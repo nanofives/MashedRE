@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x0051b750: libpng 1.0.12 pngrtran.c png_do_gamma. Official source, png_row_info layout. gamma_table copied from
    gamma_table_arg (the original packs a 16-bit-path local into that dead arg slot; 88.6 without it).

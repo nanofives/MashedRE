@@ -6,12 +6,18 @@
 
 #define MATCH_PORT 1
 #define FUN_00493480 FpsDiscretise
+// [RO-BIND-TIMER] exe: 0x00493390 binds by name to its matched exe body (Match/PortTop_00493390.cpp). Reached only
+// under MASHED_ORIG_TOP with MASHED_OT_TIMER=1 (Match/PortTop_00492370.cpp). The .asi keeps the raw-address call.
+#ifdef MASHED_STANDALONE
+#define FUN_00493390 PortTop_Bound_00493390
+#else
 #define FUN_00493390 MatchS15_00493480_Call00493390
 // Callees of the matched source: the old Boot/FrameDispatch.cpp body called each one through its original address, so these
 // forwarders make that same raw-address call (in the .asi an installed callee hook is reached through its JMP).
 extern "C" void MatchS15_00493480_Call00493390(void) {
     reinterpret_cast<void (__cdecl*)()>(0x00493390u)();
 }
+#endif
 #pragma comment(linker, "/EXPORT:FpsDiscretise=_FpsDiscretise")
 extern "C" {
 #include "../../../../re/match/s15/00493480.c"

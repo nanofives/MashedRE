@@ -1,0 +1,82 @@
+0x00441d40  ours 66  orig 66  differing runs 1
+   replace ours fld:42c80000(lit) fld:42c80000(lit) fld:42c80000(lit)
+           orig fld:00000000(0x005d757c@0x00442215) fld:00000000(0x005d757c@0x0044221f) fld:00000000(0x005d757c@0x00442239)
+0x00442e00  ours 35  orig 35  differing runs 3
+   replace ours fmul:3d4ccccd(lit)
+           orig fld:3d4ccccd(0x005cc9a0@0x00442fca)
+   insert  ours -
+           orig fmul:3b8ca29c(0x005ce02c@0x00442fe8)
+   delete  ours fmul:3b8ca29b(lit)
+           orig -
+0x00443440  ours 62  orig 61  differing runs 1
+   delete  ours fld:00000000(lit)
+           orig -
+0x00443dc0  ours 81  orig 89  differing runs 7
+   replace ours fmul:3eaaaaab(lit) fmul:3eaaaaab(lit)
+           orig fmul:3eaaaa9f(0x005ce034@0x0044400e) fmul:3eaaaa9f(0x005ce034@0x0044405c)
+   insert  ours -
+           orig fcomp:bf800000(0x005cc33c@0x004441d7) fcomp:bf800000(0x005cc33c@0x004441e8) fcomp:40000000(0x005cc574@0x004441f9) fcomp:40000000(0x005cc574@0x0044420a)
+   insert  ours -
+           orig fcomp:bf800000(0x005cc33c@0x00444266) fcomp:bf800000(0x005cc33c@0x0044427b) fcomp:40000000(0x005cc574@0x00444290) fcomp:40000000(0x005cc574@0x004442a5)
+   replace ours fcomp:00000000(lit)
+           orig fld:00000000(0x005d757c@0x004446d0)
+   replace ours fcom:00000000(lit)
+           orig fcomp:00000000(0x005d757c@0x00444790)
+   replace ours fcomp:00000000(lit)
+           orig fld:00000000(0x005d757c@0x004448ad)
+   replace ours fcom:00000000(lit)
+           orig fcomp:00000000(0x005d757c@0x0044494c)
+0x00445aa0  ours 104  orig 104  differing runs 11
+   delete  ours fcomp:40e00000(lit)
+           orig -
+   delete  ours fcomp:3ca3d70a(lit) fmul:40c00000(lit)
+           orig -
+   insert  ours -
+           orig fcomp:3ca3d70a(0x005ce18c@0x00445cde) fmul:40c00000(0x005cd0a0@0x00445d1c)
+   insert  ours -
+           orig fmul:42700000(0x005cc728@0x00445d99)
+   replace ours fmul:41092493(lit)
+           orig fmul:3e124925(0x005ce188@0x00445dc0)
+   replace ours fmul:3b491004(lit)
+           orig fmul:3b490e56(0x005ce184@0x00445f4e)
+   delete  ours fcomp:00000000(lit) fld:42b40000(lit) fld:43870000(lit)
+           orig -
+   insert  ours -
+           orig fcomp:00000000(0x005d757c@0x0044602a) fld:43870000(0x005cd324@0x00446037) fld:42b40000(0x005ccad0@0x0044603f)
+   insert  ours -
+           orig fld:43870000(0x005cd324@0x004462b1)
+   delete  ours fld:43870000(lit)
+           orig -
+   replace ours fmul:3bc91004(lit)
+           orig fmul:3bc90e56(0x005ce17c@0x004463d5)
+0x00469aa0  ours 0  orig 0  differing runs 0
+0x004709a0  ours 3  orig 2  differing runs 1
+   delete  ours fld:00000000(0x008815a0)
+           orig -
+0x00469df0  ours 62  orig 64  differing runs 6
+   insert  ours -
+           orig fld:42c80000(0x005cc568@0x0046aab8) fld:43480000(0x005ce194@0x0046aad0)
+   replace ours fld:3f800000(lit)
+           orig fcom:3f800000(0x005cc320@0x0046aae0)
+   insert  ours -
+           orig fmul:3c23d70a(0x005cc328@0x0046ad3d)
+   delete  ours fmul:3c23d70a(lit)
+           orig -
+   insert  ours -
+           orig fmul:3c23d70a(0x005cc328@0x0046ada3)
+   delete  ours fmul:3c23d70a(lit)
+           orig -
+0x0046ef70  ours 37  orig 38  differing runs 1
+   replace ours fmul:3cb60bc0(lit)
+           orig fmul:3b360bc0(0x005cea80@0x0046f484) fmul:41000000(0x005cc9f4@0x0046f495)
+0x0046f6c0  ours 62  orig 59  differing runs 3
+   delete  ours fld:00000000(0x0088e620) fld:00000000(0x0088e620) fld:00000000(0x0088e620)
+           orig -
+   replace ours fld:00000000(0x006146fc)
+           orig fmul:00000000(0x00614704@0x0047039a)
+   replace ours fld:00000000(0x006146fc)
+           orig fmul:00000000(0x006146fc@0x004703e2)
+0x004c51a0  ours 0  orig 0  differing runs 0
+0x00487180  ours 0  orig 4  differing runs 1
+   insert  ours -
+           orig fmul:3ca3d70a(0x005ce18c@0x004871f2) fmul:3ca3d70a(0x005ce18c@0x00487200) fmul:3ca3d70a(0x005ce18c@0x00487210) fld:40000000(0x005cf47c@0x00487232)

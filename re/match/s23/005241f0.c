@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x005241f0: libpng 1.0.12 pngrutil.c png_handle_sBIT. The original's compiler inlined
    png_crc_finish unevenly: IDAT path fully inline, Duplicate path with png_get_uint_32 called (0x00523110),

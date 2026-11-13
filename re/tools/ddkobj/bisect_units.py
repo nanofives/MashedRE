@@ -5,9 +5,11 @@
 Each probe builds a variant from a subset (ddkobj.py build --units-file, out dir build/ddkobj_bisect), boots it once
 through knob_boot.py inside `mashed_lock.py run` and classifies: FAIL = exited with an exception code, OK = ran to its
 own exit or to the timeout. Finds one culprit by halving, adds it to the exclusions, and repeats until the full set
-minus exclusions boots OK. One TSV row per probe. Run under test-slot.
+minus exclusions boots OK. One TSV row per probe. Run under test-slot. BISECT_ROOT / BISECT_DATA / BISECT_LABEL override the root, data dir and lock label;
+the build inherits the environment (DDKOBJ-REGCONV: DDKOBJ_REGCONV=promote reproduces the first, unguarded build).
 """
 import json
+import os
 import pathlib
 import re
 import subprocess
@@ -16,8 +18,10 @@ import sys
 W = pathlib.Path(__file__).resolve().parents[3]
 ORCH = W.parent / "orch-integration" / "re" / "orchestrator" / "mashed_lock.py"
 OUT = W / "mashedmod" / "build" / "ddkobj_bisect"
-ROOT = "D:/MashedWT/DDKOBJ-SPIKE_root"
-DATA = "D:/MashedWT/DDKOBJ-SPIKE_data/bisect"
+# DDKOBJ-REGCONV: private root, data dir and lock label of the calling step (defaults: DDKOBJ-SPIKE's)
+ROOT = os.environ.get("BISECT_ROOT", "D:/MashedWT/DDKOBJ-SPIKE_root")
+DATA = os.environ.get("BISECT_DATA", "D:/MashedWT/DDKOBJ-SPIKE_data/bisect")
+LABEL = os.environ.get("BISECT_LABEL", "DDKOBJ-SPIKE")
 
 
 def first_rva(u):
@@ -50,7 +54,7 @@ def probe(units, tag, knob, log):
         shutil.copyfile("D:/MashedWT/PORT-TOP-04E_data/settings_baseline.bin", ROOT + "/mashed_re_settings.bin")
         kv = ["MASHED_NAV_DEMO=1", "MASHED_DETERMINISTIC=1", f"MASHED_VERIFY_OUT={DATA}/{tag}"] +              (["MASHED_ORIG_TOP=1"] if knob == "on" else [])
     env_exe = str(OUT / "mashed_re_ddk.exe")
-    cmd = ["py", "-3.12", str(ORCH), "run", "--label", "DDKOBJ-SPIKE", "--",
+    cmd = ["py", "-3.12", str(ORCH), "run", "--label", LABEL, "--",
            "py", "-3.12", str(W / "verify/porttop_20261108/knob_boot.py"), tag, ROOT, "300" if NAV else "40"] + kv
     import os
     env = dict(os.environ, KNOB_EXE=env_exe, PORTTOP_OUT=DATA)

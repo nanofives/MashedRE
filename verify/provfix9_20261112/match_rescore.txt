@@ -1,0 +1,18 @@
+new 0x005aa0c0 _FUN_005aa0c0: 26.2% (regs 77.5%, ops 92.5%)  80/80 ins  flags=/O2 /Ob1 /G5 tc=ddk
+old 0x005aa0c0 _FUN_005aa0c0: 56.2% (regs 76.2%, ops 91.2%)  80/80 ins  flags=/O2 /Ob1 /G5 tc=ddk
+new 0x005abfa0 _FUN_005abfa0: 67.1% (regs 80.8%, ops 96.2%)  213/211 ins  flags=/O2 /Ob1 /G5 tc=ddk
+old 0x005abfa0 _FUN_005abfa0: 62.9% (regs 77.0%, ops 96.2%)  213/211 ins  flags=/O2 /Ob1 /G5 tc=ddk
+new 0x005a7b60 _FUN_005a7b60: 60.9% (regs 68.6%, ops 86.0%)  264/271 ins  flags=/O2 /Ob1 /G5 tc=ddk
+old 0x005a7b60 _FUN_005a7b60: 53.5% (regs 59.0%, ops 86.0%)  264/271 ins  flags=/O2 /Ob1 /G5 tc=ddk
+new 0x005aba20 _FUN_005aba20: 77.6% (regs 83.1%, ops 94.1%)  235/237 ins  flags=/O2 /Ob1 /G5 tc=ddk
+old 0x005aba20 _FUN_005aba20: 81.9% (regs 85.2%, ops 93.7%)  236/237 ins  flags=/O2 /Ob1 /G5 tc=ddk
+new 0x005ad0b0 _FUN_005ad0b0: 44.3% (regs 58.9%, ops 87.5%)  190/192 ins  flags=/O2 /Ob1 /G5 tc=ddk
+old 0x005ad0b0 _FUN_005ad0b0: 56.2% (regs 73.4%, ops 89.6%)  190/192 ins  flags=/O2 /Ob1 /G5 tc=ddk
+new 0x005a9f10 _FUN_005a9f10: 81.0% (regs 81.0%, ops 81.0%)  21/21 ins  flags=/O2 /Ob1 /G5 tc=ddk
+old 0x005a9f10 _FUN_005a9f10: 73.9% (regs 73.9%, ops 73.9%)  23/21 ins  flags=/O2 /Ob1 /G5 tc=ddk
+new 0x00481a30 _FUN_00481a30: 69.7% (regs 71.8%, ops 95.4%)  238/232 ins  flags=/O2 /GS /Ob1 tc=ddk
+old 0x00481a30 _FUN_00481a30: 63.3% (regs 65.4%, ops 95.4%)  237/232 ins  flags=/O2 /GS /Ob1 tc=ddk
+new 0x00440bc0 _FUN_00440bc0: 100.0% (regs 100.0%, ops 100.0%)  217/217 ins  flags=/O2 /GS tc=ddk
+old 0x00440bc0 _FUN_00440bc0: 12.4% (regs 12.4%, ops 14.8%)  283/217 ins  flags=/O2 /GS tc=ddk
+new 0x005a75b0 _FUN_005a75b0: 43.5% (regs 46.2%, ops 71.5%)  180/186 ins  flags=/O2 /Ob1 /G5 tc=ddk
+old 0x005a75b0 _FUN_005a75b0: 51.6% (regs 53.7%, ops 76.3%)  190/186 ins  flags=/O2 /Ob1 /G5 tc=ddk

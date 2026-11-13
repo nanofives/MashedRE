@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00516d50: libpng 1.0.12 png.c png_calculate_crc. Official source (need_crc flag).
    Best 83.3% (regs 83.3%). Residual (a): the original hoists the one load of flags (+0x6c) above the

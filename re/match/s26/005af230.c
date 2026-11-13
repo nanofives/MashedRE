@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S26 0x005af230 (h3): 79.2% exact, regs 79.2%. Residual class (b) original loads the list head from [eax+0x18] with the param in eax (no early edi copy); 4 loop spellings tried. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

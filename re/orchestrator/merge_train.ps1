@@ -30,13 +30,15 @@
   fast-forwards race/first-frame-parity in the main checkout and main (update-ref with the old value), checks both equal
   orch/integration, runs release_due.py and on DUE waits for publish.sh, then starts the next pass. It stops and
   reports on RED, INFRA, a hash change, a decided-flip row in the batch (left queued for its own -Full pass), or any
-  error. Never pushes. Wrap the driver in test-slot if a slot is wanted: the slot stays outside, mashed_lock inside.
+  error. A drain that ran out the queue but set rows aside on a merge conflict reports PARTIAL (exit 2), not GREEN
+  (HB-DRAIN-VERDICT). Never pushes. Wrap the driver in test-slot if a slot is wanted: the slot stays outside, mashed_lock inside.
   A decided-flip row (Test-FlipRow): id -FLIP / FLIP-, "decided flip" in the ledger title, or (HB-TRAIN-FLIP-DECISION,
   2026-11-11) an L-n in the ledger `decision` field together with a title naming a default turned ON.
 #>
 [CmdletBinding()]
 param([switch]$Full, [switch]$Plan, [int]$Max = 0, [switch]$KeepTemp, [switch]$SelfTest,
-      [switch]$Drain, [switch]$NoFlip, [string]$ResultJson = '', [switch]$ForceFull)
+      [switch]$Drain, [switch]$NoFlip, [string]$ResultJson = '', [switch]$ForceFull,
+      [switch]$Gate, [switch]$Override, [string]$QueueFile = '', [string]$GateNow = '')
 $ErrorActionPreference = 'Stop'
 
 $HERE = $PSScriptRoot
@@ -46,7 +48,7 @@ $RM = Join-Path $HERE 'roadmap.ps1'
 $LOCKPY = Join-Path $HERE 'mashed_lock.py'
 $DIAG = Join-Path $MAIN 'scripts\diag.py'
 $TS = Get-Date -Format 'yyyyMMdd_HHmmss'
-$DATA = Join-Path $(if ($SelfTest) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_selftest' } else { $CFG.data }) $(if ($Drain -and -not $SelfTest) { "drain_$TS" } else { $TS })
+$DATA = Join-Path $(if ($SelfTest) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_selftest' } elseif ($Gate) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_gate' } else { $CFG.data }) $(if ($Drain -and -not $SelfTest) { "drain_$TS" } else { $TS })
 New-Item -ItemType Directory -Force -Path $DATA | Out-Null
 $LOG = Join-Path $DATA 'merge_train.log'
 $FullEff = [bool]$ForceFull   # HB-TRAIN-MATCH-TEXTONLY: the pass body sets it from -Full and the batch (Resolve-FullFlag)
@@ -174,11 +176,20 @@ function Reclaim-DeadTrains {
 # ordinary acquires, windows already open and the train's own priority calls do not. The 2026-11-01 starvations
 # were all a solo window opened during the 4-8 min of merge+build before the first `run --priority` claim.
 # Best effort: a failed write only reopens the old gap, so it warns and the pass goes on.
+# HB-TRAIN-SOLO-WINDOW (b): the hold now starts after merge + archive lint + tracker lint + build + lint_rva_bodies
+# (7-16 min of CPU/disk work that touches no game), at the point Try-Batch is about to run the gates. Config
+# `priority_scope`: "games" (default) = hold only for the game legs, "pass" = the old behaviour (whole pass).
+# Enter is idempotent (Resolve-Batch calls Try-Batch again one at a time) and Exit releases only a hold that was taken.
+$script:PrioHeld = $false
 function Enter-PassPriority {
+  if ($script:PrioHeld) { return }
+  $script:PrioHeld = $true
   try { $o = & py.exe -3.12 $LOCKPY prio-hold --owner-pid $PID --label "merge-train:$TS" 2>&1; Say "priority: $(($o | Select-Object -Last 1)) rc=$LASTEXITCODE" }
   catch { Say "WARN priority hold not registered: $($_.Exception.Message)" }
 }
 function Exit-PassPriority {
+  if (-not $script:PrioHeld) { Say 'priority: no hold taken in this pass (build/lint only), nothing to release'; return }
+  $script:PrioHeld = $false
   try { $o = & py.exe -3.12 $LOCKPY prio-release --owner-pid $PID 2>&1; Say "priority: $(($o | Select-Object -Last 1)) rc=$LASTEXITCODE" }
   catch { Say "WARN priority release failed (stale once this PID exits): $($_.Exception.Message)" }
 }
@@ -270,11 +281,28 @@ function Merge-One([string]$wt, $item) {
   $o = Git -C $wt -c merge.autoStash=false merge --no-ff -m $msg $item.branch
   if ($script:GITRC -eq 0) { return @{ ok = $true } }
   $conf = @((Git -C $wt diff --name-only --diff-filter=U) | Where-Object { $_ })
-  $halt = @($conf | Where-Object { $_ -notin $CFG.conflict_union })
+  # HB-TRACKER-AT-MERGE: hooks.csv and the dual-copy allowlist are merged by key (tracker_merge3.py, 3-way on the RVA /
+  # entry), not by line union: two branches on different rows merge, the same row edited two ways is a real conflict.
+  $keyed = @{}; if ($CFG.conflict_keyed) { foreach ($pp in $CFG.conflict_keyed.PSObject.Properties) { $keyed[$pp.Name] = [string]$pp.Value } }
+  $halt = @($conf | Where-Object { $_ -notin $CFG.conflict_union -and -not $keyed.ContainsKey($_) })
   if ($halt.Count -gt 0) {
     Git -C $wt merge --abort | Out-Null
     return @{ ok = $false; why = "conflict needs a hand merge (frida-sweep recipe): $($halt -join ', ')" }
   }
+  $mergedKeyed = @{}
+  foreach ($f in @($conf | Where-Object { $keyed.ContainsKey($_) })) {
+    $tmp = Join-Path $DATA ("k_" + ($f -replace '[\\/]', '_'))
+    foreach ($st in 1, 2, 3) { Git-ShowBytes $wt ":${st}:$f" "$tmp.$st" }
+    $m3 = Join-Path $wt 're/tools/tracker_merge3.py'; if (-not (Test-Path -LiteralPath $m3)) { $m3 = Join-Path $HERE '../tools/tracker_merge3.py' }
+    $kout = & py.exe -3.12 $m3 $keyed[$f] "$tmp.2" "$tmp.1" "$tmp.3"; $krc = $LASTEXITCODE
+    if ($krc -ne 0) {
+      Git -C $wt merge --abort | Out-Null
+      return @{ ok = $false; why = "conflict needs a hand merge (same key edited on both sides): $f [$(@($kout) -join ' ')]" }
+    }
+    $mergedKeyed[$f] = "$tmp.2"
+  }
+  foreach ($f in $mergedKeyed.Keys) { Copy-Item $mergedKeyed[$f] (Join-Path $wt $f) -Force; Git -C $wt add -- $f | Out-Null }
+  $conf = @($conf | Where-Object { -not $keyed.ContainsKey($_) })
   foreach ($f in $conf) {   # frida-sweep rule for these files: keep both sides
     $tmp = Join-Path $DATA ("u_" + ($f -replace '[\\/]', '_'))
     foreach ($st in 1, 2, 3) { Git-ShowBytes $wt ":${st}:$f" "$tmp.$st" }
@@ -284,8 +312,37 @@ function Merge-One([string]$wt, $item) {
   }
   Git -C $wt -c core.editor=true commit --no-edit -q | Out-Null
   if ($script:GITRC -ne 0) { Git -C $wt merge --abort | Out-Null; return @{ ok = $false; why = "union-resolve commit failed" } }
-  Say "  union-resolved: $($conf -join ', ')"
+  Say "  union-resolved: $($conf -join ', ')$(if ($mergedKeyed.Count) { "; key-merged: $(@($mergedKeyed.Keys) -join ', ')" })"
   return @{ ok = $true }
+}
+# HB-TRACKER-AT-MERGE: a promotion row commits re/promotions/<ID>.tsv (columns rva, route, evidence, result; `result` =
+# the RESULT file the CHANGELOG cites) and never edits hooks.csv / CHANGELOG.md on its branch. Right after the row's merge
+# commit the train runs `c4_reclass.py batch --apply --strict` on the CURRENT head (so the hooks.csv it edits already has
+# every earlier row of the batch), commits hooks.csv + CHANGELOG + the TSV moved to re/promotions/applied/, and a refused
+# row sets the whole branch aside (strict: nothing written).
+function Apply-Promotions([string]$wt, $item) {
+  $new = @((Git -C $wt diff --name-only --diff-filter=A 'HEAD^1' 'HEAD') | Where-Object { $_ -match '^re/promotions/[^/]+\.tsv$' })
+  if (-not $new.Count) { return @{ ok = $true; n = 0 } }
+  $py = Join-Path $wt 're/tools/c4_reclass.py'
+  if (-not (Test-Path -LiteralPath $py)) { return @{ ok = $false; why = "promotions: no re/tools/c4_reclass.py in the merged tree" } }
+  foreach ($t in $new) {
+    $rows = @(Import-Csv -LiteralPath (Join-Path $wt $t) -Delimiter "`t")
+    $res = if ($rows.Count -and $rows[0].PSObject.Properties['result']) { ([string]$rows[0].result).Trim() } else { '' }
+    if (-not $res) { return @{ ok = $false; why = "promotions: $t has no `result` column (the RESULT path the CHANGELOG cites)" } }
+    $plog = Join-Path $DATA ("promo_" + ($t -replace '[\\/]', '_') + '.log')
+    Push-Location $wt
+    try { $po = & py.exe -3.12 $py batch --tsv $t --result $res --apply --strict 2>&1; $prc = $LASTEXITCODE } finally { Pop-Location }
+    $po | Set-Content $plog
+    if ($prc -ne 0) { return @{ ok = $false; why = "promotions: c4_reclass refused $t ($(($po | Where-Object { $_ -match 'REFUSED|refused' } | Select-Object -First 2) -join ' | ')) ($plog)" } }
+    $dest = $t -replace '^re/promotions/', 're/promotions/applied/'
+    New-Item -ItemType Directory -Force -Path (Join-Path $wt 're/promotions/applied') | Out-Null
+    Git -C $wt mv $t $dest | Out-Null
+    Git -C $wt add -- hooks.csv re/analysis/CHANGELOG.md | Out-Null
+    Git -C $wt commit -q -m "Apply promotions $($item.id) ($t) via merge train (c4_reclass batch on the current head)" | Out-Null
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
+    Say "  promotions applied: $t ($(($po | Select-Object -Last 1)))"
+  }
+  return @{ ok = $true; n = $new.Count }
 }
 function Ensure-Root([string]$root) {
   if (Test-Path (Join-Path $root 'original\MASHED.exe')) { return }
@@ -541,6 +598,8 @@ function Try-Batch($items) {
       $m = Merge-One $wt $it
       if (-not $m.ok) { $r.ok = $false; $r.why = $m.why; $r.bad = $it; $r.conflict = $true; return $r }   # HB-TRAIN-CONFLICT-SKIP: before build and gates
       Say "  merged $($it.id) ($($it.branch))"
+      $pr = Apply-Promotions $wt $it
+      if (-not $pr.ok) { $r.ok = $false; $r.why = $pr.why; $r.bad = $it; $r.conflict = $true; return $r }
     }
     $changed = @((Git -C $wt diff --name-only "$base..HEAD") | Where-Object { $_ })
     # HB-TRAIN-MATCH-TEXTONLY: re/match/** is text-only unless the build reads it; a flip pass (effective -Full) is
@@ -590,6 +649,8 @@ function Try-Batch($items) {
     $lint | Set-Content (Join-Path $DATA 'lint.txt')
     if ($lrc -ne 0) { $r.ok = $false; $r.why = "lint_rva_bodies: $(($lint | Select-Object -Last 1))"; return $r }
     Say "  lint OK: $(($lint | Select-Object -Last 1))"
+    # HB-TRAIN-SOLO-WINDOW (b): the game legs start here, so the hold starts here (comment above the function).
+    Enter-PassPriority
     return (Run-Gates $wt $r $needFull)
   } finally {
     $r.sha = (Git -C $wt rev-parse HEAD) | Select-Object -First 1
@@ -617,7 +678,37 @@ function Select-Batch($queue, [int]$cap) {
   }
   return $b
 }
-function Get-Queue { @((& pwsh -NoProfile -File $RM queue) | Out-String | ConvertFrom-Json -DateKind String) }
+function Get-Queue {
+  # -QueueFile reads a copy of the queue (tests); the live file is only read through roadmap.ps1 queue.
+  if ($QueueFile) { return @((Get-Content -LiteralPath $QueueFile -Raw) | ConvertFrom-Json -DateKind String) }
+  @((& pwsh -NoProfile -File $RM queue) | Out-String | ConvertFrom-Json -DateKind String)
+}
+# HB-TRAIN-SOLO-WINDOW (a): batching start gate. Run 39 ran 12 rows as 6 passes of 37-49 min, and each pass held
+# the machine solo, so boot rows waited ~4.1 h. A train starts only at start_gate.min_rows queued rows, or once the
+# oldest queued row has waited start_gate.max_wait_min minutes. -Gate prints one line and exits 0 (START) or 3 (WAIT);
+# -Override starts regardless. The L0 conductor calls `merge_train.ps1 -Gate` before it starts a pass or a -Drain.
+# Pure function: no side effects, takes the queue and the clock.
+function Test-StartGate($queue, [datetime]$nowUtc, [bool]$override) {
+  $sg = @{ enabled = $true; min_rows = 3; max_wait_min = 60 }
+  if ($CFG.PSObject.Properties['start_gate']) { foreach ($p in $CFG.start_gate.PSObject.Properties) { $sg[$p.Name] = $p.Value } }
+  $rows = @($queue | Where-Object { $_ })
+  $oldest = $null
+  foreach ($q in $rows) {
+    [DateTimeOffset]$t = [DateTimeOffset]::MinValue
+    if ($q.at -and [DateTimeOffset]::TryParse("$($q.at)", [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal, [ref]$t)) {
+      if ($null -eq $oldest -or $t.UtcDateTime -lt $oldest) { $oldest = $t.UtcDateTime }
+    }
+  }
+  $waitMin = if ($null -ne $oldest) { [math]::Round(($nowUtc - $oldest).TotalMinutes, 1) } else { 0 }
+  $o = [ordered]@{ start = $false; reason = ''; rows = $rows.Count; oldest_wait_min = $waitMin; min_rows = [int]$sg.min_rows; max_wait_min = [int]$sg.max_wait_min }
+  if (-not $rows.Count) { $o.reason = 'queue empty' }
+  elseif ($override) { $o.start = $true; $o.reason = 'override' }
+  elseif (-not [bool]$sg.enabled) { $o.start = $true; $o.reason = 'start_gate disabled in merge_train.json' }
+  elseif ($rows.Count -ge [int]$sg.min_rows) { $o.start = $true; $o.reason = "$($rows.Count) rows queued >= $($sg.min_rows)" }
+  elseif ($null -ne $oldest -and $waitMin -ge [int]$sg.max_wait_min) { $o.start = $true; $o.reason = "oldest row waited $waitMin min >= $($sg.max_wait_min)" }
+  else { $o.reason = "$($rows.Count) row(s) < $($sg.min_rows) and oldest waited $waitMin min < $($sg.max_wait_min)" }
+  return [pscustomobject]$o
+}
 function Get-LedgerRow([string]$id) { try { return ((& pwsh -NoProfile -File $RM get $id) | Out-String | ConvertFrom-Json -DateKind String) } catch { return $null } }
 # A decided flip (MERGE_TRAIN.md "Decided default flips") changes the refs and must run alone with -Full after L0 has
 # committed the new refs. Recognised by the row id (D4-FLIP-L29-L30, D3-SUBSTATE-FLIP, ...) or a title naming a
@@ -731,7 +822,7 @@ function Invoke-PassChild([string]$rj) {
   return (Get-Content -LiteralPath $rj -Raw | ConvertFrom-Json -AsHashtable)
 }
 function Invoke-Drain([string]$int) {
-  $passes = @(); $stop = ''; $lines = @()
+  $passes = @(); $stop = ''; $lines = @(); $aside = @()
   for ($n = 1; $n -le [int]$DCFG.max_passes; $n++) {
     $q = @(Get-Queue)
     if (-not $q.Count) { $stop = ''; Say "drain: queue empty after $($n - 1) pass(es)"; break }
@@ -742,7 +833,7 @@ function Invoke-Drain([string]$int) {
     $stop = Get-DrainStop $p (Read-Refs)
     $line = "pass $n $($p.verdict): merged [$(@($p.merged) -join ' ')] gates $($p.gates)"
     if ($stop) { $lines += $line; break }
-    if ($p.conflict_only) { $line += " (set aside on a merge conflict: $((@($p.bounced) | ForEach-Object { $_.id }) -join ' '))" }
+    if ($p.conflict_only) { $ids = @(@($p.bounced) | ForEach-Object { $_.id }); $aside += $ids; $line += " (set aside on a merge conflict: $($ids -join ' '))" }
     if (-not @($p.merged).Count) { $lines += "$line; nothing merged, no fast-forward"; continue }   # conflict-only pass: every row bounced
     $adv = Advance-Main $int
     if (-not $adv.ok) { $stop = "ERROR: fast-forward of $($DCFG.parity_branch)/$($DCFG.main_branch) refused: $($adv.why)"; $lines += $line; break }
@@ -752,7 +843,11 @@ function Invoke-Drain([string]$int) {
     if ($rel.stop) { $stop = $rel.stop; break }
   }
   if (-not $stop -and $n -gt [int]$DCFG.max_passes -and @(Get-Queue).Count) { $stop = "STOP: max_passes $($DCFG.max_passes) reached with rows still queued" }
-  $verdict = if (-not $stop) { 'GREEN' } else { ($stop -split ':')[0] }
+  # HB-DRAIN-VERDICT (2026-11-12): a conflict-only RED pass lets the drain go on (HB-TRAIN-CONFLICT-SKIP), but the
+  # drain verdict must not read GREEN when rows were set aside (run 37: pass 1 RED, HUDINIT-A set aside on hooks.csv,
+  # drain GREEN). A stop keeps its own verdict; otherwise any set-aside row makes it PARTIAL (exit 2), else GREEN.
+  $verdict = if ($stop) { ($stop -split ':')[0] } elseif ($aside.Count) { 'PARTIAL' } else { 'GREEN' }
+  $asideTxt = if ($aside.Count) { " | set aside on a merge conflict, needs a hand merge (frida-sweep recipe) and a re-queue: $($aside -join ' ')" } else { '' }
   $final = (Git rev-parse --short $int) | Select-Object -First 1
   $report = @(
     'REPORT merge-train-drain',
@@ -761,10 +856,10 @@ function Invoke-Drain([string]$int) {
     "evidence: $LOG",
     "gates: $(if ($passes.Count) { $passes[-1].gates } else { 'not run: queue empty' })",
     "decision: none",
-    "next: $($passes.Count) pass(es): $($lines -join ' | ')$(if ($stop) { " | stopped: $stop" } else { ' | queue drained' })"
+    "next: $($passes.Count) pass(es): $($lines -join ' | ')$(if ($stop) { " | stopped: $stop" } else { ' | queue drained' })$asideTxt"
   )
   $report | Set-Content (Join-Path $DATA 'REPORT.txt') -Encoding utf8
-  return @{ verdict = $verdict; stop = $stop; passes = $passes; report = $report }
+  return @{ verdict = $verdict; stop = $stop; passes = $passes; report = $report; aside = $aside }
 }
 
 # ---- self test (HB-TRAIN3): fake repo + fake arm runner, never reads the live queue ------------------
@@ -806,6 +901,51 @@ if ($SelfTest) {
   Say "  SELFTEST contrast: Set-Content writes $(@([IO.File]::ReadAllBytes($old) | Where-Object { $_ -eq 13 }).Count) CR byte(s) for 2 lines on this host"
   Git -C $fake merge --ff-only -q (Git -C $wt rev-parse HEAD | Select-Object -First 1) 2>&1 | Out-Null
   Remove-Temp $wt
+
+  # --- HB-TRACKER-AT-MERGE (real merges on a second fake repo): hooks.csv is key-merged, not line-unioned, and a
+  # promotions TSV is applied with c4_reclass.py batch at merge time on the current head.
+  $f2 = Join-Path ([IO.Path]::GetTempPath()) "mtrain_selftest_tracker_$TS"
+  New-Item -ItemType Directory -Force -Path (Join-Path $f2 're\tools'), (Join-Path $f2 're\analysis'), (Join-Path $f2 'verify\t') | Out-Null
+  function P2([string]$rel, [string]$text) { $fp = Join-Path $f2 $rel; New-Item -ItemType Directory -Force -Path (Split-Path $fp -Parent) | Out-Null; [IO.File]::WriteAllText($fp, $text, (New-Object Text.UTF8Encoding $false)) }
+  Copy-Item (Join-Path $HERE '..\tools\c4_reclass.py') (Join-Path $f2 're\tools\c4_reclass.py')
+  Copy-Item (Join-Path $HERE '..\tools\tracker_merge3.py') (Join-Path $f2 're\tools\tracker_merge3.py')
+  $h2 = "rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes,exe_file`n00401000,FunA,boot,C3,impl,a.cpp,,,na,a.cpp`n00401010,FunB,boot,C3,impl,b.cpp,,,nb,b.cpp`n00401020,FunC,boot,C3,impl,c.cpp,,,nc,c.cpp`n"
+  P2 'hooks.csv' $h2
+  P2 're/analysis/CHANGELOG.md' "# log`n<!-- ENTRIES -->`nold`n"
+  P2 'verify/t/RESULT_PA.md' "FunB 0x00401010`nIDENTICAL-FOR-120 ticks`ninstall-check: ok`nbody-executed: 120 calls`nwrite-set: covered`n"
+  P2 'verify/t/RESULT_PB.md' "FunC 0x00401020`nIDENTICAL-FOR-120 ticks`ninstall-check: ok`nbody-executed: 120 calls`nwrite-set: not-covered`n"
+  $null = Git -C $f2 init -q -b integration
+  Git -C $f2 config user.email t@t | Out-Null; Git -C $f2 config user.name t | Out-Null; Git -C $f2 config core.autocrlf false | Out-Null
+  Git -C $f2 add . | Out-Null; Git -C $f2 commit -q -m base | Out-Null
+  function Br([string]$n, [string]$rel, [string]$text) { Git -C $f2 checkout -q -b $n integration | Out-Null; P2 $rel $text; Git -C $f2 add . | Out-Null; Git -C $f2 commit -q -m $n | Out-Null; Git -C $f2 checkout -q integration | Out-Null }
+  Br 'k-a' 'hooks.csv' ($h2 -replace '00401000,FunA,boot,C3,impl,a.cpp,,,na', '00401000,FunA,boot,C3,impl,a.cpp,,,na edited by A')
+  Br 'k-b' 'hooks.csv' ($h2 -replace '00401020,FunC,boot,C3,impl,c.cpp,,,nc', '00401020,FunC,boot,C3,impl,c.cpp,,,nc edited by B')
+  Br 'k-c' 'hooks.csv' ($h2 -replace '00401000,FunA,boot,C3,impl,a.cpp,,,na', '00401000,FunA,boot,C3,impl,a.cpp,,,na edited by C')
+  $oldKeyed = $CFG.conflict_keyed
+  $wt2 = Join-Path $DATA 'wt_tracker'
+  Git -C $f2 worktree add -q $wt2 -b scratch integration | Out-Null
+  $mA = Merge-One $wt2 @{ id = 'K-A'; branch = 'k-a' }
+  $mB = Merge-One $wt2 @{ id = 'K-B'; branch = 'k-b' }
+  $hAfter = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv'))
+  Check ($mA.ok -and $mB.ok -and $hAfter -match 'na edited by A' -and $hAfter -match 'nc edited by B' -and ([regex]::Matches($hAfter, '(?m)^0040[0-9a-f]{4},')).Count -eq 3) "tracker: two branches on different hooks.csv rows both merge (key-merged), 3 rows, no duplicate RVA"
+  $mC = Merge-One $wt2 @{ id = 'K-C'; branch = 'k-c' }
+  $stClean = [string]((Git -C $wt2 status --porcelain) -join '')
+  Check ((-not $mC.ok) -and $mC.why -match 'same key edited on both sides' -and $mC.why -match '00401000' -and -not $stClean) "tracker: the same RVA edited two ways = set aside naming the RVA, merge aborted, tree clean ($($mC.why))"
+  Br 'k-d' 'hooks.csv' ($h2 -replace '00401010,FunB,boot,C3,impl,b.cpp,,,nb', '00401010,FunB,boot,C3,impl,b.cpp,,,nb edited by D')
+  Br 'p-a' 're/promotions/PA.tsv' "rva`troute`tevidence`tresult`n0x00401010`tfrida-replay`tverify/t/RESULT_PA.md`tverify/t/RESULT_PA.md`n"
+  Br 'p-b' 're/promotions/PB.tsv' "rva`troute`tevidence`tresult`n0x00401020`tfrida-replay`tverify/t/RESULT_PB.md`tverify/t/RESULT_PB.md`n"
+  $mD = Merge-One $wt2 @{ id = 'K-D'; branch = 'k-d' }
+  $mPA = Merge-One $wt2 @{ id = 'P-A'; branch = 'p-a' }
+  $aPA = Apply-Promotions $wt2 @{ id = 'P-A'; branch = 'p-a' }
+  $hP = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv')); $cP = [IO.File]::ReadAllText((Join-Path $wt2 're\analysis\CHANGELOG.md'))
+  Check ($mD.ok -and $mPA.ok -and $aPA.ok -and $aPA.n -eq 1 -and $hP -match '00401010,FunB,boot,C4,impl,b.cpp,,,nb edited by D \| .*c4=frida-replay' -and $cP -match '(?m)^<!-- ENTRIES -->\r?\n.*0x00401010  FunB  C3->C4' -and (Test-Path (Join-Path $wt2 're\promotions\applied\PA.tsv')) -and -not (Test-Path (Join-Path $wt2 're\promotions\PA.tsv'))) "tracker: promotions TSV applied at merge time on the current head: row C4 with the other branch's edit kept, CHANGELOG line written, TSV moved to applied/"
+  $hdBefore = (Git -C $wt2 rev-parse HEAD) | Select-Object -First 1
+  $mPB = Merge-One $wt2 @{ id = 'P-B'; branch = 'p-b' }
+  $aPB = Apply-Promotions $wt2 @{ id = 'P-B'; branch = 'p-b' }
+  $hP2 = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv'))
+  Check ($mPB.ok -and (-not $aPB.ok) -and $aPB.why -match 'c4_reclass refused' -and $hP2 -match '00401020,FunC,boot,C3,' ) "tracker: a refused promotion row (write-set not covered) = whole branch set aside, hooks.csv left at C3 ($($aPB.why))"
+  Git -C $f2 worktree remove --force $wt2 2>&1 | Out-Null
+  Check ((Get-Content (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') -Raw) -and ((& py.exe -3.12 (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') | Select-Object -Last 1) -match '\[11/11\].*PASS')) "tracker: tracker_merge3_selftest.py 11/11 PASS"
 
   # --- HB-V5-SKILL: a RED pass that merged nothing still writes INTEGRATION_LOG.md (one commit, that file only, newest first)
   $h0 = (Git -C $fake rev-parse HEAD) | Select-Object -First 1
@@ -882,9 +1022,15 @@ if ($SelfTest) {
   Check ($dots.Count -eq 0 -and $wrappedBody.Count -eq 0 -and $sbParams.Count -eq 1 -and $sbParams[0] -eq 'Body') "AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: $($sbParams -join ','))"
 
   # --- HB-MASHEDLOCK-EARLY-PRIORITY: the pass-wide priority hold, against a private MASHED_LOCK_DIR (never the live lock)
-  $hp = $top.Count -eq 1 -and $top[0].Body.Statements.Count -gt 0 -and $top[0].Body.Statements[0].Extent.Text -eq 'Enter-PassPriority'
+  # HB-TRAIN-SOLO-WINDOW (b): the first statement is now the priority_scope=pass fallback; the default hold is taken in
+  # Try-Batch after the build and lint legs, immediately before Run-Gates (offsets checked below).
+  $hp = $top.Count -eq 1 -and $top[0].Body.Statements.Count -gt 0 -and $top[0].Body.Statements[0].Extent.Text -match "priority_scope\)`" -eq 'pass'\) \{ Enter-PassPriority \}"
+  $tbx = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Try-Batch' -and $n.Body.Extent.Text -match 'New-Temp' }, $true))
+  $tbxt = if ($tbx.Count -eq 1) { $tbx[0].Body.Extent.Text } else { '' }
+  $iB = $tbxt.IndexOf('call mashedmod\build.bat'); $iL = $tbxt.IndexOf('scripts\lint_rva_bodies.py'); $iE = $tbxt.IndexOf('Enter-PassPriority'); $iG = $tbxt.IndexOf('return (Run-Gates $wt')
+  Check ($iB -ge 0 -and $iB -lt $iL -and $iL -lt $iE -and $iE -lt $iG -and $tbxt.IndexOf('Enter-PassPriority', $iE + 1) -lt 0) "priority window: Try-Batch takes the hold once, after build.bat ($iB) and lint_rva_bodies ($iL), right before Run-Gates ($iE < $iG)"
   $inner = @($top | ForEach-Object { $_.Finally.FindAll({ param($n) $n -is [System.Management.Automation.Language.TryStatementAst] -and $n.Body.Extent.Text -match '\bClear-Temps\b' -and $null -ne $n.Finally -and $n.Finally.Extent.Text -match '\bExit-PassPriority\b' }, $true) })
-  Check ($hp -and $inner.Count -eq 1) "AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=$hp inner=$($inner.Count))"
+  Check ($hp -and $inner.Count -eq 1) "AST: the run-body try starts with the priority_scope=pass fallback only, Exit-PassPriority runs in a finally after Clear-Temps (first=$hp inner=$($inner.Count))"
   $oldLd = $env:MASHED_LOCK_DIR; $env:MASHED_LOCK_DIR = Join-Path $DATA 'lockdir'
   New-Item -ItemType Directory -Force -Path $env:MASHED_LOCK_DIR | Out-Null
   $hf = Join-Path $env:MASHED_LOCK_DIR "mashed_machine_priolinger_$PID.lock"
@@ -1345,17 +1491,39 @@ if ($SelfTest) {
   $cb = @(@{ id = 'Q2'; why = 'conflict needs a hand merge (frida-sweep recipe): hooks.csv'; conflict = $true })
   $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $true; bounced = $cb }) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
   $h = Heads
-  Check ($d.verdict -eq 'GREEN' -and $script:passN -eq 2 -and $h[0] -eq $h[2] -and $h[1] -eq $h[2] -and ($script:ev -join ',') -eq 'pass1,release1,pass2,release2' -and $d.report[-1] -match 'set aside on a merge conflict: Q2') "drain 12: conflict-only RED pass = the rest is fast-forwarded and released, drain goes on (events $($script:ev -join ','))"
+  Check ($d.verdict -eq 'PARTIAL' -and $d.report[1] -eq 'verdict: PARTIAL' -and @($d.aside) -join ',' -eq 'Q2' -and $d.report[-1] -match 'needs a hand merge .*: Q2$' -and $script:passN -eq 2 -and $h[0] -eq $h[2] -and $h[1] -eq $h[2] -and ($script:ev -join ',') -eq 'pass1,release1,pass2,release2' -and $d.report[-1] -match 'set aside on a merge conflict: Q2') "drain 12 (HB-DRAIN-VERDICT: verdict PARTIAL, not GREEN): conflict-only RED pass = the rest is fast-forwarded and released, drain goes on (events $($script:ev -join ','))"
   $d = Drain-Case @((@{ take = 1; res = (PR 'RED' @{ conflict_only = $true; merged = @(); bounced = $cb; hashes = $null; gates = '' }) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
-  Check ($d.verdict -eq 'GREEN' -and ($script:ev -join ',') -eq 'pass1,pass2,release2' -and $d.report[-1] -match 'nothing merged, no fast-forward') "drain 12: conflict-only pass with nothing merged = no fast-forward, no release, next pass (events $($script:ev -join ','))"
+  Check ($d.verdict -eq 'PARTIAL' -and ($script:ev -join ',') -eq 'pass1,pass2,release2' -and $d.report[-1] -match 'nothing merged, no fast-forward') "drain 12 (PARTIAL): conflict-only pass with nothing merged = no fast-forward, no release, next pass (events $($script:ev -join ','))"
   $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $false; bounced = @(@{ id = 'Q2'; why = 'default gates changed'; conflict = $false }) }) })) 2 @{}
   Check ($d.verdict -eq 'RED') 'drain 12: a gate-RED bounce still stops the drain'
+  # HB-DRAIN-VERDICT: a later stop keeps its own verdict and still lists the earlier set-aside rows
+  $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $true; bounced = $cb }) }), @{ take = 0; res = (PR 'INFRA' @{ merged = @(); infra = 'D3D9-NOTAVAIL in H_DEF' }) }) 3 @{}
+  Check ($d.verdict -eq 'INFRA' -and $d.report[-1] -match 'stopped: INFRA' -and $d.report[-1] -match 'needs a hand merge .*: Q2$') "drain 12b: set-aside then INFRA = verdict INFRA, set-aside row still named ($($d.verdict))"
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{}) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
+  Check ($d.verdict -eq 'GREEN' -and $d.report[-1] -notmatch 'set aside') "drain 12c: no set-aside = GREEN, no set-aside clause ($($d.verdict))"
+  $mainTxt = Get-Content -LiteralPath $PSCommandPath -Raw
+  Check ($mainTxt -match "elseif \(\`$d\.verdict -eq 'PARTIAL'\) \{ 2 \}") 'drain 12d: -Drain exits 2 on PARTIAL (0 GREEN, 1 any stop)'
   # 11. AST: the drain dispatch sits before Write-TrainPid and the batch pick, and the pass refuses flips before Enter-PassPriority
   $txt = Get-Content -LiteralPath $PSCommandPath -Raw
-  $iDrain = $txt.LastIndexOf('$d = Invoke-Drain $INT'); $iPid = $txt.LastIndexOf("`nWrite-TrainPid"); $iFlip = $txt.LastIndexOf('$flips = @(Get-BatchFlips $batch)'); $iPrio = $txt.LastIndexOf("`nEnter-PassPriority")
+  $iDrain = $txt.LastIndexOf('$d = Invoke-Drain $INT'); $iPid = $txt.LastIndexOf("`nWrite-TrainPid"); $iFlip = $txt.LastIndexOf('$flips = @(Get-BatchFlips $batch)'); $iPrio = $txt.LastIndexOf("`nif (`"`$(`$CFG.priority_scope)`" -eq 'pass') { Enter-PassPriority }")
   Check ($iDrain -gt 0 -and $iDrain -lt $iPid -and $iFlip -gt $iPid -and $iFlip -lt $iPrio) "drain 11: dispatch before the pass body, flip refusal before the priority hold and any merge (offsets $iDrain < $iPid, $iFlip < $iPrio)"
   $locks = @([regex]::Matches(($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in 'Invoke-Drain', 'Advance-Main', 'Invoke-ReleaseStep', 'Invoke-PassChild' }, $true) | ForEach-Object { $_.Extent.Text }) -join "`n", 'LOCKPY|prio-hold|solo-begin'))
   Check ($locks.Count -eq 0) "drain 11: the drain driver takes no mashed_lock / priority hold of its own (only the passes do) ($($locks.Count) refs)"
+  # --- HB-TRAIN-SOLO-WINDOW (a): the start gate, a pure function over a fake queue and a fixed clock
+  $t0 = [datetime]::Parse('2026-11-12T12:00:00Z', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal -bor [Globalization.DateTimeStyles]::AdjustToUniversal)
+  $fq = { param($ats) @($ats | ForEach-Object -Begin { $i = 0 } -Process { $i++; [pscustomobject]@{ id = "G$i"; branch = "orch/G$i"; at = $_ } }) }
+  $g1 = Test-StartGate (& $fq @('2026-11-12T11:50:00Z')) $t0 $false
+  $g2 = Test-StartGate (& $fq @('2026-11-12T11:50:00Z', '2026-11-12T11:55:00Z', '2026-11-12T11:58:00Z')) $t0 $false
+  $g3 = Test-StartGate (& $fq @('2026-11-12T10:59:00Z', '2026-11-12T11:55:00Z')) $t0 $false
+  $g4 = Test-StartGate (& $fq @('2026-11-12T11:50:00Z')) $t0 $true
+  $g5 = Test-StartGate @() $t0 $true
+  $g6 = Test-StartGate (& $fq @('2026-11-12T11:01:00Z')) $t0 $false
+  Check ((-not $g1.start) -and $g1.oldest_wait_min -eq 10) "gate: 1 row waiting 10 min = WAIT ($($g1.reason))"
+  Check ($g2.start -and $g2.rows -eq 3) "gate: 3 rows = START ($($g2.reason))"
+  Check ($g3.start -and $g3.oldest_wait_min -eq 61) "gate: 2 rows, oldest waited 61 min = START ($($g3.reason))"
+  Check ($g4.start -and $g4.reason -eq 'override') "gate: -Override starts a 1-row queue ($($g4.reason))"
+  Check ((-not $g5.start) -and $g5.reason -eq 'queue empty') "gate: empty queue never starts, even with -Override ($($g5.reason))"
+  Check (-not $g6.start) "gate: 59 min wait is still WAIT ($($g6.reason))"
   Remove-Item -LiteralPath $fd -Recurse -Force -ErrorAction SilentlyContinue
 
   # 13. DDKOBJ-TRAIN: the object build step (Get-DdkobjStep on fake build\ddkobj outputs; AST of the Try-Batch wiring)
@@ -1389,13 +1557,20 @@ if ($SelfTest) {
 }
 
 $INT = if ($env:MASHED_MTRAIN_INT) { $env:MASHED_MTRAIN_INT } else { $CFG.integration_branch }
+# HB-TRAIN-SOLO-WINDOW (a): -Gate only reads the queue and answers; no PID file, no lock, no worktree, no merge.
+if ($Gate) {
+  $nowU = if ($GateNow) { [datetime]::Parse($GateNow, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal -bor [Globalization.DateTimeStyles]::AdjustToUniversal) } else { (Get-Date).ToUniversalTime() }
+  $g = Test-StartGate @(Get-Queue) $nowU ([bool]$Override)
+  Write-Output "GATE $(if ($g.start) { 'START' } else { 'WAIT' }): $($g.reason) (rows=$($g.rows) oldest_wait_min=$($g.oldest_wait_min) min_rows=$($g.min_rows) max_wait_min=$($g.max_wait_min))"
+  exit $(if ($g.start) { 0 } else { 3 })
+}
 # HB-TRAIN-DRAIN: the driver takes no lock and no worktree itself; each pass is a child process with its own PID file,
 # reclaim, priority hold and REPORT.
 if ($Drain -and -not $Plan) {
   Say "drain: start (max_passes $($DCFG.max_passes), passes$(if ($Full) { ' -Full' })$(if ($Max -gt 0) { " -Max $Max" }), log $LOG)"
   $d = Invoke-Drain $INT
   $d.report | Write-Output
-  exit $(if ($d.verdict -eq 'GREEN') { 0 } else { 1 })
+  exit $(if ($d.verdict -eq 'GREEN') { 0 } elseif ($d.verdict -eq 'PARTIAL') { 2 } else { 1 })
 }
 
 Write-TrainPid
@@ -1433,7 +1608,7 @@ if ($NoFlip) {
 # HB-MASHEDLOCK-EARLY-PRIORITY: the priority hold opens first thing inside it and the finally releases it, so every
 # exit (GREEN, RED, conflict, bounce, throw) ends it. Queue empty and -Plan exit above, before any hold exists.
 try {
-Enter-PassPriority
+if ("$($CFG.priority_scope)" -eq 'pass') { Enter-PassPriority }   # old behaviour: hold from before the first merge
 $res = Try-Batch $batch
 $infraGates = $res.gates
 $rb = Resolve-Batch $batch $res

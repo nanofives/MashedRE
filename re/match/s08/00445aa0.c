@@ -6,7 +6,12 @@
    Residual (b), out of budget: the original keeps tg in edi and &cam->pos in ebp (ours swap), holds `off` (0 / 7.0)
    in the dead param_2 slot and compares d2 against that slot (ours constant-propagates it, which also re-lays
    the active branch with the FUN_004430a0 loop inline instead of out of line), and spills one more frame slot
-   (0x50 vs 0x4c). */
+   (0x50 vs 0x4c).
+   PROV-DIVERGED-18 (2026-11-11): three VALUE differences. (1) dt * 60 * e * (1/7) compiled to
+   dt * e * (60/7) (folded literal 0x41092493); the original multiplies left to right through 0x005cc728 (60,
+   0x00445d99) and 0x005ce188 (1/7, 0x00445dc0). (2) the sway angle step 0.0030679711f compiled to 0x3b491004; the
+   original's 0x005ce184 is 0x3b490e56 (0x00445f4e). (3) the roll step 0.0061359424f compiled to 0x3bc91004; the
+   original's 0x005ce17c is 0x3bc90e56 (0x004463d5). All three now read the original's words. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -29,6 +34,10 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+MGLOBAL(const float, DAT_005cc728, 0x005cc728);
+MGLOBAL(const float, DAT_005ce188, 0x005ce188);
+MGLOBAL(const float, DAT_005ce184, 0x005ce184);
+MGLOBAL(const float, DAT_005ce17c, 0x005ce17c);
 typedef struct { float x; float y; float z; } V3_00445aa0;
 typedef struct { float x; float z; } V2_00445aa0;
 typedef struct {
@@ -195,7 +204,7 @@ void FUN_00445aa0(Cam_00445aa0 *cam, Tgt_00445aa0 *tg)
   if (e < 0.0f) {
     e = 0.0f;
   }
-  s = dt * 60.0f * e * 0.14285715f;
+  s = dt * DAT_005cc728; s = s * e; s = s * DAT_005ce188;
   cam->vel.x = dir.x * s + cam->vel.x;
   cam->vel.z = dir.z * s + cam->vel.z;
 damp_xz:
@@ -225,7 +234,7 @@ damp_xz:
   dx = target.x - pd->x;
   dy = target.y - cam->m1.pos.y;
   dz = target.z - cam->m1.pos.z;
-  sn = (float)sin((float)((DAT_007f101c - 0x200) & 0x3ff) * 0.0030679711f);
+  sn = (float)sin((float)((DAT_007f101c - 0x200) & 0x3ff) * DAT_005ce184);
   if (sn < 0.0f) {
     sn = -sn;
   }
@@ -347,7 +356,7 @@ damp_xz:
     f = 1.0f - dt * 4.0f;
   }
   cam->b8 = f * cam->b8;
-  roll = (float)sin((float)(DAT_007f101c & 0x3ff) * 0.0061359424f) * 30.0f;
+  roll = (float)sin((float)(DAT_007f101c & 0x3ff) * DAT_005ce17c) * 30.0f;
   if (tg->active != 0 && dist < 4.0f) {
     m = dist - 1.0f;
     if (m < 0.0f) {

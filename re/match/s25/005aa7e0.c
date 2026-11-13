@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* best 91.7% (regs 95.0%, ops 96.7%): residual = x87-free but add-chain order: original computes (iVar1 + w0xe*8 + 8) then + (w0xc*3)*4 with
    the 0xe word loaded second; ours loads the words in the other order. Tried three association orders and the permuter. The

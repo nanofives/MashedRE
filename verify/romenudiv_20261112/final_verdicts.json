@@ -1,0 +1,1605 @@
+{
+ "b_43d2a0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/b_43d2a0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x77398c",
+     "00000000",
+     "0000c1fc"
+    ],
+    [
+     "0x7f1030",
+     "39ae7959",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39ae7959', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   154,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39ae7959",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "b_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/b_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 1,
+  "first": {
+   "tick": 1,
+   "blocks": [
+    [
+     "0x67ec00",
+     "other page 0x0067e000"
+    ],
+    [
+     "0x7d6000",
+     "other page 0x007d6000"
+    ]
+   ],
+   "nblocks": 2,
+   "raw": [
+    [
+     "0x67ec40",
+     "00000000",
+     "10000000"
+    ],
+    [
+     "0x67ec5c",
+     "00000000",
+     "10000000"
+    ],
+    [
+     "0x67ec78",
+     "00000000",
+     "10000000"
+    ],
+    [
+     "0x67ec94",
+     "00000000",
+     "10000000"
+    ],
+    [
+     "0x67eca8",
+     "00000000",
+     "00000010"
+    ],
+    [
+     "0x7d62b4",
+     "00000002",
+     "00000004"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 1,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f1_43d2a0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f1_43d2a0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 108 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f1_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f1_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x7f1030",
+     "39a8d7f1",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a8d7f1', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   143,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a8d7f1",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "f2_43d2a0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f2_43d2a0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x7f1030",
+     "39a82829",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a82829', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "f2_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f2_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x7f1030",
+     "39a86e79",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a86e79', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   111,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a86e79",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "f3_43d2a0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f3_43d2a0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   109,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f3_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f3_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x7f1030",
+     "39a82829",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a82829', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   109,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "f4_43d2a0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f4_43d2a0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 108 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f4_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f4_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x7f1030",
+     "39b606f1",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39b606f1', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   459,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39b606f1",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "f5_43d2a0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f5_43d2a0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 108 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f5_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f5_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x7f1030",
+     "39a8fb19",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a8fb19', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   110,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a8fb19",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "f6_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f6_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 108 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f7_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f7_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   109,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f8_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f8_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   109,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "f9_43dfd0": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/f9_43dfd0",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 108 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "negm": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/negm",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 300,
+  "first": {
+   "tick": 300,
+   "blocks": [
+    [
+     "0x67f000",
+     "other page 0x0067f000"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x6147d8",
+     "00000000",
+     "00000001"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   109,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 300,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "ref2": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 139 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   139,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "ref3": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref3",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 110 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   110,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "ref4": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref4",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   109,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "ref5": {
+  "run": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref5",
+  "ref": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref1",
+  "ref2": "D:/MashedWT/RO-MENU-DIV-43DFD0_data/ref2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 108 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ }
+}

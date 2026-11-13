@@ -89,7 +89,7 @@ RULES = {
 REFERENCES = {
     0x00475a00: ("re/match/pilot/a3_00475a00.c", "EQUIV", "L-115 admitted: SIB base/index order"),
     0x0045a3a0: ("re/match/s09/0045a3a0.c", "EQUIV-IF-CALLERS-IGNORE", "L-115 admitted: EAX differs at return"),
-    0x00555360: ("re/match/s24/00555360.c", "EQUIV-IF-CALLERS-IGNORE", "L-117 admitted: return blocks + store order"),
+    0x00555360: ("re/tools/match/equiv_tests/refs/00555360_held.c", "EQUIV-IF-CALLERS-IGNORE", "L-117 admitted: return blocks + store order; frozen copy of the 94.4% DDK source, the live source is 100% under rw9044 since MATCH-RT2D-RESID run 40"),
     0x0048e820: ("re/match/s15/0048e820.c", "NOT-PROVEN", "L-118 admitted with the PortTop EDI wrapper; the "
                  "unedited source passes the wrong EDI to 0x0048cee0"),
     0x005c4ad0: ("re/tools/match/equiv_tests/refs/005c4ad0_held.c", "EQUIV", "held: imul operand order + a local whose address escapes (A1'); frozen copy, the live source is 100% since MATCH-RT2D-FONT"),
@@ -156,6 +156,26 @@ def test_cases():
 def test_references():
     bad = [hex(a) for a in REFERENCES if not check_reference(a)[0]]
     assert not bad, bad
+
+
+def test_summary_precision():
+    """EQUIV-NORETURN-RECHECK: the no-return reason, r11 / r12, the constant idioms, frame alignment, A7."""
+    s = equiv.summary(0x00408b00)                       # 6 rets; it calls CRT acos 0x004a3384 (r11, not no-return)
+    assert not s["noreturn"], s
+    a = equiv.summary(0x004a3384)
+    assert not a["noreturn"] and a.get("why") == "r11", a
+    al = equiv.summary(0x00498a00)                      # push ebp; mov ebp,esp; and esp,-8; ...; push esi; push edi
+    assert "edi" not in al["livein"] and "ebx" in al["livein"], al
+    md = equiv._MD
+    for code, want in ((b"\x83\xc9\xff", True), (b"\x83\xe1\x00", True), (b"\x83\xc9\x01", False),
+                       (b"\x0c\xff", True), (b"\x83\xe1\xfe", False)):
+        cs = next(md.disasm(code, 0x1000))
+        assert equiv.const_idiom(cs) is want, (code, cs.op_str)
+    esp0 = equiv.S("esp0")
+    stk = equiv.add(esp0, equiv.C(-0x64 & 0xffffffff))
+    assert equiv.disjoint(equiv.C(0x00773408), 4, stk, 4)            # A7: image constant vs frame slot
+    assert not equiv.disjoint(equiv.C(0x10000000), 4, stk, 4)        # outside the image: no claim
+    assert not equiv.disjoint(equiv.S("eax_in"), 4, stk, 4)           # unknown pointer: no claim
 
 
 def main():

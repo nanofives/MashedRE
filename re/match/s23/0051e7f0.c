@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x0051e7f0: libpng 1.0.12 pngwutil.c png_check_keyword (PNG_NO_STDIO form of the bad-character
    warning), png_strlen = intrinsic strlen.

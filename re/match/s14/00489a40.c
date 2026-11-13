@@ -1,5 +1,6 @@
 // FLAGS: /O2 /GS /Ob1
 /* h5 */
+/* MATCH-S14-FU (2026-11-11): 78.0% -> 78.9%: the two multipliers as float literals 0.3f / 0.6f (.rdata 0x005cc99c / 0x005cc318). Residual: the (float)i and m_max fild temps sit one slot higher than the original's (param_1 / param_2 homes at 0x00489b02..0x00489b0d), and the pos copy / sz are scheduled after the uv stores. match_permute (933 compiles) reached 85.6% only by moving c = m_col[idx] below its c >> 24 use, which changes the value, so it was rejected. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -108,10 +109,10 @@ void FUN_00489a40(PartTrail *param_1, PartV3 *param_2, PartV3 *param_3, unsigned
         c = param_1->m_col[idx];
         a = (int)(c >> 24);
         ((unsigned char *)&c)[3] = (unsigned char)(int)(a - (a - 10) * frac);
-        w = (span * frac + param_1->m_18) * DAT_005cc99c;
+        w = (span * frac + param_1->m_18) * 0.3f;
         p = param_1->m_pos[idx];
         uv.y = w;
-        uv.x = w * DAT_005cc318;
+        uv.x = w * 0.6f;
         sz = frac * param_1->m_20;
         FUN_004893d0(param_1->m_pool, &p, &c);
         FUN_00489450(param_1->m_pool, &uv);

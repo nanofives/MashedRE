@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S25 0x005a9f10 (h2): best 73.9% (regs 73.9%), class b. 2nd branch (1-arg callee) not emitted as tail jump, jns vs jge; flags test as uint. relocheck BAD only because the code differs from the original. */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): FUN_005ae3a0 takes 2 arguments (0x005ae3b7 / 0x005ae3e2 read [esp+0x18]; its own source re/match/s26/005ae3a0.c has 2) and gets param_2, as the original's tail jump at 0x005a9f3a. Best now 81.0%. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -25,7 +26,7 @@ typedef unsigned char bool;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 void FUN_005ae800(undefined4 p0, undefined4 p1);
-void FUN_005ae3a0(undefined4 p0);
+void FUN_005ae3a0(undefined4 p0, undefined4 p1);
 void FUN_005aea00(undefined4 p0, undefined4 p1);
 // MATCH: 0x005a9f10 FUN_005a9f10
 void FUN_005a9f10(int param_1,undefined4 param_2)
@@ -41,6 +42,6 @@ void FUN_005a9f10(int param_1,undefined4 param_2)
     FUN_005aea00(param_2,*(undefined4 *)(param_1 + 0x58));
   }
   else {
-    FUN_005ae3a0(*(undefined4 *)(param_1 + 0x48));
+    FUN_005ae3a0(*(undefined4 *)(param_1 + 0x48),param_2);
   }
 }

@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S25 0x005aba20 (h2): best 81.9% (regs 85.2%), class b. 642 B, structure right (struct copies, memcpy intrinsic), branch layout and register allocation; permuter 300 s. relocheck BAD only because the code differs from the original. */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): param_4[2] takes FUN_005b3b60's return value (0x005abacb call; 0x005abad0 mov [ebp+8],eax); the old text stored an uninitialised local. Best now 77.6%. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -77,8 +78,7 @@ int FUN_005aba20(int param_1,undefined4 param_2,undefined4 *param_3,undefined4 *
     param_4[4] = param_3[4];
     param_4[5] = param_3[5];
   }
-  param_4[2] = uVar3;
-  uVar3 = FUN_005b3b60(param_3,0,param_4);
+  param_4[2] = FUN_005b3b60(param_3,0,param_4);
   if (param_6 != 0) {
     *(undefined4 *)(param_6 + 0x54) = 4;
   }

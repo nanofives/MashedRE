@@ -1,0 +1,1419 @@
+{
+ "r4": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 110 / 108 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   110,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "r5": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/r5",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x67d800",
+     "other page 0x0067d000"
+    ],
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 2,
+   "raw": [
+    [
+     "0x77398c",
+     "00000000",
+     "0000c1fc"
+    ],
+    [
+     "0x7f1030",
+     "39a82829",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a82829', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   109,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ },
+ "negm2": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/negm2",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 300,
+  "first": {
+   "tick": 300,
+   "blocks": [
+    [
+     "0x67f000",
+     "other page 0x0067f000"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x6147d8",
+     "00000000",
+     "00000001"
+    ],
+    [
+     "0x77398c",
+     "00000000",
+     "0000c1fc"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   109,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 300,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "negm": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/negm",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 110 / 108 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   110,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "rep_0x0045c480": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/rep_0x0045c480",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   108,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "m_124434_006_1": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/m_124434_006_1",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 109 / 108 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   109,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "rep_0x004cc050": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/rep_0x004cc050",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   108,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "m_124434_010_1": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/m_124434_010_1",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 110 / 108 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   110,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "m_124434_013_1": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/m_124434_013_1",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 110 / 108 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   110,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "m_124434_014_1": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/m_124434_014_1",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 109 / 108 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   109,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "rep_0x004427c0": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/rep_0x004427c0",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r5",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r5",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [],
+  "complete": true,
+  "verdict": "IDENTICAL-FOR-N",
+  "identical_for": 3324,
+  "first": null,
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "race tick 0: ['0x7f1010'] differ, load lengths 108 / 109 (TIMER-PHASE rule)"
+  ],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "rep_0x0043d2a0": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/rep_0x0043d2a0",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 16,
+  "first": {
+   "tick": 16,
+   "blocks": [
+    [
+     "0x898800",
+     "other page 0x00898000"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x77398c",
+     "00000000",
+     "0000c1fc"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   109,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 16,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "m_124434_011_1": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/m_124434_011_1",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 1,
+  "first": {
+   "tick": 1,
+   "blocks": [
+    [
+     "0x67ec00",
+     "other page 0x0067e000"
+    ],
+    [
+     "0x7d6000",
+     "other page 0x007d6000"
+    ]
+   ],
+   "nblocks": 2,
+   "raw": [],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   108,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 1,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "rep_0x0043dfd0": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/rep_0x0043dfd0",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r5",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r5",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [],
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 1,
+  "first": {
+   "tick": 1,
+   "blocks": [
+    [
+     "0x67ec00",
+     "other page 0x0067e000"
+    ],
+    [
+     "0x7d6000",
+     "other page 0x007d6000"
+    ]
+   ],
+   "nblocks": 2,
+   "raw": [
+    [
+     "0x6147d8",
+     "00000000",
+     "00000001"
+    ],
+    [
+     "0x77398c",
+     "0000c1fc",
+     "00000000"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 1,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a82829",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": true
+ },
+ "m_090404_018_1": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/m_090404_018_1",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r1",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r2",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dcc00",
+   "0x7dd000",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 16,
+  "first": {
+   "tick": 16,
+   "blocks": [
+    [
+     "0x898800",
+     "other page 0x00898000"
+    ]
+   ],
+   "nblocks": 1,
+   "raw": [
+    [
+     "0x6147d8",
+     "00000001",
+     "00000000"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [],
+  "dn_warp": [
+   108,
+   109
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 16,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000000"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000000"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000000"
+   }
+  },
+  "boot_class_match": true
+ },
+ "m_124434_003_1": {
+  "run": "D:/MashedWT/RO-MENU-REPLAY_data/m_124434_003_1",
+  "ref": "D:/MashedWT/RO-MENU-REPLAY_data/r3",
+  "ref2": "D:/MashedWT/RO-MENU-REPLAY_data/r4",
+  "ticks": 3324,
+  "ref_ticks": 3324,
+  "allowed_blocks": [
+   "0x614400",
+   "0x616000",
+   "0x771800",
+   "0x772c00",
+   "0x773800",
+   "0x7d4000",
+   "0x7d7000",
+   "0x7dc800",
+   "0x7dd400",
+   "0x7de000",
+   "0x7e9400",
+   "0x7f1000",
+   "0x912000"
+  ],
+  "complete": true,
+  "verdict": "DIVERGED",
+  "identical_for": 0,
+  "first": {
+   "tick": 0,
+   "blocks": [
+    [
+     "0x67d800",
+     "other page 0x0067d000"
+    ],
+    [
+     "0x7f1000",
+     "frame timer block 0x007f0ff0..0x007f1034"
+    ]
+   ],
+   "nblocks": 2,
+   "raw": [
+    [
+     "0x7f1030",
+     "39a84b51",
+     "39a80501"
+    ]
+   ],
+   "segment": "menu"
+  },
+  "rc": 0,
+  "exit": null,
+  "notes": [
+   "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a84b51', '0x6147d8': '00000001'}, 'ref': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}, 'ref2': {'0x7f1030': '39a80501', '0x6147d8': '00000001'}}: verdict not body evidence"
+  ],
+  "dn_warp": [
+   110,
+   108
+  ],
+  "segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "run_segments": [
+   [
+    "menu",
+    0,
+    599
+   ],
+   [
+    "race",
+    600,
+    3323
+   ]
+  ],
+  "segments_match": true,
+  "identical_by_segment": {
+   "menu": 0,
+   "race": 0
+  },
+  "ticks_by_segment": {
+   "menu": 600,
+   "race": 2724
+  },
+  "boot_class": {
+   "run": {
+    "0x7f1030": "39a84b51",
+    "0x6147d8": "00000001"
+   },
+   "ref": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   },
+   "ref2": {
+    "0x7f1030": "39a80501",
+    "0x6147d8": "00000001"
+   }
+  },
+  "boot_class_match": false
+ }
+}

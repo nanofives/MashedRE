@@ -1,0 +1,155 @@
+// RVA-LINT: ORIGTOP-ONLY
+// PORT-OT-SEED-CODEPTR (L-111 (a), follows PORT-OT-SEED-2): the code-pointer data the port-state seed left out.
+//
+// PORT-OT-SEED-2 seeded the original's file-backed .rdata / .data bytes for the ORIG_TOP rows, except 22 entries
+// whose bytes are function entries of the original (vtables, handler tables, PTR_FUN_ globals). Copied verbatim
+// those would be original code addresses, which are not the original's code in mashed_re.exe. This file binds
+// them instead: every dword of those entries that points into the original's .text gets the exe address of its
+// target's body (the exe symbol BINDINGS.tsv records for that RVA), or, when the exe has no body for that RVA, a
+// stop thunk that logs the target and ends the process (the RwCore_Missing pattern: a named stop in place of a
+// call into exe code at an original address). The non-code dwords of the same entries, and the strings they point
+// at, are seeded with the original's bytes.
+//
+// Generated table: Compat/PortTopCodePtr.inc (verify/portorigtop_20261109/codeptr_inventory.py --write).
+// Knob: MASHED_ORIG_TOP=1 and the sub-knob MASHED_OT_CODEPTR=1 (default OFF). The default path never calls this, so its bytes and gates cannot move.
+#include "PortTopCodePtr.h"
+
+#include <windows.h>
+#include <intrin.h>
+#include <cstdarg>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+
+extern "C" char g_b17_low_arena_pad[0x00A00000];   // exe_main.cpp B17: the original-address data pad
+
+// Exe bodies the table binds to (C linkage; the real prototypes live in their own TUs. Only the address is taken).
+#define CP_EXTERN(sym) extern "C" void sym(void);
+#include "PortTopCodePtr.inc"
+#undef CP_EXTERN
+
+namespace {
+
+const char* s_logPath = "mashed_re.log";
+
+// WinMain applies the table before the exe clears mashed_re.log (exe_main.cpp, the fopen "w" next to
+// PortStateSeed_Log), so the apply-time lines are held here and written by PortTopCodePtr_Log after the clear.
+char s_pend[8192];
+std::size_t s_pendLen = 0;
+bool s_hold = true;
+
+void CodePtrLog(const char* fmt, ...) {
+    char line[512];
+    va_list ap;
+    va_start(ap, fmt);
+    const int n = std::vsnprintf(line, sizeof(line), fmt, ap);
+    va_end(ap);
+    if (n < 0) return;
+    if (s_hold) {
+        const int m = std::snprintf(s_pend + s_pendLen, sizeof(s_pend) - s_pendLen, "[OT_CODEPTR] %s\n", line);
+        if (m > 0 && s_pendLen + static_cast<std::size_t>(m) < sizeof(s_pend)) s_pendLen += static_cast<std::size_t>(m);
+        return;
+    }
+    if (std::FILE* f = std::fopen(s_logPath, "a")) {
+        std::fprintf(f, "[OT_CODEPTR] %s\n", line);
+        std::fclose(f);
+    }
+}
+
+[[noreturn]] void CodePtrStop(unsigned target, void* ret) {
+    s_hold = false;
+    const std::uintptr_t img = reinterpret_cast<std::uintptr_t>(GetModuleHandleA(nullptr));
+    CodePtrLog("STOP: a bound code pointer to original 0x%08X was called; the exe has no body for it. Return address "
+               "%08X (exe+0x%X, read against mashed_re.map). exit 0x%08X", target,
+               static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(ret)),
+               static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(ret) - img), target);
+    ExitProcess(target);
+}
+
+} // namespace
+
+// One stop thunk per unbound target. It never returns, so the caller's calling convention does not matter.
+#define CP_STOP(target, name) extern "C" void name(void) { CodePtrStop(target, _ReturnAddress()); }
+#include "PortTopCodePtr.inc"
+#undef CP_STOP
+
+namespace mashed_re {
+namespace Compat {
+
+unsigned PortTopCodePtr_Apply(const char* logPath) {
+    static bool s_done = false;
+    if (s_done) return 0;
+    s_done = true;
+    if (logPath) s_logPath = logPath;
+    // Sub-knob MASHED_OT_CODEPTR=1 (default OFF): with the binding the knob boot reaches original code the exe has
+    // no body for (the first stop is 0x004568a0 through slot 0x005f99b0, RESULT_PORT-OT-SEED-CODEPTR.md), where
+    // without it the same boot runs its 600 frames. Off: no write, one log line.
+    char on[8] = {};
+    if (!(GetEnvironmentVariableA("MASHED_OT_CODEPTR", on, sizeof(on)) > 0 && on[0] && on[0] != '0')) {
+        CodePtrLog("off (MASHED_OT_CODEPTR unset): no slot written");
+        return 0;
+    }
+    const std::uintptr_t lo = reinterpret_cast<std::uintptr_t>(&g_b17_low_arena_pad[0]);
+    const std::uintptr_t hi = lo + sizeof(g_b17_low_arena_pad);
+    unsigned fixes = 0, bound = 0, stops = 0, seeds = 0, seedBytes = 0, outside = 0, failed = 0;
+
+    // Seeds first: a slot never overlaps a seed (the generator takes seeds only from non-code dwords).
+#define CP_SEED(va, n, bytes)                                                                       \
+    if ((va) < lo || (va) + (n) > hi) { ++outside; }                                                \
+    else { std::memcpy(reinterpret_cast<void*>(static_cast<std::uintptr_t>(va)), bytes, n); ++seeds; seedBytes += (n); }
+#define CP_FIX(slot, sym, orig)                                                                     \
+    if ((slot) < lo || (slot) + 4 > hi) { ++outside; }                                              \
+    else {                                                                                          \
+        *reinterpret_cast<std::uint32_t*>(static_cast<std::uintptr_t>(slot)) =                      \
+            static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(&sym));                     \
+        ++fixes;                                                                                    \
+        if (std::strncmp(#sym, "PortTopCodePtr_Stop_", 20) == 0) ++stops; else ++bound;             \
+    }
+#include "PortTopCodePtr.inc"
+#undef CP_FIX
+#undef CP_SEED
+
+    // Self-test: read every slot and seed back. A slot must hold its symbol's exe address, inside the exe image and
+    // not inside the pad; a seed must equal the table bytes.
+    const std::uintptr_t img = reinterpret_cast<std::uintptr_t>(GetModuleHandleA(nullptr));
+    const IMAGE_NT_HEADERS* nt = reinterpret_cast<const IMAGE_NT_HEADERS*>(
+        img + reinterpret_cast<const IMAGE_DOS_HEADER*>(img)->e_lfanew);
+    const std::uintptr_t imgEnd = img + nt->OptionalHeader.SizeOfImage;
+    unsigned checks = 0;
+#define CP_SEED(va, n, bytes)                                                                       \
+    if (!((va) < lo || (va) + (n) > hi)) {                                                          \
+        ++checks;                                                                                   \
+        if (std::memcmp(reinterpret_cast<const void*>(static_cast<std::uintptr_t>(va)), bytes, n)) { \
+            ++failed; CodePtrLog("self-test FAIL: seed 0x%08X (%u B) differs", (unsigned)(va), (unsigned)(n)); } }
+#define CP_FIX(slot, sym, orig)                                                                     \
+    if (!((slot) < lo || (slot) + 4 > hi)) {                                                        \
+        ++checks;                                                                                   \
+        const std::uint32_t v = *reinterpret_cast<const std::uint32_t*>(static_cast<std::uintptr_t>(slot)); \
+        if (v != static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(&sym)) || v < img || v >= imgEnd || \
+            (v >= lo && v < hi)) {                                                                  \
+            ++failed; CodePtrLog("self-test FAIL: slot 0x%08X (orig 0x%08X) holds %08X, want %s", (unsigned)(slot), \
+                                 (unsigned)(orig), v, #sym); } }
+#include "PortTopCodePtr.inc"
+#undef CP_FIX
+#undef CP_SEED
+
+    CodePtrLog("applied: %u slots (%u bound to an exe body, %u to a stop thunk), %u data seeds (%u B), %u outside the "
+               "pad (table: %u slots, %u seeds); self-test %s (%u of %u checks failed)",
+               fixes, bound, stops, seeds, seedBytes, outside, (unsigned)PORTTOP_CODEPTR_SLOTS,
+               (unsigned)PORTTOP_CODEPTR_SEEDS, (failed || outside) ? "FAIL" : "PASS", failed, checks);
+    return failed + outside;
+}
+
+void PortTopCodePtr_Log(const char* logPath) {
+    if (logPath) s_logPath = logPath;
+    s_hold = false;
+    if (!s_pendLen) return;
+    if (std::FILE* f = std::fopen(s_logPath, "a")) {
+        std::fwrite(s_pend, 1, s_pendLen, f);
+        std::fclose(f);
+    }
+    s_pendLen = 0;
+}
+
+} // namespace Compat
+} // namespace mashed_re

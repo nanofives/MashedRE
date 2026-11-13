@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S27 0x005bbed0: 80.5% (regs 80.5%). Hand: COM QueryInterface/Release via __stdcall vfn types. Residual (a): original keeps the first 'return 0' (xor eax,eax; pop esi; ret) as its own epilogue and does not tail-merge it with the second; the compiler merges all three. Tried /Ox /Ob2 /Gy /GS /O1 /G6, permuter 97 compiles. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

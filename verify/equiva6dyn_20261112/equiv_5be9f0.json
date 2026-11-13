@@ -1,0 +1,19 @@
+[
+ {
+  "addr": 6023664,
+  "sym": "FUN_005be9f0",
+  "bytes_bad": 46,
+  "classes": [
+   "ORDER",
+   "LAYOUT",
+   "FRAME",
+   "VALUE-FLOW"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A6-paired-pop",
+   "A6-pinned-pop"
+  ],
+  "verdict": "EQUIV"
+ }
+]

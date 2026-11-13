@@ -304,6 +304,11 @@ function checkpoint(k) {
 
 const onDue = K(new NativeCallback(() => {
   try {
+    if (tevents.length) {   // RO-MENU-REPLAY tick events (the tick CModule set due = 0 at their tick)
+      const t = tickNow();
+      while (tevents.length && tevents[0].t <= t) { const e = tevents.shift(); e.fn(); }
+      TK.st.add(12).writeU32(tevents.length ? tevents[0].t : 0);
+    }
     const n = N();
     while (events.length && events[0].n <= n) { const e = events.shift(); e.fn(); }
     setDue(events.length ? events[0].n : 0xffffffff);
@@ -321,7 +326,7 @@ function watchArm() {
   const addrs = (CFG.watch || []).slice(0, 2).map((va) => ga(va));
   if (!addrs.length) return 'no watch';
   Process.setExceptionHandler((det) => {
-    if (det.type !== 'single-step' && det.type !== 'breakpoint') return false;
+    if (det.type !== 'single-step' && det.type !== 'breakpoint') return CR_HANDLER ? CR_HANDLER(det) : false;
     try {
       const c = det.context;
       if (watchHits++ < 2000) {
@@ -362,18 +367,27 @@ if (TICK) {
   const buf = K(Memory.alloc(TICK.cap * recw * 4));
   const st = K(Memory.alloc(64));
   for (let i = 0; i < 16; i++) st.add(i * 4).writeU32(0);
+  // RO-MENU-REPLAY: tph[k] = the phase byte DAT_00771968 at tick record k (boot mode hashes from the first tick, so the
+  // segments boot / menu / load / race are read from it), and tst[3] = the tick at which the next tick event is due:
+  // when the counter reaches it, due := 0, so the next main-thread clock call (FUN_00493390's own FUN_004950b0 read,
+  // the first clock call of the tick) enters onDue, which runs every tick event that has come (tickSchedule).
+  const tph = K(Memory.alloc(TICK.cap + 16));
   const src = `
 #include <gum/guminterceptor.h>
 extern volatile unsigned int dblk[16];
 extern volatile unsigned int tst[16];
 extern unsigned int tbuf[];
+extern unsigned char tph[];
 void onEnter(GumInvocationContext *ic) {
   unsigned long long q = ((unsigned long long)dblk[5] << 32) | dblk[4];
   q += ${TICK.qtick >>> 0}u;
   dblk[4] = (unsigned int)q; dblk[5] = (unsigned int)(q >> 32);
   dblk[0] += ${TICK.ttick >>> 0}u;
   tst[2]++;
+  if (tst[2] == 1 && tst[4]) { dblk[1] = 0; dblk[6] = 0; }   /* RO-MENU-REPLAY boot: per-call steps end at the first tick */
+  if (tst[3] && tst[2] >= tst[3]) { dblk[2] = 0; tst[3] = 0; }
   if (!tst[0] || tst[1] >= ${TICK.cap >>> 0}u) return;
+  tph[tst[1]] = *(const unsigned char *)0x${ga(0x00771968).toString(16).replace('0x', '')};
   unsigned int *rec = tbuf + tst[1] * ${recw}u;
   rec[0] = tst[2]; rec[1] = dblk[12];
   const unsigned int *p = (const unsigned int *)0x${ga(DATA_LO).toString(16).replace('0x', '')};
@@ -393,8 +407,17 @@ ${rawCopy}
   tst[1]++;
 }
 `;
-  const cmT = K(new CModule(src, { dblk: D, tst: st, tbuf: buf }));
-  TK = { nblk, recw, buf, st, cm: cmT };
+  const cmT = K(new CModule(src, { dblk: D, tst: st, tbuf: buf, tph }));
+  TK = { nblk, recw, buf, st, cm: cmT, tph };
+}
+const tickNow = () => (TK ? TK.st.add(8).readU32() : null);
+
+// Tick events (RO-MENU-REPLAY): {t, s, fn} run on the main thread in the first clock call of tick t or later.
+const tevents = [];
+function tickSchedule(t, fn) {
+  tevents.push({ t: t >>> 0, s: seq++, fn });
+  tevents.sort((a, b) => a.t - b.t || a.s - b.s);
+  TK.st.add(12).writeU32(tevents[0].t);
 }
 // Stale-field poison (cfg.poison, RO-STACKROW-READERS): the event ring 0x007ec9e4 (256 rows x 0x40, type word
 // DAT_007e9de4[row]) is filled from 16 stack dwords per row, and each producer writes only some of them. At the entry
@@ -436,7 +459,8 @@ function tickDump() {
   const per = Math.max(1, Math.floor((4 << 20) / recb));
   for (let i = 0; i < n; i += per) {
     const m = Math.min(per, n - i);
-    send({ kind: 'ticks', first: i, count: m, total: n, nblk: TK.nblk, recw: TK.recw, block: TICK.block, raw: TICK.raw || [] },
+    send({ kind: 'ticks', first: i, count: m, total: n, nblk: TK.nblk, recw: TK.recw, block: TICK.block, raw: TICK.raw || [],
+           phases: i === 0 ? Array.from(new Uint8Array(TK.tph.readByteArray(n))) : undefined },
          TK.buf.add(i * recb).readByteArray(m * recb));
   }
 }
@@ -458,12 +482,22 @@ function provInstall() {
   const cnt = K(Memory.alloc(pg(nb * 4 * 2)));   // [0..nb) live counters, [nb..2nb) snapshot at the anchor
   for (let i = 0; i < 2 * nb; i++) cnt.add(i * 4).writeU32(0);
   let total = 0;
-  const offs = bodies.map((b) => { const o = total; total += 16 + b.code.length / 2; total = (total + 15) & ~15; return o; });
+  // PROV-WRITESET: cfg.prov.wlog = N makes each stub single-step (TF) the first N calls of its body, see wsInstall
+  // PROV-WRITESET-SCENARIO: cfg.prov.wstride {rva: K} steps every K-th call (calls 1, K+1, 2K+1, ...) up to WL stepped
+  // calls, so the sample spans the whole race instead of its first ticks. Absent = the first WL calls (as before).
+  const WS_K = PROV.wstride || null;
+  // cfg.prov.warm = 'anchor': no call is stepped before the race anchor (provSnap sets the arm word). Stepping during the
+  // load shortened it (dn_warp 110 against 118 unstepped), so the stepped race was not the reference race.
+  const WS_ARM = !!(WS_K && PROV.warm === 'anchor');
+  const WL = PROV.wlog || 0, SZ = WL ? (WS_K ? 80 : 48) : 16;
+  const kdw = (WL && WS_K) ? K(Memory.alloc(pg(bodies.length * 8 + 4))) : null;   // [2i] countdown to the next stepped call, [2i+1] stepped calls, [2n] arm word
+  if (kdw) { kdw.add(bodies.length * 8).writeU32(WS_ARM ? 0 : 1); PV_ARM = kdw.add(bodies.length * 8); }
+  const offs = bodies.map((b) => { const o = total; total += SZ + b.code.length / 2; total = (total + 15) & ~15; return o; });
   const mem = total ? K(Memory.alloc(pg(total))) : null;
   const installed = [];
   bodies.forEach((b, i) => {
     const stub = mem.add(offs[i]);
-    const body = stub.add(16);
+    const body = stub.add(SZ);
     const code = [];
     for (let k = 0; k < b.code.length; k += 2) code.push(parseInt(b.code.substr(k, 2), 16));
     const dv = new DataView(new ArrayBuffer(code.length)); code.forEach((x, k) => dv.setUint8(k, x));
@@ -472,11 +506,26 @@ function provInstall() {
     for (const [o, t] of Object.entries(b.ext)) { const p = base + Number(o) + 4; dv.setInt32(Number(o), (t - p) | 0, true); }
     const ca = cnt.add(i * 4).toUInt32() >>> 0;
     const ent = base + b.entry;
-    const s = [0xff, 0x05, ca & 0xff, (ca >>> 8) & 0xff, (ca >>> 16) & 0xff, (ca >>> 24) & 0xff, 0xe9, 0, 0, 0, 0];
-    const rj = (ent - ((stub.toUInt32() >>> 0) + 11)) | 0;
-    s[7] = rj & 0xff; s[8] = (rj >>> 8) & 0xff; s[9] = (rj >>> 16) & 0xff; s[10] = (rj >>> 24) & 0xff;
-    while (s.length < 16) s.push(0xcc);
-    Memory.protect(stub, 16 + code.length, 'rwx');
+    const le = (v) => [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff];
+    const s = [0xff, 0x05, ...le(ca)];
+    if (WL && WS_K) {   // dec [kd] ; jnz skip ; mov [kd], K ; cmp [ws], N ; jae skip ; inc [ws] ; pushfd ; or dword [esp], 0x100 ; popfd ; skip:
+      const kv = Math.max(1, (WS_K[b.rva] || WS_K[b.rva.toLowerCase()] || 1) | 0);
+      const kd = kdw.add(i * 8), ws = kdw.add(i * 8 + 4);
+      kd.writeU32(1); ws.writeU32(0);
+      const kda = kd.toUInt32() >>> 0, wsa = ws.toUInt32() >>> 0;
+      const arma = PV_ARM.toUInt32() >>> 0;
+      s.push(0x83, 0x3d, ...le(arma), 0x00, 0x74, 0x2d);   // cmp dword [arm], 0 ; je skip
+      s.push(0xff, 0x0d, ...le(kda), 0x75, 0x25, 0xc7, 0x05, ...le(kda), ...le(kv),
+             0x81, 0x3d, ...le(wsa), ...le(WL), 0x73, 0x0f, 0xff, 0x05, ...le(wsa), 0x9c, 0x81, 0x0c, 0x24, 0x00, 0x01, 0x00, 0x00, 0x9d);
+    } else if (WL) {   // cmp [cnt], N+1 ; jae skip ; pushfd ; or dword [esp], 0x100 ; popfd ; skip:
+      s.push(0x81, 0x3d, ...le(ca), ...le(WL + 1), 0x73, 0x09, 0x9c, 0x81, 0x0c, 0x24, 0x00, 0x01, 0x00, 0x00, 0x9d);
+    }
+    const jat = s.length;
+    s.push(0xe9, 0, 0, 0, 0);
+    const rj = (ent - ((stub.toUInt32() >>> 0) + jat + 5)) | 0;
+    s.splice(jat + 1, 4, ...le(rj));
+    while (s.length < SZ) s.push(0xcc);
+    Memory.protect(stub, SZ + code.length, 'rwx');
     stub.writeByteArray(s);
     body.writeByteArray(dv.buffer);
     const site = ga(parseInt(b.rva, 16));
@@ -486,9 +535,9 @@ function provInstall() {
     const after = Array.from(new Uint8Array(site.readByteArray(5)));
     // install check: the site holds E9 to the stub, and the stub's jmp lands on the body entry
     const back = (site.toUInt32() >>> 0) + 5 + site.add(1).readS32();
-    const land = (stub.toUInt32() >>> 0) + 11 + stub.add(7).readS32();
+    const land = (stub.toUInt32() >>> 0) + jat + 5 + stub.add(jat + 1).readS32();
     installed.push({ rva: b.rva, site_before: before.map((x) => x.toString(16)).join(' '), site_after: after.map((x) => x.toString(16)).join(' '),
-                     jmp_ok: (back >>> 0) === (stub.toUInt32() >>> 0) && (land >>> 0) === (ent >>> 0), stub: stub.toString(), entry: '0x' + (ent >>> 0).toString(16) });
+                     jmp_ok: (back >>> 0) === (stub.toUInt32() >>> 0) && (land >>> 0) === (ent >>> 0), stub: stub.toString(), base: '0x' + (base >>> 0).toString(16), entry: '0x' + (ent >>> 0).toString(16), size: b.code.length / 2 });
   });
   let cm = null;
   if (count.length) {
@@ -503,14 +552,192 @@ void onEnter(GumInvocationContext *ic) { unsigned int *c = GUM_IC_GET_FUNC_DATA(
     });
   }
   PV = { cnt, nb, names: bodies.map((b) => b.rva).concat(count), installed };
+  if (WL && mem) wsInstall(mem, total, WL);
   send({ kind: 'provinst', installed });
   return { n: nb, bodies: bodies.length, count: count.length, fail: installed.filter((x) => x.err || x.jmp_ok === false).length };
 }
-function provSnap() { if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
+// PROV-WRITESET-114: single-step log of the DDK bodies. A native vectored handler (CModule, no JS per step) logs
+// eip + registers before every instruction of a body (blob range [lo, hi)), steps over calls to code outside the blob
+// (int3 at the return address, back in the blob) and ends a frame at the body's own return. Records of 10 dwords:
+// eip, eax, ecx, edx, ebx, esp, ebp, esi, edi, base_esp | 1 on a frame's first record (base_esp = esp at body entry,
+// pointing at the return address). The store targets are computed offline (re/tools/prov/prov_writeset.py).
+let WS = null;
+function wsInstall(mem, total, WL) {
+  const CAP = (CFG.prov && CFG.prov.wcap) || (1 << 21);   // records (PROV-WRITESET-SCENARIO: --prov-wcap)
+  const buf = K(Memory.alloc(CAP * 40));
+  const stm = K(Memory.alloc(Process.pageSize));
+  for (let i = 0; i < 192; i++) stm.add(i * 4).writeU32(0);
+  const cm = K(new CModule(`
+extern unsigned int st[];   /* 0 buf, 1 cap, 2 count, 3 lo, 4 hi, 5 depth, 6 overflow, 7 traps, 8 frames, 9 foreign, 10 bp misses; plain memory from Memory.alloc, a CModule's own globals are not writable */
+#define fb (st + 64)   /* frame base esp */
+#define fs (st + 96)   /* frame suspended (return address patched) */
+#define fa (st + 128)  /* patched address */
+#define fo (st + 160)  /* original byte */
+static void rec(unsigned char *cx, unsigned int first) {
+  unsigned int n = st[2];
+  if (n >= st[1]) { st[6]++; return; }
+  unsigned int *r = (unsigned int *)(st[0] + n * 40);
+  r[0] = *(unsigned int *)(cx + 0xB8); r[1] = *(unsigned int *)(cx + 0xB0); r[2] = *(unsigned int *)(cx + 0xAC);
+  r[3] = *(unsigned int *)(cx + 0xA8); r[4] = *(unsigned int *)(cx + 0xA4); r[5] = *(unsigned int *)(cx + 0xC4);
+  r[6] = *(unsigned int *)(cx + 0xB4); r[7] = *(unsigned int *)(cx + 0xA0); r[8] = *(unsigned int *)(cx + 0x9C);
+  r[9] = fb[st[5] - 1] | first;
+  st[2] = n + 1;
+}
+int __attribute__((stdcall)) veh(unsigned int *ep) {   /* the OS calls a vectored handler stdcall */
+  unsigned int *er = (unsigned int *)ep[0];
+  unsigned char *cx = (unsigned char *)ep[1];
+  unsigned int code = er[0];
+  unsigned int *eip = (unsigned int *)(cx + 0xB8), *efl = (unsigned int *)(cx + 0xC0), *esp = (unsigned int *)(cx + 0xC4);
+  unsigned int ip = *eip, d = st[5];
+  unsigned int tid = ((unsigned int (__attribute__((stdcall)) *)(void))st[16])();
+  if (code == 0x80000004u) {
+    int inb = ip >= st[3] && ip < st[4];
+    st[7]++;
+    if (tid != st[17]) { *efl &= ~0x100u; st[15]++; return -1; }   /* only the main thread is logged: the frame state is global */
+    if (inb) {
+      if (d == 0 || fs[d - 1]) {
+        if (d >= 31) { st[9]++; *efl &= ~0x100u; return -1; }
+        fb[d] = *esp; fs[d] = 0; st[5] = d + 1; st[8]++;
+        rec(cx, 1);
+      } else rec(cx, 0);
+      *efl |= 0x100u; return -1;
+    }
+    if (d == 0 || fs[d - 1]) { st[9]++; st[11] = ip; st[12] = d; *efl &= ~0x100u; return -1; }   /* stray step: counted, TF cleared */
+    {
+      unsigned int top = *esp;
+      unsigned int rv = (top >= 0x10000u) ? *(unsigned int *)top : 0;
+      if (*esp < fb[d - 1] && rv >= st[3] && rv < st[4]) {
+        unsigned char *pa = (unsigned char *)rv;
+        fa[d - 1] = rv; fo[d - 1] = *pa; *pa = 0xCC; fs[d - 1] = 1;
+        *efl &= ~0x100u; return -1;
+      }
+      st[5] = d - 1; *efl &= ~0x100u; return -1;
+    }
+  }
+  if (code == 0x80000003u) {
+    unsigned int a = ip, i;
+    if (tid != st[17]) return 0;   /* Windows reports Eip at the int3 byte itself */
+    for (i = st[5]; i > 0; i--) {
+      if (fs[i - 1] && fa[i - 1] == a) {
+        *(unsigned char *)a = (unsigned char)fo[i - 1]; fs[i - 1] = 0;
+        st[5] = i;
+        *eip = a; *efl |= 0x100u; return -1;
+      }
+    }
+    st[10]++;
+  }
+  return 0;
+}
+`, { st: stm }));
+  const lo = mem.toUInt32() >>> 0;
+  const st = stm;
+  st.writePointer(buf); st.add(4).writeU32(CAP); st.add(8).writeU32(0);
+  st.add(12).writeU32(lo); st.add(16).writeU32(lo + total);
+  st.add(16 * 4).writeU32(Process.getModuleByName('kernel32.dll').getExportByName('GetCurrentThreadId').toUInt32());
+  st.add(17 * 4).writeU32(CFG.main >>> 0);
+  const add = new NativeFunction(Process.getModuleByName('kernel32.dll').getExportByName('AddVectoredExceptionHandler'), 'pointer', ['uint', 'pointer']);
+  const vk = Object.keys(cm).find((k) => /^_?veh/.test(k));   // stdcall may decorate the symbol (veh@4)
+  if (!vk) throw new Error('veh not exported: ' + Object.keys(cm));
+  const h = add(1, cm[vk]);
+  WS = { cm, buf, st, lo, hi: lo + total, handler: h.toString() };
+  if (CFG.prov.wlive) {   // live breadcrumbs: the process can die inside the handler, so a JS timer keeps the last state on disk
+    const lf = new File(CFG.prov.wlive, 'w');
+    let lastN = -1, lastT = -1;
+    setInterval(() => {
+      const n = st.add(8).readU32(), tr = st.add(28).readU32();
+      if (n === lastN && tr === lastT) return;
+      lastN = n; lastT = tr;
+      const stats = []; for (let i = 0; i < 18; i++) stats.push(st.add(i * 4).readU32());
+      const m = Math.min(n, 12), rows = [];
+      for (let i = n - m; i < n; i++) { const r = []; for (let k = 0; k < 10; k++) r.push(buf.add(i * 40 + k * 4).readU32().toString(16)); rows.push(r.join(' ')); }
+      lf.write(JSON.stringify({ stats, rows }) + String.fromCharCode(10)); lf.flush();
+    }, 25);
+  }
+  Process.setExceptionHandler((d) => {   // crash report: the fault, our counters and the last 400 records
+    const n = st.add(8).readU32(), m = Math.min(n, 400);
+    const stats = []; for (let i = 0; i < 18; i++) stats.push(st.add(i * 4).readU32());
+    const c = d.context;
+    send({ kind: 'wcrash', type: d.type, address: '' + d.address, memory: d.memory ? JSON.stringify(d.memory) : null,
+           ctx: { eip: '' + c.eip, esp: '' + c.esp, eax: '' + c.eax, ecx: '' + c.ecx, edx: '' + c.edx, ebx: '' + c.ebx, ebp: '' + c.ebp, esi: '' + c.esi, edi: '' + c.edi },
+           stats, blob: [lo, lo + total], n }, buf.add((n - m) * 40).readByteArray(m * 40));
+    return false;
+  });
+}
+function wsDump() {
+  if (!WS) return;
+  const n = WS.st.add(8).readU32();
+  const stats = []; for (let i = 0; i < 18; i++) stats.push(WS.st.add(i * 4).readU32());
+  const CH = 1 << 16;
+  for (let i = 0; i < n; i += CH) {
+    const m = Math.min(CH, n - i);
+    send({ kind: 'wlog', first: i, count: m, total: n, stats }, WS.buf.add(i * 40).readByteArray(m * 40));
+  }
+  if (!n) send({ kind: 'wlog', first: 0, count: 0, total: 0, stats }, new ArrayBuffer(0));
+}
+let PV_ARM = null;
+function provSnap() { if (PV_ARM) PV_ARM.writeU32(1); if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
 function provReport() {
   if (!PV) return;
-  const rows = PV.names.map((rva, i) => ({ rva, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
+  const rows = PV.names.map((rva, i) => ({ rva, calls_boot: PV.atTick1 ? PV.atTick1[i] : null, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
   send({ kind: 'prov', rows, installed: PV.installed });
+}
+
+// ---------------------------------------------------------------- PROV-CRASH-12 first-fault catcher (cfg.crash)
+// An exception handler (no Interceptor) records the first real fault: type, faulting address, memory op, all registers,
+// 64 stack dwords from esp, 32 code bytes from eip-16, and which --prov blob holds eip. A JS timer samples the main
+// thread's context 40 times when N (main-thread clock calls) has not moved for cfg.crash.stall seconds (a hang).
+// Each record is written to cfg.crash.file synchronously, then sent: the process can die before a send is delivered.
+let CR_FILE = null, CR_HANDLER = null, CR_DONE = 0;
+function crWrite(rec) {
+  try { if (!CR_FILE) CR_FILE = new File(CFG.crash.file, 'a'); CR_FILE.write(JSON.stringify(rec) + String.fromCharCode(10)); CR_FILE.flush(); } catch (e) { }
+  try { send(Object.assign({ kind: 'crash' }, rec)); } catch (e) { }
+}
+function crHex(p) { return '0x' + (p.toUInt32() >>> 0).toString(16); }
+function crWhere(v) {
+  v = v >>> 0;
+  if (PV && PV.installed) for (const b of PV.installed) {
+    if (!b.base) continue;
+    const lo = parseInt(b.base, 16), st = parseInt(b.stub, 16);
+    if (v >= lo && v < lo + b.size) return { rva: b.rva, off: '0x' + (v - lo).toString(16) };
+    if (v >= st && v < lo) return { rva: b.rva, stub: '0x' + (v - st).toString(16) };
+  }
+  const m = Process.findModuleByAddress(ptr(v));
+  return m ? { mod: m.name, off: '0x' + (v - (m.base.toUInt32() >>> 0)).toString(16) } : null;
+}
+function crCtx(c) {
+  const r = {};
+  for (const k of ['eip', 'esp', 'ebp', 'eax', 'ecx', 'edx', 'ebx', 'esi', 'edi']) r[k] = crHex(c[k]);
+  let stack = [];
+  try { const sp = c.esp; for (let i = 0; i < 64; i++) { const v = sp.add(i * 4).readU32() >>> 0; const w = crWhere(v); stack.push(w ? ['0x' + v.toString(16), w] : '0x' + v.toString(16)); } } catch (e) { stack.push('stack-err ' + e); }
+  let code = '';
+  try { code = Array.from(new Uint8Array(c.eip.sub(16).readByteArray(32))).map((x) => (x < 16 ? '0' : '') + x.toString(16)).join(' '); } catch (e) { code = 'code-err'; }
+  return { ctx: r, stack, code, eip: r.eip, eip_in: crWhere(c.eip.toUInt32()) };
+}
+function crashArm() {
+  if (!CFG.crash) return null;
+  CR_HANDLER = (d) => {
+    if (d.type === 'breakpoint' || d.type === 'single-step' || d.type === 'system') return false;
+    if (CR_DONE++ < 4) {
+      try { crWrite(Object.assign({ what: 'fault', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, memory: d.memory ? { op: d.memory.operation, address: '' + d.memory.address } : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'fault-err', msg: '' + e }); }
+    }
+    return false;
+  };
+  Process.setExceptionHandler(CR_HANDLER);
+  let lastN = -1, since = Date.now(), sampled = false;
+  setInterval(() => {
+    const n = N();
+    if (n !== lastN) { lastN = n; since = Date.now(); return; }
+    if (sampled || Date.now() - since < CFG.crash.stall * 1000) return;
+    sampled = true;
+    for (let i = 0; i < 40; i++) {
+      try {
+        const t = Process.enumerateThreads().find((x) => x.id === CFG.main);
+        if (t) crWrite(Object.assign({ what: 'stall', k: i, n, tid: t.id, state: t.state }, crCtx(t.context)));
+      } catch (e) { crWrite({ what: 'stall-err', k: i, msg: '' + e }); }
+      Thread.sleep(0.05);
+    }
+  }, 250);
+  return 'crash catcher armed, stall ' + CFG.crash.stall + ' s';
 }
 
 // ---------------------------------------------------------------- install
@@ -532,14 +759,22 @@ function install() {
   // (14 patchCode calls, or 326 Interceptor attaches) moved the frame-timer phase by one tick in 2 of 4 runs
   PV_AT = provInstall();
   if (PV_AT) res.push(['prov', PV_AT]);
+  const CRA = crashArm();
+  if (CRA) res.push(['crash', CRA]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
-  schedule(CFG.warpAt, () => {
+  const doWarp = () => {
     warpN = N();
+    if (CFG.boot) {
+      // RO-MENU-REPLAY: the warp runs at a fixed tick from boot. It must find the main menu (phase 1).
+      const ph = ga(0x00771968).readU8();
+      if (ph !== 1) { send({ kind: 'err', msg: `boot warp at tick ${tickNow()}: phase ${ph}, not the menu (1)` }); return; }
+      if (CFG.menuCkpt) checkpoint(100);   // full image at the end of the menu segment, before the warp writes
+    }
     const pins = warp();
     if (PV_AT) pins.prov = PV_AT;
     if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
     if (CFG.callLog) D.add(0x34).writeU32(1);
-    send({ kind: 'warp', n: warpN, pins });
+    send({ kind: 'warp', n: warpN, tick: tickNow(), pins });
     setActive(1);
     // The track load (phase 2) takes a run-dependent number of main-thread clock calls (2 frames apart
     // between two runs, measured 2026-11-01), so the scenario timeline is anchored at the first
@@ -575,7 +810,9 @@ function install() {
         D.add(0x10).writeU32(Number(q & 0xffffffffn)); D.add(0x14).writeU32(Number(q >> 32n));
       }
       // negative control: +1 on the RenderWare RNG word at the ring cursor (cfg.negctl = 1), or on a VA
-      if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
+      // (with cfg.negTick the control runs at that tick instead, RO-MENU-REPLAY)
+      if (CFG.negTick) { }
+      else if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
       else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
       send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, tick: TK ? TK.st.add(8).readU32() : null, frames_7f101c: ga(0x007f101c).readU32(),
              clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness() });
@@ -592,17 +829,66 @@ function install() {
         }
         tickDump();
         provReport();
+        wsDump();
         if (PZ) { PZ.st.writeU32(0); send({ kind: 'info', msg: 'poison listener calls ' + PZ.st.add(4).readU32() }); }
         send({ kind: 'done', n: N() });
       });
     };
     schedule(warpN + 1, watch);
-  });
+  };
+  if (CFG.boot) {
+    // RO-MENU-REPLAY boot mode: hash from the first tick, warp at tick cfg.warpTick (counted from process start)
+    TK.st.writeU32(1);
+    // Before the first tick (CRT start, WinMain, device and frontend setup, intro movies) the main thread waits on
+    // elapsed time with no frame-timer entry, so the clock advances per call there (cfg.bootStep / cfg.bootQstep) and
+    // switches to tick-only at the first entry of the tick VA (tst[4] = 1: the CModule zeroes both steps).
+    D.add(4).writeU32(CFG.bootStep >>> 0); D.add(0x18).writeU32(CFG.bootQstep >>> 0);
+    TK.st.add(16).writeU32(1);
+    tickSchedule(CFG.warpTick, doWarp);
+    // calls made before the first tick (CRT start to the main loop) = the boot segment of the census (provReport)
+    if (PV) tickSchedule(1, () => { PV.atTick1 = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32()); });
+    if (CFG.negTick) tickSchedule(CFG.negTick, () => {   // negative control inside the menu segment
+      if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
+      else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
+      send({ kind: 'info', msg: `negctl at tick ${tickNow()}` });
+    });
+  } else schedule(CFG.warpAt, doWarp);
   return res;
 }
 
+// RO-MENU-REPLAY boot mode (cfg.boot): detorig.py spawns the process suspended and loads this script before the first
+// instruction of MASHED.exe runs. The install then happens at the image's entry point (PE AddressOfEntryPoint), on the
+// main thread, after the loader has bound the IAT and run every DllMain: the virtual clock, the tick listener and any
+// --prov body are live from the CRT's first instruction, so boot, intro, menu, load and race all run on the tick clock.
+let BOOT = null;
+if (CFG.boot) {
+  const lfanew = M.base.add(0x3c).readU32();
+  const ep = M.base.add(M.base.add(lfanew + 0x28).readU32());
+  const l = Interceptor.attach(ep, {
+    onEnter() {
+      if (BOOT) return;
+      const tid = Process.getCurrentThreadId();
+      CFG.main = tid; D.add(0xc).writeU32(tid);
+      BOOT = { ep: '0x' + (ep.sub(M.base).toUInt32() + IMG).toString(16), main: tid, slots: SLOTS.map(([va]) => ga(va).readPointer().toString()) };
+      try { BOOT.install = install(); } catch (e) { send({ kind: 'err', msg: 'boot install ' + e + ' ' + e.stack }); }
+      send({ kind: 'boot', boot: BOOT });
+    },
+  });
+  keep.push(l);
+}
+
 rpc.exports = {
+  boot() { return BOOT ? JSON.stringify(BOOT) : ''; },
+  where() {   // main thread pc + backtrace (boot diagnosis)
+    const t = Process.enumerateThreads().find((x) => x.id === CFG.main);
+    if (!t) return 'no main';
+    const f = (p) => { const m = Process.findModuleByAddress(p); return m ? m.name + '+0x' + p.sub(m.base).toString(16) : p.toString(); };
+    let bt = [];
+    try { bt = Thread.backtrace(t.context, Backtracer.FUZZY).slice(0, 14).map(f); } catch (e) { bt = ['bt ' + e]; }
+    return t.state + ' ' + f(t.context.pc) + ' | ' + bt.join(' ');
+  },
+  tick() { return tickNow(); },
   phase() { return ga(0x00771968).readU8(); },
   install() { return JSON.stringify(install()); },
-  stats() { return { qpf: ga(0x00771e70).readU32(), N: N(), T: D.readU32(), tgt: D.add(0x20).readU32(), qpc: D.add(0x24).readU32(), fwd: D.add(0x28).readU32(), clk: ga(0x007f0ff0).readU32(), phase: ga(0x00771968).readU8() }; },
+  stats() { return { qpf: ga(0x00771e70).readU32(), N: N(), T: D.readU32(), tgt: D.add(0x20).readU32(), qpc: D.add(0x24).readU32(), fwd: D.add(0x28).readU32(), clk: ga(0x007f0ff0).readU32(), phase: ga(0x00771968).readU8(), tick: tickNow() }; },
 };

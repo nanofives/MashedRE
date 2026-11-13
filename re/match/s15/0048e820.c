@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S15 h2 0x0048e820: 85.5% (regs 100%, ops 100%), 124/124 ins. Hand rewrite (raw 16.9%): 17 emitters, per-emitter param records (0x10 B at 0x00722140), 256 particles of 0x40 B per emitter at 0x007228b0 walked with j = 256; while (j--) (74.6% -> 85.5%), switch cases in layout order 7,9,10,8,6,1,13,14,15,16 with the stores in the order the tail merge needs. Residual: only the callee-saved register pair is swapped (ours i=esi, hoisted 1.0f=edi; original i=edi, 1.0f=esi). Tried: do/while vs while(i--) vs for, --i, unsigned i, declaration order, int-literal 1, 14/15/16 sharing a goto tail, separate x/y/z stores, empty default, permuter 423 variants (no gain). Class (b): register allocation that has not moved with any source change tried. */
+/* MATCH-S15 h2 0x0048e820: 85.5% (regs 100%, ops 100%), 124/124 ins. Hand rewrite (raw 16.9%): 17 emitters, per-emitter param records (0x10 B at 0x00722140), 256 particles of 0x40 B per emitter at 0x007228b0 walked with j = 256; while (j--) (74.6% -> 85.5%), switch cases in layout order 7,9,10,8,6,1,13,14,15,16 with the stores in the order the tail merge needs. Residual: only the callee-saved register pair is swapped (ours i=esi, hoisted 1.0f=edi; original i=edi, 1.0f=esi). Tried: do/while vs while(i--) vs for, --i, unsigned i, declaration order, int-literal 1, 14/15/16 sharing a goto tail, separate x/y/z stores, empty default, permuter 423 variants (no gain). Class (b): register allocation that has not moved with any source change tried. EQUIV-FU-48E820 (2026-11-12): 100%, 664 B BYTE-IDENTICAL, relocheck OK 48/48. Fix: 0x0048cee0 takes the emitter index in EDI (Ghidra unaff_EDI, re/match/s14/0048cee0.c); declaring it here as a static callee taking int i and calling FUN_0048cee0(i) gives cl that convention, which pins i in EDI and the hoisted 1.0f in ESI as in the original. The static copy is not this file's matched symbol; under MATCH_PORT it is replaced by a declaration. */
 /* ---- MATCH-S15 preamble (same text in every re/match/s15 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -43,8 +43,39 @@ typedef struct {
 MGLOBALA(EmitParm, DAT_00722140, 17, 0x00722140);
 MGLOBALA(int, DAT_00722250, 17 * 8, 0x00722250);
 MGLOBALA(Part40, DAT_007228b0, 17 * 256, 0x007228b0);
-void FUN_0048cee0(void);
 void FUN_004b6480(void *p0, unsigned int p1);
+#ifndef MATCH_PORT
+typedef struct Rec00722470 { int d[0x10]; } Rec00722470;
+MGLOBALA(Rec00722470, DAT_00722470, 0x11, 0x00722470);
+MGLOBALA(int, DAT_007668b0, 0x11, 0x007668b0);
+int FUN_0040bb30(char *p0);
+void FUN_00476cb0(Rec00722470 *p0, int p1, int p2);
+void FUN_004770c0(Rec00722470 *p0, int p1, int p2, int p3);
+/* 0x0048cee0 (matched in re/match/s14/0048cee0.c): static here so cl gives it the original's convention, the
+   emitter index in EDI (Ghidra unaff_EDI). Not the matched symbol of this file. */
+static void FUN_0048cee0(int i)
+{
+    int tex;
+
+    tex = FUN_0040bb30("smoke");
+    switch (i) {
+    case 0xd:
+    case 0xe:
+    case 0x10:
+        tex = FUN_0040bb30("wfall");
+        break;
+    case 1:
+        tex = FUN_0040bb30("flatshad");
+        break;
+    }
+    FUN_004770c0(&DAT_00722470[i], 0x817, 0x100, tex);
+    FUN_00476cb0(&DAT_00722470[i], 5, 6);
+    DAT_007668b0[i] = 0;
+}
+#else
+/* port: the matched 0x0048cee0 body (re/match/s14/0048cee0.c) bound by name, index passed explicitly */
+void FUN_0048cee0(int i);
+#endif
 // MATCH: 0x0048e820 FUN_0048e820
 void FUN_0048e820(void)
 {
@@ -155,6 +186,6 @@ void FUN_0048e820(void)
         break;
       }
     }
-    FUN_0048cee0();
+    FUN_0048cee0(i);
   } while (i != 0);
 }

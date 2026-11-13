@@ -15,7 +15,8 @@
    Residual (b): cross-jumping of the identical case tails: the original keeps 3 copies of the self block and
    shares other tails across outer cases in a pattern our source order does not reproduce (we merge more:
    343 vs 357 instructions); plus one extra `xor edi,edi` on the mode 0 path. Under MATCH_PORT the static
-   function is unused here; 0x0043d2a0.c declares it extern, so the port must keep both in one TU. */
+   function is unused here; 0x0043d2a0.c declared it extern until RO-MENU-DIV-43DFD0 (2026-11-12), which copied this function and its two static callees into
+   0x0043d2a0.c so both are in one TU. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

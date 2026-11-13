@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL02 h3 0x004e2bf0: raw converter body (Ghidra structure, gotos kept), comments stripped, prototypes loosened for C++ (void-pointer or int params), F1/F2 typedefs for the engine vtable calls. Score 38.2% structure only (class b: source shape not found, size above budget). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

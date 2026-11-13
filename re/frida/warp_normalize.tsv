@@ -38,6 +38,7 @@ va	count	stride	width	action	value	writer	readers	note
 0x006147d8	1	0	4	MASK:os	-	0x00493eeb 0x0049479a (= 1)	0x00494485	flag set on the window-message path (TOGGLE class, values 0..1)
 0x00771a00	1	0	4	MASK:os	-	0x00493ef0 0x00494794	0x00493c90 0x00493cb9 0x00493eb7 0x00493edf	flag written next to 0x006147d8 (TOGGLE class, values 0..1)
 0x0077391c	1	0	4	MASK:os	-	0x0049985e FUN_004997b0 (4-argument callback, ret 0x10) = ([esp+0xc] == 1)	0x004996cc (main-loop gate; no_focus_pause makes 0x004996d3 jump past WaitMessage)	window-focus flag; changed at tick 215 in run n3_a only
+0x0077398c	1	0	4	MASK:os	-	0x004a173a FUN_004a1570 = RegisterWindowMessageA() (lazy, guarded by the == 0 test at 0x004a1724)	0x004a1724 0x004a1754 FUN_004a1570	registered window-message id (OS-assigned, 0xC000..0xFFFF); set or still 0 at boot tick 0 by run (RO-MENU-REPLAY 2026-11-12: r3 0x0000c1fc, r4 0)
 0x007e95a0	1	0	28	RULE:WINMSG	-	PeekMessageA 0x0049969d	-	MSG filled by Windows
 0x007ec9e4	256	0x40	64	RULE:STACKROW	-	0x00469d90..0x00469daa FUN_00469aa0	see RESULT_RO-STACKROW-READERS.md	ring rows; the rule only drops fields +0x28..+0x3c
 0x007ec9e4	256	0x40	64	RULE:RINGSTALE	-	the ring producers (detorig_report.py RING_WRITTEN)	0x0040be50 0x00422ba0 0x004648b0 read only written dwords (RESULT_RO-STACKROW-READERS.md)	per-type unwritten payload dwords; types 6 and 9 compared [UNCERTAIN]

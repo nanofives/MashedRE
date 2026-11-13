@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00527560 (h4): libpng 1.0.12 pngrutil.c png_handle_tIME. Best 90.5% (regs 90.5%, h6 round 2, was 88.3).
    Written from the official source with the original's inlining mirrored by hand: png_crc_read, png_crc_finish,

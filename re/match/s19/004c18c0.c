@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /GS /Ob1 /G5
 /* MATCH-S19 0x004c18c0 (h1 form, h6): 65.2%, regs 65.2% (the earlier 100% in this header does not reproduce: match.py gives 65.2%, 36/46 ins). RwBBoxContainsPoint shape: inf compares then sup compares. Residual (b): the original repeats xor eax,eax; ret after each of the six compares, 9176 here tail-merges them into one return-0 block. Tried: RwBBoxContainsPointMacro return expression (30.4), if(&&) return 1, reversed compare operands (47.8), nested if/else returns, negated <= forms (52.2), flagscan 19 sets (best /G5 65.2). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

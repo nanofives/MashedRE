@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x0051cfc0: libpng 1.0.12 pngwutil.c png_write_PLTE (PNG_MNG_FEATURES_SUPPORTED), with
    png_write_chunk_start / _data / _end and png_save_uint_32 written inline (the original has them inline).

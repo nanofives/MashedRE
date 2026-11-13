@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+// RWC-MATCH-S02 semantic fix: the flag clear read `*(uint *)0xfffffffd & (param_1 + 0x4c)` (a load from address 0xfffffffd); the original does `mov edx,[eax+0x4c]; and edx,0xfffffffd; mov [eax+0x4c],edx`, now written as `*(uint *)(param_1 + 0x4c) & 0xfffffffd`. Score 77.3 -> 75.5% (ddk = rw9044); the 77.3 counted a wrong instruction stream.
 /* MATCH-RWL02 h3 0x004e5fc0: hand-written (28-byte Key struct array, V4f copies) + permuter. 77.3%. Residual (a): x87 operand order/scheduling of the three products (original fld field; fmul st(1) vs ours fld st(0); fmul mem) and goto label epilogue order. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -75,7 +76,7 @@ void FUN_004e5fc0(int param_1)
     *(V4f *)(param_1 + 0x1c) = (*(Key **)(iVar5 + 0x5c))->v;
   }
 LAB_004e60e6:
-  *(unsigned int *)(param_1 + 0x4c) = *(unsigned int *)0xfffffffd & (param_1 + 0x4c);
+  *(unsigned int *)(param_1 + 0x4c) = *(unsigned int *)(param_1 + 0x4c) & 0xfffffffd;
   *(unsigned char *)(param_1 + 3) = *(unsigned char *)(param_1 + 3) | 1;
 }
 

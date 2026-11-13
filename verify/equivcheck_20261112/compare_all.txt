@@ -1,0 +1,139 @@
+v4: 1106 rows EQUIV=133 EQUIV-IF-CALLERS-IGNORE=61 NOT-PROVEN=912
+prefix: 1106 rows EQUIV=202 EQUIV-IF-CALLERS-IGNORE=38 NOT-PROVEN=866
+acos: 1106 rows EQUIV=182 EQUIV-IF-CALLERS-IGNORE=38 NOT-PROVEN=886
+new: 1106 rows EQUIV=182 EQUIV-IF-CALLERS-IGNORE=38 NOT-PROVEN=886
+final: 1106 rows EQUIV=182 EQUIV-IF-CALLERS-IGNORE=38 NOT-PROVEN=886
+
+## v4 -> prefix: 69 verdict changes, 26 NOT-PROVEN kind changes
+0x004c2f60	re/match/s19/004c2f60.c	EQUIV-IF-CALLERS-IGNORE(edx,ecx) -> EQUIV		
+0x004c2fb0	re/match/s19/004c2fb0.c	NOT-PROVEN -> EQUIV		
+0x004c5930	re/match/s19/004c5930.c	NOT-PROVEN -> EQUIV		
+0x004c9eb0	re/match/s20/004c9eb0.c	NOT-PROVEN -> EQUIV		
+0x004cb600	re/match/rwl01/004cb600.c	NOT-PROVEN -> EQUIV		
+0x004cba80	re/match/s20/004cba80.c	NOT-PROVEN -> EQUIV		
+0x004cbb70	re/match/s20/004cbb70.c	NOT-PROVEN -> EQUIV		
+0x004cf4a0	re/match/s20/004cf4a0.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x004d1640	re/match/s20/004d1640.c	NOT-PROVEN -> EQUIV		
+0x004d2980	re/match/rwl01/004d2980.c	NOT-PROVEN -> EQUIV		
+0x004d4250	re/match/s21/004d4250.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x004d42b0	re/match/s21/004d42b0.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x004d4dd0	re/match/rwl01/004d4dd0.c	NOT-PROVEN -> EQUIV		
+0x004d80d0	re/match/s21/004d80d0.c	NOT-PROVEN -> EQUIV		
+0x004d8480	re/match/s21/004d8480.c	EQUIV-IF-CALLERS-IGNORE(edx,ecx) -> EQUIV		
+0x004dc5b0	re/match/rwl01/004dc5b0.c	NOT-PROVEN -> EQUIV		
+0x004dfab0	re/match/s21/004dfab0.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x004dfb10	re/match/s21/004dfb10.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x004dfb60	re/match/s21/004dfb60.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x004e5ef0	re/match/rwl02/004e5ef0.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x004e7e50	re/match/rwl02/004e7e50.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x004e98d0	re/match/rwl02/004e98d0.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x004e9910	re/match/rwl02/004e9910.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x004f10e0	re/match/s22/004f10e0.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x004f2e70	re/match/rwl03/004f2e70.c	NOT-PROVEN -> EQUIV		
+0x0051cfc0	re/match/s23/0051cfc0.c	NOT-PROVEN -> EQUIV		
+0x0051fa50	re/match/s23/0051fa50.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x00520c70	re/match/s23/00520c70.c	NOT-PROVEN -> EQUIV		
+0x00523170	re/match/s23/00523170.c	NOT-PROVEN -> EQUIV		
+0x005238c0	re/match/s23/005238c0.c	NOT-PROVEN -> EQUIV		
+0x00523cd0	re/match/s23/00523cd0.c	NOT-PROVEN -> EQUIV		
+0x00523e40	re/match/s23/00523e40.c	NOT-PROVEN -> EQUIV		
+0x005241f0	re/match/s23/005241f0.c	NOT-PROVEN -> EQUIV		
+0x005245b0	re/match/s23/005245b0.c	NOT-PROVEN -> EQUIV		
+0x00524f70	re/match/s23/00524f70.c	NOT-PROVEN -> EQUIV		
+0x005253c0	re/match/s23/005253c0.c	NOT-PROVEN -> EQUIV		
+0x00525870	re/match/s23/00525870.c	NOT-PROVEN -> EQUIV		
+0x00526310	re/match/s23/00526310.c	NOT-PROVEN -> EQUIV		
+0x00526630	re/match/s23/00526630.c	NOT-PROVEN -> EQUIV		
+0x00526910	re/match/s23/00526910.c	NOT-PROVEN -> EQUIV		
+0x00526bf0	re/match/s23/00526bf0.c	NOT-PROVEN -> EQUIV		
+0x00527560	re/match/s23/00527560.c	NOT-PROVEN -> EQUIV		
+0x00528810	re/match/s23/00528810.c	NOT-PROVEN -> EQUIV		
+0x0052b820	re/match/s23/0052b820.c	NOT-PROVEN -> EQUIV		
+0x0052bff0	re/match/s23/0052bff0.c	NOT-PROVEN -> EQUIV		
+0x0052c7a0	re/match/s23/0052c7a0.c	NOT-PROVEN -> EQUIV		
+0x00540340	re/match/rwl03/00540340.c	NOT-PROVEN -> EQUIV		
+0x00541b50	re/match/rwl04/00541b50.c	NOT-PROVEN -> EQUIV		
+0x00546b10	re/match/s24/00546b10.c	NOT-PROVEN -> EQUIV		
+0x00549900	re/match/rwl04/00549900.c	NOT-PROVEN -> EQUIV		
+0x0054b6d0	re/match/rwl04/0054b6d0.c	EQUIV-IF-CALLERS-IGNORE(ecx) -> EQUIV		
+0x00551c40	re/match/rwl04/00551c40.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x00552920	re/match/rwl04/00552920.c	NOT-PROVEN -> EQUIV		
+0x00553cf0	re/match/rwl04/00553cf0.c	NOT-PROVEN -> EQUIV		
+0x005584c0	re/match/rwl05/005584c0.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x005a62b0	re/match/s25/005a62b0.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x005a8750	re/match/s25/005a8750.c	NOT-PROVEN -> EQUIV		
+0x005aa7e0	re/match/s25/005aa7e0.c	EQUIV-IF-CALLERS-IGNORE(edx,ecx) -> EQUIV		
+0x005af180	re/match/s26/005af180.c	NOT-PROVEN -> EQUIV		
+0x005af230	re/match/s26/005af230.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x005b3620	re/match/s27/005b3620.c	EQUIV-IF-CALLERS-IGNORE(edx,ecx) -> EQUIV		
+0x005b4150	re/match/s27/005b4150.c	NOT-PROVEN -> EQUIV		
+0x005bc920	re/match/s27/005bc920.c	NOT-PROVEN -> EQUIV		
+0x005be9f0	re/match/s28/005be9f0.c	NOT-PROVEN -> EQUIV		
+0x005bf8a0	re/match/s28/005bf8a0.c	NOT-PROVEN -> EQUIV		
+0x005bfd10	re/match/s28/005bfd10.c	EQUIV-IF-CALLERS-IGNORE(eax) -> EQUIV		
+0x005bff40	re/match/s28/005bff40.c	NOT-PROVEN -> EQUIV		
+0x005c4c60	re/match/s28/005c4c60.c	EQUIV-IF-CALLERS-IGNORE(edx,ecx) -> EQUIV		
+0x005c7500	re/match/s28/005c7500.c	NOT-PROVEN -> EQUIV		
+
+## prefix -> acos: 20 verdict changes, 8 NOT-PROVEN kind changes
+0x00408b00	re/match/s01/00408b00.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x4a3384
+0x00415e20	re/match/s03/h2_00415e20.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x4a3384
+0x00448220	re/match/s08/00448220.c	EQUIV -> NOT-PROVEN	call-memory	region ours +0x3b4 / orig 0x004485d4 call 0x442e00: memory differs (st0(st0(st0(st0(st0(st0(st0(...,...,...,4),(...+-0x98),0x897fe0,4),(esp0
+0x00455150	re/match/s09/00455150.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x4a3384
+0x0051cfc0	re/match/s23/0051cfc0.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00523170	re/match/s23/00523170.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x5172b0
+0x005238c0	re/match/s23/005238c0.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00523cd0	re/match/s23/00523cd0.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00523e40	re/match/s23/00523e40.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x005241f0	re/match/s23/005241f0.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x005245b0	re/match/s23/005245b0.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00524f70	re/match/s23/00524f70.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x005253c0	re/match/s23/005253c0.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00525870	re/match/s23/00525870.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00526310	re/match/s23/00526310.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00526630	re/match/s23/00526630.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00526910	re/match/s23/00526910.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00526bf0	re/match/s23/00526bf0.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00527560	re/match/s23/00527560.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+0x00528810	re/match/s23/00528810.c	EQUIV -> NOT-PROVEN	callee-pop-unknown	callee 0x517250
+
+## acos -> new: 0 verdict changes, 3 NOT-PROVEN kind changes
+
+## new -> final: 0 verdict changes, 7 NOT-PROVEN kind changes
+
+## proven rows in final with a path that ends at a no-return callee or trap: 0
+
+## ADMITTED.tsv rows in final
+0x00407be0	admitted EQUIV	final: EQUIV
+0x0040b290	admitted EQUIV	final: EQUIV
+0x00417180	admitted EQUIV	final: EQUIV
+0x00417450	admitted EQUIV	final: EQUIV
+0x0041f770	admitted EQUIV	final: EQUIV
+0x00429310	admitted EQUIV	final: EQUIV
+0x00429bd0	admitted EQUIV	final: EQUIV
+0x0042aa00	admitted EQUIV	final: EQUIV
+0x004332a0	admitted EQUIV	final: EQUIV
+0x0045c480	admitted EQUIV	final: EQUIV
+0x00475a00	admitted EQUIV	final: EQUIV
+0x0047cea0	admitted EQUIV	final: EQUIV
+0x00484de0	admitted EQUIV	final: EQUIV
+0x00485b30	admitted EQUIV	final: EQUIV
+0x0048a4e0	admitted EQUIV	final: EQUIV
+0x004938e0	admitted EQUIV	final: EQUIV
+0x00498ea0	admitted EQUIV	final: EQUIV
+0x004b61c0	admitted EQUIV	final: EQUIV
+0x004c18c0	admitted EQUIV	final: EQUIV
+0x004d4f00	admitted EQUIV	final: EQUIV
+0x00555360	admitted EQUIV-IF-CALLERS-IGNORE(EAX)	final: EQUIV-IF-CALLERS-IGNORE(eax)
+0x005a6b70	admitted EQUIV	final: EQUIV
+0x005a8890	admitted EQUIV	final: EQUIV
+0x005aa7a0	admitted EQUIV	final: EQUIV
+0x005aaac0	admitted EQUIV	final: EQUIV
+0x005aab00	admitted EQUIV	final: EQUIV
+0x005ab410	admitted EQUIV	final: EQUIV
+0x005ace70	admitted EQUIV	final: EQUIV
+0x005ad320	admitted EQUIV	final: EQUIV
+0x005ae3a0	admitted EQUIV	final: EQUIV
+0x005ae920	admitted EQUIV	final: EQUIV
+0x005bf8a0	admitted EQUIV	final: EQUIV
+0x005be9f0	admitted EQUIV	final: EQUIV

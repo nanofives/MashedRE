@@ -1,0 +1,16 @@
+_strchr va=0x004a2fd0 obj=obj\i386\strchr.obj span=0x004a2fc0..0x004a308e insns=91 lib_bytes=204 img_bytes=206 relocs=0
+  listing: raw_identical=False normalized_equal=True first_diff=None  inc/dec lib=1 img=0
+  cf insn#14: ok (cmp)
+  differential: 4000 runs, 0 mismatches
+  VERDICT _strchr: EQUIVALENT-INC-ADD + DIFF-RUN-CLEAN
+_strrchr va=0x004a3480 obj=obj\i386\strrchr.obj span=0x004a3480..0x004a34ad insns=23 lib_bytes=39 img_bytes=45 relocs=0
+  listing: raw_identical=False normalized_equal=True first_diff=None  inc/dec lib=3 img=0
+  cf insn#7: ok (neg)
+  cf insn#9: ok (repne scasb)
+  cf insn#13: ok (cmp)
+  differential: 4000 runs, 0 mismatches
+  VERDICT _strrchr: EQUIVALENT-INC-ADD + DIFF-RUN-CLEAN
+_wcsncpy va=0x004a3bdf obj=obj\i386\wcsncpy.obj span=0x004a3bdf..0x004a3c1c insns=31 lib_bytes=61 img_bytes=61 relocs=0
+  listing: raw_identical=True normalized_equal=True first_diff=None  inc/dec lib=6 img=6
+  differential: 4000 runs, 0 mismatches
+  VERDICT _wcsncpy: IDENTICAL + DIFF-RUN-CLEAN

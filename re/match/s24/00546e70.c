@@ -1,4 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH-S03 2026-11-12: 87.0 -> 92.0% by writing the 23 .rdata float constants (0x005cc320..0x005e4888, all
+   in .rdata 0x005cc000..0x005e9044, read-only) as literals (ddk-match-levers real@). Residual: the original loads
+   six of the eight final scaled fields first (fld [esi+4]; fmul st(1)) and pops invSin with fstp st(0); df = sq
+   is fld st(0); fstp. Operand order, compound assignment, comma and double forms do not move it. */
 /* MATCH-S24 0x00546e70 (h2): 87.0% (regs 87.0%), 257/261 instructions. Quaternion slerp-cache setup:
    copy qpFrom, cosTheta = dot(qpFrom, qpTo) (as ((x + y) + z) + w), negate qpTo into raTo when cosTheta < 0,
    omega = an inlined fdlibm-style float acos (FUN_004c3b30 is its sqrt), nearlyZeroOm = cosTheta >= 0.99999
@@ -76,8 +80,8 @@ void FUN_00546e70(Quat *qpFrom, Quat *qpTo, SlerpCache *qpCache)
   qpCache->raFrom = *qpFrom;
   cosTheta = ((qpFrom->imag.x * qpTo->imag.x + qpFrom->imag.y * qpTo->imag.y) + qpFrom->imag.z * qpTo->imag.z) +
              qpFrom->real * qpTo->real;
-  if (cosTheta < DAT_005d757c) {
-    if (cosTheta < DAT_005cc33c) {
+  if (cosTheta < 0.0f) {
+    if (cosTheta < (-1.0f)) {
       cosTheta = 1.0f;
     }
     else {
@@ -89,7 +93,7 @@ void FUN_00546e70(Quat *qpFrom, Quat *qpTo, SlerpCache *qpCache)
     qpCache->raTo.imag.z = -qpTo->imag.z;
   }
   else {
-    if (cosTheta > DAT_005cc320) {
+    if (cosTheta > 1.0f) {
       cosTheta = 1.0f;
     }
     qpCache->raTo = *qpTo;
@@ -114,47 +118,47 @@ void FUN_00546e70(Quat *qpFrom, Quat *qpTo, SlerpCache *qpCache)
       }
       else {
         z = x * x;
-        p = ((((((DAT_005d8dec * z + DAT_005d8de8) * z - DAT_005d8de4) * z + DAT_005d8de0) * z - DAT_005d8ddc) * z +
-              DAT_005cc8f4) * z);
-        q = (((DAT_005d8dd8 * z - DAT_005d8dd4) * z + DAT_005d8dd0) * z - DAT_005d8dcc) * z + DAT_005cc320;
+        p = ((((((3.47933092e-05f * z + 0.000791535014f) * z - 0.0400555357f) * z + 0.201212525f) * z - 0.325565815f) * z +
+              0.166666672f) * z);
+        q = (((0.077038154f * z - 0.68828398f) * z + 2.02094579f) * z - 2.40339494f) * z + 1.0f;
         r = p / q;
-        qpCache->omega = DAT_005d8dc4 - (x - (DAT_005d8dc8 - x * r));
+        qpCache->omega = 1.57079625f - (x - (7.54978942e-08f - x * r));
       }
     }
     else if (hx < 0) {
-      z = (DAT_005cc320 + x) * DAT_005cc32c;
+      z = (1.0f + x) * 0.5f;
       sq = FUN_004c3b30(z);
-      p = ((((((DAT_005d8dec * z + DAT_005d8de8) * z - DAT_005d8de4) * z + DAT_005d8de0) * z - DAT_005d8ddc) * z +
-            DAT_005cc8f4) * z);
-      q = (((DAT_005d8dd8 * z - DAT_005d8dd4) * z + DAT_005d8dd0) * z - DAT_005d8dcc) * z + DAT_005cc320;
+      p = ((((((3.47933092e-05f * z + 0.000791535014f) * z - 0.0400555357f) * z + 0.201212525f) * z - 0.325565815f) * z +
+            0.166666672f) * z);
+      q = (((0.077038154f * z - 0.68828398f) * z + 2.02094579f) * z - 2.40339494f) * z + 1.0f;
       r = p / q;
-      w = r * sq - DAT_005d8dc8;
-      qpCache->omega = DAT_005d8dc0 - 2.0f * (sq + w);
+      w = r * sq - 7.54978942e-08f;
+      qpCache->omega = 3.1415925f - 2.0f * (sq + w);
     }
     else {
       int idf;
-      z = (DAT_005cc320 - x) * DAT_005cc32c;
+      z = (1.0f - x) * 0.5f;
       sq = FUN_004c3b30(z);
       df = sq;
       idf = *(int *)&df;
       idf &= 0xfffff000;
       df = *(float *)&idf;
       c = (z - df * df) / (sq + df);
-      p = ((((((DAT_005d8dec * z + DAT_005d8de8) * z - DAT_005d8de4) * z + DAT_005d8de0) * z - DAT_005d8ddc) * z +
-            DAT_005cc8f4) * z);
-      q = (((DAT_005d8dd8 * z - DAT_005d8dd4) * z + DAT_005d8dd0) * z - DAT_005d8dcc) * z + DAT_005cc320;
+      p = ((((((3.47933092e-05f * z + 0.000791535014f) * z - 0.0400555357f) * z + 0.201212525f) * z - 0.325565815f) * z +
+            0.166666672f) * z);
+      q = (((0.077038154f * z - 0.68828398f) * z + 2.02094579f) * z - 2.40339494f) * z + 1.0f;
       r = p / q;
       w = r * sq + c;
       qpCache->omega = 2.0f * (df + w);
     }
   }
-  qpCache->nearlyZeroOm = (cosTheta >= DAT_005e4888);
+  qpCache->nearlyZeroOm = (cosTheta >= 0.999989986f);
   if (!qpCache->nearlyZeroOm) {
     float w = qpCache->omega;
     float w2 = w * w;
-    float invSin = DAT_005cc320 /
-        ((w * w2) * (((((DAT_005cc908 * w2 - DAT_005cc904) * w2 + DAT_005cc900) * w2 - DAT_005cc8fc) * w2 +
-                      DAT_005cc8f8) * w2 - DAT_005cc8f4) + w);
+    float invSin = 1.0f /
+        ((w * w2) * (((((1.58969102e-10f * w2 - 2.50507597e-08f) * w2 + 2.75573143e-06f) * w2 - 0.000198412701f) * w2 +
+                      0.00833333377f) * w2 - 0.166666672f) + w);
     qpCache->raFrom.real = invSin * qpCache->raFrom.real;
     qpCache->raFrom.imag.x = invSin * qpCache->raFrom.imag.x;
     qpCache->raFrom.imag.y = qpCache->raFrom.imag.y * invSin;

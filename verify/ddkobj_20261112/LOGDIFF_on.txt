@@ -1,0 +1,11 @@
+== other lines: vs 177 ddk 177, diff lines 8
+--- vs_on
++++ ddk_on
+@@ -93 +93 @@
+-INTRO movie idx=1 original/toastart/pc/movies/empire.mpg: complete frames=T=297 video=720x576 tex=720x576 pow2=0 audio_hr=PTR
++INTRO movie idx=1 original/toastart/pc/movies/empire.mpg: complete frames=T=312 video=720x576 tex=720x576 pow2=0 audio_hr=PTR
+@@ -95 +95 @@
+-INTRO movie idx=3 original/toastart/pc/movies/renderware.mpg: complete frames=T=141 video=720x576 tex=720x576 pow2=0 audio_hr=PTR
++INTRO movie idx=3 original/toastart/pc/movies/renderware.mpg: complete frames=T=265 video=720x576 tex=720x576 pow2=0 audio_hr=PTR
+== [ORIG_TOP]/[RW_BIND] lines: vs 1134 ddk 1134, diff lines 0
+

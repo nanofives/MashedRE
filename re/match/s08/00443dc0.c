@@ -6,7 +6,9 @@
    The first loop has to test `i < s->n` (a cached n makes 9176 unroll it by 8; the original does not).
    Residual (b), out of budget: frame layout (ours 0x1ac vs 0x1a0, offx/offy swapped), the original keeps four
    duplicated y-range compares in the first two debug draws (ours folds them in an && chain and in a nested
-   if), and the walk/retry loop block layout differs (Ghidra shows it as two gotos into a shared tail). */
+   if), and the walk/retry loop block layout differs (Ghidra shows it as two gotos into a shared tail).
+   PROV-DIVERGED-18 (2026-11-11): the two 1/3 literals were 0.33333334f (0x3eaaaaab); the original
+   multiplies by 0x005ce034 = 0x3eaaaa9f (0x0044400e, 0x0044405c), the value 0x00443440's 0.333333f gives. Fixed. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -144,13 +146,13 @@ void FUN_00443dc0(Spline_00443dc0 *s, float *pos, float *out, int car, int track
   dlo = a.x * a.x + a.y * a.y;
   for (iter = 16; iter != 0; iter--) {
     if (dhi > dlo) {
-      hi = (hi + hi + lo) * 0.33333334f;
+      hi = (hi + hi + lo) * 0.333333f;
       FUN_00443300(s, bi, hi, &phi);
       a.x = phi.x - pos[0];
       a.y = phi.y - pos[1];
       dhi = a.x * a.x + a.y * a.y;
     } else {
-      lo = (lo + lo + hi) * 0.33333334f;
+      lo = (lo + lo + hi) * 0.333333f;
       FUN_00443300(s, bi, lo, &plo);
       a.x = plo.x - pos[0];
       a.y = plo.y - pos[1];

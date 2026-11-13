@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S20 0x004cc050 (h2): 78.5% (regs 81.7%). Raw 61.3%. RwStreamSkip shape (same RwStream / RwError types as
    0x004cbd30). Tried: inverted memory-case test (73.1%), ?: for the custom case, block-scoped RWERROR (do {..}

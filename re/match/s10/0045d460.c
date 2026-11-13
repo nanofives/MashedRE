@@ -77,7 +77,7 @@ void FUN_0045d460(void)
   unsigned int m;
   unsigned int k;
 
-  h = FUN_004cc230(2,1,"toastaudio\pc\audio\pcdics\PERMDICT.RWS");
+  h = FUN_004cc230(2,1,"toastaudio\\pc\\audio\\pcdics\\PERMDICT.RWS");
   p = ((Fn3_0045d460)*(void **)(DAT_007d3ff8 + 0x114))(0x10001,1,0);
   if (p != 0) {
     DAT_007dcaa8 = p;
