@@ -1,4 +1,10 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWT-S6 2026-11-13: 100%, BYTE-IDENTICAL (375 B, ddk), relocheck OK. Lever: the two failure tests are separate
+   statements, `if (!FUN_004cde50(mask)) { destroy image; destroy mask; return 0; }` then the same for FUN_004cdf20, so the
+   failure body is written twice. c2 merges the two copies into one block (0x004cea03), the extra uses of image make it the
+   heavier variable (esi, 0x004ce97d; mask edi, 0x004ce9a6), the failure block falls through after `jne 0x004cea99`, and
+   the mask == NULL tail cross-jumps into it (`push esi; jmp 0x004cea7b` at 0x004ce9de). Search:
+   verify/match_20261113/RESULT_MATCH-RWT-S6.md. Earlier notes below are history. */
 /* MATCH-RWT-S4 2026-11-13: SEMANTIC FIX, score 71.5% -> 56.2%. The failure path (FUN_004cde50 or FUN_004cdf20 returns 0)
    destroys image first, then mask: the original runs the destroy on esi (image) at 0x004cea03..0x004cea42, then on edi
    (mask) at 0x004cea48..0x004cea8a. The previous body destroyed mask first (a permuter pick that scored higher on a
@@ -69,17 +75,21 @@ RwImage *FUN_004ce970(const char *param_1, const char *param_2)
   if (image) {
     if (param_2 && *param_2) {
       mask = FUN_004ce390(param_2);
-      if (mask) {
-        if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) {
-          IMAGEDESTROY(mask);
-          return image;
-        }
+      if (!mask) {
+        IMAGEDESTROY(image);
+        return 0;
+      }
+      if (!FUN_004cde50(mask)) {
         IMAGEDESTROY(image);
         IMAGEDESTROY(mask);
         return 0;
       }
-      IMAGEDESTROY(image);
-      return 0;
+      if (!FUN_004cdf20(image, mask)) {
+        IMAGEDESTROY(image);
+        IMAGEDESTROY(mask);
+        return 0;
+      }
+      IMAGEDESTROY(mask);
     }
     return image;
   }

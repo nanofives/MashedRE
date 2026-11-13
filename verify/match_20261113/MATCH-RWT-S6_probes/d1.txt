@@ -1,0 +1,106 @@
+void SINK(void *p);
+@@ base
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (!mask) {
+        IMAGEDESTROY(image);
+        return 0;
+      }
+      if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) {
+        IMAGEDESTROY(image);
+        IMAGEDESTROY(mask);
+        return 0;
+      }
+      IMAGEDESTROY(mask);
+    }
+    return image;
+  }
+  return 0;
+}
+@@ lessmask
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (!mask) {
+        IMAGEDESTROY(image);
+        return 0;
+      }
+      if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) {
+        IMAGEDESTROY(image);
+        IMAGEDESTROY(mask);
+        return 0;
+      }
+      SINK(mask);
+    }
+    return image;
+  }
+  return 0;
+}
+@@ lessimg
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (!mask) {
+        SINK(image);
+        return 0;
+      }
+      if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) {
+        SINK(image);
+        IMAGEDESTROY(mask);
+        return 0;
+      }
+      IMAGEDESTROY(mask);
+    }
+    return image;
+  }
+  return 0;
+}
+@@ lessimg2
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (!mask) {
+        SINK(image);
+        return 0;
+      }
+      if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) {
+        SINK(image);
+        IMAGEDESTROY(mask);
+        return 0;
+      }
+      IMAGEDESTROY(mask);
+      IMAGEDESTROY(mask);
+    }
+    return image;
+  }
+  return 0;
+}
