@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(...);   /* IMG-5: valid C++ for the port; C keeps the original line */
+#else
 typedef int code();
+#endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 void FUN_004898d0(int p0);
 // MATCH: 0x00489c60 FUN_00489c60

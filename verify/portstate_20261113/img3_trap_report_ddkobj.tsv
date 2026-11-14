@@ -1,0 +1,10 @@
+kind	target	target_func	slot	slot_listed	image_dword	via	site
+execute	0x004568a0	0x004568a0 FUN_004568a0 conf=C4 port=none	0x005f99b0	yes - -	0x004568a0	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x004540c0	0x004540c0 DepthChargePerFrameTeardown conf=C4 port=none	0x005f99f0	no	0x004540c0	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x004555d0	no pc_funcs entry	0x005f9a30	no	0x004555d0	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x00457b10	no pc_funcs entry	0x005f9a70	no	0x00457b10	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x0045a790	no pc_funcs entry	0x005f9ab0	no	0x0045a790	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x0045b2d0	no pc_funcs entry	0x005f9af0	no	0x0045b2d0	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x00454af0	no pc_funcs entry	0x005f9b30	no	0x00454af0	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x00456ca0	no pc_funcs entry	0x005f9b70	no	0x00456ca0	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)
+execute	0x004530b0	no pc_funcs entry	0x005f9bb0	no	0x004530b0	mov r,[reg+disp]; test/jcc; call eax	mashed_re.exe+0x5648 (_Orig_0045b930+0x38)

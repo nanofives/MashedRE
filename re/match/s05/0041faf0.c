@@ -1,5 +1,12 @@
 // FLAGS: /O2 /GS /Ob1
-/* 0x0041faf0 FUN_0041faf0 (458 B): best 90.8% exact (regs 90.8%, ops 93.3%), 119/119 ins. Raw g2s 23.5%.
+/* 0x0041faf0 FUN_0041faf0 (458 B): 100.0% BYTE-IDENTICAL (match.py --bytes), relocheck OK (MATCH-NM-41FAF0,
+   2026-11-13). Raw g2s 23.5%. Closed by three levers, each measured alone: (1) the dot product written with
+   double products in z, x, y source order, `(float)((double)az*bz + (double)ax*bx + (double)ay*by)`: 90.8 -> 95.8
+   (the original loads the camera side y, x, z; with float products cl reassociates every order to the same code);
+   (2) d.z as `(float)((double)a.pos.z - b.pos.z)`: 95.8 -> 98.3 (moves fld s.y / fmul 0.5 of the b.pos block one
+   slot up); (3) d.x parenthesised, `d.x = (a.pos.x - b.pos.x);`: 98.3 -> 100 (the parenthesis node changes where
+   c2 schedules fld a.pos.y against push eax). The history below is the 90.8% state.
+   Was: best 90.8% exact (regs 90.8%, ops 93.3%), 119/119 ins.
    The record arrives in ESI and cam on the stack: the real caller FUN_00420050 pushes ebx (cam) at 0x004200c7
    with the record in ESI (the push edi before it saves EDI for the next call, it is not an argument).
    Static-function convention (pilot finding 1); Caller_0041faf0 is a stand-in. FUN_00420050's file
@@ -83,9 +90,9 @@ static void FUN_0041faf0(CarRec *r, char *cam)
   if (r->x294 & 0x40) {
     FUN_004c52f0(&a, FUN_004c0ed0(*(char **)(r->objA + 4)), 0);
     FUN_004c52f0(&b, FUN_004c0ed0(*(char **)(r->objB + 4)), 0);
-    d.x = a.pos.x - b.pos.x;
+    d.x = (a.pos.x - b.pos.x);
     d.y = a.pos.y - b.pos.y;
-    d.z = a.pos.z - b.pos.z;
+    d.z = (float)((double)a.pos.z - b.pos.z);
     FUN_004c4d20(&b, &axis, 90.0f, 1);
     b.pos.x += b.up.x * (s.y * 0.5f);
     b.pos.y += (s.y * 0.5f) * b.up.y;
@@ -96,7 +103,7 @@ static void FUN_0041faf0(CarRec *r, char *cam)
     FUN_004c5010(&b, &s, 1);
     FUN_004c45f0(&b);
     fr = *(RwFrame **)(cam + 4);
-    dot = fr->m.at.x * b.at.x + fr->m.at.y * b.at.y + fr->m.at.z * b.at.z;
+    dot = (float)((double)fr->m.at.z * b.at.z + (double)fr->m.at.x * b.at.x + (double)fr->m.at.y * b.at.y);
     if (0.0f >= dot)
       dot = 0.0f;
     col.a = (unsigned char)(dot * 32.0f);

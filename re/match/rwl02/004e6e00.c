@@ -1,5 +1,9 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-// h2 hand-matched. 67.9% (regs-renamed 68.4%) via match_permute (statement moves in the two light/camera list-removal loops; 1232 compiles). Raw Ghidra form 53.7%. RW clump destroy with inlined atomic destroy. Residual: original hoists xor ebp,ebp, keeps the clump in esi, and caches the link-offset global in ecx across the removal stores. Class (b).
+// MATCH-RWT-S7: 100% byte-identical under rw9044 (L-131), relocheck OK. Rewritten from the listing: atomic fields read off the
+// atomic pointer (cur - 0x40, lea esi,[eax-0x40] at 0x004e6e28), the light and camera unlink loops in one order (stores +8, +4, +0 at
+// 0x004e6ed9..0x004e6edf and 0x004e6f27..0x004e6f2d), the exit on a NULL object after the destroy call (cmp esi,ebp / je at
+// 0x004e6ee9 and 0x004e6f37), and the object pointer computed before next is loaded (match_permute swap).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -44,72 +48,67 @@ undefined4 FUN_004e4440(void *p0);
 undefined4 FUN_004e4d90(undefined4 p0);
 undefined4 FUN_004e8ea0(int p0);
 // MATCH: 0x004e6e00 RpClumpDestroy
-
-undefined4 RpClumpDestroy(int param_1)
-
+undefined4 RpClumpDestroy(int clump)
 {
-  int *piVar1;
-  undefined4 *puVar2;
-  int *piVar3;
-  undefined4 *puVar4;
-  int *piVar5;
-  int iVar6;
-  int iVar7;
-  
-  FUN_004d8060(&DAT_0061867c,(void *)param_1);
-  piVar5 = *(int **)(param_1 + 8);
-  if (*(int **)(param_1 + 8) != (int *)(param_1 + 8)) {
-    do {
-      piVar3 = (int *)*piVar5;
-      piVar1 = piVar5 + -0x10;
-      FUN_004d8060(&DAT_00618664,piVar1);
-      if (piVar5[-0xb] != 0) {
-        FUN_004d8bd0((int *)piVar5[-0xb]);
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
       }
-      if (piVar5[-10] != 0) {
-        FUN_004e8ea0(piVar5[-10]);
-        iVar7 = piVar5[-0xf];
-        piVar5[-10] = 0;
-        if ((iVar7 != 0) && (iVar6 = FUN_004e4440(piVar1), iVar6 != 0)) {
-          FUN_004c0e50(iVar7);
-        }
-      }
-      FUN_004c0790(piVar1);
-      (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8),piVar1);
-      piVar5 = piVar3;
-    } while (piVar3 != (int *)(param_1 + 8));
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
   }
-  puVar2 = *(undefined4 **)(param_1 + 0x10);
-  do {
-    if (puVar2 == (undefined4 *)(param_1 + 0x10)) break;
-    puVar4 = (undefined4 *)*puVar2;
-    iVar7 = (int)puVar2 + (-4 - DAT_007d7230);
-    **(undefined4 **)(DAT_007d7230 + 8 + iVar7) = *(undefined4 *)(DAT_007d7230 + 4 + iVar7);
-    *(undefined4 *)(puVar2[1] + 4) = puVar2[2];
-    puVar2[2] = 0;
-    puVar2[1] = 0;
-    *puVar2 = 0;
-    puVar2 = (undefined4 *)(DAT_007d7230 + iVar7);
-    FUN_004e4d90(iVar7);
-    puVar2 = puVar4;
-  } while (iVar7 != 0);
-  puVar2 = *(undefined4 **)(param_1 + 0x18);
-  do {
-    if (puVar2 == (undefined4 *)(param_1 + 0x18)) break;
-    puVar2[2] = 0;
-    iVar7 = (int)puVar2 + (-4 - DAT_007d722c);
-    puVar4 = (undefined4 *)*puVar2;
-    puVar2 = (undefined4 *)(DAT_007d722c + iVar7);
-    **(undefined4 **)(DAT_007d722c + 8 + iVar7) = *(undefined4 *)(DAT_007d722c + 4 + iVar7);
-    *(undefined4 *)(puVar2[1] + 4) = puVar2[2];
-    puVar2[1] = 0;
-    *puVar2 = 0;
-    FUN_004c1cf0(iVar7);
-    puVar2 = puVar4;
-  } while (iVar7 != 0);
-  if (*(int *)(param_1 + 4) != 0) {
-    FUN_004c0de0(*(int *)(param_1 + 4));
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    obj = (int)cur - DAT_007d7230 - 4;
+    next = (int *)*cur;
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
   }
-  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8),param_1);
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    obj = (int)cur - DAT_007d722c - 4;
+    next = (int *)*cur;
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
   return 1;
 }

@@ -1,5 +1,8 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-// h2 hand-matched. 71.3% (regs 88.9%, ops 94.4%). Locals grouped in one Frame struct {version, err{code,data}, chunk} so the slots do not overlap (frame 0x28 vs original 0x24, one extra dword); err.code reused as the float temp like the original. Residual: frame size, stream pointer load order, ternary at the end. Class (b).
+// MATCH-RWT-S7: 100% byte-identical under rw9044 (L-131), relocheck OK. Levers: the type byte is read as (tf >> 16) & 0xff of a
+// uint field (xor ecx,ecx / mov cl,[esp+0x2a] at 0x004e4c9e / 0x004e4ca0; a uchar field read gives a dword load + and and pads the frame by 4),
+// size is a plain local that c2 9044 places in the dead stream parameter slot (lea ecx,[esp+0x28] at 0x004e4c37, mov ebx,[esp+0x2c] at 0x004e4c3c), early returns.
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,8 +26,10 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 
+void *memset(void *, int, unsigned int);
+#pragma intrinsic(memset)
 typedef struct { undefined4 code; undefined4 data; } Err;
-typedef struct { undefined4 v[4]; float angle; uchar b0; uchar b1; uchar type; uchar b3; } Chunk;
+typedef struct { undefined4 v[4]; float angle; uint tf; } Chunk;
 MGLOBAL(float, DAT_005cc320, 0x005cc320);
 MGLOBAL(undefined4, DAT_0061862c, 0x0061862c);
 float FUN_004c3b30(float p0);
@@ -33,59 +38,47 @@ int FUN_004cc5e0(int p0, int p1, int *p2, uint *p3);
 undefined4 FUN_004d7ff0(undefined4 p0);
 undefined4 *FUN_004d8480(Err *p0);
 int FUN_004e1b60(undefined4 *p0, int p1, int p2);
-int FUN_004e4dd0(uchar p0);
-// MATCH: 0x004e4c30 RpLightStreamRead
-typedef struct { uint version; Err err; Chunk ck; } Frame;
-int RpLightStreamRead(int param_1)
+int FUN_004e4dd0(int p0);// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int stream)
 {
-  int iVar1;
-  int uVar2;
-  int iVar3;
-  undefined4 *puVar4;
-  Frame L;
+  int size;
+  uint version;
+  int light;
 
-  iVar3 = param_1;
-  iVar1 = FUN_004cc5e0(param_1, 1, &param_1, &L.version);
-  if (iVar1 != 0) {
-    if ((L.version < 0x35000) || (0x37002 < L.version)) {
-      L.err.code = 2;
-      L.err.data = FUN_004d7ff0(0x80000004);
-      FUN_004d8480(&L.err);
+  if (!FUN_004cc5e0(stream, 1, &size, &version)) return 0;
+  if ((version >= 0x35000) && (version <= 0x37002)) {
+    Chunk ck;
+    memset(&ck, 0, sizeof(ck));
+    if (FUN_004cbd30(stream, &ck, size) != size) return 0;
+    light = FUN_004e4dd0((ck.tf >> 16) & 0xff);
+    if (!light) return 0;
+    *(undefined4 *)(light + 0x14) = ck.v[0];
+    *(undefined4 *)(light + 0x18) = ck.v[1];
+    *(undefined4 *)(light + 0x1c) = ck.v[2];
+    *(undefined4 *)(light + 0x20) = ck.v[3];
+    if (version < 0x30300) {
+      float a = DAT_005cc320 / (ck.angle * ck.angle + DAT_005cc320);
+      *(float *)(light + 0x28) = -FUN_004c3b30(a);
     }
     else {
-      puVar4 = (undefined4 *)&L.ck;
-      for (iVar1 = 6; iVar1 != 0; iVar1 = iVar1 + -1) {
-        *puVar4 = 0;
-        puVar4 = puVar4 + 1;
-      }
-      iVar1 = FUN_004cbd30(iVar3, &L.ck, param_1);
-      if (iVar1 == param_1) {
-        uVar2 = FUN_004e4dd0(L.ck.type);
-        if (uVar2 != 0) {
-          *(undefined4 *)(uVar2 + 0x14) = L.ck.v[0];
-          *(undefined4 *)(uVar2 + 0x18) = L.ck.v[1];
-          *(undefined4 *)(uVar2 + 0x1c) = L.ck.v[2];
-          *(undefined4 *)(uVar2 + 0x20) = L.ck.v[3];
-          if (L.version < 0x30300) {
-            *(float *)&L.err.code = DAT_005cc320 / (L.ck.angle * L.ck.angle + DAT_005cc320);
-            *(float *)(uVar2 + 0x28) = -FUN_004c3b30(*(float *)&L.err.code);
-          }
-          else {
-            *(float *)(uVar2 + 0x28) = L.ck.angle;
-          }
-          if ((*(float *)(uVar2 + 0x18) == *(float *)(uVar2 + 0x1c)) &&
-             (*(float *)(uVar2 + 0x18) == *(float *)(uVar2 + 0x20))) {
-            *(uchar *)(uVar2 + 3) = 1;
-          }
-          else {
-            *(uchar *)(uVar2 + 3) = 0;
-          }
-          *(uchar *)(uVar2 + 2) = L.ck.b0;
-          iVar3 = FUN_004e1b60(&DAT_0061862c, iVar3, uVar2);
-          return (iVar3 != 0) ? uVar2 : 0;
-        }
-      }
+      *(float *)(light + 0x28) = ck.angle;
     }
+    if ((*(float *)(light + 0x18) == *(float *)(light + 0x1c)) &&
+        (*(float *)(light + 0x18) == *(float *)(light + 0x20))) {
+      *(uchar *)(light + 3) = 1;
+    }
+    else {
+      *(uchar *)(light + 3) = 0;
+    }
+    *(uchar *)(light + 2) = (uchar)ck.tf;
+    if (!FUN_004e1b60(&DAT_0061862c, stream, light)) return 0;
+    return light;
   }
-  return 0;
+  else {
+    Err err;
+    err.code = 2;
+    err.data = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+    return 0;
+  }
 }

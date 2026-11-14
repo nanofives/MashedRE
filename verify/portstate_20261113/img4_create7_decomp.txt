@@ -1,0 +1,164 @@
+// FUN_004555d0 @ 0x004555d0  size=61  (MASHED.exe)
+// NOTE: 0x004555d0 is not a function entry; showing containing function
+// undefined FUN_004555d0(void)
+// callees: FUN_00489c60@0x00489c60, RpClumpDestroy@0x004e6e00
+
+void FUN_004555d0(void)
+
+{
+  undefined4 *puVar1;
+  undefined4 *puVar2;
+  
+  puVar2 = &DAT_006885e8;
+  puVar1 = &DAT_00688418;
+  do {
+    RpClumpDestroy(*puVar2);
+    RpClumpDestroy(puVar1[-3]);
+    FUN_00489c60(*puVar1);
+    puVar1 = puVar1 + 0x1b;
+    puVar2 = puVar2 + 0xb;
+  } while ((int)puVar1 < 0x688634);
+  return;
+}
+
+
+
+// FUN_00457b10 @ 0x00457b10  size=93  (MASHED.exe)
+// NOTE: 0x00457b10 is not a function entry; showing containing function
+// undefined FUN_00457b10(void)
+// callees: FUN_004768c0@0x004768c0, RpClumpDestroy@0x004e6e00
+
+void FUN_00457b10(void)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = &DAT_0068b0e4;
+  do {
+    RpClumpDestroy(*puVar1);
+    puVar1 = puVar1 + 6;
+  } while ((int)puVar1 < 0x68b144);
+  puVar1 = &DAT_0068a368;
+  do {
+    RpClumpDestroy(*puVar1);
+    puVar1 = puVar1 + 0x1b;
+  } while ((int)puVar1 < 0x68b0e8);
+  RpClumpDestroy(DAT_0068b134);
+  RpClumpDestroy(DAT_0068b130);
+  FUN_004768c0(&DAT_0068b090);
+  return;
+}
+
+
+
+// FUN_0045a790 @ 0x0045a790  size=39  (MASHED.exe)
+// NOTE: 0x0045a790 is not a function entry; showing containing function
+// undefined FUN_0045a790(void)
+// callees: FUN_004898d0@0x004898d0, RpClumpDestroy@0x004e6e00
+
+void FUN_0045a790(void)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = &DAT_0068bb70;
+  do {
+    RpClumpDestroy(puVar1[4]);
+    FUN_004898d0(*puVar1);
+    puVar1 = puVar1 + 0x1a;
+  } while ((int)puVar1 < 0x68bd10);
+  return;
+}
+
+
+
+// FUN_0045b2d0 @ 0x0045b2d0  size=45  (MASHED.exe)
+// NOTE: 0x0045b2d0 is not a function entry; showing containing function
+// undefined FUN_0045b2d0(void)
+// callees: RpClumpDestroy@0x004e6e00
+
+void FUN_0045b2d0(void)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = &DAT_0068d174;
+  do {
+    RpClumpDestroy(*puVar1);
+    puVar1 = puVar1 + 9;
+  } while ((int)puVar1 < 0x68d204);
+  RpClumpDestroy(DAT_0068d1e8);
+  return;
+}
+
+
+
+// FUN_00454af0 @ 0x00454af0  size=55  (MASHED.exe)
+// NOTE: 0x00454af0 is not a function entry; showing containing function
+// undefined FUN_00454af0(void)
+// callees: FUN_004768c0@0x004768c0, RpClumpDestroy@0x004e6e00
+
+void FUN_00454af0(void)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = &DAT_00688368;
+  do {
+    RpClumpDestroy(*puVar1);
+    puVar1 = puVar1 + 5;
+  } while ((int)puVar1 < 0x6883b8);
+  RpClumpDestroy(DAT_006883a8);
+  FUN_004768c0(&DAT_0088fec0);
+  return;
+}
+
+
+
+// FUN_00456ca0 @ 0x00456ca0  size=53  (MASHED.exe)
+// NOTE: 0x00456ca0 is not a function entry; showing containing function
+// undefined FUN_00456ca0(void)
+// callees: FUN_004768c0@0x004768c0, RpClumpDestroy@0x004e6e00
+
+void FUN_00456ca0(void)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = &DAT_0068a25c;
+  do {
+    RpClumpDestroy(*puVar1);
+    puVar1 = puVar1 + 4;
+  } while ((int)puVar1 < 0x68a29c);
+  FUN_004768c0(&DAT_0068a2c0);
+  FUN_004768c0(&DAT_0068a210);
+  return;
+}
+
+
+
+// FUN_004530b0 @ 0x004530b0  size=69  (MASHED.exe)
+// NOTE: 0x004530b0 is not a function entry; showing containing function
+// undefined FUN_004530b0(void)
+// callees: FUN_004898d0@0x004898d0, RpClumpDestroy@0x004e6e00
+
+void FUN_004530b0(void)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = &DAT_00684e4c;
+  do {
+    RpClumpDestroy(*puVar1);
+    puVar1 = puVar1 + 7;
+  } while ((int)puVar1 < 0x684ebc);
+  puVar1 = &DAT_00684f00;
+  do {
+    RpClumpDestroy(puVar1[-4]);
+    FUN_004898d0(*puVar1);
+    puVar1 = puVar1 + 0x44;
+  } while ((int)puVar1 < 0x687100);
+  return;
+}
+
+

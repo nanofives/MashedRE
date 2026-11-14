@@ -1,0 +1,45 @@
+{
+ "identical": 1188,
+ "different": 11,
+ "not_in_map": 15,
+ "functions": 1214,
+ "provisional_units_skipped": 272,
+ "units": 1440,
+ "units_linked": 1164,
+ "refusals": {
+  "fail:wrapper-redefines-globals": 4
+ },
+ "skips": {
+  "skip:provisional": 272
+ },
+ "different_rvas": [
+  "0x00401690",
+  "0x004332a0",
+  "0x0043c5b0",
+  "0x0045a3a0",
+  "0x00475a00",
+  "0x004929d0",
+  "0x00493710",
+  "0x00493900",
+  "0x00498810",
+  "0x004c0c20",
+  "0x004c0f00"
+ ],
+ "not_in_map_rvas": [
+  "0x004053d0",
+  "0x00405420",
+  "0x00405430",
+  "0x0041cb10",
+  "0x0041d6e0",
+  "0x00427680",
+  "0x004277a0",
+  "0x00458080",
+  "0x0045bac0",
+  "0x0045bba0",
+  "0x0045bf30",
+  "0x0048cee0",
+  "0x004cbad0",
+  "0x0052ddc0",
+  "0x005555b0"
+ ]
+}

@@ -1,0 +1,2 @@
+# RO-FIRST-DIVERGENCE: whole file-backed .rdata+.data image (IMG-2-LOADER, L-149 (a)) on the RO replay arm
+MASHED_PORTSTATE_IMAGE=1

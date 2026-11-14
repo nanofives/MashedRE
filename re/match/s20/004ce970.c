@@ -1,4 +1,16 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWT-S6 2026-11-13: 100%, BYTE-IDENTICAL (375 B, ddk), relocheck OK. Lever: the two failure tests are separate
+   statements, `if (!FUN_004cde50(mask)) { destroy image; destroy mask; return 0; }` then the same for FUN_004cdf20, so the
+   failure body is written twice. c2 merges the two copies into one block (0x004cea03), the extra uses of image make it the
+   heavier variable (esi, 0x004ce97d; mask edi, 0x004ce9a6), the failure block falls through after `jne 0x004cea99`, and
+   the mask == NULL tail cross-jumps into it (`push esi; jmp 0x004cea7b` at 0x004ce9de). Search:
+   verify/match_20261113/RESULT_MATCH-RWT-S6.md. Earlier notes below are history. */
+/* MATCH-RWT-S4 2026-11-13: SEMANTIC FIX, score 71.5% -> 56.2%. The failure path (FUN_004cde50 or FUN_004cdf20 returns 0)
+   destroys image first, then mask: the original runs the destroy on esi (image) at 0x004cea03..0x004cea42, then on edi
+   (mask) at 0x004cea48..0x004cea8a. The previous body destroyed mask first (a permuter pick that scored higher on a
+   wrong body). Residual: image is in edi and mask in esi (original esi / edi, 0x004ce97d, 0x004ce9a6), and ours does
+   not cross-jump the mask == NULL path into the freelist-free tail (original push esi; jmp 0x004cea7b at 0x004ce9de),
+   137 against 127 instructions. Levers tried: verify/match_20261113/RESULT_MATCH-RWT-S4.md. */
 /* MATCH-S20 0x004ce970 (h3): 71.5% (regs 38.7%, ops 83.2%). RwImage read with mask: image = FUN_004ce390(name); no mask name -> image; mask = FUN_004ce390(maskname); FUN_004cde50(mask) (make mask) and FUN_004cdf20(image, mask) (apply) -> destroy mask, return image; otherwise destroy what was read and return 0. Image destroy is written as a macro (free pixels via RwGlobals+0x10c when flags&1, FUN_004d8060(&DAT_006182b4, img), freelist free +0x11c on module+0 with module = RwGlobals + DAT_007d4628). Residual: the original keeps image in esi / mask in edi (ours swapped), cross-jumps the mask==NULL path into the shared freelist-free tail (push esi; jmp), places the success path last, and schedules the three destroy copies differently. Tried: nested RW-style form (56.2%), early-return form (41.6%), if/else with a shared victim free (44.5%), static __inline destroy (not inlined under /Ob1, 19.7%), permuter 90 compiles (71.5%, this file: the failure path destroys mask first). Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -63,17 +75,21 @@ RwImage *FUN_004ce970(const char *param_1, const char *param_2)
   if (image) {
     if (param_2 && *param_2) {
       mask = FUN_004ce390(param_2);
-      if (mask) {
-        if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) {
-          IMAGEDESTROY(mask);
-          return image;
-        }
-        IMAGEDESTROY(mask);
+      if (!mask) {
         IMAGEDESTROY(image);
         return 0;
       }
-      IMAGEDESTROY(image);
-      return 0;
+      if (!FUN_004cde50(mask)) {
+        IMAGEDESTROY(image);
+        IMAGEDESTROY(mask);
+        return 0;
+      }
+      if (!FUN_004cdf20(image, mask)) {
+        IMAGEDESTROY(image);
+        IMAGEDESTROY(mask);
+        return 0;
+      }
+      IMAGEDESTROY(mask);
     }
     return image;
   }

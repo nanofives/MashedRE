@@ -1,0 +1,12 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 1/8 after 600s
+[RO_DEF-fdref] exit 0 12:05:30
+[ORIG_TOP] [TRACE] watch armed (rc 0) on main thread 8228: 1 slot(s) 0x007F0FF0 0x00000000 0x00000000 0x00000000, dr7 0x000D0001, from tick 0
+[ORIG_TOP] [TRACE] watch: 603 hit(s), 3 distinct pc, 0 pc over the table, watch.jsonl written
+[ORIG_TOP] [TRACE] self-test PASS (0 of 11098 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 3, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reached at tick 300 (N 903)
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 00018800, 0x00493390 0019CE40, 0x00497310 00018B30, 0x00534870 00033C70
+[RO_RONEG-fdneg] exit 0 12:06:13
+[ORIG_TOP] [TRACE] watch armed (rc 0) on main thread 18716: 1 slot(s) 0x007F0FF0 0x00000000 0x00000000 0x00000000, dr7 0x000D0001, from tick 0
+[ORIG_TOP] [TRACE] watch: 604 hit(s), 4 distinct pc, 0 pc over the table, watch.jsonl written
+[ORIG_TOP] [TRACE] self-test PASS (0 of 11098 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 3, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reached at tick 300 (N 903)
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 00018800, 0x00493390 0019CE40, 0x00497310 00018B30, 0x00534870 00033C70

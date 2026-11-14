@@ -1,0 +1,11 @@
+export rows 1275, listed 1283 (refused 0), CODEPTR_SLOTS 188: present 180, missing 8, target differs 0
+CODEPTR_IMAGE.tsv rows 1283 (ghidra-ref 1275, codeptr-slots only 8); CODEPTR_SLOTS absent from it: 0
+new slots 1095 (bound 67, trap 1020, excluded 8), distinct new targets 778
+  CODEPTR_SLOTS slot missing from the export: 0x005f99cc -> 0x00456740
+  CODEPTR_SLOTS slot missing from the export: 0x00632c30 -> 0x005aaef0
+  CODEPTR_SLOTS slot missing from the export: 0x00632c34 -> 0x005aae90
+  CODEPTR_SLOTS slot missing from the export: 0x00632c44 -> 0x005aaf40
+  CODEPTR_SLOTS slot missing from the export: 0x00632c48 -> 0x005aaee0
+  CODEPTR_SLOTS slot missing from the export: 0x00634554 -> 0x005b4dd0
+  CODEPTR_SLOTS slot missing from the export: 0x006351e0 -> 0x005c9230
+  CODEPTR_SLOTS slot missing from the export: 0x006351e8 -> 0x005bb8f0

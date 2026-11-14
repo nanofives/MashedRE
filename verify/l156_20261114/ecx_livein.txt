@@ -1,0 +1,35 @@
+# image C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe.unpatched
+== 0x00556ca0: 5 insns reached, rets=[], ECX full-written at every ret=False
+  0x00556cb0  UNRESOLVED-INDIRECT-JMP while-not-written jmp dword ptr [eax + 0x138]
+
+== 0x005547f0: 107 insns reached, rets=['0x55493c', '0x55493c'], ECX full-written at every ret=False
+  0x00554807  CALL-while-not-written           call 0x5c4d30
+    == 0x005c4d30: 8 insns reached, rets=['0x5c4d3d', '0x5c4d40'], ECX full-written at every ret=True
+      0x005c4d34  FULL-WRITE                       mov ecx, dword ptr [eax + 4]
+  0x0055480c  PARTIAL-WRITE                    mov cl, byte ptr [edi + 0x10]
+  0x00554859  FULL-WRITE                       mov ecx, dword ptr [eax + 4]
+  0x00554882  FULL-WRITE                       mov ecx, dword ptr [esp + 0x28]
+  0x005548c0  FULL-WRITE                       mov ecx, dword ptr [edi + 0x12c]
+  0x005548de  FULL-WRITE                       mov ecx, dword ptr [esp + 0x18]
+  0x00554914  FULL-WRITE                       mov ecx, dword ptr [esp + 0x20]
+
+== 0x00554940: 584 insns reached, rets=['0x5551ca', '0x5551ca'], ECX full-written at every ret=False
+  0x00554962  FULL-WRITE                       mov ecx, dword ptr [ebp + 0x134]
+  0x00554a19  FULL-WRITE                       mov ecx, dword ptr [0x912a04]
+  0x00554adf  FULL-WRITE                       sub ecx, edx
+  0x00554aeb  FULL-WRITE                       mov ecx, edx
+  0x00554aed  FULL-WRITE                       shr ecx, 0x1f
+  0x00554b1e  FULL-WRITE                       mov ecx, dword ptr [esp + 0x50]
+  0x00554b29  FULL-WRITE                       mov ecx, dword ptr [0x7d3ff8]
+  0x00554b37  indirect call (ECX written)      call dword ptr [ecx + 0x20]
+  0x00554b3d  FULL-WRITE                       mov ecx, dword ptr [0x7d3ff8]
+  0x00554b48  indirect call (ECX written)      call dword ptr [ecx + 0x20]
+  0x00554b58  FULL-WRITE                       mov ecx, dword ptr [0x912a04]
+  0x00554cd8  FULL-WRITE                       add ecx, 0x24
+  0x00554e38  FULL-WRITE                       add ecx, 0x24
+  0x00554fb2  FULL-WRITE                       add ecx, 0x24
+  0x00555114  FULL-WRITE                       add ecx, 0x24
+  0x0055516d  FULL-WRITE                       sub ecx, esi
+  0x00555179  FULL-WRITE                       mov ecx, edx
+  0x0055517b  FULL-WRITE                       shr ecx, 0x1f
+

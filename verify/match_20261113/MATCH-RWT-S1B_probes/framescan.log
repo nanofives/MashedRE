@@ -1,0 +1,322 @@
+0x004c02c0 size   112 ebx_refs   5  and esp, 0xfffffff8 ; sub esp, 0xc ; push ebx
+0x004c0330 size   114 ebx_refs   5  and esp, 0xfffffff8 ; sub esp, 0xc ; push ebx
+0x004cb330 size   344 ebx_refs   0  push ecx ; push esi ; mov esi, dword ptr [ebp + 0xc]
+0x004cb490 size    42 ebx_refs   0  push esi ; push edi ; mov edi, dword ptr [ebp + 0xc]
+0x004cb4c0 size   320 ebx_refs   0  mov eax, dword ptr [ebp + 8] ; push esi ; test eax, eax
+0x004cf160 size   325 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 0x1c ; fld dword ptr [ebp + 8]
+0x004dc160 size   144 ebx_refs   0  push esi ; push edi ; mov eax, dword ptr [ebp + 0x14]
+0x004dc1f0 size   129 ebx_refs   0  push esi ; push edi ; mov eax, dword ptr [ebp + 0x14]
+0x004dc280 size   127 ebx_refs   0  mov eax, dword ptr [ebp + 0x10] ; test eax, 0xf ; je 0x4dc29e
+0x004dc300 size   112 ebx_refs   0  mov eax, dword ptr [ebp + 0x10] ; test eax, 0xf ; je 0x4dc31a
+0x004dc370 size   154 ebx_refs   0  push esi ; push edi ; mov eax, dword ptr [ebp + 0x14]
+0x004dc410 size   139 ebx_refs   0  push esi ; push edi ; mov eax, dword ptr [ebp + 0x14]
+0x004dc4a0 size   137 ebx_refs   0  mov eax, dword ptr [ebp + 0x10] ; test eax, 0xf ; je 0x4dc4be
+0x004dc530 size   122 ebx_refs   0  mov eax, dword ptr [ebp + 0x10] ; test eax, 0xf ; je 0x4dc54a
+0x004dcf90 size    87 ebx_refs   9  push ecx ; xor ecx, ecx ; push ebx
+0x004dcff0 size    92 ebx_refs   9  push ecx ; xor ecx, ecx ; push ebx
+0x004dd050 size    87 ebx_refs   9  push ecx ; xor ecx, ecx ; push ebx
+0x004dd0b0 size   130 ebx_refs  10  push ecx ; push ebx ; push esi
+0x004ea9a0 size  2430 ebx_refs  70  and esp, 0xfffffff8 ; sub esp, 0xd4 ; mov eax, dword ptr [ebp + 8]
+0x004ec839 size   165 ebx_refs   8  push ebx ; xor ebx, ebx ; cmp dword ptr [ebp + 0x10], ebx
+0x004ec8eb size    42 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004ec915 size   142 ebx_refs   0  push ecx ; push ecx ; fld dword ptr [ebp + 0x1c]
+0x004ec9a3 size    42 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004ec9cd size   175 ebx_refs   0  push ecx ; push ecx ; fld dword ptr [ebp + 0x1c]
+0x004eca7c size    47 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004ecaab size    67 ebx_refs   0  mov ecx, dword ptr [ebp + 0xc] ; mov edx, dword ptr [ebp + 0x10] ; fld dword ptr [edx]
+0x004ecb97 size   174 ebx_refs   0  push ecx ; push ecx ; fld dword ptr [ebp + 0x1c]
+0x004ecc45 size    42 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004ecc6f size   209 ebx_refs   0  push ecx ; push ecx ; fld dword ptr [ebp + 0x1c]
+0x004ecd40 size    47 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004ecd6f size    93 ebx_refs   0  mov ecx, dword ptr [ebp + 0xc] ; mov edx, dword ptr [ebp + 0x10] ; fld dword ptr [edx]
+0x004ecdd9 size   139 ebx_refs   0  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0x10] ; mov ecx, dword ptr [ebp + 0xc]
+0x004ece64 size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ece75 size   167 ebx_refs   6  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0x1c] ; test eax, eax
+0x004ecf2f size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ecf59 size   102 ebx_refs   0  sub esp, 0xc ; mov ecx, dword ptr [ebp + 0x10] ; mov eax, dword ptr [ebp + 0xc]
+0x004ecfbf size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ecfd0 size   126 ebx_refs   6  sub esp, 0xc ; mov eax, dword ptr [ebp + 0x1c] ; test eax, eax
+0x004ed04e size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ed09f size   240 ebx_refs   0  sub esp, 0x1c ; mov ecx, dword ptr [ebp + 0x14] ; mov eax, dword ptr [ebp + 0x10]
+0x004ed1c6 size   209 ebx_refs   0  sub esp, 0xc ; fld dword ptr [ebp + 0x1c] ; mov ecx, dword ptr [ebp + 0xc]
+0x004ed297 size    42 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004ed2c1 size   243 ebx_refs   0  push ecx ; push ecx ; fld dword ptr [ebp + 0x1c]
+0x004ed3b4 size    47 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004ed3e3 size   119 ebx_refs   0  mov ecx, dword ptr [ebp + 0xc] ; mov edx, dword ptr [ebp + 0x10] ; fld dword ptr [edx]
+0x004ed467 size   159 ebx_refs   0  sub esp, 0x10 ; mov ecx, dword ptr [ebp + 0x10] ; mov eax, dword ptr [ebp + 0xc]
+0x004ed506 size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ed517 size   191 ebx_refs   6  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0x1c] ; test eax, eax
+0x004ed5e3 size   202 ebx_refs   0  mov eax, dword ptr [ebp + 8] ; fld dword ptr [eax + 0x28] ; fmul dword ptr [eax + 0x3c]
+0x004ed6c0 size   566 ebx_refs   0  sub esp, 0x40 ; mov eax, dword ptr [ebp + 8] ; mov edx, dword ptr [ebp + 0xc]
+0x004ed989 size   566 ebx_refs   0  sub esp, 0x40 ; mov eax, dword ptr [ebp + 8] ; mov edx, dword ptr [ebp + 0xc]
+0x004edbd2 size   927 ebx_refs   0  sub esp, 0x54 ; mov eax, dword ptr [ebp + 0x10] ; mov ecx, dword ptr [eax + 0x10]
+0x004ee0a1 size   122 ebx_refs   0  sub esp, 0x10 ; lea eax, [ebp - 8] ; mov dword ptr [ebp - 0xc], eax
+0x004ee137 size   123 ebx_refs   0  sub esp, 0x10 ; lea eax, [ebp - 4] ; mov dword ptr [ebp - 0xc], eax
+0x004ee1ce size   124 ebx_refs   0  sub esp, 0x10 ; lea eax, [ebp - 8] ; mov dword ptr [ebp - 0xc], eax
+0x004ee26a size   258 ebx_refs   0  sub esp, 0x1c ; lea eax, [ebp - 4] ; mov dword ptr [ebp - 0xc], eax
+0x004ee37f size   226 ebx_refs   0  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc] ; fld dword ptr [0x5cc574]
+0x004ee48f size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ee4a0 size    39 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0xc]
+0x004ee4c7 size   230 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x48 ; cmp dword ptr [ebp + 0x14], 0
+0x004ee616 size   308 ebx_refs  16  sub esp, 0x1c ; mov ecx, dword ptr [ebp + 0xc] ; fld dword ptr [ecx + 0x14]
+0x004ee76a size    92 ebx_refs   0  sub esp, 0x14 ; push dword ptr [ebp + 0xc] ; lea eax, [ebp - 0x14]
+0x004ee7fa size   217 ebx_refs   0  sub esp, 0x20 ; fld dword ptr [ebp + 0x14] ; lea eax, [ebp - 4]
+0x004ee99c size   177 ebx_refs   0  mov edx, dword ptr [ebp + 0xc] ; fld dword ptr [edx + 0xc] ; mov ecx, dword ptr [ebp + 8]
+0x004eea60 size   123 ebx_refs   0  push ecx ; push esi ; mov esi, dword ptr [ebp + 0xc]
+0x004eeaee size   152 ebx_refs   0  push ecx ; push ecx ; mov ecx, dword ptr [ebp + 0xc]
+0x004eebb0 size   227 ebx_refs   0  push ecx ; mov ecx, dword ptr [ebp + 0xc] ; fld1 
+0x004eec93 size    42 ebx_refs   0  push 1 ; call 0x4fbe7a ; fld dword ptr [ebp + 0x1c]
+0x004eecbd size    87 ebx_refs   0  sub esp, 0x20 ; fld dword ptr [ebp + 0x1c] ; push ecx
+0x004eed14 size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004eed54 size   136 ebx_refs   0  sub esp, 0x20 ; fld dword ptr [ebp + 0x18] ; push esi
+0x004eedef size   161 ebx_refs   0  push esi ; mov esi, dword ptr [ebp + 0xc] ; fld dword ptr [esi + 8]
+0x004eee9d size   162 ebx_refs   0  mov ecx, dword ptr [ebp + 0xc] ; fld dword ptr [ecx] ; push esi
+0x004eef91 size   162 ebx_refs  12  sub esp, 0x18 ; mov eax, dword ptr [ebp + 0x10] ; push ebx
+0x004ef040 size   159 ebx_refs   0  sub esp, 0x10 ; mov ecx, dword ptr [ebp + 0x10] ; mov eax, dword ptr [ebp + 0xc]
+0x004ef0df size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ef0f0 size   191 ebx_refs   6  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0x1c] ; test eax, eax
+0x004ef1af size    17 ebx_refs   0  push 1 ; call 0x4fbe7a ; pop ebp
+0x004ef1d1 size   138 ebx_refs   0  push ecx ; push ecx ; mov ecx, dword ptr [ebp + 0xc]
+0x004ef25b size   107 ebx_refs   0  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0x10] ; mov ecx, dword ptr [ebp + 0xc]
+0x004ef2c6 size   131 ebx_refs   6  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0x1c] ; test eax, eax
+0x004ef349 size   125 ebx_refs   0  push ecx ; mov eax, dword ptr [ebp + 0xc] ; mov edx, dword ptr [ebp + 0x10]
+0x004ef3c6 size   152 ebx_refs   4  sub esp, 0x10 ; push ebx ; push esi
+0x004ef45e size    60 ebx_refs   0  push ecx ; push ecx ; mov ecx, dword ptr [ebp + 0x10]
+0x004ef49a size    84 ebx_refs   6  push ecx ; push ecx ; push esi
+0x004ef4ee size   157 ebx_refs   0  sub esp, 0xc ; push esi ; mov esi, dword ptr [ebp + 0xc]
+0x004ef58b size   188 ebx_refs   0  push ecx ; mov eax, dword ptr [ebp + 0xc] ; mov edx, dword ptr [ebp + 0x10]
+0x004ef647 size   223 ebx_refs  12  sub esp, 0x10 ; mov eax, dword ptr [ebp + 0x1c] ; test eax, eax
+0x004ef726 size   365 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x44 ; mov ecx, dword ptr [ebp + 0x1c]
+0x004ef8b3 size   480 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x84 ; mov ecx, dword ptr [ebp + 0x24]
+0x004efab3 size   390 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x44 ; mov ecx, dword ptr [ebp + 0x1c]
+0x004efc59 size   529 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x94 ; mov ecx, dword ptr [ebp + 0x24]
+0x004efe8a size   182 ebx_refs   0  sub esp, 0x10 ; push esi ; mov esi, dword ptr [ebp + 0xc]
+0x004eff40 size    57 ebx_refs   0  sub esp, 0x10 ; fld dword ptr [ebp + 0x14] ; sub esp, 0xc
+0x004eff79 size   692 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0xc8 ; mov eax, dword ptr [ebp + 0x14]
+0x004f022d size   218 ebx_refs   0  sub esp, 0x20 ; push dword ptr [ebp + 0x10] ; lea eax, [ebp - 0x10]
+0x004f0307 size   191 ebx_refs   0  sub esp, 0x10 ; push dword ptr [ebp + 0xc] ; lea eax, [ebp - 0x10]
+0x004fb050 size   143 ebx_refs   0  mov eax, dword ptr [ebp + 8] ; xor ecx, ecx ; cmp eax, ecx
+0x004fb0e0 size    80 ebx_refs   0  mov eax, dword ptr [0x7d4150] ; test eax, eax ; jne 0x4fb10a
+0x004fb130 size   214 ebx_refs   0  push esi ; mov esi, dword ptr [0x7d9904] ; test esi, esi
+0x004fb2a0 size   308 ebx_refs   0  mov eax, dword ptr [0x7d9908] ; test eax, eax ; jne 0x4fb2fe
+0x004fb3e0 size   234 ebx_refs   0  mov eax, dword ptr [0x7d9904] ; push esi ; test eax, eax
+0x004fb4d0 size   203 ebx_refs   0  sub esp, 0x10 ; mov ecx, dword ptr [0x7d9900] ; test ecx, ecx
+0x004fb5a0 size  1034 ebx_refs  18  sub esp, 0x340 ; mov eax, dword ptr [ebp + 0x2c] ; mov ecx, dword ptr [ebp + 0x10]
+0x004fb9aa size   157 ebx_refs   0  sub esp, 0xc ; mov eax, dword ptr [ebp + 0x18] ; mov ecx, dword ptr [ebp + 0xc]
+0x004fbd78 size    93 ebx_refs   0  push ecx ; and dword ptr [ebp - 4], 0 ; lea eax, [ebp - 4]
+0x004fbe7a size   252 ebx_refs   8  push ecx ; push ecx ; cmp dword ptr [ebp + 8], 0
+0x004fc015 size   156 ebx_refs   4  push ecx ; xor edx, edx ; cmp dword ptr [ebp + 8], edx
+0x004fc383 size   228 ebx_refs   4  sub esp, 0x28 ; push ebx ; push esi
+0x004fc916 size   202 ebx_refs   0  push ecx ; push ecx ; push edi
+0x004fc9e0 size   227 ebx_refs   8  sub esp, 0x40 ; mov eax, dword ptr [ebp + 8] ; push ebx
+0x004fcac3 size   142 ebx_refs   5  sub esp, 0x44 ; mov eax, dword ptr [ebp + 8] ; cmp eax, dword ptr [ebp + 0xc]
+0x004fccd8 size   423 ebx_refs  23  sub esp, 0x104 ; push ebx ; push esi
+0x004fd405 size   172 ebx_refs  15  sub esp, 0x100 ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x004fd4da size   456 ebx_refs  13  sub esp, 0x218 ; push esi ; mov esi, ecx
+0x004fd6a2 size   214 ebx_refs   8  sub esp, 0x104 ; push esi ; push edi
+0x004fda12 size   917 ebx_refs  39  sub esp, 0x18 ; and dword ptr [ebp - 8], 0 ; and dword ptr [ebp - 0xc], 0
+0x004fdeaa size   101 ebx_refs   6  mov ecx, dword ptr [ebp + 0xc] ; push edi ; xor eax, eax
+0x004fe298 size   102 ebx_refs   0  push ecx ; push esi ; lea eax, [ebp - 4]
+0x004fe2fe size  1745 ebx_refs  52  sub esp, 0x78 ; push ebx ; push esi
+0x004fe9cf size   551 ebx_refs  47  sub esp, 0x64 ; push ebx ; push esi
+0x004febf6 size   911 ebx_refs  45  sub esp, 0x44 ; push ebx ; push esi
+0x004ff5b6 size   771 ebx_refs  64  push ecx ; push ecx ; push ebx
+0x004ff8b9 size    90 ebx_refs   0  sub esp, 0x20 ; push esi ; mov esi, ecx
+0x004ff9a7 size   321 ebx_refs  19  sub esp, 0xc ; push ebx ; mov ebx, ecx
+0x004ffbc5 size   104 ebx_refs   5  cmp dword ptr [ebp + 0x18], 0 ; push ebx ; push esi
+0x004ffc86 size   380 ebx_refs  37  push ecx ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x004ffe81 size   268 ebx_refs   5  push ecx ; mov eax, dword ptr [ebp + 0xc] ; and dword ptr [eax], 0
+0x004fffd3 size   135 ebx_refs   6  push ecx ; and dword ptr [ebp - 4], 0 ; push ebx
+0x0050005a size   104 ebx_refs   0  push esi ; lea eax, [ebp + 8] ; push eax
+0x005000c2 size   201 ebx_refs   6  mov eax, 0x1000 ; call 0x4a3440 ; push ebx
+0x0050018b size   353 ebx_refs  22  mov eax, 0x100c ; call 0x4a3440 ; mov ecx, dword ptr [ebp + 8]
+0x005002ec size   267 ebx_refs   0  sub esp, 0x100 ; push esi ; mov esi, dword ptr [ebp + 0xc]
+0x0050042f size   304 ebx_refs   0  push ecx ; and dword ptr [ebp - 4], 0 ; push esi
+0x00500604 size   124 ebx_refs   7  push ecx ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x00500680 size   161 ebx_refs  11  push ecx ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x00500721 size   406 ebx_refs  13  push ebx ; mov ebx, ecx ; mov eax, dword ptr [ebx + 4]
+0x005008b7 size   259 ebx_refs  16  sub esp, 0x2c ; push ebx ; mov ebx, ecx
+0x005009f9 size   227 ebx_refs   6  push ecx ; push ecx ; mov eax, dword ptr [ebp + 8]
+0x00500c48 size   667 ebx_refs  11  sub esp, 0x1c ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x00500f92 size   190 ebx_refs  14  mov eax, 0x1000 ; call 0x4a3440 ; push ebx
+0x00501050 size   108 ebx_refs   0  mov eax, dword ptr [ebp + 0x10] ; and eax, 0xffff ; dec eax
+0x00501a85 size   179 ebx_refs   0  push ecx ; push esi ; push edi
+0x00501b38 size   186 ebx_refs   5  push ecx ; push ecx ; mov eax, dword ptr [ebp + 8]
+0x00501ce4 size  1914 ebx_refs  66  sub esp, 0xc ; push esi ; mov esi, ecx
+0x0050250a size   544 ebx_refs  19  sub esp, 0x34 ; push esi ; push edi
+0x0050272a size   741 ebx_refs  18  sub esp, 0x50 ; push ebx ; push esi
+0x00502a48 size    87 ebx_refs   4  push ecx ; push esi ; lea eax, [ebp - 4]
+0x00502a9f size   149 ebx_refs   6  push ecx ; push ecx ; push dword ptr [ebp + 8]
+0x00502b7b size   555 ebx_refs  11  push esi ; push edi ; mov edi, dword ptr [ebp + 0x14]
+0x00502e9e size  1281 ebx_refs  62  sub esp, 0x3c ; push ebx ; push esi
+0x005033f4 size  1430 ebx_refs  63  sub esp, 0x44 ; push ebx ; push edi
+0x00504008 size  1107 ebx_refs  51  sub esp, 0xc ; push esi ; push edi
+0x0050450d size    71 ebx_refs   0  mov eax, dword ptr [ebp + 0x10] ; and dword ptr [eax], 0 ; push esi
+0x005045ca size   121 ebx_refs   5  push ebx ; mov eax, dword ptr [ebp + 0x10] ; mov ebx, dword ptr [ebp + 0xc]
+0x00504643 size   154 ebx_refs   0  mov eax, dword ptr [ebp + 0xc] ; movss xmm0, dword ptr [eax] ; movss xmm1, dword ptr [eax + 4]
+0x005046dd size   126 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc]
+0x0050475b size   194 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x20 ; movss xmm1, dword ptr [ebp + 0x14]
+0x0050481d size   298 ebx_refs  14  sub esp, 0x14 ; mov ecx, dword ptr [ebp + 0xc] ; fld dword ptr [ecx + 0x14]
+0x00504947 size   378 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, ecx
+0x00504ac1 size   518 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00504cc7 size   398 ebx_refs  17  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00504e55 size   358 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00504fbb size   272 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x005050cb size   574 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x134 ; mov eax, dword ptr [ebp + 0x1c]
+0x00505309 size   464 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x005054d9 size   561 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x0050570a size  1368 ebx_refs  22  and esp, 0xfffffff0 ; sub esp, 0x4a4 ; mov ecx, dword ptr [ebp + 0x2c]
+0x00505d8c size   212 ebx_refs   8  sub esp, 0xc ; cmp dword ptr [ebp + 0x10], 8 ; push ebx
+0x00505f2c size   204 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov ecx, dword ptr [ebp + 0xc]
+0x0050612c size   764 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x90 ; mov eax, dword ptr [ebp + 0x10]
+0x00506428 size   192 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc]
+0x005064e8 size   154 ebx_refs   0  mov eax, dword ptr [ebp + 0xc] ; movss xmm0, dword ptr [eax] ; movss xmm1, dword ptr [eax + 4]
+0x00506582 size   178 ebx_refs   0  movss xmm0, dword ptr [ebp + 0x1c] ; movss xmm1, xmm0 ; mulss xmm1, xmm0
+0x00506634 size   133 ebx_refs   0  movss xmm0, dword ptr [ebp + 0x1c] ; movss xmm1, xmm0 ; mulss xmm1, xmm0
+0x005066b9 size   165 ebx_refs   0  movss xmm0, dword ptr [ebp + 0x1c] ; movss xmm1, xmm0 ; mulss xmm1, xmm0
+0x0050675e size   179 ebx_refs   0  movss xmm0, dword ptr [ebp + 0x1c] ; movss xmm1, xmm0 ; mulss xmm1, xmm0
+0x00506811 size   154 ebx_refs   0  movss xmm0, dword ptr [ebp + 0x1c] ; movss xmm1, xmm0 ; mulss xmm1, xmm0
+0x005068ab size   134 ebx_refs   0  movss xmm0, dword ptr [ebp + 0x1c] ; movss xmm1, xmm0 ; mulss xmm1, xmm0
+0x00506a29 size   174 ebx_refs   0  mov eax, dword ptr [ebp + 8] ; mov dword ptr [ebp + 8], eax ; mov eax, dword ptr [ebp + 0xc]
+0x00506ad7 size   256 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc]
+0x00506bd7 size   268 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc]
+0x00506ce3 size   213 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x20 ; mov eax, dword ptr [ebp + 0x10]
+0x00506db8 size   240 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x20 ; mov eax, dword ptr [ebp + 0xc]
+0x00506ea8 size   455 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x20 ; mov eax, dword ptr [ebp + 0x10]
+0x0050706f size   518 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00507275 size   398 ebx_refs  17  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00507403 size   358 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00507569 size   272 ebx_refs   8  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00507679 size   574 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x134 ; mov eax, dword ptr [ebp + 0x1c]
+0x005078b7 size   464 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00507a87 size   561 ebx_refs  11  and esp, 0xfffffff0 ; sub esp, 0x124 ; mov eax, dword ptr [ebp + 0x1c]
+0x00507da9 size   210 ebx_refs   8  sub esp, 0xc ; cmp dword ptr [ebp + 0x10], 8 ; push ebx
+0x00507e7b size   192 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc]
+0x00507f3b size   267 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x30 ; mov eax, dword ptr [ebp + 8]
+0x00508046 size   256 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc]
+0x00508146 size   268 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x10 ; mov eax, dword ptr [ebp + 0xc]
+0x00508252 size   212 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x1c ; mov ecx, dword ptr [ebp + 0xc]
+0x00508326 size   259 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x1c ; mov ecx, dword ptr [ebp + 0xc]
+0x00508429 size   277 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x20 ; mov ecx, dword ptr [ebp + 0xc]
+0x0050853e size   564 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x30 ; mov eax, dword ptr [ebp + 0x10]
+0x00508772 size   455 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x20 ; mov eax, dword ptr [ebp + 0x10]
+0x00508939 size   194 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x20 ; movss xmm1, dword ptr [ebp + 0x14]
+0x005089fb size   298 ebx_refs  14  sub esp, 0x14 ; mov ecx, dword ptr [ebp + 0xc] ; fld dword ptr [ecx + 0x14]
+0x0050a41e size  2617 ebx_refs  12  sub esp, 0xa0 ; and esp, 0xfffffff8 ; mov edx, dword ptr [ebp + 0x14]
+0x0050b6ff size  4504 ebx_refs   0  sub esp, 0xc0 ; mov edx, dword ptr [ebp + 0x14] ; mov ecx, dword ptr [ebp + 0x10]
+0x0050cf70 size   281 ebx_refs   2  sub esp, 0x18 ; mov edx, dword ptr [ebp + 0xc] ; and esp, 0xfffffff8
+0x0050d089 size  4436 ebx_refs   0  sub esp, 0xc0 ; mov edx, dword ptr [ebp + 0x14] ; mov ecx, dword ptr [ebp + 0x10]
+0x0050e8b7 size   820 ebx_refs   0  sub esp, 0x44 ; mov edx, dword ptr [ebp + 0x10] ; movq mm0, qword ptr [edx]
+0x0050f1c4 size   360 ebx_refs   8  sub esp, 0x40 ; mov ecx, dword ptr [ebp + 0x1c] ; xor eax, eax
+0x0050f34c size   518 ebx_refs   8  sub esp, 0x40 ; mov ecx, dword ptr [ebp + 0x1c] ; xor eax, eax
+0x0050f572 size   306 ebx_refs   8  sub esp, 0x40 ; mov ecx, dword ptr [ebp + 0x1c] ; xor eax, eax
+0x005105b6 size    39 ebx_refs   0  cmp dword ptr [ebp + 8], 0 ; jne 0x5105c4 ; mov eax, dword ptr [ebp + 0xc]
+0x00510677 size   130 ebx_refs   0  push ecx ; and dword ptr [ebp - 4], 0 ; push esi
+0x00510886 size    60 ebx_refs   0  mov eax, ecx ; mov ecx, dword ptr [ebp + 8] ; and dword ptr [eax + 8], 0
+0x00510e2f size   311 ebx_refs  13  push ecx ; push esi ; push edi
+0x00510f72 size   235 ebx_refs  13  push ecx ; push ebx ; mov ebx, dword ptr [ebp + 0xc]
+0x0051105d size   181 ebx_refs   5  push ebx ; push esi ; push edi
+0x00511112 size   249 ebx_refs   6  sub esp, 0x20 ; push ebx ; push esi
+0x0051120b size   190 ebx_refs   7  push ecx ; mov eax, dword ptr [ebp + 0x14] ; push esi
+0x005112c9 size   737 ebx_refs  35  sub esp, 0x5c ; or byte ptr [ebp + 0x1b], 0x80 ; push ebx
+0x0051167d size   196 ebx_refs  17  push ecx ; push ecx ; push ebx
+0x00511774 size    70 ebx_refs   0  push esi ; push 0x12 ; mov esi, ecx
+0x00511879 size    84 ebx_refs   0  sub esp, 0x100 ; push esi ; lea eax, [ebp + 0x18]
+0x005118cd size    75 ebx_refs   0  sub esp, 0x100 ; lea eax, [ebp + 0x18] ; push eax
+0x00511918 size    86 ebx_refs   0  sub esp, 0x100 ; push esi ; lea eax, [ebp + 0x18]
+0x00511c4d size   437 ebx_refs   0  mov ecx, dword ptr [ebp + 8] ; test ecx, ecx ; push esi
+0x00511e02 size   269 ebx_refs   6  sub esp, 0x1c ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x00511f0f size   277 ebx_refs  11  sub esp, 0x5c ; push esi ; push edi
+0x00512024 size   814 ebx_refs  15  sub esp, 0x4c ; xor eax, eax ; cmp dword ptr [ebp + 0x10], eax
+0x00512352 size   461 ebx_refs  12  sub esp, 0x20 ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x0051251f size  1951 ebx_refs  42  sub esp, 0x110 ; mov eax, dword ptr [ebp + 0x20] ; xor edx, edx
+0x00513cb6 size   606 ebx_refs  16  sub esp, 0x10 ; push ebx ; xor ebx, ebx
+0x00513f90 size   821 ebx_refs  17  sub esp, 0x28 ; mov eax, dword ptr [ebp + 0xc] ; push ebx
+0x00514330 size  1039 ebx_refs  18  sub esp, 0x44 ; mov eax, dword ptr [ebp + 8] ; push ebx
+0x00514d00 size   341 ebx_refs   5  push ecx ; mov eax, dword ptr [ebp + 0x18] ; mov ecx, dword ptr [ebp + 0x1c]
+0x00515370 size   737 ebx_refs  18  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [ebp + 0xc]
+0x00516460 size   258 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 0x10 ; push esi
+0x005173f0 size   437 ebx_refs   5  push ecx ; mov eax, dword ptr [ebp + 0x18] ; mov ecx, dword ptr [ebp + 0x1c]
+0x005185a0 size  3242 ebx_refs  63  and esp, 0xfffffff8 ; sub esp, 0x44 ; push ebx
+0x0051c220 size  1990 ebx_refs  46  and esp, 0xfffffff8 ; sub esp, 0x44 ; push ebx
+0x00530650 size  1453 ebx_refs  35  and esp, 0xfffffff8 ; sub esp, 0x1bc ; mov eax, dword ptr [ebp + 8]
+0x00532000 size   171 ebx_refs  11  push ebx ; push esi ; push edi
+0x005320b0 size   220 ebx_refs  12  push ebx ; push esi ; push edi
+0x0054a120 size  2315 ebx_refs  39  and esp, 0xfffffff8 ; sub esp, 0x194 ; mov ecx, dword ptr [ebp + 0xc]
+0x00553620 size   626 ebx_refs  15  and esp, 0xfffffff8 ; sub esp, 0x4c ; push ebx
+0x005538a0 size   936 ebx_refs  11  and esp, 0xfffffff8 ; sub esp, 0x54 ; push ebx
+0x0056a450 size   836 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x148 ; fld dword ptr [0x5cc320]
+0x0056a7a0 size   826 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x98 ; mov eax, dword ptr [ebp + 0xa0]
+0x0056ac40 size   357 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x38 ; mov eax, dword ptr [ebp + 0x40]
+0x0056adb0 size  1370 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0x88 ; mov ecx, dword ptr [ebp + 8]
+0x0056dd40 size  2357 ebx_refs   0  and esp, 0xfffffff0 ; sub esp, 0xe8 ; mov eax, dword ptr [ebp + 0x78]
+0x00574920 size    94 ebx_refs   5  push -1 ; push 0x5e5948 ; push 0x4ac660
+0x005749b0 size    77 ebx_refs   2  push -1 ; push 0x5e5958 ; push 0x4ac660
+0x0057cb30 size   864 ebx_refs  11  and esp, 0xfffffff8 ; sub esp, 0x30 ; mov eax, dword ptr [0x913e78]
+0x0057ce90 size  1241 ebx_refs  28  and esp, 0xfffffff8 ; sub esp, 0x20 ; mov eax, dword ptr [0x913e78]
+0x0057d370 size   519 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 8 ; mov eax, dword ptr [0x913fc8]
+0x0057d580 size  1036 ebx_refs  14  and esp, 0xfffffff8 ; sub esp, 0x18 ; push ebx
+0x0057d990 size  1231 ebx_refs  18  and esp, 0xfffffff8 ; sub esp, 0x24 ; mov eax, dword ptr [0x913e78]
+0x0057e750 size   202 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 8 ; mov eax, dword ptr [0x91459c]
+0x00580090 size   782 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 0x10 ; push esi
+0x00580ac0 size   992 ebx_refs  21  and esp, 0xfffffff8 ; sub esp, 0x3c ; push ebx
+0x00585660 size   545 ebx_refs   5  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [0x913e78]
+0x00585890 size   720 ebx_refs  11  and esp, 0xfffffff8 ; sub esp, 0x2c ; mov eax, dword ptr [0x913fe8]
+0x00586340 size   755 ebx_refs  12  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [0x91465c]
+0x00589080 size   789 ebx_refs  15  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [0x913fc0]
+0x00589fa0 size 13348 ebx_refs   9  and esp, 0xfffffff8 ; mov eax, 0x21b4 ; call 0x4a3440
+0x0058e940 size   950 ebx_refs   8  and esp, 0xfffffff8 ; sub esp, 0xc ; mov ecx, dword ptr [0x914020]
+0x0058f520 size   370 ebx_refs  14  push ecx ; mov eax, dword ptr [0x62abec] ; push ebx
+0x005901f0 size   495 ebx_refs  21  push ebx ; push esi ; push edi
+0x005905d0 size   815 ebx_refs  32  and esp, 0xfffffff8 ; sub esp, 0x1c ; mov eax, dword ptr [0x913f8c]
+0x00590930 size  1157 ebx_refs  10  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [0x913e78]
+0x00590dc0 size   608 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 8 ; mov eax, dword ptr [0x9145a0]
+0x005913c0 size   839 ebx_refs  16  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [ebp + 0x10]
+0x005929c0 size  1532 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 8 ; push 0x914474
+0x005946a0 size   128 ebx_refs   6  and esp, 0xfffffff8 ; push ecx ; mov eax, dword ptr [ebp + 0xc]
+0x00594ec0 size   285 ebx_refs  10  and esp, 0xfffffff8 ; sub esp, 0xc ; mov eax, dword ptr [0x913e78]
+0x00595090 size   421 ebx_refs   0  and esp, 0xfffffff8 ; sub esp, 8 ; cmp dword ptr [0x913e78], 4
+0x00595240 size   858 ebx_refs  10  and esp, 0xfffffff8 ; sub esp, 0x2c ; mov eax, dword ptr [ebp + 0x10]
+0x005955a0 size   714 ebx_refs  16  and esp, 0xfffffff8 ; sub esp, 0x1c ; mov edx, dword ptr [ebp + 0x18]
+0x0059c7f0 size   775 ebx_refs  12  and esp, 0xfffffff8 ; sub esp, 0x10 ; mov eax, dword ptr [0x913e78]
+0x0059ec20 size  2370 ebx_refs  59  and esp, 0xfffffff8 ; sub esp, 0x34 ; mov eax, dword ptr [ebp + 0x14]
+0x0059f5d0 size  6083 ebx_refs 118  and esp, 0xfffffff8 ; sub esp, 0xdc ; push ebx
+0x005a14a0 size   638 ebx_refs  17  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [ebp + 0x10]
+0x005a1c80 size   243 ebx_refs   9  and esp, 0xfffffff8 ; push ecx ; mov ecx, dword ptr [ebp + 8]
+0x005a2070 size   427 ebx_refs  10  and esp, 0xfffffff8 ; sub esp, 0xc ; push ebx
+0x005a2500 size   358 ebx_refs   9  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [ebp + 0x10]
+0x005a2670 size   499 ebx_refs   9  and esp, 0xfffffff8 ; sub esp, 0xc ; mov eax, dword ptr [0x914648]
+0x005a2870 size   456 ebx_refs   8  and esp, 0xfffffff8 ; sub esp, 0xc ; mov eax, dword ptr [0x914648]
+0x005a2c60 size  2170 ebx_refs  72  and esp, 0xfffffff8 ; sub esp, 0x14 ; push ebx
+0x005a3990 size  1284 ebx_refs  31  and esp, 0xfffffff8 ; sub esp, 0x24 ; mov eax, dword ptr [0x913f8c]
+0x005a3f80 size   693 ebx_refs  14  and esp, 0xfffffff8 ; sub esp, 0xc ; mov eax, dword ptr [0x91401c]
+0x005a4240 size   834 ebx_refs  18  and esp, 0xfffffff8 ; sub esp, 0x3c ; push ebx
+0x005a4590 size   421 ebx_refs   9  and esp, 0xfffffff8 ; sub esp, 0x24 ; mov edx, dword ptr [0x91401c]
+0x005a48d0 size   911 ebx_refs  26  and esp, 0xfffffff8 ; sub esp, 0x14 ; mov eax, dword ptr [0x914664]
+0x005a4ed0 size   328 ebx_refs  17  and esp, 0xfffffff8 ; sub esp, 0xc ; push ebx
+0x005a56e0 size   176 ebx_refs   4  and esp, 0xfffffff8 ; push ecx ; mov ecx, dword ptr [ebp + 0x14]
+0x005bd6f0 size   748 ebx_refs  25  sub esp, 0x5c ; push ebx ; mov ebx, dword ptr [ebp + 8]
+0x005bdad0 size   407 ebx_refs   8  sub esp, 0x20 ; mov eax, dword ptr [ebp + 8] ; push esi
+0x005c1a40 size   631 ebx_refs  11  sub esp, 0x18 ; push ebx ; push esi
+0x005c1dac size    39 ebx_refs   0  add esp, -0xc ; wait  ; fnstcw word ptr [ebp - 2]
+0x005c1f97 size   142 ebx_refs   0  sub esp, 0x20 ; push esi ; push edi
+0x005c21e2 size   172 ebx_refs   0  push esi ; push edi ; mov esi, 0xffff
+0x005c22bd size    52 ebx_refs   0  sub esp, 0x20 ; mov eax, dword ptr [ebp + 8] ; push eax
+0x005c2435 size    57 ebx_refs   0  push ecx ; push ecx ; lea eax, [ebp - 8]
+0x005c278f size    87 ebx_refs   0  sub esp, 0x20 ; mov eax, dword ptr [ebp + 0xc] ; push esi
+0x005c27e6 size    56 ebx_refs   0  sub esp, 0x18 ; push esi ; mov esi, dword ptr [ebp + 8]
+0x005c281e size   201 ebx_refs  14  push ecx ; push ebx ; mov ebx, dword ptr [ebp + 0xc]
+0x005c29cb size    67 ebx_refs   0  push ecx ; push ecx ; push edi
+0x005c2a0e size    55 ebx_refs   0  push ecx ; push ecx ; push esi
+0x005c2a45 size   384 ebx_refs   7  push esi ; mov esi, dword ptr [ebp + 8] ; cmp dword ptr [esi], 0
+0x005c2bc5 size   447 ebx_refs   7  push ecx ; push ebx ; push esi
+0x005c302a size   354 ebx_refs  17  sub esp, 0xc ; push ebx ; push esi
+0x005c31d0 size   155 ebx_refs   3  sub esp, 0x1c ; mov eax, dword ptr [0x616038] ; xor eax, dword ptr [ebp + 4]
+0x005c326b size   209 ebx_refs   8  push ecx ; push ecx ; push ebx
+0x005c3340 size    62 ebx_refs   2  add esp, 0xfffffd30 ; push ebx ; wait 
+0x005c337e size    61 ebx_refs   2  add esp, 0xfffffd30 ; push ebx ; wait 
+0x005c33bb size    72 ebx_refs   2  add esp, 0xfffffd30 ; push ebx ; push dword ptr [ebp + 0xc]
+0x005c3551 size    51 ebx_refs   2  add esp, 0xfffffd30 ; push ebx ; push dword ptr [ebp + 0xc]
+0x005c3584 size    60 ebx_refs   6  add esp, -0xc ; push ebx ; mov ax, word ptr [ebp + 0xe]
+0x005c4180 size    24 ebx_refs   0  sub esp, 8 ; and esp, 0xfffffff0 ; fstp qword ptr [esp]
+0x005c4547 size   192 ebx_refs  13  push ebx ; push esi ; push edi

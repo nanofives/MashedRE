@@ -1,0 +1,247 @@
+== re/match/t01g/004111c0.c  helpers FUN_004103a0
+   caller-side FUN_0040dd80: plain 48 B, non-static 48 B, IDENTICAL
+   caller-side FUN_0040ddf0: plain 16 B, non-static 16 B, IDENTICAL
+   caller-side FUN_0040e460: plain 16 B, non-static 16 B, IDENTICAL
+   caller-side FUN_0040fc00: plain 688 B, non-static 688 B, DIFFERENT
+   caller-side FUN_0040feb0: plain 640 B, non-static 640 B, IDENTICAL
+   caller-side FUN_00410130: plain 448 B, non-static 448 B, IDENTICAL
+   caller-side FUN_004102f0: plain 176 B, non-static 176 B, DIFFERENT
+   helper FUN_004103a0: static 368 B, non-static 368 B, same=False
+   caller-side FUN_00410ab0: plain 128 B, non-static 128 B, IDENTICAL
+   caller-side FUN_004111c0: plain 400 B, non-static 432 B, DIFFERENT
+   helper FUN_004103a0 live-in registers, original 0x004103a0: eax @0x004103a4 (mov ebx, eax)
+   helper FUN_004103a0 live-in registers, DDK static copy: eax @+0x4 (mov ebx, eax)
+   helper FUN_004103a0 read and never written, original: none
+   call FUN_004111c0+0xfb -> FUN_004103a0 (plain object):
+  00ed: call 0xf2
+  00f2: pop esi
+  00f3: pop ecx
+  00f4: ret 
+  00f5: mov esi, dword ptr [esp + 0xc]
+  00f9: mov eax, esi
+  00fb: call 0x100
+  0100: call 0x105
+  0105: pop esi
+   same site in the original, 0x004112bb:
+  004112af: jmp 0x59a012b3
+  004112b4: ret 
+  004112b5: mov esi, dword ptr [esp + 0xc]
+  004112b9: mov eax, esi
+  004112bb: call 0x4103a0
+   VERDICT callers-depend-on-private-convention
+== re/match/s06/00427ca0.c  helpers FUN_00427880
+   helper FUN_00427880: static 80 B, non-static 80 B, same=False
+   caller-side FUN_00427ca0: plain 352 B, non-static 352 B, DIFFERENT
+   helper FUN_00427880 live-in registers, original 0x00427880: eax @0x00427882 (push eax)
+   helper FUN_00427880 live-in registers, DDK static copy: eax @+0x2 (push eax)
+   helper FUN_00427880 read and never written, original: none
+   call FUN_00427ca0+0xa5 -> FUN_00427880 (plain object):
+  0093: push 0
+  0095: push edx
+  0096: call 0x9b
+  009b: push eax
+  009c: call 0xa1
+  00a1: lea eax, [esp + 0x28]
+  00a5: call 0xaa
+  00aa: mov dword ptr [0], eax
+  00af: call 0xb4
+   same site in the original, 0x00427d45:
+  00427d39: add byte ptr [eax], al
+  00427d3b: push eax
+  00427d3c: call 0x556cc0
+  00427d41: lea eax, [esp + 0x28]
+  00427d45: call 0x427880
+   VERDICT callers-depend-on-private-convention
+== re/match/s06/00427e00.c  helpers FUN_00427680, FUN_004277a0
+   helper FUN_00427680: static 256 B, non-static 272 B, same=False
+   helper FUN_004277a0: static 160 B, non-static 176 B, same=False
+   caller-side FUN_00427e00: plain 256 B, non-static 256 B, DIFFERENT
+   helper FUN_00427680 live-in registers, original 0x00427680: none
+   helper FUN_00427680 live-in registers, DDK static copy: none
+   helper FUN_00427680 read and never written, original: edi @0x004276d9 (push edi), esi @0x00427745 (fstp dword ptr [esi])
+   call FUN_00427e00+0x9c -> FUN_00427680 (plain object):
+  008a: mov ecx, dword ptr [esp + 0x144]
+  0091: push edx
+  0092: push eax
+  0093: push ecx
+  0094: lea esi, [esp + 0x3c]
+  0098: lea edi, [esp + 0x44]
+  009c: call 0xa1
+  00a1: fld dword ptr [esp + 0x15c]
+  00a8: mov edx, dword ptr [0]
+   same site in the original, 0x00427e9c:
+  00427e90: add byte ptr [edx + 0x50], dl
+  00427e93: push ecx
+  00427e94: lea esi, [esp + 0x3c]
+  00427e98: lea edi, [esp + 0x44]
+  00427e9c: call 0x427680
+   helper FUN_004277a0 live-in registers, original 0x004277a0: eax @0x004277a1 (mov si, word ptr [eax])
+   helper FUN_004277a0 live-in registers, DDK static copy: eax @+0x1 (mov si, word ptr [eax])
+   helper FUN_004277a0 read and never written, original: ebx @0x004277af (mov ecx, ebx)
+   call FUN_00427e00+0x2d -> FUN_004277a0 (plain object):
+  001a: mov eax, dword ptr [esp + 0x114]
+  0021: push esi
+  0022: push edi
+  0023: push eax
+  0024: call 0x29
+  0029: lea ebx, [esp + 0x18]
+  002d: call 0x32
+  0032: mov ecx, dword ptr [0]
+  0038: push 2
+   same site in the original, 0x00427e2d:
+  00427e21: push esi
+  00427e22: push edi
+  00427e23: push eax
+  00427e24: call 0x427780
+  00427e29: lea ebx, [esp + 0x18]
+  00427e2d: call 0x4277a0
+   VERDICT callers-depend-on-private-convention
+== re/match/s06/00427f00.c  helpers FUN_00427680, FUN_00427840
+   helper FUN_00427680: static 256 B, non-static 272 B, same=False
+   helper FUN_00427840: static 64 B, non-static 64 B, same=False
+   caller-side FUN_00427f00: plain 240 B, non-static 240 B, DIFFERENT
+   helper FUN_00427680 live-in registers, original 0x00427680: none
+   helper FUN_00427680 live-in registers, DDK static copy: none
+   helper FUN_00427680 read and never written, original: edi @0x004276d9 (push edi), esi @0x00427745 (fstp dword ptr [esi])
+   call FUN_00427f00+0x90 -> FUN_00427680 (plain object):
+  007e: mov eax, dword ptr [esp + 0x43c]
+  0085: push ecx
+  0086: push edx
+  0087: push eax
+  0088: lea esi, [esp + 0x34]
+  008c: lea edi, [esp + 0x3c]
+  0090: call 0x95
+  0095: fld dword ptr [esp + 0x454]
+  009c: mov ecx, dword ptr [0]
+   same site in the original, 0x00427f90:
+  00427f84: add byte ptr [ecx + 0x52], dl
+  00427f87: push eax
+  00427f88: lea esi, [esp + 0x34]
+  00427f8c: lea edi, [esp + 0x3c]
+  00427f90: call 0x427680
+   helper FUN_00427840 live-in registers, original 0x00427840: eax @0x00427842 (mov edi, eax), ecx @0x0042784a (mov esi, ecx)
+   helper FUN_00427840 live-in registers, DDK static copy: eax @+0x2 (mov edi, eax), ecx @+0xa (mov esi, ecx)
+   helper FUN_00427840 read and never written, original: none
+   call FUN_00427f00+0x32 -> FUN_00427840 (plain object):
+  001b: mov eax, dword ptr [0]
+  0020: push 2
+  0022: push 9
+  0024: call dword ptr [eax + 0x20]
+  0027: mov eax, dword ptr [esp + 0x420]
+  002e: lea ecx, [esp + 0x18]
+  0032: call 0x37
+  0037: call 0x3c
+  003c: lea ecx, [esp + 0x42c]
+   same site in the original, 0x00427f32:
+  00427f26: and byte ptr [ebx + 0x4202484], cl
+  00427f2c: add byte ptr [eax], al
+  00427f2e: lea ecx, [esp + 0x18]
+  00427f32: call 0x427840
+   VERDICT callers-depend-on-private-convention
+== re/match/s06/00427ff0.c  helpers FUN_00427680, FUN_004277a0
+   helper FUN_00427680: static 256 B, non-static 272 B, same=False
+   helper FUN_004277a0: static 160 B, non-static 176 B, same=False
+   caller-side FUN_00427ff0: plain 336 B, non-static 336 B, DIFFERENT
+   helper FUN_00427680 live-in registers, original 0x00427680: none
+   helper FUN_00427680 live-in registers, DDK static copy: none
+   helper FUN_00427680 read and never written, original: edi @0x004276d9 (push edi), esi @0x00427745 (fstp dword ptr [esi])
+   call FUN_00427ff0+0xac -> FUN_00427680 (plain object):
+  009a: mov ecx, dword ptr [esp + 0x150]
+  00a1: push edx
+  00a2: push eax
+  00a3: push ecx
+  00a4: lea esi, [esp + 0x40]
+  00a8: lea edi, [esp + 0x50]
+  00ac: call 0xb1
+  00b1: fld dword ptr [esp + 0x168]
+  00b8: fmul dword ptr [0]
+   same site in the original, 0x0042809c:
+  00428090: add byte ptr [edx + 0x50], dl
+  00428093: push ecx
+  00428094: lea esi, [esp + 0x40]
+  00428098: lea edi, [esp + 0x50]
+  0042809c: call 0x427680
+   helper FUN_004277a0 live-in registers, original 0x004277a0: eax @0x004277a1 (mov si, word ptr [eax])
+   helper FUN_004277a0 live-in registers, DDK static copy: eax @+0x1 (mov si, word ptr [eax])
+   helper FUN_004277a0 read and never written, original: ebx @0x004277af (mov ecx, ebx)
+   call FUN_00427ff0+0x3d -> FUN_004277a0 (plain object):
+  0022: push edi
+  0023: push eax
+  0024: mov dword ptr [esp + 0x1c], 0
+  002c: mov dword ptr [esp + 0x20], 0
+  0034: call 0x39
+  0039: lea ebx, [esp + 0x24]
+  003d: call 0x42
+  0042: mov ecx, dword ptr [0]
+  0048: push 2
+   same site in the original, 0x0042802d:
+  00428022: add byte ptr [eax], al
+  00428024: call 0x427780
+  00428029: lea ebx, [esp + 0x24]
+  0042802d: call 0x4277a0
+   VERDICT callers-depend-on-private-convention
+== re/match/s06/00428140.c  helpers FUN_00427680, FUN_004277a0
+   helper FUN_00427680: static 256 B, non-static 272 B, same=False
+   helper FUN_004277a0: static 160 B, non-static 176 B, same=False
+   caller-side FUN_00428140: plain 352 B, non-static 352 B, DIFFERENT
+   helper FUN_00427680 live-in registers, original 0x00427680: none
+   helper FUN_00427680 live-in registers, DDK static copy: none
+   helper FUN_00427680 read and never written, original: edi @0x004276d9 (push edi), esi @0x00427745 (fstp dword ptr [esi])
+   call FUN_00428140+0x71 -> FUN_00427680 (plain object):
+  005f: mov edx, dword ptr [esp + 0x134]
+  0066: push eax
+  0067: push ecx
+  0068: push edx
+  0069: lea esi, [esp + 0x2c]
+  006d: lea edi, [esp + 0x34]
+  0071: call 0x76
+  0076: mov eax, dword ptr [esp + 0x148]
+  007d: add esp, 0x1c
+   same site in the original, 0x004281b1:
+  004281a5: add byte ptr [eax + 0x51], dl
+  004281a8: push edx
+  004281a9: lea esi, [esp + 0x2c]
+  004281ad: lea edi, [esp + 0x34]
+  004281b1: call 0x427680
+   helper FUN_004277a0 live-in registers, original 0x004277a0: eax @0x004277a1 (mov si, word ptr [eax])
+   helper FUN_004277a0 live-in registers, DDK static copy: eax @+0x1 (mov si, word ptr [eax])
+   helper FUN_004277a0 read and never written, original: ebx @0x004277af (mov ecx, ebx)
+   call FUN_00428140+0x2d -> FUN_004277a0 (plain object):
+  0014: mov dword ptr [esp + 0x114], eax
+  001b: mov eax, dword ptr [esp + 0x11c]
+  0022: push edi
+  0023: push eax
+  0024: call 0x29
+  0029: lea ebx, [esp + 0x1c]
+  002d: call 0x32
+  0032: mov ecx, dword ptr [0]
+  0038: push 2
+   same site in the original, 0x0042816d:
+  00428161: add byte ptr [edi + 0x50], dl
+  00428164: call 0x427780
+  00428169: lea ebx, [esp + 0x1c]
+  0042816d: call 0x4277a0
+   VERDICT callers-depend-on-private-convention
+== re/match/s09/00458920.c  helpers FUN_00458570
+   helper FUN_00458570: static 192 B, non-static 208 B, same=False
+   caller-side FUN_00458920: plain 288 B, non-static 288 B, DIFFERENT
+   helper FUN_00458570 live-in registers, original 0x00458570: eax @0x00458573 (push eax), esi @0x004585c9 (fst dword ptr [esi])
+   helper FUN_00458570 live-in registers, DDK static copy: eax @+0x3 (push eax), esi @+0x59 (fst dword ptr [esi])
+   helper FUN_00458570 read and never written, original: esi @0x004585c9 (fst dword ptr [esi])
+   call FUN_00458920+0xbd -> FUN_00458570 (plain object):
+  009d: je 0xe4
+  009f: mov eax, esi
+  00a1: lea esi, [esp + 0x18]
+  00a5: mov dword ptr [esp + 0xc], 0
+  00ad: mov dword ptr [esp + 0x10], 0x3d23d70a
+  00b5: mov dword ptr [esp + 0x14], 0
+  00bd: call 0xc2
+  00c2: fstp st(0)
+  00c4: mov eax, dword ptr [esp + 0xc]
+   same site in the original, 0x004589dd:
+  004589d1: or dl, bh
+  004589d3: and edi, dword ptr [0x142444c7]
+  004589d9: add byte ptr [eax], al
+  004589db: add byte ptr [eax], al
+  004589dd: call 0x458570
+   VERDICT callers-depend-on-private-convention

@@ -794,6 +794,39 @@ function callFn(fn, input, buf) {
         ptr(CONFIG.target_global).writeU32(input >>> 0);
         return fn(0);
     }
+    // near_leaf_seed_multi_obs — zero-arg fn whose whole observable effect is writes to absolute globals.
+    // MECHANISM: (HB-RUNDIFF-MULTIOBS, 2026-11-13; ported from early_window_leaf_diff.py handler of the
+    // same name): the test input is an INDEX t into CONFIG.seed_sets (path1_tests = [0,1,..]).
+    // seed_sets[t].globals = [[addr,val],...] is written before the call; fn() is called with no args;
+    // CONFIG.observe_addrs (absolute addresses) are read as u32 and packed as a hex fingerprint
+    // (8 digits each). Every seeded and observed global is snapshotted and restored, so the diff does not
+    // leave the live game altered (the early-window harness did not restore; this one does, as
+    // cache_setter_observe does). The return value is NOT observed: false-GREEN hazard if fn also returns
+    // something the caller reads. Addresses may be numbers or hex strings. An empty observe_addrs or a
+    // missing seed_sets[t] throws instead of passing on nothing.
+    // Needs run_diff.py to forward 'seed_sets' and 'observe_addrs' (added with this handler).
+    // NOT mirrored in verify_hook_install_template.js (path2): that template has no case for this type.
+    if (CONFIG.arg_type === 'near_leaf_seed_multi_obs') {
+        const sps = CONFIG.seed_sets || [];
+        const sp = sps[input | 0];
+        if (!sp) throw new Error('near_leaf_seed_multi_obs: no seed_sets[' + (input | 0) + ']');
+        const obs = CONFIG.observe_addrs || [];
+        if (!obs.length) throw new Error('near_leaf_seed_multi_obs: observe_addrs is empty');
+        const seeds = sp.globals || [];
+        const seedSaved = seeds.map(g => ptr(g[0]).readU32() >>> 0);
+        const obsSaved  = obs.map(a => ptr(a).readU32() >>> 0);
+        let result = '';
+        try {
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s][0]).writeU32(seeds[s][1] >>> 0);
+            fn();
+            for (let o = 0; o < obs.length; o++)
+                result += ('00000000' + (ptr(obs[o]).readU32() >>> 0).toString(16)).slice(-8);
+        } finally {
+            for (let o = 0; o < obs.length; o++) ptr(obs[o]).writeU32(obsSaved[o] >>> 0);
+            for (let s = seeds.length - 1; s >= 0; s--) ptr(seeds[s][0]).writeU32(seedSaved[s] >>> 0);
+        }
+        return '0x' + result;
+    }
     // void_setter_observe — call fn(input) [void return], then read target_global and return it.
     // Use for void(uint32) setters that write param_1 directly to a global.
     // Strategy: call fn(value), read back target_global. Both orig and reimpl must

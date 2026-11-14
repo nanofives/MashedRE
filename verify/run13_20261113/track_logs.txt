@@ -1,0 +1,13 @@
+01_Egypt R7IN_lines=0 phase 3 released after 597 frames log_sha256=fa709b693deff584
+02_Neustein R7IN_lines=0 phase 3 released after 951 frames log_sha256=4009cf09a87ca622
+03_Arctic R7IN_lines=0 phase 3 released after 908 frames log_sha256=0aa50f65156a9a50
+04_Highway R7IN_lines=0 phase 3 released after 710 frames log_sha256=49e855a9183f365c
+05_Sands R7IN_lines=0 phase 3 released after 941 frames log_sha256=b56a0e32b7b202e7
+06_SuperG R7IN_lines=0 phase 3 released after 600 frames log_sha256=211a0f13ea048c7b
+07_Roundabout R7IN_lines=0 phase 3 released after 948 frames log_sha256=4d304e45936b3197
+08_Storm R7IN_lines=0 phase 3 released after 785 frames log_sha256=4754d0d4d449730f
+09_Forest R7IN_lines=0 phase 3 released after 677 frames log_sha256=94a2fbd3fcaf581f
+10_Dump R7IN_lines=0 phase 3 released after 592 frames log_sha256=245fd3f2fafda74b
+11_Warzone R7IN_lines=0 phase 3 released after 441 frames log_sha256=1c2c398200bde919
+12_City R7IN_lines=0 phase 3 released after 618 frames log_sha256=93b0cad8f2eed2e7
+13_Training R7IN_lines=0 phase 3 released after 741 frames log_sha256=789a311fc439b889

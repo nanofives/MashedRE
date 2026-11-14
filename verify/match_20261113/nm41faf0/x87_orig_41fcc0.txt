@@ -1,0 +1,13 @@
+fld dword ptr [esi + 0x10]
+fmul dword ptr [0x5d757c]
+fadd dword ptr [esi + 0x14]
+fld dword ptr [esi + 0x18]
+fmul dword ptr [0x5d757c]
+faddp st(1)
+fld dword ptr [0x5d757c]
+fcomp st(1)
+fnstsw ax
+fstp st(0)
+fld dword ptr [0x5d757c]
+fmul dword ptr [edi + 0x288]
+fmul dword ptr [0x5cd04c]

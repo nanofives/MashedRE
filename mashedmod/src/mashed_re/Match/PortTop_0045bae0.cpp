@@ -143,7 +143,10 @@ void PortTop_PWI_Call004587a0(void) {
 // through a forwarder that logs the call and the records the init wrote. One stays a stand-in (entry 1 was the second until ATOMIC-VIEW-2):
 //  - entry 1, 0x004548e0 (DepthCharge): runs matched since ATOMIC-VIEW-2 (librw clone / set-frame / add-child bindings
 //    on the 0x004b3f90 view, Match/PortTop_004548e0.cpp).
-//  - entry 2, 0x00455400 (Missile): no byte match (94.0%, POWERUPINIT-B). Row POWERUPINIT-B2.
+//  - entry 2, 0x00455400 (Missile): no byte match (94.0%, POWERUPINIT-B). Row POWERUPINIT-B2. Since IMG-5-TEARDOWN-BODIES
+//    (L-153 (a), run 46) it runs its PROVISIONAL body (re/match/PROVISIONAL.tsv, L-126, Match/PortTop_00455400.cpp), so
+//    the records that the matched teardown 0x004555d0 reads are built (RESULT_IMG-5-TEARDOWN-FAULT.md).
+void Orig_00455400(void);
 void Orig_00456760(void);
 void Orig_004548e0(void);
 void Orig_004583a0(void);
@@ -153,9 +156,15 @@ void Orig_00454e70(void);
 void Orig_004576f0(void);
 void Orig_00452f70(void);
 #define PWI_INIT(i, rva, why)                                                                                          static void PortTop_PWI_InitStandIn_##i(void) {                                                                        PortTop_PWI_Log("type table entry %u (+0x14 = 0x%08X in the original): init stand-in, not run: " why,                               static_cast<unsigned>(i), 0x##rva##u);                                                        }
-PWI_INIT(2, 00455400, "no byte match (94.0 percent), row POWERUPINIT-B2")
 #undef PWI_INIT
 static unsigned PortTop_PWI_Dw(unsigned a);
+// Entry 2: provisional body (not a byte match, L-126). Logs the two words the matched teardown 0x004555d0 reads first.
+static void PortTop_PWI_InitProv_2(void) {
+    Orig_00455400();
+    PortTop_PWI_Log("type table entry 2: rva 0x00455400: provisional body returned (PROVISIONAL.tsv, 94.0 percent), "
+                    "launcher clone 0x006885e8 = %08X, missile particle 0x00688418 = %08X",
+                    PortTop_PWI_Dw(0x006885e8u), PortTop_PWI_Dw(0x00688418u));
+}
 #define PWI_MATCHED(i, rva, rec, what)                                                                                 static void PortTop_PWI_Init_##i(void) {                                                                               Orig_##rva();                                                                                                      PortTop_PWI_Log("type table entry %u: rva 0x" #rva ": matched body returned, " what " = %08X",                                     static_cast<unsigned>(i), PortTop_PWI_Dw(rec));                                                }
 PWI_MATCHED(0, 00456760, 0x006886b8u, "first clone (0x006886b8)")
 PWI_MATCHED(1, 004548e0, 0x00688260u, "first DepthCharge clone (0x00688260)")
@@ -167,13 +176,18 @@ PWI_MATCHED(7, 004576f0, 0x0068a25cu, "first oil clone (0x0068a25c)")
 PWI_MATCHED(8, 00452f70, 0x00684e4cu, "first mortar clone (0x00684e4c)")
 #undef PWI_MATCHED
 static void (*const s_pwiInit[9])(void) = {
-    PortTop_PWI_Init_0, PortTop_PWI_Init_1, PortTop_PWI_InitStandIn_2,
+    PortTop_PWI_Init_0, PortTop_PWI_Init_1, PortTop_PWI_InitProv_2,
     PortTop_PWI_Init_3, PortTop_PWI_Init_4, PortTop_PWI_Init_5,
     PortTop_PWI_Init_6, PortTop_PWI_Init_7, PortTop_PWI_Init_8,
 };
 
 static unsigned PortTop_PWI_Dw(unsigned a) { return *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(a)); }
 
+// IMG-2-LOADER: the original +0x14 value of each entry (the rvas of s_pwiInit, read from MASHED.exe.unpatched at
+// 0x005f99ac + 0x40*i). With MASHED_PORTSTATE_IMAGE=1 the slots hold these instead of 0, so a slot equal to its own
+// entry's original target is rebound too. With the image off the slots are 0 and this changes nothing.
+static const unsigned s_pwiOrig[9] = {0x00456760u, 0x004548e0u, 0x00455400u, 0x004583a0u, 0x0045a6b0u,
+                                      0x0045b830u, 0x00454e70u, 0x004576f0u, 0x00452f70u};
 // Call site of rva 0x0045bae0 (from the matched 0x00402750): fill the type table's +0x14 slots, then the matched body.
 void PortTop_PWI_Call0045bae0(void) {
     const int n = static_cast<int>(PortTop_PWI_Dw(0x005f9bd8u));
@@ -184,14 +198,14 @@ void PortTop_PWI_Call0045bae0(void) {
     unsigned seeded = 0, kept = 0;
     for (int i = 0; i < 9; ++i) {
         unsigned* const slot = reinterpret_cast<unsigned*>(static_cast<unsigned long>(0x005f9998u + 0x40u * i + 0x14u));
-        if (*slot == 0) {
+        if (*slot == 0 || *slot == s_pwiOrig[i]) {
             *slot = static_cast<unsigned>(reinterpret_cast<unsigned long>(s_pwiInit[i]));
             ++seeded;
         } else {
             ++kept;
         }
     }
-    PortTop_PWI_Log("rva 0x0045bae0: type table +0x14 slots: %u init pointers stored (8 matched, 1 stand-in), %u already non-zero, of 9", seeded, kept);
+    PortTop_PWI_Log("rva 0x0045bae0: type table +0x14 slots: %u init pointers stored (8 matched, 1 provisional), %u already non-zero, of 9", seeded, kept);
     Orig_0045bae0();
     PortTop_PWI_Log("rva 0x0045bae0: matched body returned: DAT_0068d4e0 = %08X, DAT_0068bb58 = %08X, record 0x0068b9b8 +0x04 = %08X",
                     PortTop_PWI_Dw(0x0068d4e0u), PortTop_PWI_Dw(0x0068bb58u), PortTop_PWI_Dw(0x0068b9bcu));

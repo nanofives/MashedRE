@@ -1,0 +1,13 @@
+hooks.csv function entries parsed: 6410
+aligned dwords into a code section: 2124
+  by (section, target section): {('.rdata', '.text'): 893, ('.data', '.text'): 1231}
+  target is a hooks.csv function entry: 772  not an entry: 1352
+  slot inside IAT 0x005cc000..0x005cc2e8: 0
+  distinct targets: 1515  distinct entry targets: 475
+unaligned dword positions whose value lands in code (upper bound, overlaps aligned ones): 2496
+  first 12 non-entry slots: 005cd32c->0049412e 005cd580->0041554c 005cd75c->005c3a63 005cde6c->00424752 005ce6b0->00535752 005ce74c->005c6e61 005ce760->005c6863 005ce788->005c7363 005cf6b0->00595241 005cf9d0->0049dd00 005cf9d4->0049dd10 005cf9d8->0049dd20
+IAT dwords 186, nonzero 177, sample 001e89e0 001e89be 001e89cc 001e9018
+CODEPTR_SLOTS.tsv slots 188, in this scan 188, missing []
+B16 const 005cd5a8 image 3acccccd written-by-B16 3acccccd equal=True
+B16 const 005cc560 image 3b088889 written-by-B16 3b088889 equal=True
+SEED_CANDIDATES.tsv rows: 272

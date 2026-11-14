@@ -1,0 +1,148 @@
+---- _m_blk
+    push	ebp
+    mov	ebp, esp
+    mov	eax, DWORD PTR _x$[ebp]
+    push	ebx
+    push	esi
+    push	edi
+    mov	ecx, DWORD PTR [eax]
+    mov	edi, DWORD PTR _C
+    mov	DWORD PTR _GB8, ecx
+    mov	eax, OFFSET FLAT:_GB8
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L543:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$547
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L543
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    pop	ebp
+    ret	0
+    $set$547:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_GB8
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    pop	ebp
+    ret	0
+---- _m_file
+    push	ebp
+    mov	ebp, esp
+    mov	eax, DWORD PTR _x$[ebp]
+    push	ebx
+    push	esi
+    push	edi
+    mov	ecx, DWORD PTR [eax]
+    mov	edi, DWORD PTR _C
+    mov	DWORD PTR _GF8, ecx
+    mov	eax, OFFSET FLAT:_GF8
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L557:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$561
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L557
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    pop	ebp
+    ret	0
+    $set$561:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_GF8
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    pop	ebp
+    ret	0
+---- _m_none
+    mov	eax, DWORD PTR _x$[esp-4]
+    push	ebx
+    push	esi
+    push	edi
+    mov	ecx, DWORD PTR [eax]
+    mov	edi, DWORD PTR _C
+    mov	DWORD PTR _GN, ecx
+    mov	eax, OFFSET FLAT:_GN
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L571:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$575
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L571
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$575:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_GN
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _m_stat
+    push	ebp
+    mov	ebp, esp
+    mov	eax, DWORD PTR _x$[ebp]
+    push	ebx
+    push	esi
+    push	edi
+    mov	ecx, DWORD PTR [eax]
+    mov	edi, DWORD PTR _C
+    mov	DWORD PTR ?GS8@?1??m_stat@@9@9, ecx
+    mov	eax, OFFSET FLAT:?GS8@?1??m_stat@@9@9
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L587:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$591
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L587
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    pop	ebp
+    ret	0
+    $set$591:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:?GS8@?1??m_stat@@9@9
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    pop	ebp
+    ret	0

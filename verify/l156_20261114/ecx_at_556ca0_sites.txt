@@ -1,0 +1,4 @@
+0x427ecd []
+0x427fc1 []
+0x428115 ['42810c lea ecx, [esp + 0x2c]', '428113 push ecx', '428115 call 0x556ca0']
+0x428271 ['428266 push ecx', '428267 push ecx', '428271 call 0x556ca0']

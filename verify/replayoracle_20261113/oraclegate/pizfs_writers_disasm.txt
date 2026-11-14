@@ -1,0 +1,32 @@
+0x4b6995 adc al, 0x33
+0x4b6997 fild dword ptr [ebp - 0x46e58b40]
+0x4b699d add byte ptr [eax - 0x3fcd0000], al
+0x4b69a3 mov edi, 0x8ad9c0
+0x4b69a8 mov dword ptr [0x7d3e64], ebx
+0x4b69ae mov dword ptr [0x7d3e68], ebx
+0x4b69b4 rep stosd dword ptr es:[edi], eax
+0x4b69b6 mov edx, 0x8ad8a0
+0x4b69bb mov eax, esi
+0x4b69bd sub edx, esi
+0x4b69bf nop 
+0x4b69c0 mov cl, byte ptr [eax]
+0x4b69c2 mov byte ptr [edx + eax], cl
+--
+0x4b6b70 add byte ptr [edx], al
+0x4b6b72 add byte ptr [ebx - 0x35fcef3c], al
+0x4b6b78 mov dword ptr [0x7d3e68], ecx
+0x4b6b7e mov ecx, 0x8000
+0x4b6b83 mov edi, 0x8ad9c0
+0x4b6b88 rep movsd dword ptr es:[edi], dword ptr [esi]
+0x4b6b8a pop edi
+0x4b6b8b pop esi
+0x4b6b8c pop ecx
+0x4b6b8d ret 
+0x4b6b8e nop 
+0x4b6b8f nop 
+0x4b6b90 cdq 
+0x4b6b91 idiv ecx
+0x4b6b93 imul eax, ecx
+0x4b6b96 ret 
+0x4b6b97 nop 
+--

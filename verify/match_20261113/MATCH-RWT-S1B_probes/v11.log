@@ -1,0 +1,120 @@
+dn                   rw9044  /O2 /Ob1 /G3 /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G4 /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G6 /Oy-         87.0 regs  87.0 ops  85.9 92/92 badbytes 87
+dn                   rw9044  /O2 /Ob1 /GB /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /d2G3 /Oy-   83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /d2G4 /Oy-   83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /d2G6 /Oy-   87.0 regs  87.0 ops  85.9 92/92 badbytes 87
+dn                   rw9044  /O2 /Ob1 /G5 /d2G7 /Oy-  FAIL compile failed (rw9044):
+v_dn.c
+fatal error C1048: unknown option '7' in '-G7'
+
+dn                   rw9044  /O2 /Ob1 /G5 /d2G0 /Oy-  FAIL compile failed (rw9044):
+v_dn.c
+fatal error C1048: unknown option '0' in '-G0'
+
+dn                   rw9044  /O2 /Ob1 /G5 /d2G1 /Oy-  FAIL compile failed (rw9044):
+v_dn.c
+fatal error C1048: unknown option '1' in '-G1'
+
+dn                   ddk     /O2 /Ob1 /G3 /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /O2 /Ob1 /G4 /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /O2 /Ob1 /G5 /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /O2 /Ob1 /G6 /Oy-         87.0 regs  87.0 ops  85.9 92/92 badbytes 87
+dn                   ddk     /O2 /Ob1 /GB /Oy-         87.0 regs  87.0 ops  85.9 92/92 badbytes 87
+dn                   ddk     /O2 /Ob1 /G5 /d2G3 /Oy-   83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /O2 /Ob1 /G5 /d2G4 /Oy-   83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /O2 /Ob1 /G5 /d2G6 /Oy-   87.0 regs  87.0 ops  85.9 92/92 badbytes 87
+dn                   ddk     /O2 /Ob1 /G5 /d2G7 /Oy-  FAIL compile failed (ddk):
+v_dn.c
+fatal error C1048: unknown option '7' in '-G7'
+
+dn                   ddk     /O2 /Ob1 /G5 /d2G0 /Oy-  FAIL compile failed (ddk):
+v_dn.c
+fatal error C1048: unknown option '0' in '-G0'
+
+dn                   ddk     /O2 /Ob1 /G5 /d2G1 /Oy-  FAIL compile failed (ddk):
+v_dn.c
+fatal error C1048: unknown option '1' in '-G1'
+
+dn2                  rw9044  /O2 /Ob1 /G3 /Oy-         82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  rw9044  /O2 /Ob1 /G4 /Oy-         82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  rw9044  /O2 /Ob1 /G5 /Oy-         82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  rw9044  /O2 /Ob1 /G6 /Oy-         84.8 regs  84.8 ops  85.9 92/92 badbytes 91
+dn2                  rw9044  /O2 /Ob1 /GB /Oy-         82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  rw9044  /O2 /Ob1 /G5 /d2G3 /Oy-   82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  rw9044  /O2 /Ob1 /G5 /d2G4 /Oy-   82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  rw9044  /O2 /Ob1 /G5 /d2G6 /Oy-   84.8 regs  84.8 ops  85.9 92/92 badbytes 91
+dn2                  rw9044  /O2 /Ob1 /G5 /d2G7 /Oy-  FAIL compile failed (rw9044):
+v_dn2.c
+fatal error C1048: unknown option '7' in '-G7'
+
+dn2                  rw9044  /O2 /Ob1 /G5 /d2G0 /Oy-  FAIL compile failed (rw9044):
+v_dn2.c
+fatal error C1048: unknown option '0' in '-G0'
+
+dn2                  rw9044  /O2 /Ob1 /G5 /d2G1 /Oy-  FAIL compile failed (rw9044):
+v_dn2.c
+fatal error C1048: unknown option '1' in '-G1'
+
+dn2                  ddk     /O2 /Ob1 /G3 /Oy-         82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  ddk     /O2 /Ob1 /G4 /Oy-         82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  ddk     /O2 /Ob1 /G5 /Oy-         82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  ddk     /O2 /Ob1 /G6 /Oy-         84.8 regs  84.8 ops  85.9 92/92 badbytes 91
+dn2                  ddk     /O2 /Ob1 /GB /Oy-         84.8 regs  84.8 ops  85.9 92/92 badbytes 91
+dn2                  ddk     /O2 /Ob1 /G5 /d2G3 /Oy-   82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  ddk     /O2 /Ob1 /G5 /d2G4 /Oy-   82.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn2                  ddk     /O2 /Ob1 /G5 /d2G6 /Oy-   84.8 regs  84.8 ops  85.9 92/92 badbytes 91
+dn2                  ddk     /O2 /Ob1 /G5 /d2G7 /Oy-  FAIL compile failed (ddk):
+v_dn2.c
+fatal error C1048: unknown option '7' in '-G7'
+
+dn2                  ddk     /O2 /Ob1 /G5 /d2G0 /Oy-  FAIL compile failed (ddk):
+v_dn2.c
+fatal error C1048: unknown option '0' in '-G0'
+
+dn2                  ddk     /O2 /Ob1 /G5 /d2G1 /Oy-  FAIL compile failed (ddk):
+v_dn2.c
+fatal error C1048: unknown option '1' in '-G1'
+
+idx                  rw9044  /O2 /Ob1 /G3 /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G4 /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G6 /Oy-         77.2 regs  76.1 ops  83.7 91/92 badbytes 131
+idx                  rw9044  /O2 /Ob1 /GB /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /d2G3 /Oy-   90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /d2G4 /Oy-   90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /d2G6 /Oy-   77.2 regs  76.1 ops  83.7 91/92 badbytes 131
+idx                  rw9044  /O2 /Ob1 /G5 /d2G7 /Oy-  FAIL compile failed (rw9044):
+v_idx.c
+fatal error C1048: unknown option '7' in '-G7'
+
+idx                  rw9044  /O2 /Ob1 /G5 /d2G0 /Oy-  FAIL compile failed (rw9044):
+v_idx.c
+fatal error C1048: unknown option '0' in '-G0'
+
+idx                  rw9044  /O2 /Ob1 /G5 /d2G1 /Oy-  FAIL compile failed (rw9044):
+v_idx.c
+fatal error C1048: unknown option '1' in '-G1'
+
+idx                  ddk     /O2 /Ob1 /G3 /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /O2 /Ob1 /G4 /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /O2 /Ob1 /G5 /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /O2 /Ob1 /G6 /Oy-         77.2 regs  76.1 ops  83.7 91/92 badbytes 131
+idx                  ddk     /O2 /Ob1 /GB /Oy-         77.2 regs  76.1 ops  83.7 91/92 badbytes 131
+idx                  ddk     /O2 /Ob1 /G5 /d2G3 /Oy-   90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /O2 /Ob1 /G5 /d2G4 /Oy-   90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /O2 /Ob1 /G5 /d2G6 /Oy-   77.2 regs  76.1 ops  83.7 91/92 badbytes 131
+idx                  ddk     /O2 /Ob1 /G5 /d2G7 /Oy-  FAIL compile failed (ddk):
+v_idx.c
+fatal error C1048: unknown option '7' in '-G7'
+
+idx                  ddk     /O2 /Ob1 /G5 /d2G0 /Oy-  FAIL compile failed (ddk):
+v_idx.c
+fatal error C1048: unknown option '0' in '-G0'
+
+idx                  ddk     /O2 /Ob1 /G5 /d2G1 /Oy-  FAIL compile failed (ddk):
+v_idx.c
+fatal error C1048: unknown option '1' in '-G1'
+

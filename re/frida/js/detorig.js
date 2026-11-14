@@ -143,21 +143,38 @@ const ORIG_CELL = K(Memory.alloc(8));
 const ACTIVE = K(Memory.alloc(4));
 ACTIVE.writeU32(0);
 const setActive = (v) => ACTIVE.writeU32(v);
+// RO-INPUT-RECORD (cfg.rec): the value FUN_00497310 returns for player 0 (the value the game consumes, scripted or
+// not) is logged as one row (tick, control, value) whenever it differs from the previous return for that control.
+// Native, no Interceptor: the logger sits in the replacement CModule. REC layout (u32): [0] on, [1] row count,
+// [2] address of the tick counter (TK.st + 8), [3] overflow count, [4..67] last value per control, [68 + 3 * i] rows.
+const REC_ROWS = 8192;
+const REC = K(Memory.alloc((68 + 3 * REC_ROWS) * 4));
+for (let i = 0; i < 68; i++) REC.add(i * 4).writeU32(0);
 const cm = K(new CModule(`
   typedef int (*fn_t)(int, int);
   extern fn_t orig_cell;
   extern volatile int ctl[64];
   extern volatile int active;
+  extern volatile unsigned int rec[];
   int repl(int p, int c) {
     int r = orig_cell(p, c);
-    if (active && p == 0 && c >= 0 && c < 64) return ctl[c];
+    if (active && p == 0 && c >= 0 && c < 64) r = ctl[c];
+    if (rec[0] && p == 0 && c >= 0 && c < 64 && (unsigned int)r != rec[4 + c]) {
+      unsigned int n = rec[1];
+      if (n < ${REC_ROWS}u) {
+        unsigned int *row = (unsigned int *)&rec[68 + 3 * n];
+        row[0] = *(const volatile unsigned int *)rec[2]; row[1] = (unsigned int)c; row[2] = (unsigned int)r;
+        rec[1] = n + 1;
+      } else rec[3]++;
+      rec[4 + c] = (unsigned int)r;
+    }
     return r;
   }
-`, { orig_cell: ORIG_CELL, ctl: CTL, active: ACTIVE }));
+`, { orig_cell: ORIG_CELL, ctl: CTL, active: ACTIVE, rec: REC }));
 
 // ---------------------------------------------------------------- events
 const events = [];   // {n, s, fn}
-let seq = 0, warpN = null, raceN = null;
+let seq = 0, warpN = null, raceN = null, recAnchor = null;
 function schedule(n, fn) { events.push({ n: n >>> 0, s: seq++, fn }); events.sort((a, b) => a.n - b.n || a.s - b.s); setDue(events.length ? events[0].n : 0xffffffff); }
 
 const DATA_LO = 0x005ea000, DATA_HI = 0x00915008;   // .data (0x32a704) + _rwdseg (8), contiguous with padding
@@ -287,17 +304,20 @@ function witness() { return (CFG.witness || []).map((va) => [va.toString(16), ga
 function checkpoint(k) {
   const n = N();
   const blob = watchQuiet(() => ga(DATA_LO).readByteArray(DATA_HI - DATA_LO));   // rw watch: the agent's own read would trap
-  const ptd = getptd();
-  const P = rwRngPtr();
+  // RO-FIRST-DIVERGENCE tick checkpoints can run before the CRT per-thread data or the RW globals exist (tick 0 = PE
+  // entry): those fields are then null instead of throwing.
+  const opt = (f) => { try { return f(); } catch (e) { return null; } };
+  const ptd = opt(getptd);
+  const P = opt(rwRngPtr);
   const info = {
-    kind: 'ckpt', k, n, dn: n - raceN, dn_warp: n - warpN,
+    kind: 'ckpt', k, n, dn: n - raceN, dn_warp: n - warpN, tick: tickNow(),
     T: D.readU32(), Qlo: D.add(0x10).readU32(), Qhi: D.add(0x14).readU32(),
     tgt: D.add(0x20).readU32(), qpc: D.add(0x24).readU32(), fwd: D.add(0x28).readU32(),
     phase: ga(0x00771968).readU8(), clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(),
     frames_7f101c: ga(0x007f101c).readU32(), witness: witness(),
-    holdrand: ptd.add(0x14).readU32(),
-    rw_ring: Array.from(new Uint32Array(P.readPointer().readByteArray(0x7c))),
-    rw_cur: [P.add(4).readU32() - P.readPointer().toUInt32(), P.add(8).readU32() - P.readPointer().toUInt32()],
+    holdrand: opt(() => ptd.add(0x14).readU32()),
+    rw_ring: opt(() => Array.from(new Uint32Array(P.readPointer().readByteArray(0x7c)))),
+    rw_cur: opt(() => [P.add(4).readU32() - P.readPointer().toUInt32(), P.add(8).readU32() - P.readPointer().toUInt32()]),
   };
   send(info, blob);
 }
@@ -326,12 +346,14 @@ let watchHits = 0;
 // rw watch only: run fn with this thread's debug-register slots cleared, then re-arm them (an agent read of a watched
 // word would otherwise trap inside Frida's guarded read and throw).
 function watchQuiet(fn) {
-  if (CFG.watchMode !== 'rw' || !(CFG.watch && CFG.watch.length) || !watchArmed) return fn();
+  // RO-FIRST-DIVERGENCE: also in 'w' mode, so the agent's own pins at the warp / anchor (pinTimer writes 0x007f1030) do
+  // not trap inside the agent (o3 failed with 'single-step triggered at pinTimer'). Those writes are then not hits.
+  if (!(CFG.watch && CFG.watch.length) || !watchArmed) return fn();
   const me = Process.getCurrentThreadId();
   const t = Process.enumerateThreads().find((x) => x.id === me);
   const addrs = CFG.watch.slice(0, 2).map((va) => ga(va));
   if (t) addrs.forEach((a, k) => { try { t.unsetHardwareWatchpoint(k); } catch (e) { } });
-  try { return fn(); } finally { if (t) addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, 'rw'); } catch (e) { } }); }
+  try { return fn(); } finally { if (t) addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, CFG.watchMode === 'rw' ? 'rw' : 'w'); } catch (e) { } }); }
 }
 let watchArmed = false;
 const watchPc = {};
@@ -350,7 +372,7 @@ function watchArm() {
       if (watchHits++ < 2000 || rw) {
         let bt = '';
         try { bt = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 12).map((p) => '0x' + (p.toUInt32() >>> 0).toString(16)).join('|'); } catch (e) { bt = 'bt-err'; }
-        send({ kind: 'watch', n: N(), cnt, mode: CFG.watchMode || 'w', tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
+        send({ kind: 'watch', n: N(), tick: tickNow(), rec: TK ? TK.st.add(4).readU32() : null, cnt, mode: CFG.watchMode || 'w', tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
                values: rw ? [] : addrs.map((a) => '0x' + a.readU32().toString(16)) });  // rw: a read here would re-trap
       }
     } catch (e) { /* keep running */ }
@@ -795,7 +817,7 @@ function install() {
       if (CFG.menuCkpt) checkpoint(100);   // full image at the end of the menu segment, before the warp writes
     }
     if (CFG.watchFrom === 'install' && CFG.watch && CFG.watch.length) send({ kind: 'info', msg: 'warp ' + watchArm() });
-    const pins = warp();
+    const pins = watchQuiet(warp);
     if (PV_AT) pins.prov = PV_AT;
     if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
     if (CFG.callLog) D.add(0x34).writeU32(1);
@@ -821,8 +843,8 @@ function install() {
         const cnt = D.add(0x38).readU32();
         send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
       }
-      const pins3 = pinRngs();
-      const na = pinNorm('anchor');
+      const pins3 = watchQuiet(pinRngs);
+      const na = watchQuiet(() => pinNorm('anchor'));
       if (na) pins3.norm = na;
       const ao3 = audioOff('anchor');
       if (ao3) pins3.audioOff = ao3;
@@ -842,7 +864,9 @@ function install() {
       send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, tick: TK ? TK.st.add(8).readU32() : null, frames_7f101c: ga(0x007f101c).readU32(),
              clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness() });
       if (CFG.watch && CFG.watch.length) send({ kind: 'info', msg: watchArm() });
-      for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
+      if (CFG.rec && TK) { recAnchor = tickNow(); REC.add(8).writeU32(TK.st.add(8).toUInt32()); REC.writeU32(1); }
+      if (CFG.inputTick) { const t0 = tickNow(); for (const [dt, c, v] of CFG.input) tickSchedule(t0 + dt, () => { CTL.add(c * 4).writeS32(v); }); }
+      else for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
       CFG.ckpts.forEach((dn, k) => schedule(raceN + dn, () => checkpoint(k)));
       schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => {
         setDue(0xffffffff);
@@ -856,6 +880,11 @@ function install() {
         provReport();
         wsDump();
         if (PZ) { PZ.st.writeU32(0); send({ kind: 'info', msg: 'poison listener calls ' + PZ.st.add(4).readU32() }); }
+        if (CFG.rec) {
+          REC.writeU32(0);
+          const nr = REC.add(4).readU32();
+          send({ kind: 'inputrec', rows: nr, overflow: REC.add(12).readU32(), tick_anchor: recAnchor }, nr ? REC.add(68 * 4).readByteArray(nr * 12) : new ArrayBuffer(0));
+        }
         send({ kind: 'done', n: N() });
       });
     };
@@ -872,6 +901,13 @@ function install() {
     tickSchedule(CFG.warpTick, doWarp);
     // calls made before the first tick (CRT start to the main loop) = the boot segment of the census (provReport)
     if (PV) tickSchedule(1, () => { PV.atTick1 = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32()); });
+    // RO-FIRST-DIVERGENCE: full-image checkpoints at ticks (k = 200 + i). Tick t's dump is taken in the first clock call
+    // of tick t, after that tick's record (the CModule onEnter); detorig_firstdiv.py re-hashes it against record t - 1.
+    // Tick 0 = here, at the install (PE entry point), before any instruction of MASHED.exe ran.
+    (CFG.ckptTicks || []).forEach((t, i) => {
+      if (t === 0) res.push(['ckpt-tick0', (checkpoint(200 + i), 'k ' + (200 + i))]);
+      else tickSchedule(t, () => checkpoint(200 + i));
+    });
     if (CFG.negTick) tickSchedule(CFG.negTick, () => {   // negative control inside the menu segment
       if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
       else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
