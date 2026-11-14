@@ -11,13 +11,14 @@ usage: py -3.12 run_arms.py <arm> [<arm> ...]
 To ADD a stack, write verify/savelink_20261023/stacks/<TAG>.txt (one knob per line, '@<TAG>' includes another stack,
 '#' comments), never a new STACK[...] line in this file: per-stack files keep two rows' additions out of each other's
 merge (HB-RUNARMS-STACKFILES, verify/hb_runarms_20261109/RESULT_HB-RUNARMS-STACKFILES.md). A tag already defined is an error.
-A4_PLAN=1: print each arm's exe and MASHED_* env and exit without launching (no file is touched).
+A4_PLAN=1: print each arm's exe and MASHED_* env and exit without launching (no arm file is touched; A4_OUT itself is created at startup).
 The exe runs with MASHED_ROOT = a private copy of original/ (the root CONTAINS original\), so CWD-relative
 logs land in ROOT, never in the shared main tree. Every run appends one provenance line to RUNLOG.txt.
 """
 import hashlib, os, shutil, subprocess, sys, time
 W = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.normpath(os.environ.get('A4_OUT', 'D:/MashedWT/kfdot_data/arms'))
+os.makedirs(OUT, exist_ok=True)   # HB-RUNARMS-AOUT-MKDIR: a fresh data dir has no A4_OUT yet; create it before any use (also for A4_PLAN=1)
 EXE_NEW = os.environ.get('A4_EXE', os.path.join(W, r'mashedmod\build\mashed_re.exe'))
 EXE_BASE = EXE_NEW
 ROOT = os.path.normpath(os.environ.get('A4_ROOT', 'D:/MashedWT/kfdot_root'))
