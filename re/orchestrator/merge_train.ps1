@@ -321,8 +321,12 @@ function Merge-One([string]$wt, $item) {
 # every earlier row of the batch), commits hooks.csv + CHANGELOG + the TSV moved to re/promotions/applied/, and a refused
 # row sets the whole branch aside (strict: nothing written).
 function Apply-Promotions([string]$wt, $item) {
-  $new = @((Git -C $wt diff --name-only --diff-filter=A 'HEAD^1' 'HEAD') | Where-Object { $_ -match '^re/promotions/[^/]+\.tsv$' })
-  if (-not $new.Count) { return @{ ok = $true; n = 0 } }
+  $added = @((Git -C $wt diff --name-only --diff-filter=A 'HEAD^1' 'HEAD') | Where-Object { $_ -match '^re/promotions/[^/]+\.tsv$' })
+  # HB-TRAIN-TAG-TSV: re/promotions/<ID>-tag.tsv (header rva, tag; optional result) is a notes-only tag file for
+  # `c4_reclass.py tag --apply --strict`, not a batch file. Same failure handling: a refused row sets the branch aside.
+  $tags = @($added | Where-Object { $_ -match '-tag\.tsv$' })
+  $new = @($added | Where-Object { $_ -notmatch '-tag\.tsv$' })
+  if (-not $new.Count -and -not $tags.Count) { return @{ ok = $true; n = 0 } }
   $py = Join-Path $wt 're/tools/c4_reclass.py'
   if (-not (Test-Path -LiteralPath $py)) { return @{ ok = $false; why = "promotions: no re/tools/c4_reclass.py in the merged tree" } }
   foreach ($t in $new) {
@@ -342,7 +346,24 @@ function Apply-Promotions([string]$wt, $item) {
     if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
     Say "  promotions applied: $t ($(($po | Select-Object -Last 1)))"
   }
-  return @{ ok = $true; n = $new.Count }
+  foreach ($t in $tags) {
+    $rows = @(Import-Csv -LiteralPath (Join-Path $wt $t) -Delimiter "`t")
+    $res = if ($rows.Count -and $rows[0].PSObject.Properties['result']) { ([string]$rows[0].result).Trim() } else { '' }
+    if (-not $res) { $res = $t }   # no result column: the CHANGELOG line cites the tag TSV itself
+    $plog = Join-Path $DATA ("promo_" + ($t -replace '[\\/]', '_') + '.log')
+    Push-Location $wt
+    try { $po = & py.exe -3.12 $py tag --tsv $t --result $res --apply --strict 2>&1; $prc = $LASTEXITCODE } finally { Pop-Location }
+    $po | Set-Content $plog
+    if ($prc -ne 0) { return @{ ok = $false; why = "promotions: c4_reclass tag refused $t ($(($po | Where-Object { $_ -match 'REFUSED|refused' } | Select-Object -First 2) -join ' | ')) ($plog)" } }
+    $dest = $t -replace '^re/promotions/', 're/promotions/applied/'
+    New-Item -ItemType Directory -Force -Path (Join-Path $wt 're/promotions/applied') | Out-Null
+    Git -C $wt mv $t $dest | Out-Null
+    Git -C $wt add -- hooks.csv re/analysis/CHANGELOG.md | Out-Null
+    Git -C $wt commit -q -m "Apply tags $($item.id) ($t) via merge train (c4_reclass tag on the current head)" | Out-Null
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
+    Say "  tags applied: $t ($(($po | Select-Object -Last 1)))"
+  }
+  return @{ ok = $true; n = ($new.Count + $tags.Count) }
 }
 function Ensure-Root([string]$root) {
   if (Test-Path (Join-Path $root 'original\MASHED.exe')) { return }
@@ -944,6 +965,16 @@ if ($SelfTest) {
   $aPB = Apply-Promotions $wt2 @{ id = 'P-B'; branch = 'p-b' }
   $hP2 = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv'))
   Check ($mPB.ok -and (-not $aPB.ok) -and $aPB.why -match 'c4_reclass refused' -and $hP2 -match '00401020,FunC,boot,C3,' ) "tracker: a refused promotion row (write-set not covered) = whole branch set aside, hooks.csv left at C3 ($($aPB.why))"
+  # HB-TRAIN-TAG-TSV: re/promotions/<ID>-tag.tsv (rva, tag) is applied with `c4_reclass.py tag --apply --strict` and moved to applied/.
+  Br 't-a' 're/promotions/TA-tag.tsv' "rva`ttag`n0x00401000`tlever=volatile`n"
+  Br 't-b' 're/promotions/TB-tag.tsv' "rva`ttag`n0x00409999`tlever=volatile`n"
+  $mTA = Merge-One $wt2 @{ id = 'T-A'; branch = 't-a' }
+  $aTA = Apply-Promotions $wt2 @{ id = 'T-A'; branch = 't-a' }
+  $hT = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv')); $cT = [IO.File]::ReadAllText((Join-Path $wt2 're\analysis\CHANGELOG.md'))
+  Check ($mTA.ok -and $aTA.ok -and $aTA.n -eq 1 -and $hT -match '00401000,FunA,boot,C3,impl,a.cpp,,,na edited by A.*lever=volatile' -and $cT -match '(?m)^<!-- ENTRIES -->\r?\n.*tag .*0x00401000' -and (Test-Path (Join-Path $wt2 're\promotions\applied\TA-tag.tsv')) -and -not (Test-Path (Join-Path $wt2 're\promotions\TA-tag.tsv'))) "tracker: a <ID>-tag.tsv is applied at merge time (c4_reclass tag --strict): notes tagged, confidence untouched, CHANGELOG line written, TSV moved to applied/"
+  $mTB = Merge-One $wt2 @{ id = 'T-B'; branch = 't-b' }
+  $aTB = Apply-Promotions $wt2 @{ id = 'T-B'; branch = 't-b' }
+  Check ($mTB.ok -and (-not $aTB.ok) -and $aTB.why -match 'c4_reclass tag refused') "tracker: a refused tag row (no hooks.csv row) = whole branch set aside ($($aTB.why))"
   Git -C $f2 worktree remove --force $wt2 2>&1 | Out-Null
   Check ((Get-Content (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') -Raw) -and ((& py.exe -3.12 (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') | Select-Object -Last 1) -match '\[11/11\].*PASS')) "tracker: tracker_merge3_selftest.py 11/11 PASS"
 
