@@ -1,6 +1,86 @@
 # RESULT MATCH-RWT-S5 (2026-11-13)
 
 Row: compiler shaping of 0x004dcbb0 (`re/match/rwl01/004dcbb0.c`) toward a byte match. Match-only: no build, no gates.
+
+## Attempt 3 (Fable 5.2 high on claude3, the one Fable attempt): GREEN, byte-identical
+
+**Verdict: GREEN. 83.2% -> 100.0%** (regs 100.0%, ops 100.0%, 119/119 ins) under `ddk` (cl 13.00.9176 /
+c2 13.00.9178) and `rw9044`, flags `/O2 /Ob1 /G5`. `relocheck.py`: `0x004dcbb0 OK checked=24 unchecked=0`.
+`c4_reclass.py batch --tsv re/promotions/MATCH-RWT-S5.tsv` (dry run): `[1/1] 0x004dcbb0 match PASS byte-identical
+369 B, relocheck OK (24/0)`, 1 pass, 0 refused. Not applied on the branch (merge train applies it). Fable gate 1
+(two Opus-high attempts failed on this exact problem).
+
+### What closed it
+
+The earlier sources kept the slot index in a local (`idx`) mirrored to `DAT_007d70c8`. The matching source has no such
+local. Four source facts, each tied to the original's listing:
+
+1. **`DAT_007d70c8` used directly at every site** (`f1.py`). c2 forms the index web by itself and puts it in ebp:
+   load at 0x004dcbbb (`mov ebp,[0x7d70c8]`), loop compare `cmp ecx,ebp` (0x004dcbf5), found path
+   `mov ebp,ecx` / `cmp ecx,4` / `mov [0x7d70c8],ebp` (0x004dcc27..0x004dcc2c), reloads after the pn stores
+   (0x004dcc7b) and after the call (0x004dcc96). This is the found-path residue of attempt 2 (store from ebp), and it
+   needs no store / compare form in the source.
+2. **end is a variable** (`end = off + size`, and `end = size` on the two off = 0 paths, 0x004dcc4a `mov ebx,edi`).
+   With the expression `off + size` repeated at each site instead (`f1.py` X forms) c2 recomputes it in the tail
+   (`lea eax,[esi+edi]`) and has no `mov ebx,edi`.
+3. **Loop key local, tail inline** (`f2.py`, `f3.py`). The pn loop key is a local loaded before the loop
+   (0x004dcc5f `mov ecx,[ebp*4+0x7d70ec]` precedes the null test at 0x004dcc68; inline key: 99.2). The tail uses
+   `DAT_007d70ec[DAT_007d70c8]` inline in each branch (0x004dcc9f `mov ebp,[ebp*4+0x7d70ec]`, then `mov ecx,[ebp]` /
+   `mov eax,[ebp]` per branch). A `vb` local before the `if` gives 88.2 (pointer in eax, `*vb` load hoisted above
+   the branch).
+4. **Entry copy of param_1 through a volatile read** (`a0 = *(volatile uint *)&param_1;`, used for the size product
+   and the first round-up, 0x004dcbb0 `mov ecx,[esp+4]`). The loop and the tail read `param_1` itself, which c2
+   leaves in its home slot: `mov ebx,[esp+0x14]` per pass (0x004dcc00) and `div dword ptr [esp+0x14]` (0x004dccf2).
+   With (1) to (3) in place and param_1 out of the register competition, size takes edi, end ebx and the index ebp
+   with no further shaping. This removes the 17-instruction size / end swap of attempt 2.
+
+Score ladder (ddk = rw9044 where both were run): `f1.py` natural source with the global index 44.5 (end variable) /
+58.8 (end expression), `f2.py` plus the entry volatile copy 88.2, `f3.py` tail inline 100.0, `f4.py` controls: plain
+copy `a0 = param_1` 41.2, param_1 everywhere 41.2, volatile copy only in the size product 70.6, only in the first
+round-up 85.7, inline loop key 99.2.
+
+### Disclosures
+
+- **The volatile read is still in the source** (one, in the entry block; attempt 2 had one in the loop). It is plain
+  C, emits the one load the original has at 0x004dcbb0, and reads the same value as param_1 (param_1 is never
+  written). No inline asm. Without it (plain copy or param_1 everywhere, `f4.py` c / n) c2 gives param_1 a
+  callee-saved register and leaves the index in memory, 41.2%. A source form that makes c2 drop param_1 from the
+  registers with no volatile was not searched in this attempt (one attempt, stopped at byte identity). If the lead
+  reads the match route as excluding a volatile-read cast, this row is 41.2% natural / 100% with the cast and needs a
+  decision. `c4_reclass.py` accepts it as is.
+- **Provenance of lever 4.** The entry-block placement of the volatile copy first appears in `e1.py` (`t_lp_dp`,
+  71.4%), an untracked probe left in the worktree by the stopped wrong-model worker, with `e2.py` (index-site sweep on
+  the local-idx source, best 88.3% at 120 instructions). I read both before the move to Fable. Levers 1 to 3 and the
+  combination are from this attempt. `e1` / `e2` are committed with the probes for the record.
+- **PROVISIONAL.tsv** (`re/match/PROVISIONAL.tsv` line 200) still lists this RVA at 77.5 NOT-PROVEN. That score is void
+  (S3) and the row is now byte-matched. Not edited here: no documented tool path for removing a row was found
+  (`re/tools/prov/`, `re/tools/provbodies/` read it). The lead or the merge train should drop or refile the row when
+  the promotion applies.
+- `re/analysis/match_ledger.tsv` line 2615 (77.5, REFUSED) is a generated ledger, not regenerated here.
+
+### Semantics
+
+Byte-identical to 0x004dcbb0 (369 B, relocs checked 24/0), so the body computes the original's function. Against the
+S3 / attempt 2 source: same stores in the same order, the local `idx` is replaced by reads of `DAT_007d70c8` at
+points where the local held the global's value.
+
+### Checks run
+
+- `py -3.12 re/tools/match/match.py re/match/rwl01/004dcbb0.c` -> 100.0% tc=ddk; `--toolchain rw9044` -> 100.0%.
+- `py -3.12 re/tools/match/relocheck.py re/match/rwl01/004dcbb0.c` -> OK checked=24 unchecked=0.
+- `py -3.12 re/tools/c4_reclass.py batch --tsv re/promotions/MATCH-RWT-S5.tsv` -> PASS (dry run, nothing written).
+- No build, no gates (match-only row). The VS2022 port build of this file was not run.
+
+### Evidence files (this attempt)
+
+`verify/match_20261113/MATCH-RWT-S5_probes/`: `f1.py`..`f4.py` with `f1.txt`..`f4.txt` (score tables),
+`install_final.py` (writes `f4.py` variant `t` into the source), `e1.py` / `e2.py` and tables (stopped worker).
+Promotion: `re/promotions/MATCH-RWT-S5.tsv`.
+
+---
+
+## Attempt 2 (Opus 5.5 high), history
+
 Model: Opus 5.5, high effort (second Opus-high attempt on the S3-corrected source). Branch `orch/MATCH-RWT-S5` from
 `orch/integration`.
 
