@@ -1,0 +1,200 @@
+exe C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe
+--- 0x004b65c0 +0x30
+0x004b65c0  57                   push edi
+0x004b65c1  8b7c2408             mov edi, dword ptr [esp + 8]
+0x004b65c5  85ff                 test edi, edi
+0x004b65c7  740e                 je 0x4b65d7
+0x004b65c9  56                   push esi
+0x004b65ca  b92b080000           mov ecx, 0x82b
+0x004b65cf  bee0b78a00           mov esi, 0x8ab7e0
+0x004b65d4  f3a5                 rep movsd dword ptr es:[edi], dword ptr [esi]
+0x004b65d6  5e                   pop esi
+0x004b65d7  5f                   pop edi
+0x004b65d8  c3                   ret 
+0x004b65d9  90                   nop 
+0x004b65da  90                   nop 
+0x004b65db  90                   nop 
+0x004b65dc  90                   nop 
+0x004b65dd  90                   nop 
+0x004b65de  90                   nop 
+0x004b65df  90                   nop 
+0x004b65e0  33c0                 xor eax, eax
+0x004b65e2  a328da8e00           mov dword ptr [0x8eda28], eax
+0x004b65e7  a32cda8e00           mov dword ptr [0x8eda2c], eax
+--- 0x004952f0 +0x40
+0x004952f0  b8b0200000           mov eax, 0x20b0
+0x004952f5  e846e10000           call 0x4a3440
+0x004952fa  a138606100           mov eax, dword ptr [0x616038]
+0x004952ff  338424b0200000       xor eax, dword ptr [esp + 0x20b0]
+0x00495306  898424ac200000       mov dword ptr [esp + 0x20ac], eax
+0x0049530d  8d442400             lea eax, [esp]
+0x00495311  50                   push eax
+0x00495312  e8a9120200           call 0x4b65c0
+0x00495317  8d4c2404             lea ecx, [esp + 4]
+0x0049531b  51                   push ecx
+0x0049531c  6894fe5c00           push 0x5cfe94
+0x00495321  e8da100000           call 0x496400
+0x00495326  e865120200           call 0x4b6590
+--- 0x004963d0 +0xd0
+0x004963d0  e99bffffff           jmp 0x496370
+0x004963d5  90                   nop 
+0x004963d6  90                   nop 
+0x004963d7  90                   nop 
+0x004963d8  90                   nop 
+0x004963d9  90                   nop 
+0x004963da  90                   nop 
+0x004963db  90                   nop 
+0x004963dc  90                   nop 
+0x004963dd  90                   nop 
+0x004963de  90                   nop 
+0x004963df  90                   nop 
+0x004963e0  a1bc2f7700           mov eax, dword ptr [0x772fbc]
+0x004963e5  85c0                 test eax, eax
+0x004963e7  eb0e                 jmp 0x4963f7
+0x004963e9  50                   push eax
+0x004963ea  8b442408             mov eax, dword ptr [esp + 8]
+0x004963ee  50                   push eax
+0x004963ef  e860de0000           call 0x4a4254
+0x004963f4  83c408               add esp, 8
+0x004963f7  c3                   ret 
+0x004963f8  90                   nop 
+0x004963f9  90                   nop 
+0x004963fa  90                   nop 
+0x004963fb  90                   nop 
+0x004963fc  90                   nop 
+0x004963fd  90                   nop 
+0x004963fe  90                   nop 
+0x004963ff  90                   nop 
+0x00496400  c3                   ret 
+0x00496401  ec                   in al, dx
+0x00496402  0402                 add al, 2
+0x00496404  0000                 add byte ptr [eax], al
+0x00496406  a138606100           mov eax, dword ptr [0x616038]
+0x0049640b  33842404020000       xor eax, dword ptr [esp + 0x204]
+0x00496412  89842400020000       mov dword ptr [esp + 0x200], eax
+0x00496419  a1bc2f7700           mov eax, dword ptr [0x772fbc]
+0x0049641e  85c0                 test eax, eax
+0x00496420  742d                 je 0x49644f
+0x00496422  8b8c2408020000       mov ecx, dword ptr [esp + 0x208]
+0x00496429  8d84240c020000       lea eax, [esp + 0x20c]
+0x00496430  50                   push eax
+0x00496431  51                   push ecx
+0x00496432  8d542408             lea edx, [esp + 8]
+0x00496436  52                   push edx
+0x00496437  e889de0000           call 0x4a42c5
+0x0049643c  a1bc2f7700           mov eax, dword ptr [0x772fbc]
+0x00496441  50                   push eax
+0x00496442  8d4c2410             lea ecx, [esp + 0x10]
+0x00496446  51                   push ecx
+0x00496447  e808de0000           call 0x4a4254
+0x0049644c  83c414               add esp, 0x14
+0x0049644f  8b8c2400020000       mov ecx, dword ptr [esp + 0x200]
+0x00496456  338c2404020000       xor ecx, dword ptr [esp + 0x204]
+0x0049645d  81c404020000         add esp, 0x204
+0x00496463  e981c70000           jmp 0x4a2be9
+0x00496468  90                   nop 
+0x00496469  90                   nop 
+0x0049646a  90                   nop 
+0x0049646b  90                   nop 
+0x0049646c  90                   nop 
+0x0049646d  90                   nop 
+0x0049646e  90                   nop 
+0x0049646f  90                   nop 
+0x00496470  a1bc2f7700           mov eax, dword ptr [0x772fbc]
+0x00496475  85c0                 test eax, eax
+0x00496477  7413                 je 0x49648c
+0x00496479  50                   push eax
+0x0049647a  e8e9de0000           call 0x4a4368
+0x0049647f  83c404               add esp, 4
+0x00496482  c705bc2f770000000000 mov dword ptr [0x772fbc], 0
+0x0049648c  c3                   ret 
+0x0049648d  90                   nop 
+0x0049648e  90                   nop 
+0x0049648f  90                   nop 
+0x00496490  31c0                 xor eax, eax
+0x00496492  c3                   ret 
+0x00496493  90                   nop 
+0x00496494  90                   nop 
+0x00496495  90                   nop 
+0x00496496  a138606100           mov eax, dword ptr [0x616038]
+exe C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe
+--- 0x00495326 +0x30
+0x00495326  e865120200           call 0x4b6590
+0x0049532b  8b8c24b8200000       mov ecx, dword ptr [esp + 0x20b8]
+0x00495332  338c24bc200000       xor ecx, dword ptr [esp + 0x20bc]
+0x00495339  81c4bc200000         add esp, 0x20bc
+0x0049533f  e9a5d80000           jmp 0x4a2be9
+0x00495344  90                   nop 
+0x00495345  90                   nop 
+0x00495346  90                   nop 
+0x00495347  90                   nop 
+0x00495348  90                   nop 
+0x00495349  90                   nop 
+0x0049534a  90                   nop 
+0x0049534b  90                   nop 
+0x0049534c  90                   nop 
+0x0049534d  90                   nop 
+0x0049534e  90                   nop 
+0x0049534f  90                   nop 
+0x00495350  55                   push ebp
+0x00495351  8bec                 mov ebp, esp
+0x00495353  83e4f8               and esp, 0xfffffff8
+exe C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe
+--- 0x004b6590 +0x30
+0x004b6590  e90b020000           jmp 0x4b67a0
+0x004b6595  90                   nop 
+0x004b6596  90                   nop 
+0x004b6597  90                   nop 
+0x004b6598  90                   nop 
+0x004b6599  90                   nop 
+0x004b659a  90                   nop 
+0x004b659b  90                   nop 
+0x004b659c  90                   nop 
+0x004b659d  90                   nop 
+0x004b659e  90                   nop 
+0x004b659f  90                   nop 
+0x004b65a0  e93b030000           jmp 0x4b68e0
+0x004b65a5  90                   nop 
+0x004b65a6  90                   nop 
+0x004b65a7  90                   nop 
+0x004b65a8  90                   nop 
+0x004b65a9  90                   nop 
+0x004b65aa  90                   nop 
+0x004b65ab  90                   nop 
+0x004b65ac  90                   nop 
+0x004b65ad  90                   nop 
+0x004b65ae  90                   nop 
+0x004b65af  90                   nop 
+0x004b65b0  e93b030000           jmp 0x4b68f0
+0x004b65b5  90                   nop 
+0x004b65b6  90                   nop 
+0x004b65b7  90                   nop 
+0x004b65b8  90                   nop 
+0x004b65b9  90                   nop 
+0x004b65ba  90                   nop 
+0x004b65bb  90                   nop 
+0x004b65bc  90                   nop 
+0x004b65bd  90                   nop 
+0x004b65be  90                   nop 
+0x004b65bf  90                   nop 
+exe C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe
+--- 0x004b67a0 +0x40
+0x004b67a0  e8cbffffff           call 0x4b6770
+0x004b67a5  a1583e7d00           mov eax, dword ptr [0x7d3e58]
+0x004b67aa  50                   push eax
+0x004b67ab  c7054c3e7d0000000000 mov dword ptr [0x7d3e4c], 0
+0x004b67b5  e8d69f0900           call 0x550790
+0x004b67ba  83c404               add esp, 4
+0x004b67bd  c705583e7d0000000000 mov dword ptr [0x7d3e58], 0
+0x004b67c7  c705483e7d0000000000 mov dword ptr [0x7d3e48], 0
+0x004b67d1  e90afeffff           jmp 0x4b65e0
+0x004b67d6  90                   nop 
+0x004b67d7  90                   nop 
+0x004b67d8  90                   nop 
+0x004b67d9  90                   nop 
+0x004b67da  90                   nop 
+0x004b67db  90                   nop 
+0x004b67dc  90                   nop 
+0x004b67dd  90                   nop 
+0x004b67de  90                   nop 
+0x004b67df  90                   nop 
