@@ -1,4 +1,172 @@
-# RESULT RO-ORACLE-GATE (run 45, 2026-11-13): owners of the record-0 residue left after RO-FIRST-DIVERGENCE run 44
+# RESULT RO-ORACLE-GATE
+
+Run 46 comes first, run 45 (history, unchanged) below it.
+
+# Run 46 (2026-11-14): pizfs mask (L-152 (a)) and the oracle forward. HANDOFF at the LIVING-PC reboot
+
+Worker on claude3, lead cmwggc54z02ehmz1bcgkcra7l. Branch `orch/RO-ORACLE-GATE`. Merged `orch/integration` `2c7f97e41`
+(merge `635286e09`, so RWC-FRAME-CLUMP and DDKOBJ-REGCONV-FALLBACK-7 are in).
+
+**Status: HANDOFF.** The mask is in, verified by a static scan and by re-scoring the run-44 pair. The object build is built
+and checked, and a fresh original reference (`og1`) has run. The conductor's reboot notice arrived while the exe arm
+`RO_ROIMG-og1i` was still queued on test-slot memory (it had not launched). It was cancelled, so the oracle verdict on the
+current head has not been measured yet. The exact next command is below.
+
+## 1. The mask (done)
+
+`re/frida/replay_masks_manual.tsv` gets family `pizfs` (bound family, L-152 (a), described in the header) with 3 rows. The
+same rows are appended to `re/frida/replay_masks.tsv`:
+
+| va | width (B) | what | writers | readers |
+|---|---|---|---|---|
+| `0x008ad9c0` | 131,072 (`0x008ad9c0..0x008cd9bf`) | piz chunk cache | `0x004b69b4` `rep stosd` (EDI = `0x008ad9c0` at `0x004b69a3`, FUN_004b6940), `0x004b6b88` `rep movsd` (EDI = `0x008ad9c0` at `0x004b6b83`, ECX = `0x8000` at `0x004b6b7e`, FUN_004b6b20) | `0x004b6db2` only |
+| `0x008ad868` | 4 | FUN_004b6cd0 counter | `0x004b6ce0` | `0x004b6cd0` |
+| `0x008ad878` | 20 (`0x008ad878 0x008ad87c 0x008ad880 0x008ad884 0x008ad888`) | FUN_004b6cd0 counters | `0x004b6d7d 0x004b6d82 0x004b6df2 0x004b6df7 0x004b6e12` | `0x004b6d6c 0x004b6d72 0x004b6de1 0x004b6de7 0x004b6e04` |
+
+Not masked, as the brief requires: `0x008cd9c0`, `0x008eda38`, `0x0090dac0`, `0x007d3e4c..0x007d3e68`
+(RO-PIZFS-UNMASKED-READERS). The other words of the `0x008ad800` counter block (`0x008ad860 0x008ad864 0x008ad86c
+0x008ad870 0x008ad874`, `0x008ad8a0..`, `0x008ad9a0..0x008ad9ac`) are not masked either. They are outside L-152's list.
+
+**Sole reader `0x004b6db2`: confirmed by a static scan of the anchored binary, this run.**
+
+- Tool: `oraclegate/pizfs_refscan.py` (capstone over `original/MASHED.exe.unpatched`, SHA-256 `BDCAE093...3C0E`).
+  Output: `oraclegate/pizfs_refscan.txt`.
+- The scan covers every `.text` operand whose memory displacement (any base or index register) or immediate falls in
+  `0x008ad800..0x008cd9bf`.
+- Exactly three instructions name an address inside the cache:
+  - `0x004b69a3 mov edi, 0x8ad9c0`
+  - `0x004b6b83 mov edi, 0x8ad9c0`
+  - `0x004b6db2 lea esi, [eax + esi + 0x8ad9c0]`
+- **The first two are destinations of the store.** Disassembly is in `oraclegate/pizfs_writers_disasm.txt`:
+  - EDI from `0x004b69a3` feeds `0x004b69b4 rep stosd`.
+  - EDI from `0x004b6b83` feeds `0x004b6b88 rep movsd`.
+- **`0x004b6db2` is the one read.** It loads ESI as the source of `0x004b6dc0 rep movsd` and `0x004b6dc7 rep movsb`. Their
+  destination is EDI = `[esp+0x24]` (`0x004b6dae`), the caller's buffer. ESI is overwritten at `0x004b6dc9`
+  (`mov esi, [ebp+0x20070]`), so the cache pointer does not leave the function.
+- The six counters are named only by instructions inside FUN_004b6cd0 (`0x004b6cd0..0x004b6ec1`), as the table lists.
+- [UNCERTAIN] Six `.data` dwords hold values that fall inside the cache range:
+  - `0x0061d05c` = `0x008b0a07`
+  - `0x0061d474` = `0x008c0045`
+  - `0x0061eeec` = `0x008c0077`
+  - `0x0061eef0` = `0x008c007c`
+  - `0x0061ef08` = `0x008c007c`
+  - `0x0061f018` = `0x008c0124`
+
+  None is 4-byte aligned. Run 45 found no code reference to `0x0061eee0..0x0061ef00`. This run did not check code
+  references to the tables that hold `0x0061d05c`, `0x0061d474` and `0x0061f018`. So "sole reader" is proven for
+  instruction operands only. A pointer loaded from one of these data words is not excluded by this scan.
+- Section 1 of `replay_masks.tsv` was not regenerated. Re-running `gen_replay_masks.py` on the merged head (facts
+  `log/ghidra_funcfacts.jsonl` of the main checkout) also adds an unrelated bound-family row, `0x00914700 MASK:audio`, from
+  hooks.csv drift since RO-MASKS. That row is outside this brief, so it was left out. The committed file equals the
+  regenerated file minus that row and the count line. **For the lead:** regenerate it in its own row.
+
+## 2. Effect of the mask (score-only, no launch)
+
+`re/frida/detorig_firstdiv.py`, image ON exe arm `RO_ROIMG-fdimg` (run 44, object build `ca1854fc...`), masks
+`warp_normalize.tsv,replay_masks.tsv`:
+
+| | run 44 (no pizfs mask) | run 46, ref o2 | run 46, ref og1 (fresh) |
+|---|---|---|---|
+| first divergent record | 0 (tick 1) | 0 (tick 1) | 0 (tick 1) |
+| counted blocks at record 0 | 260 | **140** | **140** |
+| VALUE dwords at tick 1 | 32,942 | **5,696** | 5,696-class (same 140 blocks) |
+| `MASK:pizfs` dwords dropped at tick 1 | n/a | 239 | |
+| first NEW block (detorig_ticks verdict) | `0x00898c00` @ 17, IDENTICAL-FOR-N 17 of 566 | the same | the same |
+
+- 121 of the 123 cache-range blocks leave the count.
+- The two that stay:
+  - `0x008ad800`: holds the unmasked counter words listed in section 1.
+  - `0x008cd800`: holds the head of slot 0, `0x008cd9c0`, which is not masked.
+- Reports: `oraclegate/run46_fd_o2_fdimg_pizmask.md`, `oraclegate/run46_fd_og1_fdimg_pizmask.md`.
+- **The first VALUE dword of the 140 blocks** is listed without an exe map, because the run-44 exe and map no longer exist.
+  The report's first rows are `0x005f99ac..0x005f9bac`, stride `0x40`, 9 dwords:
+  - Ref: the file initializer (e.g. `0x00456760`).
+  - Run: `0x001cd420..0x001cd500`.
+  - Without the map the IMGPTR rule cannot run. In run 44 the same pair, with its map, put the first VALUE dword at
+    `0x00604604`.
+
+  So the next divergence after the pizfs mask is, as far as the code reading goes, `0x00604604` at record 0 (tick 1):
+  ref `0x00000004` (signed 4), run `0x00000000` (signed 0). That is the FUN_004669b0 / FUN_0045d460 audio-init word of
+  run 45 (a) (store `0x0045d6a5`).
+
+  [UNCERTAIN] This rests on run 44's map and on a run-44 exe, not on a run of the current head. Missing evidence: the
+  `RO_ROIMG-og1i` arm below, scored with `--exe-map mashedmod/build/ddkobj/mashed_re_ddk.map`.
+
+## 3. Builds, checks and runs done
+
+- **Object build** (`cmd /c "set MASHED_NO_DEPLOY=1&& set MASHED_DDKOBJ=1&& mashedmod\build.bat"`): rc 0.
+  `mashedmod/build/ddkobj/mashed_re_ddk.exe` SHA-256 `294fae63b3c06bbdb5bbedd009e273dfcb232e2279232c98f83b2afe45965710`.
+  The VS2022 exe was not rebuilt separately.
+- **`ddkobj.py check`:**
+  - IDENTICAL 1229/1263, DIFFERENT 19 (`0x00401690 0x004332a0 0x0043c5b0 0x0045a3a0 0x00475a00 0x004929d0 0x00493710
+    0x00493900 0x00498510 0x00498810 0x004c0c20 0x004c0f00 0x00552890 0x005530f0 0x005533d0 0x005538a0 0x00554200
+    0x00554940 0x005572c0`), not-in-map 15, units linked 1210/1488.
+  - Refusals 9: externalized-static-register-convention 5, wrapper-redefines-globals 4.
+  - These figures equal the merge train's own figures for `orch/integration` at DDKOBJ-REGCONV-FALLBACK-7
+    (`INTEGRATION_LOG.md`, 2026-11-13 22:32). This row changes no exe source.
+- **Original reference `og1`:**
+  - `oraclegate/og_arms.sh orig og1 --ckpt-ticks 0,1,17,18,299,301,600`, under test-slot and mashed_lock, root
+    `D:\MashedWT\RO-ORACLE-GATE_root`.
+  - rc 0, 600 records x 3245 blocks, 22 ckpts, warp at N=3524.
+- **Reference control (original vs original), o2 (run 43) vs og1:** not identical.
+  - 3 counted blocks at record 0, and the first NEW block is `0x00614400` at record 3 (IDENTICAL-FOR-N 3 of 600).
+  - VALUE dwords at tick 1:
+    - `0x0068bc2c`: o2 `0x00000000`, og1 `0x00000004` (signed 4).
+    - `0x00771998`, `0x0077199c`, `0x007719a0`: o2 `0x0001a4b2` (signed 107,698), og1 `0x0001a4af` (signed 107,695).
+    - `0x007f1030` (frame timer block): o2 `0x1341c1c3` (signed 323,076,547), og1 `0x13419e9b` (signed 323,067,547).
+  - Report: `oraclegate/run46_fd_o2_og1.md`.
+  - [UNCERTAIN] Whether these are the run-to-run original drift already handled in RO-CONTROL-DRIFT / `ticks_o1_o2_masked`.
+    This run did not check them against those masks. They decide whether og1 or o2 is the reference race for the verdict.
+- **Self-test:** not reached. It is printed by the exe arm (`[TRACE] self-test`, `[REPLAY] self-test` in `mashed_re.log`),
+  and that arm did not launch. On the original side `og1` exited rc 0 with every checkpoint written.
+- **Tool fix:** `re/frida/detorig_firstdiv.py` `ExeMap` now sets `lo` / `hi` to None when no map is given. Before, the
+  report stopped with `AttributeError: 'ExeMap' object has no attribute 'lo'` whenever `--exe-map` was absent.
+
+## 4. Next (after the reboot)
+
+1. `py -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py status`
+   must show free or no PRIORITY-HOLD / SOLO.
+2. From the worktree:
+   `test-slot bash -c 'A4_RO_CKPT=0,1,17,18,299,301,600 A4_RO_WATCH=0x00604604,0x008ad9c0 bash verify/replayoracle_20261113/oraclegate/og_arms.sh exe ddk RO_ROIMG-og1i'`
+   - Use background mode with a 3,600,000 ms timeout.
+   - The exe is already built: `294fae63...`. No rebuild is needed unless the branch moves.
+   - Read the `[TRACE]` / `[REPLAY]` self-test lines. The image-ON arm can AV in AppDestroy (IMG-4), and then the
+     self-test sits in `meta.json` `selftest`.
+3. Score it against the fresh reference. `D` is `D:/MashedWT/RO-ORACLE-GATE_data`:
+   `py -3.12 re/frida/detorig_firstdiv.py $D/og1 $D/RO_ROIMG-og1i --exe-map mashedmod/build/ddkobj/mashed_re_ddk.map --json $D/fd_og1_og1i.json --md $D/fd_og1_og1i.md`
+4. Settle the reference-control drift (section 3) before naming the reference race in the verdict.
+
+## Evidence (run 46)
+
+- **Committed:**
+  - this section
+  - `re/frida/replay_masks_manual.tsv`, `re/frida/replay_masks.tsv`
+  - `re/frida/detorig_firstdiv.py` (ExeMap fix)
+  - `oraclegate/pizfs_refscan.py`, `oraclegate/pizfs_refscan.txt`, `oraclegate/pizfs_writers_disasm.txt`
+  - `oraclegate/og_arms.sh`
+  - `oraclegate/run46_fd_o2_fdimg_pizmask.md`, `oraclegate/run46_fd_og1_fdimg_pizmask.md`, `oraclegate/run46_fd_o2_og1.md`
+  - `raw_sha256_RO-ORACLE-GATE_run46.txt`
+- **Raw, not committed** (folder `D:/MashedWT/RO-ORACLE-GATE_data`; SHA-256 below and in
+  `raw_sha256_RO-ORACLE-GATE_run46.txt`):
+
+| file | SHA-256 |
+|---|---|
+| `og1/meta.json` | `2d211470c238d14eab63b1fda1fc7f20024d9125717a6d27be5c0edfee48ccd4` |
+| `og1/ticks.bin` | `8cb3819320ad0d6a083e7902d468c0f5e2bd4245d2eaedb5ded873d672e37c00` |
+| `og1.log` | `bc4ec66fc5d03846018c395b78d0867729820582aad03ed68c06812958442a73` |
+| `fd_o2_fdimg_pizmask.json` | `fa9aa6f258bc17e3ae36601ca7efd600048736f9a9c576e99ec0b7b12f63f9dd` |
+| `fd_og1_fdimg_pizmask.json` | `1b7334577796df10918fa0bce757e09d6679bce5f3516ac567c96583596352ed` |
+| `fd_o2_og1.json` | `0ba7fe5964cfd9437921e52b84e425434e215807a9fab1099608faef409b4e4b` |
+| `build_ddk.log` | `48e472d87834c656f4cd431b03c3c6f7fdf4dc93bded03703648a31ed80d11ab` |
+| `ddkobj_check.txt` | `e59f25fb7d7f4e7175504685966762a3b6295e0e6e1ea4b8523e9cab8f359f93` |
+| `D:/MashedWT/RO-FIRST-DIVERGENCE_data/o2/meta.json` | `ac4cb0da3384339b4f1dd372f4d39dd9a39ccd0a2efe2cfdbfe4855f07cd6441` |
+| `D:/MashedWT/RO-FIRST-DIVERGENCE_data/RO_ROIMG-fdimg/meta.json` | `bc2756f167b4c210eb1925e2a54ad66a3b3bc482cddd29b93454718709a2fc74` |
+| `D:/MashedWT/RO-FIRST-DIVERGENCE_data/RO_ROIMG-fdimg/ticks.bin` | `401d1e0582c2f60e53da25ba04b0e31aa693f6ca527d7be2807bab9245cd7026` |
+| root `original/mashed_image.bin` | `81cc77758ffe93ac0b681eb1fed3d63912d25e7d059503af6d4f871dea9afcd8` |
+
+- Gates: not run (top-down row, no G-CTRL, no B, no 12 captures). No tracker, hooks.csv, ROADMAP or `.asi` edit. Nothing pushed.
+
+# Run 45 (2026-11-13, history): owners of the record-0 residue left after RO-FIRST-DIVERGENCE run 44
 
 Row: replay oracle 10. Kind: top-down / harness, scoped by the lead to diagnosis this run. Worker cmwflg95v2y7slh1nj82cq1l4
 (claude2, moved to claude3 for Ghidra MCP), lead cmwfldzyw2xjolh1npz5ac1rm. Branch `orch/RO-ORACLE-GATE` from

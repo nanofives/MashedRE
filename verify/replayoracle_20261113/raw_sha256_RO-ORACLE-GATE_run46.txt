@@ -1,0 +1,13 @@
+2d211470c238d14eab63b1fda1fc7f20024d9125717a6d27be5c0edfee48ccd4  D:/MashedWT/RO-ORACLE-GATE_data/og1/meta.json
+8cb3819320ad0d6a083e7902d468c0f5e2bd4245d2eaedb5ded873d672e37c00  D:/MashedWT/RO-ORACLE-GATE_data/og1/ticks.bin
+bc4ec66fc5d03846018c395b78d0867729820582aad03ed68c06812958442a73  D:/MashedWT/RO-ORACLE-GATE_data/og1.log
+fa9aa6f258bc17e3ae36601ca7efd600048736f9a9c576e99ec0b7b12f63f9dd  D:/MashedWT/RO-ORACLE-GATE_data/fd_o2_fdimg_pizmask.json
+1b7334577796df10918fa0bce757e09d6679bce5f3516ac567c96583596352ed  D:/MashedWT/RO-ORACLE-GATE_data/fd_og1_fdimg_pizmask.json
+0ba7fe5964cfd9437921e52b84e425434e215807a9fab1099608faef409b4e4b  D:/MashedWT/RO-ORACLE-GATE_data/fd_o2_og1.json
+48e472d87834c656f4cd431b03c3c6f7fdf4dc93bded03703648a31ed80d11ab  D:/MashedWT/RO-ORACLE-GATE_data/build_ddk.log
+e59f25fb7d7f4e7175504685966762a3b6295e0e6e1ea4b8523e9cab8f359f93  D:/MashedWT/RO-ORACLE-GATE_data/ddkobj_check.txt
+ac4cb0da3384339b4f1dd372f4d39dd9a39ccd0a2efe2cfdbfe4855f07cd6441  D:/MashedWT/RO-FIRST-DIVERGENCE_data/o2/meta.json
+bc2756f167b4c210eb1925e2a54ad66a3b3bc482cddd29b93454718709a2fc74  D:/MashedWT/RO-FIRST-DIVERGENCE_data/RO_ROIMG-fdimg/meta.json
+401d1e0582c2f60e53da25ba04b0e31aa693f6ca527d7be2807bab9245cd7026  D:/MashedWT/RO-FIRST-DIVERGENCE_data/RO_ROIMG-fdimg/ticks.bin
+81cc77758ffe93ac0b681eb1fed3d63912d25e7d059503af6d4f871dea9afcd8  D:/MashedWT/RO-ORACLE-GATE_root/original/mashed_image.bin
+294fae63b3c06bbdb5bbedd009e273dfcb232e2279232c98f83b2afe45965710  mashedmod/build/ddkobj/mashed_re_ddk.exe (not committed, build output)

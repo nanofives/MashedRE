@@ -1,6 +1,9 @@
 # Hand-written rows of the replay-oracle mask file (RO-MASKS, 2026-11-13). re/tools/gen_replay_masks.py appends them to
 # re/frida/replay_masks.tsv. Same columns as warp_normalize.tsv. Only MASK rows here: PIN rows stay in warp_normalize.tsv.
-# Families: os (OS-assigned or boot-time words), stale-stack (dwords holding leftover stack of the writer).
+# Families: os (OS-assigned or boot-time words), stale-stack (dwords holding leftover stack of the writer),
+# pizfs (bound family, L-152 a, 2026-11-14: private state of the original piz file layer 0x004b6xxx, which the ORIG_TOP
+# exe replaces with its own piz reader, PORT-TOP-04E. Only words written and read inside that layer. The file slots
+# 0x008cd9c0 / 0x008eda38, the directory 0x0090dac0 and 0x007d3e4c..0x007d3e68 are NOT masked: RO-PIZFS-UNMASKED-READERS).
 # Boot residue (1.9) is not masked: warp_normalize.tsv pins it on both sides at the warp.
 va	count	stride	width	action	value	writer	readers	note
 0x00773c40	1	0	260	MASK:os	-	0x004abe86 CRT startup (push 0x104 at 0x004abe9d; the buffer receives the module file name)	-	exe path D:\MashedWT\<ROW>_root\original\MASHED.exe, 0x104 B, differs per private root folder (RESULT_RO-CONTROL-DRIFT, orch/RO-CONTROL-DRIFT @ 22695e174)
@@ -12,3 +15,6 @@ va	count	stride	width	action	value	writer	readers	note
 0x006fe7dc	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370 (rep movsd of an RwMatrix into the particle ring 0x006fe790)	-	RwMatrix pad m[7], stale stack
 0x006fe7ec	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[11], held code address 0x004671a5 (run n3_w2)
 0x006fe7fc	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[15], stale stack
+0x008ad9c0	1	0	131072	MASK:pizfs	-	0x004b69a3/0x004b69b4 FUN_004b6940, 0x004b6b83/0x004b6b88 FUN_004b6b20 (rep movsd, dst 0x008ad9c0, 0x8000 dwords)	0x004b6db2 FUN_004b6cd0 (lea esi -> rep movsd/movsb 0x004b6dc0/0x004b6dc7 into the caller buffer)	piz chunk cache 0x008ad9c0..0x008cd9bf (0x20000 B). Sole code reader 0x004b6db2 by the static scan verify/replayoracle_20261113/oraclegate/pizfs_refscan.txt (RESULT_RO-ORACLE-GATE run 46)
+0x008ad868	1	0	4	MASK:pizfs	-	0x004b6ce0 FUN_004b6cd0	0x004b6cd0 FUN_004b6cd0	FUN_004b6cd0 counter, no other code reference (pizfs_refscan.txt)
+0x008ad878	1	0	20	MASK:pizfs	-	0x004b6d7d 0x004b6d82 0x004b6df2 0x004b6df7 0x004b6e12 FUN_004b6cd0	0x004b6d6c 0x004b6d72 0x004b6de1 0x004b6de7 0x004b6e04 FUN_004b6cd0	FUN_004b6cd0 counters 0x008ad878 0x008ad87c 0x008ad880 0x008ad884 0x008ad888, no other code reference (pizfs_refscan.txt)
