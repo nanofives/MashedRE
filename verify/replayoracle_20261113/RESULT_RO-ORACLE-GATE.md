@@ -12,14 +12,19 @@ Worker on claude3, lead cmwggc54z02ehmz1bcgkcra7l. Branch `orch/RO-ORACLE-GATE`.
 
 **The oracle on the current head, with the pizfs mask in place, gives first divergence at record 0 (tick 1).**
 
+[UNCERTAIN] Every verdict number in this section and in its table is measured against a reference that is not named yet,
+and that reference's control run is not clean (row RO-REF-CONTROL-NOISE, section 6). This covers the first divergence at
+record 0, IDENTICAL-FOR-N 17 of 566, and the first NEW block `0x00898c00` at record 17. They stay [UNCERTAIN] until that row
+names the reference race and its control is clean.
+
 - Pair: exe arm `RO_ROIMG-og1i` (object build `294fae63...`, `MASHED_PORTSTATE_IMAGE=1`) against the original `og1`. Both
   were run in this row on the current head.
-- **First VALUE dword: `0x00604604`**, ref `0x00000004` (signed 4), run `0x00000000` (signed 0).
+- [UNCERTAIN] **First VALUE dword: `0x00604604`**, ref `0x00000004` (signed 4), run `0x00000000` (signed 0).
   - It is the FUN_0045d460 store `0x0045d6a5` of run 45 (a), reached from FUN_004669b0 at `0x004669f6`.
   - The exe arm's write watch on `0x00604604` had 0 hits over 600 ticks.
   - This needs a boot-side body (FUN_0045d460 on the ORIG_TOP audio-init path), not a mask. No mask, admission or stand-in
     was added for it. A row for the lead to file.
-- **detorig_ticks verdict (NEW blocks): IDENTICAL-FOR-N 17 of 566.** The first NEW block is `0x00898c00` at record 17, the
+- [UNCERTAIN] **detorig_ticks verdict (NEW blocks): IDENTICAL-FOR-N 17 of 566.** The first NEW block is `0x00898c00` at record 17, the
   `0x0043dfd0` body lane (RO-FIRST-DIVERGENCE (c), PORT-TOP-08). Unchanged from run 44.
 - **No reference race is named.** The original-vs-original control (o2 against og1) is not clean (section 6). That noise
   belongs to row RO-REF-CONTROL-NOISE.
@@ -28,14 +33,15 @@ Worker on claude3, lead cmwggc54z02ehmz1bcgkcra7l. Branch `orch/RO-ORACLE-GATE`.
   `ticks.bin` holds 566 complete records, and all checkpoint dumps are complete.
 - **Object build:** `ddkobj.py check` IDENTICAL 1229/1263, DIFFERENT 19, the same as the integration head (section 3).
 
-The run-44 → run-46 change at record 0, image ON:
+The run-44 → run-46 change at record 0, image ON. [UNCERTAIN] for the whole table: the reference is not named yet and its
+control is not clean (RO-REF-CONTROL-NOISE).
 
 | | run 44 | run 46 (current head, pizfs mask) |
 |---|---|---|
 | counted blocks | 260 | 139 |
 | VALUE dwords | 32,942 | 5,687 |
 | `MASK:pizfs` dwords dropped | n/a | 239 |
-| first VALUE dword | `0x00604604` | `0x00604604` |
+| first VALUE dword [UNCERTAIN] | `0x00604604` | `0x00604604` |
 
 `0x005f9800` is now explained (IMGPTR) by the fresh exe map. Report: `oraclegate/run46_fd_og1_og1i.md`.
 
@@ -215,6 +221,14 @@ source base is `0x008ab7e0`.
 copy before the frame returns, apart from the [UNCERTAIN] `0x004b6770` and the `0x004a3440` probe named above. No compared
 word is written from it. The counter rows stand on this disassembly, not on a run: no watch was set on the stack buffer.
 The cache rows keep their own evidence, the reader `0x004b6db2` (section 1).
+
+**[UNCERTAIN] The six counter mask rows** (`0x008ad868`, `0x008ad878`, `0x008ad87c`, `0x008ad880`, `0x008ad884`,
+`0x008ad888`) stay uncertain until the two callees this run did not read are checked:
+
+- `0x004a3440`, the frame probe at `0x004952f5`.
+- `0x004b6770`, called from `0x004b67a0`.
+
+Either one could read the stack copy or write a compared word from it. The follow-up row is **RO-ORACLE-CALLEES-STATIC**.
 
 ## 6. Reference control (o2 vs og1): moved to RO-REF-CONTROL-NOISE
 
