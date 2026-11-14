@@ -12,6 +12,7 @@ rva	kind	source	best_pct	exe_symbol
 0x00426030	stop	re/match/s05/00426030.c		RwCoreMissing_00426030
 0x00426670	stop	re/match/s06/00426670.c		RwCoreMissing_00426670
 0x004266b0	stop	re/match/s06/004266b0.c		RwCoreMissing_004266b0
+0x004275d0	match100	re/match/s06/004275d0.c	100.0	RwCore_004275d0
 0x00427680	match100	re/match/s06/00427680.c	100.0	RwCore_00427680
 0x00427780	match100	re/match/s06/00427780.c	100.0	RwCore_00427780
 0x004277a0	match100	re/match/s06/004277a0.c	100.0	RwCore_004277a0
@@ -91,6 +92,12 @@ rva	kind	source	best_pct	exe_symbol
 0x004a3370	missing			RwCoreMissing_004a3370
 0x004a3907	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_004a3907
 0x004b3eb0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_004b3eb0
+0x004b3f90	provisional	re/match/rwfc/004b3f90.c		RwCore_004b3f90
+0x004b4070	provisional	re/match/rwfc/004b4070.c		RwCore_004b4070
+0x004b5190	match100	re/match/s18/004b5190.c	100.0	RwCore_004b5190
+0x004b52c0	match100	re/match/s18/004b52c0.c	100.0	RwCore_004b52c0
+0x004b52f0	match100	re/match/s18/004b52f0.c	100.0	RwCore_004b52f0
+0x004b5300	provisional	re/match/rwfc/004b5300.c		RwCore_004b5300
 0x004c0740	match100	re/match/s19/004c0740.c	100.0	RwCore_004c0740
 0x004c0790	match100	re/match/rwl01/004c0790.c	100.0	RwCore_004c0790
 0x004c07b0	match100	re/match/s19/004c07b0.c	100.0	RwCore_004c07b0
@@ -307,6 +314,9 @@ rva	kind	source	best_pct	exe_symbol
 0x004ccef0	hand	RwCore/RwCore_Hand.cpp		RwCoreHand_004ccef0
 0x004ccf00	hand	RwCore/RwCore_Hand.cpp		RwCoreHand_004ccf00
 0x004ccf20	match100	re/match/s20/004ccf20.c	100.0	RwCore_004ccf20
+0x004cd070	match100	re/match/s20/004cd070.c	100.0	RwCore_004cd070
+0x004cd140	match100	re/match/s20/004cd140.c	100.0	RwCore_004cd140
+0x004cd170	match100	re/match/s20/004cd170.c	100.0	RwCore_004cd170
 0x004cd500	provisional	re/match/s20/004cd500.c	83.3	RwCore_004cd500
 0x004cd550	provisional	re/match/s20/004cd550.c	50.0	RwCore_004cd550
 0x004cd810	match100	re/match/rwl01/004cd810.c	100.0	RwCore_004cd810
@@ -746,8 +756,6 @@ rva	kind	source	best_pct	exe_symbol
 0x004e71de	missing			RwCoreMissing_004e71de
 0x004e72fe	missing			RwCoreMissing_004e72fe
 0x004e7420	provisional	re/match/rwl02/004e7420.c	37.9	RwCore_004e7420
-0x004e77de	missing			RwCoreMissing_004e77de
-0x004e7bd5	missing			RwCoreMissing_004e7bd5
 0x004e7cc0	provisional	re/match/rwl02/004e7cc0.c	90.9	RwCore_004e7cc0
 0x004e7d40	match100	re/match/rwl02/004e7d40.c	100.0	RwCore_004e7d40
 0x004e7d70	match100	re/match/rwl02/004e7d70.c	100.0	RwCore_004e7d70
@@ -1485,6 +1493,9 @@ rva	kind	source	best_pct	exe_symbol
 0x00543b10	match100	re/match/rwl04/00543b10.c	100.0	RwCore_00543b10
 0x00543b20	match100	re/match/rwl04/00543b20.c	100.0	RwCore_00543b20
 0x00543b30	provisional	re/match/rwl04/00543b30.c	52.9	RwCore_00543b30
+0x00543d40	match100	re/match/rwl04/00543d40.c	100.0	RwCore_00543d40
+0x00543d70	match100	re/match/rwl04/00543d70.c	100.0	RwCore_00543d70
+0x00543df0	match100	re/match/rwl04/00543df0.c	100.0	RwCore_00543df0
 0x00543e50	provisional	re/match/rwl04/00543e50.c	75.9	RwCore_00543e50
 0x005440c0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005440c0
 0x005440d0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005440d0
@@ -1600,12 +1611,40 @@ rva	kind	source	best_pct	exe_symbol
 0x00552600	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00552600
 0x005526b0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005526b0
 0x00552750	exe	Match/PortTop_00552750.cpp		Orig_00552750
+0x00552890	provisional	re/match/rwl04/00552890.c	91.2	RwCore_00552890
+0x00552920	provisional	re/match/rwl04/00552920.c	79.8	RwCore_00552920
+0x00552a60	match100	re/match/s24/00552a60.c	100.0	RwCore_00552a60
+0x00552b50	provisional	re/match/rt2d/00552b50.c		RwCore_00552b50
 0x00552d10	match100	re/match/s24/00552d10.c	100.0	RwCore_00552d10
 0x00552d70	match100	re/match/s24/00552d70.c	100.0	RwCore_00552d70
+0x00552da0	match100	re/match/s24/00552da0.c	100.0	RwCore_00552da0
+0x00552df0	match100	re/match/s24/00552df0.c	100.0	RwCore_00552df0
+0x00552e40	match100	re/match/s24/00552e40.c	100.0	RwCore_00552e40
+0x00552fa0	match100	re/match/rwl04/00552fa0.c	100.0	RwCore_00552fa0
+0x00553030	match100	re/match/rwl04/00553030.c	100.0	RwCore_00553030
+0x005530f0	provisional	re/match/rwl04/005530f0.c	67.8	RwCore_005530f0
+0x005533d0	provisional	re/match/rwl04/005533d0.c	55.0	RwCore_005533d0
+0x00553590	match100	re/match/rwl04/00553590.c	100.0	RwCore_00553590
+0x00553620	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00553620
+0x005538a0	provisional	re/match/rwl04/005538a0.c	19.7	RwCore_005538a0
+0x00553c50	match100	re/match/rwl04/00553c50.c	100.0	RwCore_00553c50
+0x00553cf0	provisional	re/match/rwl04/00553cf0.c	40.9	RwCore_00553cf0
+0x00553e80	match100	re/match/s24/00554200.c	100.0	RwCore_00553e80
+0x00553ef0	match100	re/match/rwl04/00553ef0.c	100.0	RwCore_00553ef0
+0x00553f40	match100	re/match/rwl04/00553f40.c	100.0	RwCore_00553f40
+0x00554150	match100	re/match/s24/00554150.c	100.0	RwCore_00554150
+0x00554200	provisional	re/match/s24/00554200.c	69.5	RwCore_00554200
+0x00554390	provisional	re/match/rwl05/00554390.c	33.5	RwCore_00554390
+0x005547f0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005547f0
+0x00554940	provisional	re/match/s24/00554940.c	12.5	RwCore_00554940
+0x005551d0	match100	re/match/rwl05/005551d0.c	100.0	RwCore_005551d0
 0x005554d0	match100	re/match/s24/005554d0.c	100.0	RwCore_005554d0
 0x005555b0	match100	re/match/s24/005555b0.c	100.0	RwCore_005555b0
+0x00555830	match100	re/match/s24/00555830.c	100.0	RwCore_00555830
 0x00556ca0	provisional	re/match/s24/00556ca0.c	60.0	RwCore_00556ca0
 0x00556e90	provisional	re/match/s24/00556e90.c	97.5	RwCore_00556e90
+0x005572b0	match100	re/match/s24/005572b0.c	100.0	RwCore_005572b0
+0x005572c0	provisional	re/match/s24/005572c0.c	17.9	RwCore_005572c0
 0x005578a0	match100	re/match/rwl05/005578a0.c	100.0	RwCore_005578a0
 0x00557920	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00557920
 0x00557a60	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00557a60
@@ -1620,6 +1659,7 @@ rva	kind	source	best_pct	exe_symbol
 0x005584c0	provisional	re/match/rwl05/005584c0.c	90.0	RwCore_005584c0
 0x00558c50	match100	re/match/rwl05/00558c50.c	100.0	RwCore_00558c50
 0x00558c80	match100	re/match/rwl05/00558c80.c	100.0	RwCore_00558c80
+0x0055deb0	provisional	re/match/rwfc/0055deb0.c		RwCore_0055deb0
 0x00561ee0	match100	re/match/rwl05/00561ee0.c	100.0	RwCore_00561ee0
 0x00561f40	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00561f40
 0x00561f50	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00561f50
@@ -1641,8 +1681,12 @@ rva	kind	source	best_pct	exe_symbol
 0x005c47e0	provisional	re/match/s28/005c47e0.c	80.0	RwCore_005c47e0
 0x005c4ab0	match100	re/match/s28/005c4ab0.c	100.0	RwCore_005c4ab0
 0x005c4ad0	provisional	re/match/s28/005c4ad0.c	96.7	RwCore_005c4ad0
+0x005c4ba0	match100	re/match/s28/005c4ba0.c	100.0	RwCore_005c4ba0
+0x005c4bb0	match100	re/match/s28/005c4bb0.c	100.0	RwCore_005c4bb0
+0x005c4c60	provisional	re/match/s28/005c4c60.c	93.0	RwCore_005c4c60
 0x005c4d30	exe	Match/PortTop_005c4d30.cpp		Orig_005c4d30
 0x005c4d50	match100	re/match/s28/005c4d50.c	100.0	RwCore_005c4d50
+0x005c4df0	match100	re/match/s28/005c4df0.c	100.0	RwCore_005c4df0
 0x005cb000	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005cb000
 0x005cb07f	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005cb07f
 0x005cb0ef	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005cb0ef

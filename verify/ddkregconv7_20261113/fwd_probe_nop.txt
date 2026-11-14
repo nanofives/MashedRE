@@ -1,0 +1,40 @@
+== re/match/t01g/004111c0.c  helpers FUN_004103a0
+   caller-side FUN_0040dd80: IDENTICAL
+   caller-side FUN_0040ddf0: IDENTICAL
+   caller-side FUN_0040e460: IDENTICAL
+   caller-side FUN_0040fc00: IDENTICAL
+   caller-side FUN_0040feb0: IDENTICAL
+   caller-side FUN_00410130: IDENTICAL
+   caller-side FUN_004102f0: IDENTICAL
+   caller-side FUN_00410ab0: IDENTICAL
+   caller-side FUN_004111c0: DIFFERENT
+   forwarder FUN_004103a0: 16 B, live-in none
+   PROBE callers-changed
+== re/match/s06/00427ca0.c  helpers FUN_00427880
+   caller-side FUN_00427ca0: DIFFERENT
+   forwarder FUN_00427880: 16 B, live-in none
+   PROBE callers-changed
+== re/match/s06/00427e00.c  helpers FUN_00427680, FUN_004277a0
+   caller-side FUN_00427e00: DIFFERENT
+   forwarder FUN_00427680: 16 B, live-in none
+   forwarder FUN_004277a0: 16 B, live-in none
+   PROBE callers-changed
+== re/match/s06/00427f00.c  helpers FUN_00427680, FUN_00427840
+   caller-side FUN_00427f00: DIFFERENT
+   forwarder FUN_00427680: 16 B, live-in none
+   forwarder FUN_00427840: 16 B, live-in none
+   PROBE callers-changed
+== re/match/s06/00427ff0.c  helpers FUN_00427680, FUN_004277a0
+   caller-side FUN_00427ff0: DIFFERENT
+   forwarder FUN_00427680: 16 B, live-in none
+   forwarder FUN_004277a0: 16 B, live-in none
+   PROBE callers-changed
+== re/match/s06/00428140.c  helpers FUN_00427680, FUN_004277a0
+   caller-side FUN_00428140: DIFFERENT
+   forwarder FUN_00427680: 16 B, live-in none
+   forwarder FUN_004277a0: 16 B, live-in none
+   PROBE callers-changed
+== re/match/s09/00458920.c  helpers FUN_00458570
+   caller-side FUN_00458920: DIFFERENT
+   forwarder FUN_00458570: 16 B, live-in none
+   PROBE callers-changed

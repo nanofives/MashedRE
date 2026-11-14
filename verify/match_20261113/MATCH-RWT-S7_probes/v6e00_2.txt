@@ -1,0 +1,945 @@
+@@ a
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    obj = (int)cur - (DAT_007d7230 + 4);
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    obj = (int)cur - (DAT_007d722c + 4);
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ a_off
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+  int off;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    off = DAT_007d7230;
+    obj = (int)cur - (off + 4);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    off = DAT_007d722c;
+    obj = (int)cur - (off + 4);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ b
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    obj = (int)cur + (-4 - DAT_007d7230);
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    obj = (int)cur + (-4 - DAT_007d722c);
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ b_off
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+  int off;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    off = DAT_007d7230;
+    obj = (int)cur + (-4 - off);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    off = DAT_007d722c;
+    obj = (int)cur + (-4 - off);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ c
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    obj = (int)cur - 4 - DAT_007d7230;
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    obj = (int)cur - 4 - DAT_007d722c;
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ c_off
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+  int off;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    off = DAT_007d7230;
+    obj = (int)cur - 4 - off;
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    off = DAT_007d722c;
+    obj = (int)cur - 4 - off;
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ d
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    obj = ((int)cur - 4) - DAT_007d7230;
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    obj = ((int)cur - 4) - DAT_007d722c;
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ d_off
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+  int off;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    off = DAT_007d7230;
+    obj = ((int)cur - 4) - off;
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    off = DAT_007d722c;
+    obj = ((int)cur - 4) - off;
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ e
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    obj = (int)((char *)cur - DAT_007d7230 - 4);
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    obj = (int)((char *)cur - DAT_007d722c - 4);
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ e_off
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+  int off;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    off = DAT_007d7230;
+    obj = (int)((char *)cur - off - 4);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    off = DAT_007d722c;
+    obj = (int)((char *)cur - off - 4);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ f
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    obj = (int)((char *)cur - 4 - DAT_007d7230);
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    obj = (int)((char *)cur - 4 - DAT_007d722c);
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ f_off
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+  int off;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    off = DAT_007d7230;
+    obj = (int)((char *)cur - 4 - off);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    off = DAT_007d722c;
+    obj = (int)((char *)cur - 4 - off);
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ g
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    obj = -DAT_007d7230 + (int)cur - 4;
+    lnk = (int *)(DAT_007d7230 + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    obj = -DAT_007d722c + (int)cur - 4;
+    lnk = (int *)(DAT_007d722c + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}
+@@ g_off
+// MATCH: 0x004e6e00 RpClumpDestroy
+undefined4 RpClumpDestroy(int clump)
+{
+  int *cur;
+  int *next;
+  int atomic;
+  int frame;
+  int obj;
+  int *lnk;
+  int off;
+
+  FUN_004d8060(&DAT_0061867c, (void *)clump);
+  cur = *(int **)(clump + 8);
+  while (cur != (int *)(clump + 8)) {
+    next = (int *)*cur;
+    atomic = (int)cur - 0x40;
+    FUN_004d8060(&DAT_00618664, (void *)atomic);
+    if (*(int *)(atomic + 0x14) != 0) {
+      FUN_004d8bd0(*(int **)(atomic + 0x14));
+    }
+    if (*(int *)(atomic + 0x18) != 0) {
+      FUN_004e8ea0(*(int *)(atomic + 0x18));
+      frame = *(int *)(atomic + 4);
+      *(int *)(atomic + 0x18) = 0;
+      if (frame != 0 && FUN_004e4440((void *)atomic) != 0) {
+        FUN_004c0e50(frame);
+      }
+    }
+    FUN_004c0790((void *)atomic);
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + DAT_007d3ff8), atomic);
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x10);
+  while (cur != (int *)(clump + 0x10)) {
+    next = (int *)*cur;
+    off = DAT_007d7230;
+    obj = -off + (int)cur - 4;
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004e4d90(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  cur = *(int **)(clump + 0x18);
+  while (cur != (int *)(clump + 0x18)) {
+    next = (int *)*cur;
+    off = DAT_007d722c;
+    obj = -off + (int)cur - 4;
+    lnk = (int *)(off + obj);
+    *(int *)lnk[2] = lnk[1];
+    *(int *)(lnk[1] + 4) = lnk[2];
+    lnk[2] = 0;
+    lnk[1] = 0;
+    lnk[0] = 0;
+    FUN_004c1cf0(obj);
+    if (obj == 0) break;
+    cur = next;
+  }
+  if (*(int *)(clump + 4) != 0) {
+    FUN_004c0de0(*(int *)(clump + 4));
+  }
+  (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8), clump);
+  return 1;
+}

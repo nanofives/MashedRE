@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-FRAME-CLUMP 2026-11-13: the 0x10-byte geometry header read (0x004e9377, buffer [esp+0x18]) and the 0x18-byte morph target read (0x004e953b, buffer [esp+0x28]) go into one array each (hdr[4], mt[6]) in place of ten separate 4-byte locals, which the port's VS2022 frame does not keep contiguous (the reads overran it: AV at EIP 1 in the cup.dff geometry read, verify/rwcframeclump_20261113). Body otherwise unchanged. */
 /* MATCH-RWL02 h3 0x004e9330: raw converter body (Ghidra structure, gotos kept), comments stripped, prototypes loosened for C++ (void-pointer or int params), F1/F2 typedefs for the engine vtable calls. Score 51.5% structure only (class b: source shape not found, size above budget). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -61,16 +62,8 @@ int FUN_004e9330(uint param_1)
   int iVar9;
   int local_30;
   undefined4 local_2c;
-  uint local_28;
-  undefined4 local_24;
-  undefined4 local_20;
-  int local_1c;
-  undefined4 local_18;
-  undefined4 local_14;
-  undefined4 local_10;
-  undefined4 local_c;
-  int local_8;
-  int local_4;
+  int hdr[4];
+  int mt[6];
   
   uVar2 = param_1;
   iVar4 = FUN_004cc5e0(param_1,1,0,&param_1);
@@ -83,17 +76,17 @@ int FUN_004e9330(uint param_1)
     FUN_004d8480(&local_30);
     return 0;
   }
-  iVar4 = FUN_004cbd30(uVar2,&local_28,0x10);
+  iVar4 = FUN_004cbd30(uVar2,hdr,0x10);
   if (iVar4 != 0x10) {
     return 0;
   }
-  iVar4 = FUN_004e8c70(local_20,local_24,local_28);
+  iVar4 = FUN_004e8c70(hdr[2],hdr[1],hdr[0]);
   if (iVar4 == 0) {
     return 0;
   }
-  if ((local_1c < 2) || (iVar5 = FUN_004e8750(iVar4,local_1c + -1), -1 < iVar5)) {
+  if ((hdr[3] < 2) || (iVar5 = FUN_004e8750(iVar4,hdr[3] + -1), -1 < iVar5)) {
     if (((*(uint *)(iVar4 + 8) & 0x1000000) == 0) && (*(int *)(iVar4 + 0x14) != 0)) {
-      if (((local_28 & 8) != 0) &&
+      if (((hdr[0] & 8) != 0) &&
          (iVar5 = *(int *)(iVar4 + 0x14) * 4,
          iVar6 = FUN_004cbd30(uVar2,(void *)*(undefined4 *)(iVar4 + 0x30),iVar5), iVar6 != iVar5))
       goto LAB_004e93c9;
@@ -152,20 +145,20 @@ LAB_004e959f:
     if (0 < *(int *)(iVar4 + 0x18)) {
       do {
         iVar9 = *(int *)(iVar4 + 0x5c) + iVar5;
-        iVar6 = FUN_004cbd30(uVar2,&local_18,0x18);
+        iVar6 = FUN_004cbd30(uVar2,mt,0x18);
         if (iVar6 != 0x18) goto LAB_004e959f;
-        *(undefined4 *)(iVar9 + 4) = local_18;
-        *(undefined4 *)(iVar9 + 8) = local_14;
-        *(undefined4 *)(iVar9 + 0xc) = local_10;
-        *(undefined4 *)(iVar9 + 0x10) = local_c;
-        if (local_8 == 0) {
+        *(undefined4 *)(iVar9 + 4) = mt[0];
+        *(undefined4 *)(iVar9 + 8) = mt[1];
+        *(undefined4 *)(iVar9 + 0xc) = mt[2];
+        *(undefined4 *)(iVar9 + 0x10) = mt[3];
+        if (mt[4] == 0) {
 LAB_004e9640:
-          if ((local_4 != 0) &&
+          if ((mt[5] != 0) &&
              (iVar6 = FUN_004cc790(uVar2,*(undefined4 *)(iVar9 + 0x18),*(int *)(iVar4 + 0x14) * 0xc)
              , iVar6 == 0)) goto LAB_004e96bf;
         }
         else {
-          if (local_4 == 0) {
+          if (mt[5] == 0) {
             iVar6 = FUN_004cc790(uVar2,*(undefined4 *)(iVar9 + 0x14),*(int *)(iVar4 + 0x14) * 0xc);
             if (iVar6 != 0) goto LAB_004e9640;
             goto LAB_004e959f;

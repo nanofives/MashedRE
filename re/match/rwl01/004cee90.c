@@ -1,5 +1,10 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL01 0x004cee90: best 66.7% (regs 80%), class (b). The four stream-read words are one int[4] (one read of 16 bytes), early return on a failed read. The original keeps the header words in callee-saved regs across the pool alloc (the FUN_004cdca0 alloc is inlined there); an __inline static copy of the alloc made it worse (40.7%) and was dropped. */
+// MATCH-RWT-S7: 100% byte-identical under rw9044 (L-131), relocheck OK. Levers: stream kept in a register and the header word 0
+// passed through an __inline create helper (c2 9044 keeps it in the dead parameter slot across the alloc: mov [esp+0x38],eax at
+// 0x004ceed8, read back at 0x004ceeff; words 1/2 in ebp/edi at 0x004ceed4/0x004ceed0), the helper's NULL return gives the
+// xor esi,esi at 0x004ceefb, and the row counter step written as the for-step 'y++, off += stride' (inc eax at 0x004cef9b before
+// add ebp,edi at 0x004cef9c).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -40,63 +45,56 @@ undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 * p2, uint * p3);
 uint * FUN_004cdd60(uint * p0);
 int FUN_004d8000(int p0, undefined4 * p1);
 // MATCH: 0x004cee90 FUN_004cee90
-undefined4 * FUN_004cee90(int param_1)
-
+static __inline int *ImageCreateInl(int width, int height, int depth)
 {
-  undefined4 uVar1;
-  int iVar2;
-  undefined4 *puVar3;
-  int iVar4;
-  undefined1 local_18 [4];
-  undefined1 local_14 [4];
+  int *image;
+  image = (int *)(**(code **)(DAT_007d3ff8 + 0x118))(*(undefined4 *)(DAT_007d4628 + DAT_007d3ff8), 0x30018);
+  if (!image) {
+    return 0;
+  }
+  image[1] = width;
+  image[2] = height;
+  image[3] = depth;
+  image[5] = 0;
+  image[6] = 0;
+  image[0] = 0;
+  FUN_004d8000((int)&DAT_006182b4, (undefined4 *)image);
+  return image;
+}
+undefined4 * FUN_004cee90(int stream)
+{
+  undefined4 size;
+  uint version;
   int hdr[4];
-  
-  uVar1 = param_1;
-  iVar2 = FUN_004cc5e0(param_1,1,(undefined4 *)local_14,(uint *)local_18);
-  if (iVar2 == 0) {
-    return (undefined4 *)0x0;
+  int *image;
+  int off;
+  int y;
+  int stride;
+
+  if (FUN_004cc5e0(stream, 1, &size, &version) == 0) {
+    return 0;
   }
-  FUN_004cbd30(param_1,(int)hdr,0x10);
-  iVar2 = hdr[1];
-  puVar3 = (undefined4 *)
-           (**(code **)(DAT_007d3ff8 + 0x118))
-                     (*(undefined4 *)(DAT_007d4628 + DAT_007d3ff8),0x30018);
-  if (puVar3 == (undefined4 *)0x0) {
-    puVar3 = (undefined4 *)0x0;
-  }
-  else {
-    puVar3[2] = iVar2;
-    puVar3[3] = hdr[2];
-    puVar3[1] = hdr[0];
-    puVar3[5] = 0;
-    puVar3[6] = 0;
-    *puVar3 = 0;
-    FUN_004d8000((int)&DAT_006182b4,puVar3);
-  }
-  FUN_004cdd60(puVar3);
-  iVar2 = puVar3[4];
-  if (iVar2 == hdr[3]) {
-    FUN_004cbd30(param_1,puVar3[5],puVar3[2] * iVar2);
+  FUN_004cbd30(stream, (int)hdr, 0x10);
+  image = ImageCreateInl(hdr[0], hdr[1], hdr[2]);
+  FUN_004cdd60((uint *)image);
+  stride = image[4];
+  if (stride == hdr[3]) {
+    FUN_004cbd30(stream, image[5], image[2] * stride);
   }
   else {
-    iVar4 = 0;
-    param_1 = 0;
-    if (0 < hdr[1]) {
-      do {
-        if (iVar2 > hdr[3]) {
-          FUN_004cbd30(uVar1,puVar3[5] + iVar4,hdr[3]);
-        }
-        else {
-          FUN_004cbd30(uVar1,puVar3[5] + iVar4,iVar2);
-          FUN_004cc050(uVar1,hdr[3] - iVar2);
-        }
-        param_1 = param_1 + 1;
-        iVar4 = iVar4 + iVar2;
-      } while (param_1 < hdr[1]);
+    off = 0;
+    for (y = 0; y < hdr[1]; y++, off += stride) {
+      if (stride > hdr[3]) {
+        FUN_004cbd30(stream, image[5] + off, hdr[3]);
+      }
+      else {
+        FUN_004cbd30(stream, image[5] + off, stride);
+        FUN_004cc050(stream, hdr[3] - stride);
+      }
     }
   }
-  if ((int)puVar3[3] <= 8) {
-    FUN_004cbd30(uVar1,puVar3[6],(1 << ((byte)0x1f & puVar3[3])) << 2);
+  if (image[3] <= 8) {
+    FUN_004cbd30(stream, image[6], (1 << image[3]) << 2);
   }
-  return puVar3;
+  return (undefined4 *)image;
 }

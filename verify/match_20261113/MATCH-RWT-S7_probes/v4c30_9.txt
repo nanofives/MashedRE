@@ -1,0 +1,294 @@
+void *memset(void *, int, unsigned int);
+#pragma intrinsic(memset)
+typedef struct { undefined4 code; undefined4 data; } Err;
+typedef struct { undefined4 v[4]; float angle; uint tf; } Chunk;
+MGLOBAL(float, DAT_005cc320, 0x005cc320);
+MGLOBAL(undefined4, DAT_0061862c, 0x0061862c);
+float FUN_004c3b30(float p0);
+uint FUN_004cbd30(int p0, Chunk *p1, uint p2);
+int FUN_004cc5e0(int p0, int p1, int *p2, uint *p3);
+undefined4 FUN_004d7ff0(undefined4 p0);
+undefined4 *FUN_004d8480(Err *p0);
+int FUN_004e1b60(undefined4 *p0, int p1, int p2);
+int FUN_004e4dd0(int p0);
+@@ p_init
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int param_1)
+{
+  int stream = param_1;
+  uint version;
+  int light;
+
+
+  if (!FUN_004cc5e0(stream, 1, &param_1, &version)) return 0;
+  if ((version >= 0x35000) && (version <= 0x37002)) {
+    Chunk ck;
+    memset(&ck, 0, sizeof(ck));
+    if (FUN_004cbd30(stream, &ck, param_1) != param_1) return 0;
+    light = FUN_004e4dd0((ck.tf >> 16) & 0xff);
+    if (!light) return 0;
+    *(undefined4 *)(light + 0x14) = ck.v[0];
+    *(undefined4 *)(light + 0x18) = ck.v[1];
+    *(undefined4 *)(light + 0x1c) = ck.v[2];
+    *(undefined4 *)(light + 0x20) = ck.v[3];
+    if (version < 0x30300) {
+      float a = DAT_005cc320 / (ck.angle * ck.angle + DAT_005cc320);
+      *(float *)(light + 0x28) = -FUN_004c3b30(a);
+    }
+    else {
+      *(float *)(light + 0x28) = ck.angle;
+    }
+    if ((*(float *)(light + 0x18) == *(float *)(light + 0x1c)) &&
+        (*(float *)(light + 0x18) == *(float *)(light + 0x20))) {
+      *(uchar *)(light + 3) = 1;
+    }
+    else {
+      *(uchar *)(light + 3) = 0;
+    }
+    *(uchar *)(light + 2) = (uchar)ck.tf;
+    if (!FUN_004e1b60(&DAT_0061862c, stream, light)) return 0;
+    return light;
+  }
+  else {
+    Err err;
+    err.code = 2;
+    err.data = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+    return 0;
+  }
+}
+@@ p_ptr
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int param_1)
+{
+  void *stream;
+  uint version;
+  int light;
+
+  stream = (void *)param_1;
+
+  if (!FUN_004cc5e0((int)stream, 1, &param_1, &version)) return 0;
+  if ((version >= 0x35000) && (version <= 0x37002)) {
+    Chunk ck;
+    memset(&ck, 0, sizeof(ck));
+    if (FUN_004cbd30((int)stream, &ck, param_1) != param_1) return 0;
+    light = FUN_004e4dd0((ck.tf >> 16) & 0xff);
+    if (!light) return 0;
+    *(undefined4 *)(light + 0x14) = ck.v[0];
+    *(undefined4 *)(light + 0x18) = ck.v[1];
+    *(undefined4 *)(light + 0x1c) = ck.v[2];
+    *(undefined4 *)(light + 0x20) = ck.v[3];
+    if (version < 0x30300) {
+      float a = DAT_005cc320 / (ck.angle * ck.angle + DAT_005cc320);
+      *(float *)(light + 0x28) = -FUN_004c3b30(a);
+    }
+    else {
+      *(float *)(light + 0x28) = ck.angle;
+    }
+    if ((*(float *)(light + 0x18) == *(float *)(light + 0x1c)) &&
+        (*(float *)(light + 0x18) == *(float *)(light + 0x20))) {
+      *(uchar *)(light + 3) = 1;
+    }
+    else {
+      *(uchar *)(light + 3) = 0;
+    }
+    *(uchar *)(light + 2) = (uchar)ck.tf;
+    if (!FUN_004e1b60(&DAT_0061862c, (int)stream, light)) return 0;
+    return light;
+  }
+  else {
+    Err err;
+    err.code = 2;
+    err.data = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+    return 0;
+  }
+}
+@@ p_uint
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(uint param_1)
+{
+  int stream;
+  uint version;
+  int light;
+
+  stream = param_1;
+
+  if (!FUN_004cc5e0(stream, 1, (int *)&param_1, &version)) return 0;
+  if ((version >= 0x35000) && (version <= 0x37002)) {
+    Chunk ck;
+    memset(&ck, 0, sizeof(ck));
+    if (FUN_004cbd30(stream, &ck, param_1) != param_1) return 0;
+    light = FUN_004e4dd0((ck.tf >> 16) & 0xff);
+    if (!light) return 0;
+    *(undefined4 *)(light + 0x14) = ck.v[0];
+    *(undefined4 *)(light + 0x18) = ck.v[1];
+    *(undefined4 *)(light + 0x1c) = ck.v[2];
+    *(undefined4 *)(light + 0x20) = ck.v[3];
+    if (version < 0x30300) {
+      float a = DAT_005cc320 / (ck.angle * ck.angle + DAT_005cc320);
+      *(float *)(light + 0x28) = -FUN_004c3b30(a);
+    }
+    else {
+      *(float *)(light + 0x28) = ck.angle;
+    }
+    if ((*(float *)(light + 0x18) == *(float *)(light + 0x1c)) &&
+        (*(float *)(light + 0x18) == *(float *)(light + 0x20))) {
+      *(uchar *)(light + 3) = 1;
+    }
+    else {
+      *(uchar *)(light + 3) = 0;
+    }
+    *(uchar *)(light + 2) = (uchar)ck.tf;
+    if (!FUN_004e1b60(&DAT_0061862c, stream, light)) return 0;
+    return light;
+  }
+  else {
+    Err err;
+    err.code = 2;
+    err.data = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+    return 0;
+  }
+}
+@@ p_last
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int param_1)
+{
+  uint version;
+  int light;
+  int stream;
+
+  stream = param_1;
+
+  if (!FUN_004cc5e0(stream, 1, &param_1, &version)) return 0;
+  if ((version >= 0x35000) && (version <= 0x37002)) {
+    Chunk ck;
+    memset(&ck, 0, sizeof(ck));
+    if (FUN_004cbd30(stream, &ck, param_1) != param_1) return 0;
+    light = FUN_004e4dd0((ck.tf >> 16) & 0xff);
+    if (!light) return 0;
+    *(undefined4 *)(light + 0x14) = ck.v[0];
+    *(undefined4 *)(light + 0x18) = ck.v[1];
+    *(undefined4 *)(light + 0x1c) = ck.v[2];
+    *(undefined4 *)(light + 0x20) = ck.v[3];
+    if (version < 0x30300) {
+      float a = DAT_005cc320 / (ck.angle * ck.angle + DAT_005cc320);
+      *(float *)(light + 0x28) = -FUN_004c3b30(a);
+    }
+    else {
+      *(float *)(light + 0x28) = ck.angle;
+    }
+    if ((*(float *)(light + 0x18) == *(float *)(light + 0x1c)) &&
+        (*(float *)(light + 0x18) == *(float *)(light + 0x20))) {
+      *(uchar *)(light + 3) = 1;
+    }
+    else {
+      *(uchar *)(light + 3) = 0;
+    }
+    *(uchar *)(light + 2) = (uchar)ck.tf;
+    if (!FUN_004e1b60(&DAT_0061862c, stream, light)) return 0;
+    return light;
+  }
+  else {
+    Err err;
+    err.code = 2;
+    err.data = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+    return 0;
+  }
+}
+@@ p_reg
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int param_1)
+{
+  register int stream;
+  uint version;
+  int light;
+
+  stream = param_1;
+
+  if (!FUN_004cc5e0(stream, 1, &param_1, &version)) return 0;
+  if ((version >= 0x35000) && (version <= 0x37002)) {
+    Chunk ck;
+    memset(&ck, 0, sizeof(ck));
+    if (FUN_004cbd30(stream, &ck, param_1) != param_1) return 0;
+    light = FUN_004e4dd0((ck.tf >> 16) & 0xff);
+    if (!light) return 0;
+    *(undefined4 *)(light + 0x14) = ck.v[0];
+    *(undefined4 *)(light + 0x18) = ck.v[1];
+    *(undefined4 *)(light + 0x1c) = ck.v[2];
+    *(undefined4 *)(light + 0x20) = ck.v[3];
+    if (version < 0x30300) {
+      float a = DAT_005cc320 / (ck.angle * ck.angle + DAT_005cc320);
+      *(float *)(light + 0x28) = -FUN_004c3b30(a);
+    }
+    else {
+      *(float *)(light + 0x28) = ck.angle;
+    }
+    if ((*(float *)(light + 0x18) == *(float *)(light + 0x1c)) &&
+        (*(float *)(light + 0x18) == *(float *)(light + 0x20))) {
+      *(uchar *)(light + 3) = 1;
+    }
+    else {
+      *(uchar *)(light + 3) = 0;
+    }
+    *(uchar *)(light + 2) = (uchar)ck.tf;
+    if (!FUN_004e1b60(&DAT_0061862c, stream, light)) return 0;
+    return light;
+  }
+  else {
+    Err err;
+    err.code = 2;
+    err.data = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+    return 0;
+  }
+}
+@@ p_late
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int param_1)
+{
+  int stream;
+  uint version;
+  int light;
+
+  stream = param_1;
+
+  if (!FUN_004cc5e0(stream, 1, &param_1, &version)) return 0;
+  if ((version >= 0x35000) && (version <= 0x37002)) {
+    Chunk ck;
+    memset(&ck, 0, sizeof(ck));
+    if (FUN_004cbd30(stream, &ck, param_1) != param_1) return 0;
+    light = FUN_004e4dd0((ck.tf >> 16) & 0xff);
+    if (!light) return 0;
+    *(undefined4 *)(light + 0x14) = ck.v[0];
+    *(undefined4 *)(light + 0x18) = ck.v[1];
+    *(undefined4 *)(light + 0x1c) = ck.v[2];
+    *(undefined4 *)(light + 0x20) = ck.v[3];
+    if (version < 0x30300) {
+      float a = DAT_005cc320 / (ck.angle * ck.angle + DAT_005cc320);
+      *(float *)(light + 0x28) = -FUN_004c3b30(a);
+    }
+    else {
+      *(float *)(light + 0x28) = ck.angle;
+    }
+    if ((*(float *)(light + 0x18) == *(float *)(light + 0x1c)) &&
+        (*(float *)(light + 0x18) == *(float *)(light + 0x20))) {
+      *(uchar *)(light + 3) = 1;
+    }
+    else {
+      *(uchar *)(light + 3) = 0;
+    }
+    *(uchar *)(light + 2) = (uchar)ck.tf;
+    if (!FUN_004e1b60(&DAT_0061862c, stream, light)) return 0;
+    return light;
+  }
+  else {
+    Err err;
+    err.code = 2;
+    err.data = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+    return 0;
+  }
+}

@@ -1,0 +1,1 @@
+0x0041faf0	OK	checked=18	unchecked=1	0041faf0.c	  unchecked: __ftol

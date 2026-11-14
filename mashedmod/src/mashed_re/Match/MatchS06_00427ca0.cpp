@@ -16,8 +16,29 @@
 #define FUN_00552b60 PortTop_FontSysInit_00552b60
 #define FUN_00556cc0 Orig_00556cc0
 #define FUN_00556d70 Orig_00556d70
-#define FUN_00556e90 PortTop_StandInHIB_00556e90
-#define FUN_00427880 PortTop_StandInHIB_00427880
+// [RWC-FRAME-CLUMP] under MASHED_RWC_FRAME (RwCore_FrameRoute, RwCore/RwCore_Knob.cpp) the two stand-ins give way:
+// 0x00427880 to its exe body FUN_00427880 (Match/MatchS06_00427880.cpp, re/match/s06/00427880.c 100%; stream calls on
+// the PORT-TOP-04F bindings, the font read on the RW core body RwCore_00554390), 0x00556e90 to the RW core body
+// RwCore_00556e90 (re/match/s24/00556e90.c, 97.5%, provisional, the body the first-frame text draw 0x00427e00 already
+// runs). Without the font the first 0x00427e00 -> 0x00427680 -> 0x005554d0 reads +0x134 of a NULL font.
+extern "C" {
+bool RwCore_FrameRoute(void);
+int PortTop_StandInHIB_00556e90();
+int PortTop_StandInHIB_00427880();
+void RwCore_00556e90(void);
+int FUN_00427880(const char *name);   // Match/MatchS06_00427880.cpp
+int MatchS06_00427ca0_Sel00556e90(int font, void *c0, void *c1, void *c2, void *c3) {
+    if (RwCore_FrameRoute())
+        return reinterpret_cast<int (__cdecl*)(int, void*, void*, void*, void*)>(&RwCore_00556e90)(font, c0, c1, c2, c3);
+    return PortTop_StandInHIB_00556e90();
+}
+int MatchS06_00427ca0_Sel00427880(char *name) {
+    if (RwCore_FrameRoute()) return FUN_00427880(name);
+    return PortTop_StandInHIB_00427880();
+}
+}  // extern "C"
+#define FUN_00556e90 MatchS06_00427ca0_Sel00556e90
+#define FUN_00427880 MatchS06_00427ca0_Sel00427880
 #else
 #define FUN_00556cc0 SetDat00912a20
 #define FUN_00556d70 MatchS06_00427ca0_Call00556d70

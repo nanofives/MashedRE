@@ -32,8 +32,6 @@
 #define FUN_005c4670 RwCore_005c4670
 #define FUN_005c47b0 RwCore_005c47b0
 #define FUN_005c47e0 RwCore_005c47e0
-#define LAB_004e77de RwCoreMissing_004e77de
-#define LAB_004e7bd5 RwCoreMissing_004e7bd5
 extern "C" {
 #include "../../../../re/match/rwl02/004e7420.c"
 }

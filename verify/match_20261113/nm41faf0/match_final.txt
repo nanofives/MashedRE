@@ -1,0 +1,2 @@
+0x0041faf0 _FUN_0041faf0: 100.0% (regs 100.0%, ops 100.0%)  119/119 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 458 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
