@@ -1,10 +1,26 @@
 # RESULT PORT-TOP-AUDIOPOOL-5AE650: 0x005ae650 (AudioPoolConstruct) as a provisional body on the image path
 
-## Status: HANDOFF (LIVING-PC reboot notice, 2026-11-14 11:10). Builds and ddkobj check done, arms NOT run yet
+## Verdict: GREEN (0x005ae650 bound as a provisional body; the init arms get past 0x005AE650 and stop at the next named stop, 0x005ADC10)
 
-- **Self-test: not run yet.** The arms (they carry the OT_CODEPTR / code-trap / portstate-image self-tests) were queued
-  under test-slot, waiting for memory (24-26 GB committed against a 24 GB budget), when the reboot notice came.
-  I stopped the queued run before any game launched (my own PIDs only: sh/tee/py/python of this run).
+- **Self-test: PASS in both arms, both builds.** portstate-image PASS (0 of 8 checks failed), OT_CODEPTR PASS (0 of 359
+  checks failed; 188 slots, 99 image slots written, 0 refused), code-trap PASS (0 of 6 checks failed, 459/459 pages).
+- **Arms** (run 2026-11-14 14:44 after the LIVING-PC reboot, test-slot slot 6/8 after the 10 min memory wait, mashed_lock
+  taken by this run, pid 4128, the stale pre-reboot SOAK-P0 holder reclaimed by the tool itself):
+
+  | arm | build | exit | where | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005ADC10** after 39.9 s | named stop, return 0x0023671D = `_PortTop_Bound_005add60+0xd` (`mashedmod/build/mashed_re.map`) | adc1083bbb69febc |
+  | ddk_init_audio | object | **0x005ADC10** after 27.6 s | named stop, return 0x000434BC = `_PortTop_Bound_005add60+0xc` (`mashedmod/build/ddkobj/mashed_re_ddk.map`) | b3e12bb281f040be |
+
+  - Both builds stop at the same place: no stop at 0x005AE650 any more. The stop line reads
+    `[OT_TIMER] STOP: the matched 0x00000000 called original 0x005ADC10`. The caller field of the line is 0; the map
+    resolves the return address to 0x005add60 in both builds.
+  - The expected next stop was 0x005ae800. It was not reached first: 0x005ADC10 comes first. Per `plan.json`,
+    0x005ada90 calls 0x005add60, 0x005ae650, 0x005ae7e0 and 0x005b3580, and 0x005add60 calls 0x005adc10. Which of
+    them runs first inside 0x005ada90 is [UNCERTAIN] (the plan lists callees, not call order).
+  - The last lines before the stop in both logs: `0x004627f0 sound engine HW init: provisional exe body`.
+- **New rows filed** (`roadmap.ps1 add`, section D4): `PORT-TOP-AUDIOSTOP-5ADC10` (the new stop; `re/match/s26/005adc10.c`
+  is 78.9%) and `TOOL-EQUIV-EBPDATA-REPSTOS` (the two equiv gaps of section 1).
 - **equiv verdict line** (`re/tools/match/equiv.py` @ fea5b5483, the same file as orch/integration, no diff):
   `0x005ae650	NOT-PROVEN	call-args: region ours +0x20 / orig 0x005ae672 call 0x5ae800 arg 3: ebx_in | esi_in`
   So it is not admitted. Listed as **provisional** in `re/match/PROVISIONAL.tsv` (L-126), knob path only, never C4.
@@ -61,20 +77,20 @@
   `re/tools/image/extract_image.py --exe <main>/original/MASHED.exe.unpatched`: sha256 81CC7775...9AFCD8, equal to the
   table row's. It is copied into the private root.
 
-## 4. Next (after the reboot)
-1. Check that nothing holds the lock: `mashed_lock.py status` must show no PRIORITY-HOLD and no SOLO.
-2. Run the two init arms from the worktree:
+## 4. Arms command (run 2026-11-14 after the reboot; result in the verdict section)
+1. `mashed_lock.py status` showed only the stale pre-reboot SOAK-P0 holder (pid 19856, no such process); `mashed_lock.py run`
+   reclaimed it itself.
+2. Command, from the worktree:
    `ARMS_STEP=PORT-TOP-AUDIOPOOL-5AE650 ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIOPOOL-5AE650_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIOPOOL-5AE650 -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
    - The private root `D:/MashedWT/PORT-TOP-AUDIOPOOL-5AE650_root` is ready, image included.
    - Logs go to `D:/MashedWT/PORT-TOP-AUDIOPOOL-5AE650_data/`.
-3. Read from the logs:
-   - the self-test lines (OT_CODEPTR, code-trap, portstate-image);
-   - the exit address and its return site.
-   Expected: no stop at 0x005AE650. The next named stop is expected to be 0x005ae800.
-4. File the new stop as its own row (`roadmap.ps1 add`). Also file the equiv tool gaps of section 1 (non-frame-ebp
-   arg bound, variable-count rep stos) as a tool row.
-5. Fill sections "Self-test" and "Arms" here, set the verdict, commit, and `set review`.
+3. Return addresses symbolized against the build maps (preferred load address 0x00010000), nearest preceding symbol.
+
+## 5. Next
+- `PORT-TOP-AUDIOSTOP-5ADC10`: body for 0x005adc10, then the init arms again on this branch.
+- `TOOL-EQUIV-EBPDATA-REPSTOS`: with both gaps closed, re-run equiv on 0x005ae650 (it may then be admitted).
+- The audio stack (AUDIOTICK-STOPS, HWINIT-4627F0, RWAUDIO-TABLE, this row) still merges together only after the arms pass.
 
 ## Raw data
 - `D:/MashedWT/PORT-TOP-AUDIOPOOL-5AE650_data/`: `plan_write.txt`, `build_vs.log`, `build_ddk.log`, `ddkcheck.log`,
-  `arms1.out` (queue lines only, no game ran).
+  `arms1.out` (queue lines only, no game ran), `arms2.out`, `vs_init_audio.log`, `ddk_init_audio.log`.
