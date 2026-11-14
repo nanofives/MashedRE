@@ -26,6 +26,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-13  0x004e4c30  RpLightStreamRead  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl02/004e4c30.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S7.md
+2026-11-13  0x004e6e00  RpClumpDestroy  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl02/004e6e00.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S7.md
+2026-11-13  0x004cee90  FUN_004cee90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004cee90.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S7.md
 2026-11-13  0x004ce970  FUN_004ce970  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ce970.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S6.md
 2026-11-13  0x005b8200  FUN_005b8200  C2->C2  refile third-party-library[d3dx9-fx] -> audio (P2, L-127; re-classify subsystem leg, confidence unchanged); evidence: verify/match_20261113/RESULT_MATCH-RWC-UNCERT-3.md
 2026-11-13  0x005b8680  FUN_005b8680  C2->C2  refile third-party-library[d3dx9-fx] -> audio (P2, L-127; re-classify subsystem leg, confidence unchanged); evidence: verify/match_20261113/RESULT_MATCH-RWC-UNCERT-3.md
