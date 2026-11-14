@@ -35,12 +35,12 @@ Done so far (branch `orch/IMG-5-TEARDOWN-BODIES`):
 - **Default build (VS2022, NO_DEPLOY):** `=== Build OK ===`, rva-lint OK (237 known, 0 new), asm-lint OK,
   portstate-seed OK (272). The exe is `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/default/mashed_re.exe`, sha256
   c5bce682...539422a. Log: `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/build_default.log`.
-- **Object build (`MASHED_DDKOBJ=1`):** started before the reboot notice and was in its final link at the handoff. Log:
-  `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/build_ddkobj.log`. Its result is not checked yet.
+- **Object build (`MASHED_DDKOBJ=1`, NO_DEPLOY):** `=== Build OK ===`, `[ddkobj] link rc=0`, units 1459, ddk objects 1184.
+  Log: `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/build_ddkobj.log`. Exe:
+  `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/ddkobj/mashed_re_ddk.exe`, sha256 44e3983d...e100059.
 
 Next, after the reboot (nothing else is pending):
-1. Check `build_ddkobj.log` for `=== Build OK ===` (re-run `cmd /c "set MASHED_NO_DEPLOY=1&& set MASHED_DDKOBJ=1&&
-   mashedmod\build.bat"` if it is cut off). Copy that exe to `run46/ddkobj/`.
+1. (done) Object build OK.
 2. Run `py.exe -3.12 re/tools/ddkobj/ddkobj.py check`. Expected: 0x00489940 IDENTICAL, and 0x00455400 is the only new
    DIFFERENT (the provisional residue).
 3. Knob boots, image ON, through AppDestroy, on both builds, with `test-slot` outside and `mashed_lock.py run --label
