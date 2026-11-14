@@ -826,6 +826,8 @@ def main_build(a):
                 {x.name for x in co.sections if x.name == ".sxdata"})) + "): @feat.00 would be a false SafeSEH claim"
         if rec["status"] == "ok" and rec.get("externalized_regconv"):
             # RWC-FRAME-CLUMP: a helper copy with a private register convention cannot be repointed (process_unit)
+            # L-156 (2026-11-14): 0x00427e00 0x00427f00 0x00427ff0 0x00428140 0x00458920 stay refused here by decision.
+            # Reasons and evidence per unit: re/match/REFUSED_UNITS.tsv (data only, not read by this tool).
             rec["status"] = "fail:externalized-static-register-convention"
             rec["evidence"] = "; ".join(rec["externalized_regconv"]) + (
                 f"; forwarder refused: {rec['forwarder_refused']}" if rec.get("forwarder_refused") else "")
