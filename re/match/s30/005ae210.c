@@ -40,10 +40,10 @@ MGLOBAL(int, _DAT_007dda7c, 0x007dda7c);
 void FUN_005ae210(void)
 
 {
-  while ((undefined4 **)DAT_007dda74 != &DAT_007dda74) {
+  while ((undefined4 **)DAT_007dda74 != (undefined4 **)&DAT_007dda74) {
     FUN_005ae330(DAT_007dda74 + -0x14);
   }
-  FUN_005ae7e0(&DAT_007dda50);
+  FUN_005ae7e0((int)&DAT_007dda50);
   _DAT_007dda7c = 0;
   return;
 }

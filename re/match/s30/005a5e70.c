@@ -51,7 +51,7 @@ undefined4 FUN_005a5e70(void)
       return 0;
     }
     uStack_4 = 1;
-    iVar1 = FUN_004c30b0(&uStack_4);
+    iVar1 = FUN_004c30b0((int)&uStack_4);
     if (iVar1 == 0) {
       FUN_004c3270();
       return 0;

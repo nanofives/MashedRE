@@ -43,9 +43,9 @@ undefined4 FUN_005a6e50(void)
 
 {
   _DAT_007dca2c = 1;
-  DAT_007dca24 = &DAT_007dca24;
-  _DAT_007dca28 = &DAT_007dca24;
-  DAT_007dca18 = &DAT_007dca18;
+  DAT_007dca24 = (undefined4)&DAT_007dca24;
+  _DAT_007dca28 = (int)&DAT_007dca24;
+  DAT_007dca18 = (undefined4)&DAT_007dca18;
   DAT_007dca1c = &DAT_007dca18;
   FUN_005a62b0();
   return 1;

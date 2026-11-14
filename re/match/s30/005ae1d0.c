@@ -43,9 +43,9 @@ undefined4 FUN_005ae1d0(void)
 {
   int iVar1;
   
-  DAT_007dda74 = &DAT_007dda74;
-  _DAT_007dda78 = &DAT_007dda74;
-  iVar1 = FUN_005ae650(0x1c,8,4,0,&DAT_007dda50,0x40800);
+  DAT_007dda74 = (undefined4)&DAT_007dda74;
+  _DAT_007dda78 = (int)&DAT_007dda74;
+  iVar1 = (int)FUN_005ae650(0x1c,8,4,0,(uint *)&DAT_007dda50,0x40800);
   if (iVar1 != 0) {
     _DAT_007dda7c = 1;
     return 1;

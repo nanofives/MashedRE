@@ -42,12 +42,12 @@ MGLOBAL(int, _DAT_007dd6b0, 0x007dd6b0);
 void FUN_005ad030(void)
 
 {
-  while ((undefined4 **)DAT_007dd6a8 != &DAT_007dd6a8) {
+  while ((undefined4 **)DAT_007dd6a8 != (undefined4 **)&DAT_007dd6a8) {
     FUN_005ad5f0(DAT_007dd6a8 + -0x20);
   }
-  DAT_007dd6a8 = &DAT_007dd6a8;
-  _DAT_007dd6ac = &DAT_007dd6a8;
-  FUN_005ae7e0(&DAT_007dd684);
+  DAT_007dd6a8 = (undefined4)&DAT_007dd6a8;
+  _DAT_007dd6ac = (int)&DAT_007dd6a8;
+  FUN_005ae7e0((int)&DAT_007dd684);
   _DAT_007dd6b0 = 0;
   return;
 }

@@ -40,7 +40,7 @@ undefined4 FUN_005add80(void)
 {
   int iVar1;
   
-  iVar1 = FUN_005ae650(0xc,0x20,0,0,&DAT_009146c0,0x40804);
+  iVar1 = (int)FUN_005ae650(0xc,0x20,0,0,(uint *)&DAT_009146c0,0x40804);
   if (iVar1 != 0) {
     _DAT_007dda24 = 1;
     return 1;

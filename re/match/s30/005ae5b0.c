@@ -42,10 +42,10 @@ MGLOBAL(int, _DAT_007ddaac, 0x007ddaac);
 undefined4 FUN_005ae5b0(void)
 
 {
-  DAT_007dda80 = &DAT_007dda80;
-  _DAT_007dda84 = &DAT_007dda80;
+  DAT_007dda80 = (undefined4)&DAT_007dda80;
+  _DAT_007dda84 = (int)&DAT_007dda80;
   _DAT_007ddaac = 1;
-  DAT_007ddab0 = FUN_005ae650(0x24,0x10,4,0,&DAT_007dda88,0x40800);
+  DAT_007ddab0 = (int)FUN_005ae650(0x24,0x10,4,0,(uint *)&DAT_007dda88,0x40800);
   if (DAT_007ddab0 == 0) {
     _DAT_007ddaac = DAT_007ddab0;
     return 0;

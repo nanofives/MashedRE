@@ -39,7 +39,7 @@ MGLOBAL(int, _DAT_007ddaac, 0x007ddaac);
 void FUN_005ae610(void)
 
 {
-  while ((undefined4 **)DAT_007dda80 != &DAT_007dda80) {
+  while ((undefined4 **)DAT_007dda80 != (undefined4 **)&DAT_007dda80) {
     FUN_005ae7e0(DAT_007dda80 + -0x1c);
   }
   FUN_005ae7e0(DAT_007ddab0);

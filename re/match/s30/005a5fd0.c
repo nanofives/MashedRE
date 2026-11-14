@@ -45,7 +45,7 @@ int FUN_005a5fd0(int *param_1)
     if (DAT_007dc954 == 0) {
       DAT_007dc954 = FUN_004cd060();
     }
-    iVar1 = FUN_005aea60(DAT_007dc954);
+    iVar1 = FUN_005aea60((undefined4 *)DAT_007dc954);
     return iVar1 == 1;
   }
   return 1;

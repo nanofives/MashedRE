@@ -41,9 +41,9 @@ MGLOBAL(int, _DAT_007dca14, 0x007dca14);
 int FUN_005a6af0(void)
 {
   int iVar1;
-  DAT_007dca0c = &DAT_007dca0c;
-  _DAT_007dca10 = &DAT_007dca0c;
-  iVar1 = FUN_005ae650(0x18,0x40,4,0,&DAT_007dc9e8,0x4080b);
+  DAT_007dca0c = (undefined4)&DAT_007dca0c;
+  _DAT_007dca10 = (int)&DAT_007dca0c;
+  iVar1 = (int)FUN_005ae650(0x18,0x40,4,0,(uint *)&DAT_007dc9e8,0x4080b);
   if (iVar1 == 0) return 0;
   _DAT_007dca14 = 1;
   return 1;

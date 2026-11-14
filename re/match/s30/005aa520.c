@@ -43,9 +43,9 @@ void FUN_005aa520(void)
 
 {
   _DAT_007dccc8 = 1;
-  FUN_005aaa00(DAT_007dcd20,0,0);
+  FUN_005aaa00((int *)DAT_007dcd20,0,0);
   DAT_007dcd20 = 0;
-  FUN_005ae7e0(&DAT_007dcccc);
+  FUN_005ae7e0((int)&DAT_007dcccc);
   _DAT_007dcd24 = 0;
   return;
 }

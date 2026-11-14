@@ -23,8 +23,19 @@ with open('re/match/PROVISIONAL.tsv', encoding='utf-8') as f:
 # PORT-TOP-AUDIO-RWA: L-126 provisional bodies bind on the knob path only for the rvas named here (kept narrow so the
 # closure grows one reached stop at a time); c4=frida-replay rows (L-128) bind from their one re/match source.
 PROV_BIND = {'005a6ea0', '005a6f30', '004627f0', '005aa0c0'}   # 004627f0 + its reached callee 005aa0c0: PORT-TOP-AUDIO-HWINIT-4627F0
+PROV_BIND |= {'005a5e70'}   # PORT-TOP-RWAUDIO-TABLE-632BA8: table slot 0x00632ba8 (tail-merge layout, PROVISIONAL.tsv)
+# PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
+# not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
+PEND = {}
+for _p in glob.glob('re/promotions/*.tsv'):
+    with open(_p, encoding='utf-8') as f:
+        for r in csv.DictReader((l for l in f if not l.startswith('#')), delimiter='\t'):
+            if r.get('route') == 'match' and r.get('rva', '').startswith('0x') and os.path.exists(r.get('evidence', '')):
+                PEND[r['rva'][2:].lower()] = r['evidence']
 def msrc(rva):
     r = rows.get(rva)
+    if rva in PEND and not (r and r[3] == 'C4' and 'c4=match' in r[8]):
+        return PEND[rva], 'match'
     if not r: return None, None
     if r[3] == 'C4' and 'c4=frida-replay' in r[8] and 'c4=match' not in r[8]:
         hits = glob.glob('re/match/*/%s.c' % rva)
@@ -58,6 +69,11 @@ def reuse(rva):
     for sym, f, how in idx.get(rva, []):
         if f.startswith('Match/PortTop_') and how == 'match-include':
             return sym, f
+    # PORT-TOP-RWAUDIO-TABLE-632BA8: the RW core already compiles one exe body per rva (RwCore/RwCore_<rva>.cpp, L-124);
+    # the table's RW calls (0x004c2f60 / 0x004c2fb0 / 0x004c3040 / 0x004c30b0 / 0x004c3270 / 0x004c32b0) reuse it.
+    for sym, f, how in idx.get(rva, []):
+        if f.startswith('RwCore/') and how == 'match-include':
+            return sym, f
     src, kind = msrc(rva)
     if src:
         cs, _, _ = callees(src, rva)
@@ -80,6 +96,12 @@ EXTRA_PRE = {
                  '#define MASHED_RE_PORT 1', '#define DAT_00639d80 ((Rec639d80 *)0x00639d80u)'],
 }
 EXTRA_PRE['005ab040'] = ['#pragma comment(lib, "winmm.lib")   // timeGetTime (the original imports it from WINMM.dll)']
+# PORT-TOP-RWAUDIO-TABLE-632BA8: names the sources define or reference that are not FUN_<rva>.
+EXTRA_PRE['005aafe0'] = ['#define thunk_FUN_005ab010 PortTop_Bound_005aafe0   // re/match/s30/005aafe0.c names its body after the jump target (Ghidra thunk name)']
+EXTRA_PRE['005ac590'] = ['// LAB_005ac5c0 is a code address the body stores, not called here: the port stores the original address (no exe body;',
+                         '// a later call through it is reported by MASHED_CODE_TRAP, image design (b)).',
+                         '#define LAB_005ac5c0 (*(undefined1 *)0x005ac5c0u)']
+EXTRA_PRE['005ae330'] = ['#define thunk_FUN_004522d0 RwCore_004522d0   // Ghidra thunk_ name of the jump to 0x004522d0 (re/match/s26/005ae330.c)']
 EXTRA_IN = {'00407600': ['char *FUN_0047d150(int h);   // declared here: the source declares it only outside MASHED_RE_PORT']}
 FORCE = {"00466b50", "0045d3f0", "0045d430"}
 # PORT-TOP-AUDIO-RWA: re-runs regenerate every wrapper this generator wrote before (the previous plan.json 'bind' rows),
@@ -123,6 +145,10 @@ while q:
         q.extend(cs)
     else:
         plan[rva] = ('stop',)
+# PORT-TOP-RWAUDIO-TABLE-632BA8: every rva new to plan.json in this run comes from the table roots (0x00632ba8 targets
+# and the two 0x005a5f00 callbacks); OLD_PLAN wrappers keep their header.
+_OLDB = {k for k, v in json.load(open(_pp)).items() if v and v[0] == 'bind'} if os.path.exists(_pp) else set()
+TABLE_NEW = {r for r in plan if r not in _OLDB}
 def sym(rva):
     p = plan[rva]
     if p[0] == 'reuse': return p[1]
@@ -143,7 +169,11 @@ for rva, p in sorted(plan.items()):
     keep_hdr = None
     if os.path.exists(fn):
         old = open(fn, encoding='utf-8').read()
-        keep_hdr = [l for l in old.splitlines() if l.startswith('//')]
+        # PORT-TOP-RWAUDIO-TABLE-632BA8: the leading comment block only (EXTRA_PRE comments further down are re-emitted)
+        keep_hdr = []
+        for l in old.splitlines():
+            if not l.startswith('//'): break
+            keep_hdr.append(l)
     r = rows.get(rva)
     m = None
     ev = 'match.py BYTE-IDENTICAL, hooks.csv C4 c4=match' if kind == 'match' else \
@@ -153,8 +183,19 @@ for rva, p in sorted(plan.items()):
     L = []
     if keep_hdr and rva in ('00466b50', '0045d3f0', '0045d430'):
         L += [l for l in keep_hdr if not l.startswith('// RVA-LINT')]
-        L.append('// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops')
-        L.append('// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).')
+        for x in ('// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops',
+                  '// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).'):
+            if x not in L: L.append(x)   # re-runs used to append these twice
+    elif keep_hdr and rva not in TABLE_NEW:
+        # PORT-TOP-RWAUDIO-TABLE-632BA8: an existing wrapper keeps the header its row wrote (re-runs used to rewrite the
+        # HWINIT wrappers' headers to the AUDIOTICK text once those rvas were in plan.json).
+        L += [l for l in keep_hdr if not l.startswith('// RVA-LINT')]
+    elif rva in TABLE_NEW:
+        L.append('// PORT-TOP-RWAUDIO-TABLE-632BA8 (2026-11-13): exe-only port body of rva 0x%s = %s' % (rva, src))
+        L.append('// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOINIT' % ev)
+        L.append('// through the RW-audio init/shutdown table 0x00632ba8 that 0x005a5f60 walks for 0x005a5f00 (slots bound by the')
+        L.append('// image code-pointer fix-up, Compat/PortTopCodePtrImage.inc). Callees bind to exe bodies by name;')
+        L.append('// a callee with no matched or admitted body is a named stop (Match/PortTop_AudioStops.cpp).')
     elif rva not in OLD_PLAN:
         L.append('// PORT-TOP-AUDIO-HWINIT-4627F0 (2026-11-13): exe-only port body of rva 0x%s = %s' % (rva, src))
         L.append('// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOINIT' % ev)

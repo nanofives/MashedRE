@@ -31,7 +31,9 @@ typedef unsigned long DWORD; typedef char *LPSTR; typedef const char *LPCSTR; ty
 typedef unsigned char BYTE; typedef long LONG; typedef void *HDC; typedef void *HMENU; typedef void *HICON;
 
 MGLOBAL(undefined1, DAT_007dd680, 0x007dd680);
+#ifndef MATCH_PORT   /* the port reads the label at its original address (Match/PortTop_005ac590.cpp) */
 extern undefined1 LAB_005ac5c0;
+#endif
 MGLOBAL(undefined1, DAT_007dd65c, 0x007dd65c);
 undefined4 * FUN_005aa0c0(undefined4 * p0, int * p1, undefined * p2, undefined4 p3, int p4);
 void FUN_005ae7e0(int p0);
@@ -41,7 +43,7 @@ void FUN_005ac590(void)
 
 {
   FUN_005aa0c0(0,0,&LAB_005ac5c0,0,1);
-  FUN_005ae7e0(&DAT_007dd65c);
+  FUN_005ae7e0((int)&DAT_007dd65c);
   _DAT_007dd680 = 0;
   return;
 }

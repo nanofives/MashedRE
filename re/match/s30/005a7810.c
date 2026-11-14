@@ -51,18 +51,18 @@ undefined4 FUN_005a7810(void)
 {
   int iVar1;
   
-  DAT_007dca7c = &DAT_007dca7c;
-  _DAT_007dca80 = &DAT_007dca7c;
+  DAT_007dca7c = (undefined4)&DAT_007dca7c;
+  _DAT_007dca80 = (int)&DAT_007dca7c;
   _DAT_007dcab0 = 1;
-  iVar1 = FUN_005ae650(0x24,8,4,0,&DAT_007dca84,0x40808);
+  iVar1 = (int)FUN_005ae650(0x24,8,4,0,(uint *)&DAT_007dca84,0x40808);
   if (iVar1 != 0) {
-    DAT_007dcab8 = FUN_005a7920(&DAT_007dca58);
+    DAT_007dcab8 = FUN_005a7920((int)&DAT_007dca58);
     DAT_007dcabc = DAT_007dcab8;
     if (DAT_007dcab8 != 0) {
-      FUN_005ad540(DAT_007dcab8,&DAT_005e615c,&DAT_007d3e6c);
+      FUN_005ad540(DAT_007dcab8,(undefined4)&DAT_005e615c,(undefined4)&DAT_007d3e6c);
       return 1;
     }
-    FUN_005ae7e0(&DAT_007dca84);
+    FUN_005ae7e0((int)&DAT_007dca84);
   }
   DAT_007dcab8 = 0;
   DAT_007dcabc = 0;

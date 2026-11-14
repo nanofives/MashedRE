@@ -6,8 +6,8 @@ rva	xcheck_default	xcheck_seeded
 005a9970	SAME same=16 inc=0 diff=0	SAME same=16 inc=0 diff=0
 005aa480	SAME same=16 inc=0 diff=0	SAME same=16 inc=0 diff=0
 005ad030	INCONCLUSIVE same=0 inc=16 diff=0	INCONCLUSIVE same=0 inc=16 diff=0
-005adb70	not run	not run
-005ae210	not run	not run
+005adb70	INCONCLUSIVE same=0 inc=16 diff=0	INCONCLUSIVE same=0 inc=16 diff=0
+005ae210	INCONCLUSIVE same=0 inc=16 diff=0	INCONCLUSIVE same=0 inc=16 diff=0
 005ae5b0	SAME same=16 inc=0 diff=0	SAME same=16 inc=0 diff=0
-005ae610	not run	not run
+005ae610	INCONCLUSIVE same=0 inc=16 diff=0	INCONCLUSIVE same=0 inc=16 diff=0
 005aea60	SAME same=16 inc=0 diff=0	SAME same=16 inc=0 diff=0

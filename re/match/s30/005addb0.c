@@ -38,7 +38,7 @@ MGLOBAL(int, _DAT_007dda24, 0x007dda24);
 void FUN_005addb0(void)
 
 {
-  FUN_005ae7e0(&DAT_009146c0);
+  FUN_005ae7e0((int)&DAT_009146c0);
   _DAT_007dda24 = 0;
   return;
 }

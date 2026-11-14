@@ -53,8 +53,8 @@ undefined4 FUN_005ab4a0(void)
   DAT_007dd614 = 0;
   FUN_005aeea0(&DAT_007dd618,1,1);
   DAT_007dd62c = 0;
-  DAT_007dd624 = &DAT_007dd624;
-  _DAT_007dd628 = &DAT_007dd624;
+  DAT_007dd624 = (undefined4)&DAT_007dd624;
+  _DAT_007dd628 = (int)&DAT_007dd624;
   FUN_005aeea0(&DAT_007dd620,1,1);
   FUN_005aeea0(&DAT_007dd61c,1,1);
   return 1;

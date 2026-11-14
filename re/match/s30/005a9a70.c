@@ -46,9 +46,9 @@ void FUN_005a9a70(void)
 {
   _DAT_007dcbf0 = 1;
   FUN_005a9d00(&DAT_007dcc40);
-  FUN_005ae7e0(&DAT_007dcc18);
-  FUN_005ae7e0(&DAT_007dcbf4);
-  FUN_005ae7e0(&DAT_007dcc9c);
+  FUN_005ae7e0((int)&DAT_007dcc18);
+  FUN_005ae7e0((int)&DAT_007dcbf4);
+  FUN_005ae7e0((int)&DAT_007dcc9c);
   _DAT_007dccc0 = 0;
   return;
 }
