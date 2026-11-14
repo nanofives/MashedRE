@@ -32,17 +32,17 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
 
-extern undefined1 FUN_005a5ee0;
+void FUN_005a5ee0(void);
 void FUN_0045b350(void);
 // MATCH: 0x005a6010 FUN_005a6010
-
-void FUN_005a6010(int param_1)
-
-{
-  if (*(code **)(param_1 + 4) == FUN_005a5ee0) {
-    FUN_0045b350();
-    return;
-  }
-  return;
-}
-
+
+void FUN_005a6010(int param_1)
+
+{
+  if (*(int *)(param_1 + 4) == (int)FUN_005a5ee0) {
+    FUN_0045b350();
+    return;
+  }
+  return;
+}
+

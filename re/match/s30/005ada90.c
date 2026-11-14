@@ -31,64 +31,39 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT14(a) ((int)(signed char)(a))
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
-
-extern undefined1 DAT_007dd6b8;
-extern undefined1 DAT_007dda20;
-extern undefined4 DAT_006336f0;
-extern void * PTR_DAT_006336f8;
-extern undefined4 DAT_006336fc;
-extern undefined1 DAT_007dd6c4;
-extern undefined1 DAT_009146f0;
-bool FUN_005add60(void);
-uint * FUN_005ae650(int p0, uint p1, uint p2, int p3, uint * p4, undefined4 p5);
-void FUN_005ae7e0(int p0);
-void FUN_005b3580(undefined4 * p0);
+typedef struct { void *pool; int size; } S30_PoolDesc;   /* 8-byte rows at 0x006336f8: +0 pool record, +4 size (0x005adaa2 / 0x005adaa9) */
+extern S30_PoolDesc DAT_006336f8[5];
+extern int DAT_007dd6c4;
+extern int DAT_009146f0;
 extern int _DAT_007dd6b8;
 extern int _DAT_007dda20;
+int FUN_005add60(void);
+int FUN_005ae650(int p0, uint p1, uint p2, int p3, void * p4, undefined4 p5);
+void FUN_005ae7e0(void * p0);
+void FUN_005b3580(void * p0);
 // MATCH: 0x005ada90 FUN_005ada90
-undefined4 FUN_005ada90(void)
-
-{
-  int iVar1;
-  uint uVar2;
-  uint uVar3;
-  undefined4 *puVar4;
-  
-  FUN_005b3580(&DAT_009146f0);
-  uVar2 = 0;
-  do {
-    iVar1 = FUN_005ae650((&DAT_006336fc)[uVar2 * 2],8,4,0,(&PTR_DAT_006336f8)[uVar2 * 2],0x40803);
-    uVar3 = uVar2;
-    if ((iVar1 == 0) && (uVar2 != 0)) {
-      puVar4 = &DAT_006336f0 + uVar2 * 2;
-      do {
-        FUN_005ae7e0(*puVar4);
-        uVar3 = uVar3 - 1;
-        puVar4 = puVar4 + -2;
-        uVar2 = uVar2 - 1;
-      } while (uVar2 != 0);
-    }
-    uVar2 = uVar3 + 1;
-  } while (uVar2 < 5);
-  _DAT_007dd6b8 = 0;
-  _DAT_007dda20 = 1;
-  iVar1 = FUN_005ae650(0x28,0x10,4,0,&DAT_007dd6c4,0x40803);
-  if (iVar1 != 0) {
-    iVar1 = FUN_005add60();
-    if (iVar1 == 1) {
-      return 1;
-    }
-    FUN_005ae7e0(&DAT_007dd6c4);
-  }
-  if (uVar2 != 0) {
-    puVar4 = &DAT_006336f0 + uVar2 * 2;
-    do {
-      FUN_005ae7e0(*puVar4);
-      puVar4 = puVar4 + -2;
-      uVar2 = uVar2 - 1;
-    } while (uVar2 != 0);
-  }
-  _DAT_007dda20 = 0;
-  return 0;
-}
-
+int FUN_005ada90(void)
+{
+  uint i;
+  FUN_005b3580(&DAT_009146f0);
+  for (i = 0; i < 5; i++) {
+    if (FUN_005ae650(DAT_006336f8[i].size,8,4,0,DAT_006336f8[i].pool,0x40803) == 0) {
+      while (i > 0) {
+        FUN_005ae7e0(DAT_006336f8[i - 1].pool);
+        i--;
+      }
+    }
+  }
+  _DAT_007dd6b8 = 0;
+  _DAT_007dda20 = 1;
+  if (FUN_005ae650(0x28,0x10,4,0,&DAT_007dd6c4,0x40803) != 0) {
+    if (FUN_005add60() == 1) return 1;
+    FUN_005ae7e0(&DAT_007dd6c4);
+  }
+  while (i > 0) {
+    FUN_005ae7e0(DAT_006336f8[i - 1].pool);
+    i--;
+  }
+  _DAT_007dda20 = 0;
+  return 0;
+}

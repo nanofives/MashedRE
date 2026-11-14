@@ -33,23 +33,23 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT48(a) ((longlong)(int)(a))
 
 extern int DAT_007dc954;
-extern undefined1 FUN_005a5e70;
+void FUN_005a5e70(void);
 int FUN_004cd060(void);
 undefined4 FUN_005aea60(undefined4 * p0);
 // MATCH: 0x005a5fd0 FUN_005a5fd0
-
-bool FUN_005a5fd0(int *param_1)
-
-{
-  int iVar1;
-  
-  if ((code *)*param_1 == FUN_005a5e70) {
-    if (DAT_007dc954 == 0) {
-      DAT_007dc954 = FUN_004cd060();
-    }
-    iVar1 = FUN_005aea60(DAT_007dc954);
-    return iVar1 == 1;
-  }
-  return true;
-}
-
+
+int FUN_005a5fd0(int *param_1)
+
+{
+  int iVar1;
+  
+  if (*param_1 == (int)FUN_005a5e70) {
+    if (DAT_007dc954 == 0) {
+      DAT_007dc954 = FUN_004cd060();
+    }
+    iVar1 = FUN_005aea60(DAT_007dc954);
+    return iVar1 == 1;
+  }
+  return 1;
+}
+

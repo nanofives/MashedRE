@@ -39,14 +39,14 @@ void FUN_005a6cb0(int * p0, undefined4 * p1);
 void FUN_005ae7e0(int p0);
 extern int _DAT_007dca14;
 // MATCH: 0x005a6b30 FUN_005a6b30
-void FUN_005a6b30(void)
-
-{
-  while ((undefined4 **)DAT_007dca0c != &DAT_007dca0c) {
-    FUN_005a6cb0(DAT_007dca0c + -2,0);
-  }
-  FUN_005ae7e0(&DAT_007dc9e8);
-  _DAT_007dca14 = 0;
-  return;
-}
-
+void FUN_005a6b30(void)
+
+{
+  while ((undefined4 **)DAT_007dca0c != &DAT_007dca0c) {
+    FUN_005a6cb0(DAT_007dca0c + -8,0);
+  }
+  FUN_005ae7e0(&DAT_007dc9e8);
+  _DAT_007dca14 = 0;
+  return;
+}
+

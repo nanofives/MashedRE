@@ -1,0 +1,172 @@
+[
+ {
+  "addr": 5925680,
+  "sym": "FUN_005a6b30",
+  "bytes_bad": 31,
+  "classes": [
+   "ENC"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5926480,
+  "sym": "FUN_005a6e50",
+  "bytes_bad": 8,
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "frame",
+  "rules": [],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5928976,
+  "sym": "FUN_005a7810",
+  "bytes_bad": 3,
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5929136,
+  "sym": "FUN_005a78b0",
+  "bytes_bad": 6,
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5937520,
+  "sym": "FUN_005a9970",
+  "bytes_bad": 17,
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5940352,
+  "sym": "FUN_005aa480",
+  "bytes_bad": 3,
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5951536,
+  "sym": "FUN_005ad030",
+  "bytes_bad": 33,
+  "classes": [
+   "ENC"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5954416,
+  "sym": "FUN_005adb70",
+  "bytes_bad": 64,
+  "classes": [
+   "ENC",
+   "ORDER",
+   "LAYOUT",
+   "FRAME",
+   "VALUE-FLOW"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image",
+   "jmp-threading",
+   "polarity"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5956112,
+  "sym": "FUN_005ae210",
+  "bytes_bad": 29,
+  "classes": [
+   "ENC"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5956400,
+  "sym": "FUN_005ae330",
+  "bytes_bad": 17,
+  "classes": [
+   "ORDER",
+   "FRAME"
+  ],
+  "mode": "frame",
+  "rules": [],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5957040,
+  "sym": "FUN_005ae5b0",
+  "bytes_bad": 11,
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5957136,
+  "sym": "FUN_005ae610",
+  "bytes_bad": 28,
+  "classes": [
+   "ENC"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 5958240,
+  "sym": "FUN_005aea60",
+  "bytes_bad": 13,
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "frame",
+  "rules": [],
+  "verdict": "EQUIV"
+ }
+]

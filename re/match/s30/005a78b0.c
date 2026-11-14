@@ -45,20 +45,20 @@ extern int _DAT_007dcab4;
 extern int _DAT_007dca80;
 extern int _DAT_007dcab0;
 // MATCH: 0x005a78b0 FUN_005a78b0
-void FUN_005a78b0(void)
-
-{
-  _DAT_007dcab4 = 1;
-  while ((undefined4 **)DAT_007dca7c != &DAT_007dca7c) {
-    FUN_005a79a0(DAT_007dca7c + -7);
-  }
-  FUN_005ae7e0(&DAT_007dca84);
-  DAT_007dca7c = &DAT_007dca7c;
-  _DAT_007dca80 = &DAT_007dca7c;
-  DAT_007dcab8 = 0;
-  DAT_007dcabc = 0;
-  _DAT_007dcab0 = 0;
-  _DAT_007dcab4 = 0;
-  return;
-}
-
+void FUN_005a78b0(void)
+
+{
+  _DAT_007dcab4 = 1;
+  while ((undefined4 **)DAT_007dca7c != &DAT_007dca7c) {
+    FUN_005a79a0(DAT_007dca7c + -0x1c);
+  }
+  FUN_005ae7e0(&DAT_007dca84);
+  DAT_007dca7c = &DAT_007dca7c;
+  _DAT_007dca80 = &DAT_007dca7c;
+  DAT_007dcab8 = 0;
+  DAT_007dcabc = 0;
+  _DAT_007dcab0 = 0;
+  _DAT_007dcab4 = 0;
+  return;
+}
+

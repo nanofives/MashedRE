@@ -41,16 +41,16 @@ void FUN_005ae7e0(int p0);
 extern int _DAT_007dd6ac;
 extern int _DAT_007dd6b0;
 // MATCH: 0x005ad030 FUN_005ad030
-void FUN_005ad030(void)
-
-{
-  while ((undefined4 **)DAT_007dd6a8 != &DAT_007dd6a8) {
-    FUN_005ad5f0(DAT_007dd6a8 + -8);
-  }
-  DAT_007dd6a8 = &DAT_007dd6a8;
-  _DAT_007dd6ac = &DAT_007dd6a8;
-  FUN_005ae7e0(&DAT_007dd684);
-  _DAT_007dd6b0 = 0;
-  return;
-}
-
+void FUN_005ad030(void)
+
+{
+  while ((undefined4 **)DAT_007dd6a8 != &DAT_007dd6a8) {
+    FUN_005ad5f0(DAT_007dd6a8 + -0x20);
+  }
+  DAT_007dd6a8 = &DAT_007dd6a8;
+  _DAT_007dd6ac = &DAT_007dd6a8;
+  FUN_005ae7e0(&DAT_007dd684);
+  _DAT_007dd6b0 = 0;
+  return;
+}
+

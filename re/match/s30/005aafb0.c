@@ -36,19 +36,20 @@ extern BOOL DAT_007dce00;
 extern undefined4 DAT_007dcdf0;
 extern undefined4 DAT_007dcdf8;
 void FUN_005aaff0(void);
+typedef union { struct { DWORD LowPart; LONG HighPart; } u; __int64 QuadPart; } LARGE_INTEGER;
 __declspec(dllimport) BOOL __stdcall QueryPerformanceCounter(LARGE_INTEGER * p0);
 __declspec(dllimport) BOOL __stdcall QueryPerformanceFrequency(LARGE_INTEGER * p0);
-extern int LARGE_INTEGER;
+
 // MATCH: 0x005aafb0 FUN_005aafb0
-
-undefined4 FUN_005aafb0(void)
-
-{
-  DAT_007dce00 = QueryPerformanceCounter((LARGE_INTEGER *)&DAT_007dcdf0);
-  if (DAT_007dce00 == 1) {
-    QueryPerformanceFrequency((LARGE_INTEGER *)&DAT_007dcdf8);
-  }
-  FUN_005aaff0();
-  return 1;
-}
-
+
+undefined4 FUN_005aafb0(void)
+
+{
+  DAT_007dce00 = QueryPerformanceCounter((LARGE_INTEGER *)&DAT_007dcdf0);
+  if (DAT_007dce00 == 1) {
+    QueryPerformanceFrequency((LARGE_INTEGER *)&DAT_007dcdf8);
+  }
+  FUN_005aaff0();
+  return 1;
+}
+

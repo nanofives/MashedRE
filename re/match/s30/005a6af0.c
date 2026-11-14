@@ -40,18 +40,13 @@ uint * FUN_005ae650(int p0, uint p1, uint p2, int p3, uint * p4, undefined4 p5);
 extern int _DAT_007dca10;
 extern int _DAT_007dca14;
 // MATCH: 0x005a6af0 FUN_005a6af0
-void FUN_005a6af0(void)
-
-{
-  int iVar1;
-  
-  DAT_007dca0c = &DAT_007dca0c;
-  _DAT_007dca10 = &DAT_007dca0c;
-  iVar1 = FUN_005ae650(0x18,0x40,4,0,&DAT_007dc9e8,0x4080b);
-  if (iVar1 == 0) {
-    return;
-  }
-  _DAT_007dca14 = 1;
-  return;
-}
-
+int FUN_005a6af0(void)
+{
+  int iVar1;
+  DAT_007dca0c = &DAT_007dca0c;
+  _DAT_007dca10 = &DAT_007dca0c;
+  iVar1 = FUN_005ae650(0x18,0x40,4,0,&DAT_007dc9e8,0x4080b);
+  if (iVar1 == 0) return 0;
+  _DAT_007dca14 = 1;
+  return 1;
+}

@@ -31,40 +31,31 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT14(a) ((int)(signed char)(a))
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
-
-extern undefined1 DAT_007dd6b8;
-extern undefined1 DAT_007dda20;
-extern void * PTR_DAT_006336f8;
-extern undefined1 DAT_00633720;
-extern undefined1 DAT_007dd6c4;
-extern undefined1 DAT_009146f0;
-void FUN_005ada40(undefined4 p0, int p1);
-void FUN_005ae7e0(int p0);
-void FUN_005b3580(undefined4 * p0);
-int * FUN_005b36b0(int * p0, int p1);
+typedef struct { void *pool; int size; } S30_PoolDesc;   /* 8-byte rows at 0x006336f8 (see 005ada90.c) */
+extern S30_PoolDesc DAT_006336f8[5];
+extern int DAT_007dd6c4;
+extern int DAT_009146f0;
 extern int _DAT_007dd6b8;
 extern int _DAT_007dda20;
+void FUN_005ada40(void * p0, int p1);
+void FUN_005ae7e0(void * p0);
+void FUN_005b3580(void * p0);
+void * FUN_005b36b0(void * p0, int p1);
 // MATCH: 0x005adb70 FUN_005adb70
-void FUN_005adb70(void)
-
-{
-  int iVar1;
-  undefined **ppuVar2;
-  
-  _DAT_007dd6b8 = 1;
-  while( true ) {
-    iVar1 = FUN_005b36b0(&DAT_009146f0,0);
-    if (iVar1 == 0) break;
-    FUN_005ada40(iVar1,1);
-  }
-  FUN_005b3580(&DAT_009146f0);
-  FUN_005ae7e0(&DAT_007dd6c4);
-  ppuVar2 = (undefined **)&DAT_00633720;
-  do {
-    FUN_005ae7e0(ppuVar2[-2]);
-    ppuVar2 = ppuVar2 + -2;
-  } while (&PTR_DAT_006336f8 < ppuVar2);
-  _DAT_007dda20 = 0;
-  return;
-}
-
+void FUN_005adb70(void)
+{
+  void *p;
+  S30_PoolDesc *d;
+  _DAT_007dd6b8 = 1;
+  while ((p = FUN_005b36b0(&DAT_009146f0,0)) != 0) {
+    FUN_005ada40(p,1);
+  }
+  FUN_005b3580(&DAT_009146f0);
+  FUN_005ae7e0(&DAT_007dd6c4);
+  d = &DAT_006336f8[5];
+  do {
+    FUN_005ae7e0(d[-1].pool);
+    d--;
+  } while (d > DAT_006336f8);
+  _DAT_007dda20 = 0;
+}
