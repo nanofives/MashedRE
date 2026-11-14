@@ -312,7 +312,7 @@ if os.path.exists(_TB):
         _s, _n, _r = _ln.split('\t')
         if inrw(int(_r, 16)):
             THUNK_BIND.setdefault((_s, _n), _r)
-MATCHLINE = re.compile(r'^// MATCH: 0x([0-9a-f]{8}) (\S+)', re.M)
+MATCHLINE = re.compile(r'^(?:[^\n/]*;)?// MATCH: 0x([0-9a-f]{8}) (\S+)', re.M)   # hand merge run 45: also a MATCH label glued after a prototype (re/match/rwl02/004e4c30.c line 41)
 # 004c7a70 has no ledger row yet (RWC-DRIVER); its source is the RWC-DRIVER one.
 PIN = {'004c7a70': 're/match/rwd01/004c7a70.c'}
 PCT = {'004c7a70': 93.2,
