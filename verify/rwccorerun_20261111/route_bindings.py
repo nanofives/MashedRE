@@ -28,7 +28,13 @@ DEF = re.compile(r'^(?P<pre>(?:extern "C" )?)(?P<ret>[A-Za-z_][\w\s\*]*?)\s*(?P<
                  r'(?P<name>(?:MashedRw_\w+?|PortTop_Port)_(?P<rva>00[0-9a-f]{6}))\((?P<params>[^()]*)\)\s*\{')
 TAG = '// [RWC-FRAME]'
 # bindings routed to a knob wrapper instead of the bare core body
-SPECIAL = {'004c7730': 'RwCore_FrameShowRaster'}   # first Present on the core ends the frame-knob boot
+SPECIAL = {'004c7730': 'RwCore_FrameShowRaster',   # first Present on the core ends the frame-knob boot
+           }
+# RWC-FRAME-CLUMP run 45: AppDestroy teardown on the core. The Destroy bindings call a knob wrapper that skips a 0 object
+# (its creator is a stand-in on the top-down path) and runs the core body otherwise (RwCore_Knob.cpp, RWC_DESTROY0).
+for _r in ('004c5930', '004c5a60', '004e5700', '004d41e0', '004c1cf0', '004c0c20', '004e6e00', '004c7650', '004e6920',
+           '004e4d90'):
+    SPECIAL[_r] = 'RwCore_FrameDestroy0_' + _r
 
 
 def split_params(p):

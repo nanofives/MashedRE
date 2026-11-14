@@ -200,6 +200,164 @@ int RwCore_AttachPlugins(void) {
     return r;
 }
 
+// ---- RWC-FRAME-CLUMP run 45: core-side Im2D draw dump (MASHED_RWC_DRAWDUMP=<json path>, frame route only, default OFF).
+// Same channel and schema as the original-side capture re/frida/menu_draw_burst.py: the Im2D RenderPrimitive slot of the
+// engine instance, [[0x007d3ff8] + 0x30] (RwIm2DRenderPrimitive(prim, verts, num), cdecl), one record per call with the
+// raw vertex blob (num * 0x1c bytes, num outside 1..64 read as 4, as the burst tool does) and up to 5 return addresses
+// (exe-relative offsets, resolve with --map mashedmod/build/mashed_re.map). The frame delimiter is MASHED_RWC_DRAWDUMP_DELIM
+// (RwCore_DrawDumpMark below; menu_draw_burst.py --delim takes the same RVA on the original side).
+// MASHED_RWC_DRAWDUMP_SKIP = entries to skip before the first captured frame (default 0), MASHED_RWC_DRAWDUMP_FRAMES =
+// frames captured (default 4). Labels core_f0..core_f<K-1>. The wrapper calls the saved slot, so the draws are unchanged.
+// [RWC-FRAME-CLUMP] Indexed draws (slot +0x34) are counted per frame, not dumped (the burst tool does not hook +0x34).
+typedef int(__cdecl* RwCoreIm2DPrimFn)(int prim, void* verts, int num);
+typedef int(__cdecl* RwCoreIm2DIdxFn)(int prim, void* verts, int nverts, void* idx, int nidx);
+static RwCoreIm2DPrimFn s_ddPrim = nullptr;
+static RwCoreIm2DIdxFn s_ddIdx = nullptr;
+static std::FILE* s_ddOut = nullptr;
+static int s_ddState = -1;            // -1 env not read, 0 off, 1 armed, 2 written
+static unsigned s_ddDelim = 0x00492e90u, s_ddTotal = 0;
+static unsigned s_ddSkip = 0, s_ddFrames = 4, s_ddEntries = 0, s_ddDraws = 0, s_ddIdxDraws = 0, s_ddClamped = 0;
+static int s_ddCur = -1;              // captured frame index, -1 = not collecting
+static char s_ddPath[MAX_PATH] = {};
+
+static unsigned RwCore_DdEnvU(const char* name, unsigned dflt) {
+    char v[16] = {};
+    return GetEnvironmentVariableA(name, v, sizeof(v)) > 0 ? static_cast<unsigned>(std::strtoul(v, nullptr, 10)) : dflt;
+}
+
+static void RwCore_DdCloseFrame(void) {
+    if (s_ddCur < 0) return;
+    std::fputs("\n ]", s_ddOut);
+    // 0x0067eca4: 0x0043c5b0 returns before any draw while it is 0 or 1 (re/match/s08/0043c5b0.c); 0x0067ecb0: screen id.
+    RwCore_Log("drawdump core_f%d: %u Im2D prim draws, %u indexed (+0x34, not dumped), %u counts read as 4; DAT_0067eca4 %d "
+               "DAT_0067ecb0 %d DAT_00771968 %d", s_ddCur, s_ddDraws, s_ddIdxDraws, s_ddClamped,
+               static_cast<int>(U32(0x0067eca4u)), static_cast<int>(U32(0x0067ecb0u)), static_cast<int>(U32(0x00771968u)));
+    s_ddCur = -1;
+}
+
+static void RwCore_DdFinish(const char* why) {
+    if (s_ddState != 1) return;
+    RwCore_DdCloseFrame();
+    std::fputs("\n}\n", s_ddOut);
+    std::fclose(s_ddOut);
+    s_ddOut = nullptr;
+    s_ddState = 2;
+    RwCore_Log("drawdump written (%s): %s, delimiter 0x%08X entries seen %u, Im2D prim calls in the whole run %u", why,
+               s_ddPath, s_ddDelim, s_ddEntries, s_ddTotal);
+}
+
+static int __cdecl RwCore_DdPrim(int prim, void* verts, int num) {
+    ++s_ddTotal;
+    if (s_ddCur >= 0 && s_ddOut) {
+        int n = num;
+        if (n < 1 || n > 64) { n = 4; ++s_ddClamped; }
+        std::fprintf(s_ddOut, "%s\n  {\"v\": \"", s_ddDraws ? "," : "");
+        const unsigned char* p = static_cast<const unsigned char*>(verts);
+        __try {
+            for (int i = 0; i < n * 0x1c; ++i) std::fprintf(s_ddOut, "%02x", p[i]);
+        } __except (1) {}
+        std::fputs("\", \"r\": [", s_ddOut);
+        void* fr[5] = {};
+        const USHORT got = CaptureStackBackTrace(1, 5, fr, nullptr);
+        const std::uintptr_t base = reinterpret_cast<std::uintptr_t>(GetModuleHandleA(nullptr));
+        for (USHORT i = 0; i < got; ++i)
+            std::fprintf(s_ddOut, "%s\"0x%x\"", i ? ", " : "",
+                         static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(fr[i]) - base));
+        std::fprintf(s_ddOut, "], \"prim\": %d, \"num\": %d}", prim, num);
+        ++s_ddDraws;
+    }
+    return s_ddPrim(prim, verts, num);
+}
+
+static int __cdecl RwCore_DdIdx(int prim, void* verts, int nverts, void* idx, int nidx) {
+    if (s_ddCur >= 0) ++s_ddIdxDraws;
+    return s_ddIdx(prim, verts, nverts, idx, nidx);
+}
+
+// Installs the wrappers in the engine instance's device block (after the core's RwEngineStart, frame route only).
+static void RwCore_DdInstall(void) {
+    if (s_ddState < 0) {
+        s_ddState = (GetEnvironmentVariableA("MASHED_RWC_DRAWDUMP", s_ddPath, sizeof(s_ddPath)) > 0 && s_ddPath[0]) ? 1 : 0;
+        if (s_ddState == 1) {
+            s_ddSkip = RwCore_DdEnvU("MASHED_RWC_DRAWDUMP_SKIP", 0);
+            s_ddFrames = RwCore_DdEnvU("MASHED_RWC_DRAWDUMP_FRAMES", 4);
+            char dv[16] = {};
+            if (GetEnvironmentVariableA("MASHED_RWC_DRAWDUMP_DELIM", dv, sizeof(dv)) > 0)
+                s_ddDelim = static_cast<unsigned>(std::strtoul(dv, nullptr, 16));
+            s_ddOut = std::fopen(s_ddPath, "w");
+            if (!s_ddOut) { RwCore_Log("drawdump: cannot open %s", s_ddPath); s_ddState = 0; return; }
+            std::fputs("{", s_ddOut);
+        }
+    }
+    if (s_ddState != 1) return;
+    const std::uint32_t g = U32(0x007d3ff8u);
+    if (!g) return;
+    const std::uint32_t pf = U32(g + 0x30), xf = U32(g + 0x34);
+    const std::uint32_t mine = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(&RwCore_DdPrim));
+    const std::uint32_t minex = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(&RwCore_DdIdx));
+    if (pf != mine) {
+        s_ddPrim = reinterpret_cast<RwCoreIm2DPrimFn>(static_cast<std::uintptr_t>(pf));
+        U32(g + 0x30) = mine;
+        RwCore_Log("drawdump: Im2D prim slot [RwGlobals %08X + 0x30] %08X wrapped (delimiter 0x%08X, skip %u, frames %u) -> %s",
+                   g, pf, s_ddDelim, s_ddSkip, s_ddFrames, s_ddPath);
+    }
+    if (xf != minex && xf) {
+        s_ddIdx = reinterpret_cast<RwCoreIm2DIdxFn>(static_cast<std::uintptr_t>(xf));
+        U32(g + 0x34) = minex;
+    }
+}
+
+// Frame delimiter. MASHED_RWC_DRAWDUMP_DELIM (hex RVA, default 0x00492e90): one frame = the span between two entries to
+// that RVA. 0x00492e90 = the frame render, marked by its caller PortTop_StandIn_00492e90 (Match/PortTop_00492370.cpp) on
+// the frame route; 0x0042e3a0 = the burst tool's default delimiter, marked by the CALL_VIA entry below (run 45: the core
+// frame at the title, DAT_0067ecb0 = 33, never entered it, 0 entries in 120 frames).
+// Under the dump knob the begin-update of the frame camera DAT_006905b0 (0x004671a0 returns it for -1; RwCameraBeginUpdate
+// 0x004c1a00 calls [camera + 0x18]) is wrapped too, and its result logged for the first 3 calls and every 60th: 0x00492e90
+// draws the screen (0x0043c5b0) only when it returns non-zero.
+typedef int(__cdecl* RwCoreCamFn)(int cam);
+static RwCoreCamFn s_ddBegin = nullptr;
+static std::uint32_t s_ddBeginCam = 0;
+static int __cdecl RwCore_DdBegin(int cam) {
+    static unsigned n = 0;
+    const int r = s_ddBegin(cam);
+    if (++n <= 3 || n % 60 == 0)
+        RwCore_Log("drawdump: camera %08X begin-update [+0x18] %08X call %u = %08X; camera +0x60 %08X +0x64 %08X", cam,
+                   static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(s_ddBegin)), n, r, U32(cam + 0x60), U32(cam + 0x64));
+    return r;
+}
+static void RwCore_DdWrapCamera(void) {
+    const std::uint32_t cam = U32(0x006905b0u);
+    const std::uint32_t mine = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(&RwCore_DdBegin));
+    if (!cam || U32(cam + 0x18) == mine) return;
+    if (cam != s_ddBeginCam || !s_ddBegin) s_ddBegin = reinterpret_cast<RwCoreCamFn>(static_cast<std::uintptr_t>(U32(cam + 0x18)));
+    s_ddBeginCam = cam;
+    RwCore_Log("drawdump: frame camera DAT_006905b0 %08X, begin-update [+0x18] %08X end-update [+0x1c] %08X wrapped", cam,
+               U32(cam + 0x18), U32(cam + 0x1c));
+    U32(cam + 0x18) = mine;
+}
+
+void RwCore_DrawDumpMark(unsigned rva) {
+    if (s_ddState != 1 || rva != s_ddDelim) return;
+    RwCore_DdInstall();   // re-wrap if the slot was rewritten since the engine start
+    RwCore_DdWrapCamera();
+    const unsigned e = s_ddEntries++;
+    if (e >= s_ddSkip && e < s_ddSkip + s_ddFrames) {
+        RwCore_DdCloseFrame();
+        s_ddDraws = s_ddIdxDraws = s_ddClamped = 0;
+        s_ddCur = static_cast<int>(e - s_ddSkip);
+        std::fprintf(s_ddOut, "%s\n \"core_f%d\": [", s_ddCur ? "," : "", s_ddCur);
+    } else if (e == s_ddSkip + s_ddFrames) {
+        RwCore_DdFinish("frames done");
+    }
+}
+
+void RwCore_0042e3a0(void);
+// CALL_VIA entry for 0x0042e3a0 (gen_rwcore_tus.py): marks a dump frame, then runs the matched body unchanged.
+void RwCore_DrawDumpFrame_0042e3a0(void) {
+    RwCore_DrawDumpMark(0x0042e3a0u);
+    RwCore_0042e3a0();
+}
+
 int RwCore_EngineStart(void) {
     const int r = RwCore_004c2fb0();
     RwCore_Log("RwEngineStart 0x004c2fb0() = %d", r);
@@ -208,6 +366,7 @@ int RwCore_EngineStart(void) {
     if (RwCore_FrameRoute()) {
         RwCore_Log("MASHED_RWC_FRAME: RwEngineStart returns %d; the top-down path continues with the bindings on the core", r);
         s_coreGlobals = reinterpret_cast<void*>(static_cast<std::uintptr_t>(U32(0x007d3ff8u)));
+        RwCore_DdInstall();
         return r;
     }
     RwCore_Log("calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)");
@@ -217,7 +376,26 @@ int RwCore_EngineStart(void) {
     return 0;
 }
 
-int RwCore_EngineStop(void) { const int r = RwCore_004c2f60(); RwCore_Log("RwEngineStop 0x004c2f60() = %d", r); return r; }
+// RWC-FRAME-CLUMP run 45: live-clump census before RwEngineStop on the frame route (read only). The clump module close
+// 0x004e6250 (lifted) destroys every clump still in the clump freelist ([RwGlobals + [0x007d7200] + 4], 0x004e6262) through
+// 0x004e62f0; run 45 vs_frameT AVs there (0x0053ec60 frees into freelist DAT_007dc5e8 = 0). This lists those clumps first:
+// pointer, frame (+0x4) and the clump's atomic list head (+0x8), to be read against the boot log's clump pointers.
+extern "C" int RwCore_004ccce0(int freelist, void* cb, int data);
+static unsigned s_liveClumps = 0;
+static void __cdecl RwCore_LiveClumpCb(int clump, int) {
+    if (++s_liveClumps <= 64)
+        RwCore_Log("live clump %u at RwEngineStop: %08X frame +0x4 %08X atomics +0x8 %08X", s_liveClumps, clump, U32(clump + 4),
+                   U32(clump + 8));
+}
+int RwCore_EngineStop(void) {
+    if (RwCore_FrameRoute() && U32(0x007d3ff8u)) {
+        const std::uint32_t fl = U32(U32(0x007d3ff8u) + U32(0x007d7200u) + 4);
+        s_liveClumps = 0;
+        if (fl) RwCore_004ccce0(static_cast<int>(fl), reinterpret_cast<void*>(&RwCore_LiveClumpCb), 0);
+        RwCore_Log("live clumps at RwEngineStop: %u (clump freelist %08X)", s_liveClumps, fl);
+    }
+    const int r = RwCore_004c2f60(); RwCore_Log("RwEngineStop 0x004c2f60() = %d", r); return r;
+}
 int RwCore_EngineClose(void) { const int r = RwCore_004c3040(); RwCore_Log("RwEngineClose 0x004c3040() = %d", r); return r; }
 int RwCore_EngineTerm(void) { const int r = RwCore_004c3270(); RwCore_Log("RwEngineTerm 0x004c3270() = %d", r); return r; }
 // RwRasterShowRaster 0x004c7730 on the core under MASHED_RWC_FRAME. After the Nth call (N = MASHED_RWC_FRAME_N, default 1,
@@ -259,10 +437,40 @@ extern "C" int RwCore_FrameShowRaster(int raster, int dev, int flags) {
     } else {
         RwCore_Log("MASHED_RWC_FRAME_N %u: engine teardown not run (game objects alive, AppDestroy not reached)", calls);
     }
+    RwCore_DdFinish("boot end");
     RwCore_Log("MASHED_RWC_FRAME: boot ends after present %u on the RW core (exit 0x%08X)", calls, 0x5257F000u | (r ? 1u : 0u));
     ExitProcess(0x5257F000u | (r ? 1u : 0u));
     return r;
 }
+// RWC-FRAME-CLUMP run 45: the RW Destroy binding entries on the frame route (route_bindings.py SPECIAL). Run 44 d18 and
+// run 45 vs_frameT: AppDestroy 0x00402a40 passes objects whose creators are stand-ins on the top-down path, so they are 0:
+// 0x0041a3d0 RpClumpDestroy(DAT_0063c620) (AV read 0x00000008 at RwCore_004e6e00+0x15; the only writer of 0x0063c620 in
+// re/match is the Panel stand-in 0x0041a1e0, re/match/s03/h1_0041a1e0.c), then 0x0041ccf0 RwTexDictionaryDestroy(DAT_0063cdd0)
+// (AV read 0x00000008 at RwCore_004c5930+0x22). In the original the creators always run first, so its Destroy bodies are never
+// given 0. Each wrapper skips a 0 (first 8 per RVA logged) and returns what the librw binding returns for 0 (1, the camera
+// 0); any other value runs the core body unchanged. The librw bindings skip 0 the same way.
+#define RWC_DESTROY0(rva, name, ret0)                                                                                \
+    int RwCore_##rva(int obj);                                                                                       \
+    int RwCore_FrameDestroy0_##rva(int obj) {                                                                        \
+        if (!obj) {                                                                                                  \
+            static unsigned n = 0;                                                                                   \
+            if (++n <= 8) RwCore_Log("%s 0x%s(0) on the RW core: skipped, its creator did not run (stand-in); call %u", \
+                                     name, #rva, n);                                                                 \
+            return ret0;                                                                                             \
+        }                                                                                                            \
+        return RwCore_##rva(obj);                                                                                    \
+    }
+RWC_DESTROY0(004c5930, "RwTexDictionaryDestroy", 1)
+RWC_DESTROY0(004c5a60, "RwTextureDestroy", 1)
+RWC_DESTROY0(004e5700, "RpWorldDestroy", 1)
+RWC_DESTROY0(004d41e0, "0x004d41e0", 1)
+RWC_DESTROY0(004c1cf0, "RwCameraDestroy", 0)
+RWC_DESTROY0(004c0c20, "RwFrameDestroy", 1)
+RWC_DESTROY0(004e6e00, "RpClumpDestroy", 1)
+RWC_DESTROY0(004c7650, "RwRasterDestroy", 1)
+RWC_DESTROY0(004e6920, "RpAtomicDestroy", 1)
+RWC_DESTROY0(004e4d90, "RpLightDestroy", 1)
+#undef RWC_DESTROY0
 int RwCore_Set7d4134(int v) { return RwCore_004c9f50(v); }
 int RwCore_SetRefresh(int v) { return RwCore_004c9eb0(v); }
 int RwCore_Set7d413c(int v) { return RwCore_004c9f60(v); }

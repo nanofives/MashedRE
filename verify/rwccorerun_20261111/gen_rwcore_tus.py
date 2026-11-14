@@ -192,6 +192,9 @@ CALL_VIA = {
     # to the body and so bypassed the MASHED_RWC_FRAME_N count (d18: 481 frames, 605 presents, the N=120 stop never
     # fired). Through the knob wrapper every present on the core counts (the wrapper calls RwCore_004c7730).
     '004c7730': ('RwCore_FrameShowRaster', 'RwCore/RwCore_Knob.cpp'),
+    # RWC-FRAME-CLUMP run 45: the menu chrome 0x0042e3a0 (called by 0x0043c5b0) is the frame delimiter of the core-side
+    # Im2D draw dump (MASHED_RWC_DRAWDUMP), as in re/frida/menu_draw_burst.py. The entry marks the frame and calls the body.
+    '0042e3a0': ('RwCore_DrawDumpFrame_0042e3a0', 'RwCore/RwCore_Knob.cpp'),
 }
 # RW-band RVAs with a hand body in RwCore/RwCore_Hand.cpp (no source; written from the disassembly, provisional).
 HAND = {}

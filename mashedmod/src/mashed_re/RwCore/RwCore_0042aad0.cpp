@@ -11,7 +11,7 @@
 #define FUN_0042aad0 RwCore_0042aad0
 #define FUN_0042aae0 RwCore_0042aae0
 #define FUN_0042b930 RwCore_0042b930
-#define FUN_0042e3a0 RwCore_0042e3a0
+#define FUN_0042e3a0 RwCore_DrawDumpFrame_0042e3a0   // binding entry, RwCore/RwCore_Knob.cpp
 #define FUN_0042e5b0 RwCore_0042e5b0
 #define FUN_0043bf30 RwCore_0043bf30
 #define FUN_0043c5b0 RwCore_0043c5b0

@@ -1,0 +1,22 @@
+== orig_f0 (A: 82 draws, x1.0) vs core_f100 (B: 0 draws, x1.0)
+   matched 0  mismatched 0  missing 82  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISSING  A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+== orig_f1 (A: 82 draws, x1.0) vs core_f101 (B: 0 draws, x1.0)
+   matched 0  mismatched 0  missing 82  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISSING  A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+== orig_f2 (A: 82 draws, x1.0) vs core_f102 (B: 0 draws, x1.0)
+   matched 0  mismatched 0  missing 82  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISSING  A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+== orig_f3 (A: 82 draws, x1.0) vs core_f103 (B: 0 draws, x1.0)
+   matched 0  mismatched 0  missing 82  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISSING  A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+-> D:/MashedWT/RWC-FRAME-CLUMP_data/drawdiff_r45.json
+VERDICT: RED (match=0 mismatch=0 missing=328 extra=0)

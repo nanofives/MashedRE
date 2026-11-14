@@ -1,6 +1,18 @@
-# RESULT RWC-FRAME-CLUMP (runs 43 + 44; HANDOFF: the draw compare is not run)
+# RESULT RWC-FRAME-CLUMP (runs 43 to 45; RED: the draw compare runs and is RED on one named cause)
 
-Runs 43 and 44, 2026-11-13. Branch `orch/RWC-FRAME-CLUMP`, based on `orch/integration` 69cd03777. Top-down row.
+Runs 43, 44 and 45, 2026-11-13. Branch `orch/RWC-FRAME-CLUMP`, based on `orch/integration` 69cd03777. Top-down row.
+
+**Run 45 summary (section 11).** (1) A core-side Im2D draw dump exists (`MASHED_RWC_DRAWDUMP`, default OFF) in the
+schema of the original-side capture, and the draw compare ran: **RED, 0 of 82 original draws matched in each of 4 frame
+pairs (missing 328, extra 0)**. One cause: the core frames run with `DAT_0067eca4` = 1 in all 585 captured frames, where
+0x0043c5b0 returns before any draw; the original reference is taken at `DAT_0067eca4` = 3 (the burst tool waits for 3).
+On the exe that global is driven by the hand menu stand-in 0x0043dfd0. (2) The AppDestroy AV is fixed: AppDestroy
+0x00402a40 now returns on the core (VS and object build). The boot then stops at the next teardown step,
+SoftwareTidyUpBeforeExiting 0x004938c0 -> RwEngineStop, with 103 clumps alive: 0x0045b930 skips the nine powerup
+type-table destroy entries because their slots are 0 on the port, and 7 of the 9 destroy functions have no source.
+**Self-test: PASS on both builds and every arm** (binding self-test `0 of 11 checks failed`, `[RWC-DEVICE] selftest
+PASS (0 fail)`). `ddkobj.py check`: IDENTICAL 1216/1249, unchanged from run 44 (output byte-identical). The six arms pass
+as in run 44. **RO-FIRST-DIVERGENCE's compare has to be re-run after this row merges.**
 
 **Run 44 summary.** With `MASHED_RWC_FRAME_N=120` both builds now boot through AppInitialiseOnBootup, enter the main
 loop and render **120 frames with `RwCore_00492e90` on the RW core**, then end with **0x5257F001** (VS2022 and object
@@ -141,13 +153,8 @@ cdecl target by the same mechanism, but no run compared them.
 
 ## 9. Open items
 
-1. **The draw-for-draw compare (not run).** The original side is `re/frida/menu_draw_burst.py` (Im2D calls through the
-   RwGlobals slot, frames delimited by entries to 0x0042e3a0). The exe's `MASHED_DBG_DRAWSTREAM` dump
-   (`D3d9Render/DrawStreamDump.cpp`) is fed from the librw Im2D bridge, which the frame route does not use. Needed: a
-   dump hook on the core's Im2D render-primitive slot (`RwGlobals +0x30` / `+0x34` in `RwCore_Probe`) writing the "v"
-   schema, a frame delimiter on the core (0x0042e3a0 or the 0x00492e90 call), then `drawlist_diff.py`. Menu state on the
-   exe side still comes from the hand stand-in 0x0043dfd0 (logged every frame), so a compare names that row as well.
-2. The AppDestroy teardown on the core (d18: `RwCore_004e6e00` from `Orig_0041a3d0`, after the 600-frame loop).
+1. Run 44 items 1 (draw compare) and 2 (AppDestroy AV) are done in run 45, section 11. Their open residue is listed there.
+2. (merged into item 1)
 3. From run 43, still open: strict members (L-144) 0x004e7420 52.3, 0x004e9330 52.2, 0x004e7060 49.8, 0x004e8120 53.8,
    0x0053fec0 67.3, 0x004e8c70 28.9, 0x004cc5e0 59.8, 0x005c47e0 80.0. Lifted executed members (L-141): 0x004f3e90,
    0x0053f3c0. Run 44 adds executed provisional members 0x00554390 33.5, 0x00556e90 97.5 and the 12 in section 7.
@@ -166,3 +173,134 @@ Raw data: `D:/MashedWT/RWC-FRAME-CLUMP_data` (`vs_frameN_d9..d20.log`, the six f
 `build_ddk21.log`, `build_ddk22.log` (the ddkobj relink after the fix), `ddkcheck22.out`), sha256 in
 `RAW_SHA256_RWC-FRAME-CLUMP.txt` (run 44 block). Every game launch went through `test-slot` -> `mashed_lock.py run`.
 No build ran during a PRIORITY-HOLD or SOLO (iter.sh and the object builds wait on `mashed_lock.py status`).
+
+## 11. Run 45 (2026-11-13): core-side draw dump, draw compare, AppDestroy teardown
+
+All run 45 code is default OFF (MASHED_ORIG_TOP + MASHED_RWC_CORE + MASHED_RWC_FRAME, the dump also MASHED_RWC_DRAWDUMP).
+L-124 holds: no librw binding added. No tracker edit, no promotion.
+
+### 11.1 Core-side Im2D draw dump
+
+`RwCore/RwCore_Knob.cpp`, `MASHED_RWC_DRAWDUMP=<json>` (frame route only). After the core's RwEngineStart it wraps the
+Im2D RenderPrimitive slot of the engine instance, `[[0x007d3ff8] + 0x30]`, the slot `re/frida/menu_draw_burst.py` hooks on
+the original. One record per call: the raw vertex blob (`num * 0x1c` bytes, `num` outside 1..64 read as 4, the burst
+tool's rule) and 5 return addresses (exe offsets, `--map mashedmod/build/mashed_re.map`), schema `{"v", "r"}` plus
+`prim` / `num`. The wrapper calls the saved slot, so the draw is unchanged. Indexed draws (+0x34) are counted per frame.
+Frame delimiter `MASHED_RWC_DRAWDUMP_DELIM` (hex RVA, default 0x00492e90): marked by `PortTop_StandIn_00492e90`
+(`Match/PortTop_00492370.cpp`) before the core frame render, or 0x0042e3a0 through a new `CALL_VIA` entry
+(`gen_rwcore_tus.py`, `RwCore_DrawDumpFrame_0042e3a0`, called by 0x0043c5b0). `MASHED_RWC_DRAWDUMP_SKIP` /
+`_FRAMES` select the frames. Under the dump knob the frame camera's begin-update (`[DAT_006905b0 + 0x18]`, called by
+RwCameraBeginUpdate 0x004c1a00) is wrapped and its result logged.
+
+`re/frida/menu_draw_burst.py --delim <rva>` (default 0x0042e3a0, unchanged) moves the original side's delimiter. Both
+sides used 0x00492e90 in this run: the 0x0042e3a0 delimiter saw **0 entries in 120 core frames** (first vs_dump).
+
+### 11.2 Draw compare: RED, one cause
+
+| side | file | frames | draws per frame | DAT_0067eca4 | DAT_0067ecb0 | DAT_00771968 |
+|---|---|---|---|---|---|---|
+| original (`menu_draw_burst.py --frames 4 --delim 0x00492e90 --peek ...`) | `orig_burst_492e90.json` | 4 | 82, 82, 82, 82 | 3 | 33 | 1 |
+| RW core (vs_dump, N=590, all frames) | `core_burst.json` | 585 | 0 in every frame (1 Im2D prim call in the whole run) | 1 in all 585 | 33 | 1 |
+
+`drawlist_diff.py orig_burst_492e90.json core_burst.json` (orig_f0..3 against core_f100..103, `--scale-b 1`):
+**VERDICT RED (match 0, mismatch 0, missing 328, extra 0)**, `DRAWDIFF_r45.txt`.
+
+Cause, from the sources: in phase 1 (`DAT_00771968` = 1) and screen 33 the frame render 0x00492e90 calls 0x0043c5b0
+between RwCameraBeginUpdate and RwCameraEndUpdate (re/match/s15/00492e90.c, case 1). The begin-update returns the
+camera on every core frame (`drawdump: camera 08F6F364 begin-update ... = 08F6F364`, calls 1 to 180), so the gate is
+open. 0x0043c5b0 returns before any draw when `DAT_0067eca4` is 0 or 1 (re/match/s08/0043c5b0.c: `== 0` return,
+`== 1` calls 0x0042aae0(1) and two render states, then returns). Its 0x0042e5b0 / 0x0042e3a0 calls and the menu rows
+run only for `DAT_0067eca4` >= 2. 81 of the 82 original draws per frame come from 0x0043c5b0 (return addresses
+0x0043c678 / 0x0043c680, through 0x0042e3a0 and 0x0042e8b0 into 0x004730a3 / 0x00473213 / 0x004733a2 / 0x00474464 and
+others). The 82nd comes from the title layer 0x00403050 (chain 0x00450c7a <- 0x00428750 <- 0x00428785 <- 0x00403083 <-
+0x00493012), which the core frame calls for screen 0x21 and which also issues no Im2D draw there. [UNCERTAIN] why the
+title layer draws nothing on the core: its gate was not traced in this run. The burst tool
+waits for `DAT_0067eca4` = 3 before it captures (menu_draw_burst.py line 263). On the exe `DAT_0067eca4` stays 1 through
+600 frames: the menu step that advances it is 0x0043dfd0, which runs as the hand stand-in on the top-down path
+(`rva 0x0043dfd0: stand-in (PORT-TOP-05) hand menu navigation + input globals`, every frame). So the remaining draw
+rows name 0x0043dfd0 (the menu stand-in row) first. A per-draw comparison of the 82 draws needs the core frame to reach
+`DAT_0067eca4` = 3. [UNCERTAIN] which writer advances 0x0067eca4 from 1 to 3 in the original: not traced in this run
+(needs a write watch on the original, e.g. `--watch-write` style, or the 0x0043dfd0 decomp).
+
+### 11.3 AppDestroy teardown on the core
+
+New arm `vs_frameT` / `ddk_frameT`: `MASHED_RWC_FRAME_N=100000`, so the 600-frame loop ends and AppDestroy 0x00402a40 runs
+on the core.
+
+1. Run 44 d18 AV (read 0x00000008 at RwCore_004e6e00+0x15 from `Orig_0041a3d0`): 0x0041a3d0 is
+   `RpClumpDestroy(DAT_0063c620)` (re/match/s03/raw_0041a3d0.c). The only writer of 0x0063c620 in re/match is 0x0041a1e0
+   (re/match/s03/h1_0041a1e0.c, the BTBPanel.dff load), a Panel-family stand-in on this path, so the argument is 0. The
+   original's RpClumpDestroy has no null check, and in the original 0x0041a1e0 always runs first. The next AV, after the
+   fix below, was the same class: read 0x00000008 at RwCore_004c5930+0x22 from `Orig_0041ccf0`
+   (`RwTexDictionaryDestroy(DAT_0063cdd0)`).
+   **Fix:** the ten routed RW Destroy bindings (0x004c5930, 0x004c5a60, 0x004e5700, 0x004d41e0, 0x004c1cf0, 0x004c0c20,
+   0x004e6e00, 0x004c7650, 0x004e6920, 0x004e4d90) call a knob wrapper `RwCore_FrameDestroy0_<rva>` (route_bindings.py
+   `SPECIAL`) that skips a 0 object, logs it (first 8 per RVA), returns what the librw binding returns for 0 (1, the
+   camera 0) and runs the core body for any other value. The librw bindings skip 0 the same way. Skips in vs_frameT:
+   RpClumpDestroy 8, RwTextureDestroy 4, 0x004d41e0 2, RwTexDictionaryDestroy 1 (`TEARDOWN_vs_frameT_r45.txt`).
+2. `Match/PortTop_0045b930.cpp`: the selector for 0x004593b0 runs the matched body on the frame route too (it ran only
+   with RWMOD, because its callee 0x004c5770 calls RwGlobals +0x11c). On the frame route RwGlobals is the core's engine
+   instance, and the records 0x0068ba30..0x0068bb90 hold the clumps the matched 0x00459290 built (0x0045bae0 runs matched,
+   POWERUPINIT-A). It frees 4 clumps: 107 -> 103 alive at RwEngineStop.
+3. **Result: AppDestroy 0x00402a40 returns on the core** (`0x00402a40 AppDestroy (matched) returned`, VS and object
+   build). The boot then stops in SoftwareTidyUpBeforeExiting 0x004938c0 -> RwEngineStop 0x004c2f60 -> module close
+   0x004d8060 -> clump module close 0x004e6250 (lifted) -> RwFreeListForAllUsed 0x004ccce0 -> 0x004e62f0 -> 0x004e8ea0 ->
+   0x004f3b60 -> 0x004e8030 -> 0x004d8060 -> plugin destructor 0x0053ec60 (lifted) -> RwFreeListFree 0x004ccba0: AV read
+   0x00000010, the plugin's freelist DAT_007dc5e8 is 0 (0x0053ec78). Same chain on the object build.
+4. Census (`RwCore_EngineStop`, read only, frame route): **103 clumps alive at RwEngineStop**. The identified ones
+   (pointer match against the boot log, 6 of the 64 logged) are POWERUPINIT-A objects: type-table entries 0, 1, 3, 4, 5
+   (first clones at 0x006886b8, 0x00688260, 0x0068a368, 0x0068bb80, 0x0068d174) and Bomb.dff (DAT_00636c00).
+   Cause of the survivors: 0x0045b930 destroys the powerup types through the +0x18 slots of the type table 0x005f9998
+   (9 x 0x40, re/match/s09/0045b930.c `PTR_FUN_005f99b0[i].m_fn`). On the port those slots are 0 (the image pad holds
+   the range zero-filled, `MASHED_OT_CODEPTR` off), so every destroy entry is skipped. POWERUPINIT-A stores the +0x14
+   init slots only (Match/PortTop_0045bae0.cpp). The original's +0x18 values (read from MASHED.exe.unpatched):
+
+   | i | type | +0x14 init | +0x18 destroy | destroy source |
+   |---|---|---|---|---|
+   | 0 | 0x09 | 0x00456760 | 0x004568a0 | re/match/s09/004568a0.c, 100% |
+   | 1 | 0x0a | 0x004548e0 | 0x004540c0 | re/match/s09/004540c0.c, 100% |
+   | 2 | 0x0b | 0x00455400 | 0x004555d0 | none |
+   | 3 | 0x0c | 0x004583a0 | 0x00457b10 | none |
+   | 4 | 0x10 | 0x0045a6b0 | 0x0045a790 | none |
+   | 5 | 0x11 | 0x0045b830 | 0x0045b2d0 | none |
+   | 6 | 0x12 | 0x00454e70 | 0x00454af0 | none |
+   | 7 | 0x13 | 0x004576f0 | 0x00456ca0 | none |
+   | 8 | 0x07 | 0x00452f70 | 0x004530b0 | none |
+
+   Next for the teardown: store the +0x18 slots as POWERUPINIT-A stores +0x14 (matched 0x004568a0 / 0x004540c0, the seven
+   others need sources first), then rerun vs_frameT. [UNCERTAIN] the destroyer of Bomb.dff (DAT_00636c00) and of the 97
+   unidentified clumps (the census logs 64 of 103).
+
+### 11.4 Arms, builds, checks (final tree)
+
+| arm | exit | note |
+|---|---|---|
+| vs_off / ddk_off | 0 / 0 | `WinMain 0x00492370 returned 0 after 600 frames`; logcmp 1146 / 1146, 1 differs (the cfglog clock line) |
+| vs_frame / ddk_frame | 0x5257F001 | present 1, both self-tests PASS; the N = 1 engine teardown now also logs the census line (0 live clumps) |
+| vs_frameN / ddk_frameN (N=120) | 0x5257F001 | present 120; logcmp 195 / 195, 1 differs (the clock line) |
+| vs_frameT / ddk_frameT (N=100000) | 0xC0000005 | AppDestroy returns, AV in RwEngineStop (11.3) |
+| vs_dump (N=590) | 0x5257F001 | 585 frames dumped, 0 draws each (11.2) |
+
+Self-test on every arm with the frame route: binding self-test `self-test PASS (0 of 11 checks failed)` and
+`[RWC-DEVICE] selftest PASS (0 fail)`. Builds: VS2022 Build OK, object build (`MASHED_DDKOBJ=1`) Build OK, link rc 0.
+`ddkobj.py check`: IDENTICAL 1216/1249, DIFFERENT 18, not-in-map 15, the `result` column of BYTECHECK.tsv unchanged from
+run 44 and `ddkcheck_r45.out` byte-identical to run 44's `ddkcheck22.out`. Refusals unchanged: the 7
+`fail:externalized-static-register-convention` units of section 8 (ddkobj.py guard logic not touched, row
+DDKOBJ-REGCONV-FALLBACK-7). G-CTRL / B / 12 captures: not run (top-down row; the knob is off for those hashes).
+`exe_sources.rsp`: the generator reordered its block (same file set); the committed order is restored so the default
+exe's link order does not move.
+
+Process notes: every game launch went through `test-slot` -> `mashed_lock.py run` with `PROYECTOS_TEST_HUB=off`. One
+object build (`build_ddk_r45f.log`) started while the merge train held the machine lock (`HELD ... merge-train:20261113_212426`,
+not PRIORITY-HOLD / SOLO); the other builds started with the lock free. One heredoc was used for a source edit (no
+escapes involved).
+
+**RO-FIRST-DIVERGENCE's compare has to be re-run after this row merges** (this row changes the frame route's RW
+bindings and the 0x004593b0 selector).
+
+Changed files: `RwCore/RwCore_Knob.cpp`, `RwCore/RwCore_0042aad0.cpp` (generated, CALL_VIA 0x0042e3a0),
+`LibRw/RwApiBind.cpp` (generated [RWC-FRAME] lines), `Match/PortTop_00492370.cpp`, `Match/PortTop_0045b930.cpp`,
+`re/frida/menu_draw_burst.py`, `verify/rwccorerun_20261111/{gen_rwcore_tus.py, route_bindings.py, ROUTED.tsv}`.
+Committed extracts: `DRAWDIFF_r45.txt`, `CORE_DRAWDUMP_r45_summary.txt`, `TEARDOWN_vs_frameT_r45.txt`,
+`orig_burst_492e90.peek.json`. Raw data `D:/MashedWT/RWC-FRAME-CLUMP_data`, sha256 in `RAW_SHA256_RWC-FRAME-CLUMP.txt`
+(run 45 block).

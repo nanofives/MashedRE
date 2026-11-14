@@ -61,9 +61,14 @@ void PortTop_0045b930_Call00412010(void) {
     if (built == 6) Orig_00412010();
     else PortTop_StandIn04C_00412010();
 }
+// [RWC-FRAME-CLUMP] run 45: under MASHED_RWC_FRAME (RwCore_FrameRoute, RwCore/RwCore_Knob.cpp) the matched body runs too.
+// There RwGlobals is the RW core's engine instance (+0x11c is the core RwFreeListFree), and the records 0x0068ba30..0x0068bb90
+// hold the clumps the matched 0x00459290 built (POWERUPINIT-A runs 0x0045bae0 matched). Run 45 vs_frameT: with the stand-in
+// these clumps were still alive at RwEngineStop, whose clump module close 0x004e6250 then AVed in 0x0053ec60.
+bool RwCore_FrameRoute(void);
 void PortTop_0045b930_Call004593b0(void) {
-    const int on = MashedRw_RwModKnob() != 0;
-    PortTop_0045b930_Log("0x004593b0", on ? "matched body (RWMOD on)" : "stand-in (RWMOD off)", on, 0);
+    const int on = MashedRw_RwModKnob() != 0 || RwCore_FrameRoute();
+    PortTop_0045b930_Log("0x004593b0", on ? "matched body (RWMOD on or RW core frame route)" : "stand-in (RWMOD off)", on, 0);
     if (on) Orig_004593b0();
     else PortTop_StandIn04C_004593b0();
 }
