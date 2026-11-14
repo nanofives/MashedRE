@@ -856,7 +856,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005ae380	FUN_005ae380	matched	PortTop_Bound_005ae380	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ae380.c (c4=match), Match/PortTop_005ae380.cpp	3	
 0x005ae5b0	FUN_005ae5b0	matched	PortTop_Bound_005ae5b0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ae5b0.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ae5b0.cpp	3	
 0x005ae610	FUN_005ae610	matched	PortTop_Bound_005ae610	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ae610.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ae610.cpp	3	
-0x005ae650	FUN_005ae650	missing	PortTop_AStop_005ae650	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
+0x005ae650	FUN_005ae650	matched	PortTop_Bound_005ae650	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ae650.c (c4=match), Match/PortTop_005ae650.cpp	3	
 0x005ae780	FUN_005ae780	matched	PortTop_Bound_005ae780	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ae780.c (c4=match), Match/PortTop_005ae780.cpp	3	
 0x005ae7e0	FUN_005ae7e0	matched	PortTop_Bound_005ae7e0	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ae7e0.c (c4=match), Match/PortTop_005ae7e0.cpp	3	
 0x005ae800	FUN_005ae800	missing	PortTop_AStop_005ae800	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
@@ -871,3 +871,4 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005b35e0	FUN_005b35e0	missing	PortTop_AStop_005b35e0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005b3670	FUN_005b3670	matched	AudioListFind	PORT-TOP-AUDIOTICK-STOPS: existing exe body Audio/AudioList_ag.cpp	3	
 0x005b36b0	FUN_005b36b0	missing	PortTop_AStop_005b36b0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
+0x005aea00	FUN_005aea00	matched	PortTop_Bound_005aea00	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005aea00.c (c4=match), Match/PortTop_005aea00.cpp	3	

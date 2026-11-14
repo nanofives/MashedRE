@@ -24,6 +24,7 @@ with open('re/match/PROVISIONAL.tsv', encoding='utf-8') as f:
 # closure grows one reached stop at a time); c4=frida-replay rows (L-128) bind from their one re/match source.
 PROV_BIND = {'005a6ea0', '005a6f30', '004627f0', '005aa0c0'}   # 004627f0 + its reached callee 005aa0c0: PORT-TOP-AUDIO-HWINIT-4627F0
 PROV_BIND |= {'005a5e70'}   # PORT-TOP-RWAUDIO-TABLE-632BA8: table slot 0x00632ba8 (tail-merge layout, PROVISIONAL.tsv)
+PROV_BIND |= {'005ae650'}   # PORT-TOP-AUDIOPOOL-5AE650: AudioPoolConstruct, init side of the 13 pool pairs (prologue placement, PROVISIONAL.tsv)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
 PEND = {}

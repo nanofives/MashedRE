@@ -71,3 +71,5 @@ mashedmod/src/mashed_re/Match/PortTop_005aea60.cpp
 mashedmod/src/mashed_re/Match/PortTop_005aeaf0.cpp
 mashedmod/src/mashed_re/Match/PortTop_005aeb30.cpp
 mashedmod/src/mashed_re/Match/PortTop_005aeb80.cpp
+mashedmod/src/mashed_re/Match/PortTop_005ae650.cpp
+mashedmod/src/mashed_re/Match/PortTop_005aea00.cpp

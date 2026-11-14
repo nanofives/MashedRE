@@ -1130,7 +1130,15 @@
 "RwCore/RwCore_004c2f60.cpp"
 ],
 "005ae650": [
-"stop"
+"bind",
+"re/match/s26/005ae650.c",
+"provisional",
+[
+"005ae780",
+"005ae800",
+"005aea00"
+],
+[]
 ],
 "005ae7e0": [
 "bind",
@@ -1865,6 +1873,16 @@
 ],
 []
 ],
+"005ae800": [
+"stop"
+],
+"005aea00": [
+"bind",
+"re/match/s26/005aea00.c",
+"match",
+[],
+[]
+],
 "004522d0": [
 "reuse",
 "RwCore_004522d0",
@@ -1961,9 +1979,6 @@
 "reuse",
 "AudioSubStructZeroInit",
 "Audio/AudioRwsLeaves.cpp"
-],
-"005ae800": [
-"stop"
 ],
 "005a7a40": [
 "bind",
