@@ -192,6 +192,19 @@ py -3.12 re\tools\c4_reclass.py batch --tsv <batch.tsv> --apply --result <RESULT
   (`date  0x<rva>  name  Cn->C4  route <route> (L-93): ...; evidence: <RESULT>`) goes below `<!-- ENTRIES -->`.
   Refused rows are reported and left alone. `--strict` writes nothing when any row is refused.
 - Idempotent: a second `--apply` skips every row it promoted.
+- **Optional `lever` column** (5th, after `rva route evidence`): a tag such as `lever=volatile`. `--apply` appends it to
+  the newly promoted row's notes in the same transaction (not added twice). Rows without the column behave as before.
+- **Notes-only tag for a row that already exists (L-154 (a)):** `batch` skips C4 rows, so use `tag`:
+  ```
+  py -3.12 re\tools\c4_reclass.py tag --tsv <tags.tsv>                                   # dry run
+  py -3.12 re\tools\c4_reclass.py tag --tsv <tags.tsv> --apply --result <RESULT.md> [--strict]
+  ```
+  TSV header `rva  tag` (tab-separated). Per row: `TAG` (would append), `SKIP` (tag already a whole token in the notes,
+  so a second run is a no-op) or `REFUSED` (no `hooks.csv` row, bad rva, empty tag, duplicate). Only the tagged lines
+  are rewritten (confidence and status untouched, the rest of the file byte for byte, key-merge friendly) and one
+  CHANGELOG line per run goes below `<!-- ENTRIES -->`. `--hooks <file>` / `--changelog <file>` redirect the run to
+  copies for a rehearsal. On a branch, commit the TSV (like `re/promotions/<ID>.tsv`) and dry-run it; the train applies
+  with `--apply --strict`.
 - `--jobs N` (default 4) compiles sources in parallel.
 - Self-test: `py -3.12 -m pytest re/tools/tests/test_c4_reclass.py` (fake repo root, no compiler, real trackers
   untouched).
