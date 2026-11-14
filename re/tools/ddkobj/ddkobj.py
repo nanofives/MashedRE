@@ -748,14 +748,38 @@ def main_build(a):
             u["regconv"] = rc
             rec["regconv"] = {k: (v or "no-adapter") for k, v in rc.items()}
             pristine = obj.read_bytes()
-        attempt = None
-        for ext_statics in (False, True):
-            co = CE.Coff(pristine)
-            r = process_unit(co, u, rec_base=dict(rec), ext_statics=ext_statics)
-            attempt = (co, r)
-            if r["status"] != "ok" or not r["unbindable"]:
-                break
-        co, rec = attempt
+        def attempts(data, base):
+            att, first_unb = None, None
+            for ext_statics in (False, True):
+                co_ = CE.Coff(data)
+                r_ = process_unit(co_, u, rec_base=dict(base), ext_statics=ext_statics)
+                att = (co_, r_)
+                if r_["status"] != "ok" or not r_["unbindable"]:
+                    break
+                first_unb = list(r_["unbindable"])
+            if first_unb is not None and att[1].get("ext_statics"):
+                # DDKOBJ-REGCONV-FALLBACK-7: why the local-static attempt was not kept (the callees the local helper
+                # copies pull in that the exe does not define)
+                att[1]["local_statics_unbindable"] = first_unb
+            return att
+        base_rec = dict(rec)
+        co, rec = attempts(pristine, base_rec)
+        if rec["status"] == "ok" and rec.get("externalized_regconv") and \
+                os.environ.get("DDKOBJ_REGCONV", "adapter") == "adapter":
+            # DDKOBJ-REGCONV-FALLBACK-7: the helper copies keep their private convention as generated forwarders
+            helpers = [x.split(":")[0] for x in rec["externalized_regconv"]]
+            fdata, fccs, why = regconv_forwarder_recompile(u, helpers, pristine)
+            if fdata is None:
+                rec["forwarder_refused"] = why
+            else:
+                co2, rec2 = attempts(fdata, base_rec)
+                if rec2["status"] == "ok" and not rec2.get("externalized_regconv"):
+                    rec2["regconv_forwarders"] = fccs
+                    rec2["regconv_forwarders_replaced"] = rec["externalized_regconv"]
+                    co, rec, pristine = co2, rec2, fdata
+                else:
+                    rec["forwarder_refused"] = "forwarder object: " + (rec2["status"] if rec2["status"] != "ok"
+                                                                       else "; ".join(rec2["externalized_regconv"]))
         # SafeSEH: cl 13.00 predates the @feat.00 flag, and one unmarked object makes the linker drop the exe's whole
         # safe-handler table. An object that registers no SEH handler (no __except_handler* reference, no .sxdata)
         # is SafeSEH-compatible by definition, so it is marked below. One that does cannot be marked honestly.
@@ -773,7 +797,8 @@ def main_build(a):
         if rec["status"] == "ok" and rec.get("externalized_regconv"):
             # RWC-FRAME-CLUMP: a helper copy with a private register convention cannot be repointed (process_unit)
             rec["status"] = "fail:externalized-static-register-convention"
-            rec["evidence"] = "; ".join(rec["externalized_regconv"])
+            rec["evidence"] = "; ".join(rec["externalized_regconv"]) + (
+                f"; forwarder refused: {rec['forwarder_refused']}" if rec.get("forwarder_refused") else "")
         if rec["status"] == "ok" and rec["unbindable"]:
             rec["status"] = "fail:unbindable-callee"   # stays on its VS2022 body in the variant
         edits = rec.pop("_edits", [])
@@ -1117,6 +1142,97 @@ def regconv_recompile(u, needed, pristine: bytes, obj: pathlib.Path):
     return regconv, None
 
 
+# ------------------------------------------------------------------ DDKOBJ-REGCONV-FALLBACK-7 (2026-11-13)
+# A unit whose port-excluded `static` helper copy has a private register convention cannot have that copy repointed
+# to the exe body (process_unit, RWC-FRAME-CLUMP refusal): its in-object call sites pass arguments in registers.
+# Recovery: replace the helper copy's BODY with a forwarder `{ return __ddkfwd_<name>(<args>); }` to an external
+# declared with the convention the VS2022 wrapper object gives the exe name, keep it `static`, and recompile. cl then
+# emits both sides of the helper's convention itself, as it does for the original body. Accepted only when every
+# other function of the object (the matched callers) is byte-identical to the plain compile, relocation targets
+# included: the call sites are then exactly the original's, and the forwarder pushes the arguments to the one exe body.
+# The forwarder's def is renamed `<name>__ddkfwd` (local), its external `__ddkfwd_<name>` takes the exe-name form and
+# binds like any other undefined symbol.
+FWD_PREFIX = "__ddkfwd_"
+
+
+def forwarder_source(text: str, plain: str, cc: str):
+    """text with plain's static definition body replaced by a forwarder, or (None, reason)."""
+    hits = list(re.finditer(r"(^|\n)([ \t]*)static\s+[^;{(]*\b" + re.escape(plain) + r"\s*\(", text))
+    if len(hits) != 1:
+        return None, f"{len(hits)} static definitions of {plain} in the text"
+    d = _definition(text, plain)
+    if d is None:
+        return None, "definition not found in the C view"
+    pre, params = d
+    drop = _cc_drop_tokens(text)
+    ret = " ".join(t for t in re.findall(r"[A-Za-z_]\w*|\*", pre) if t not in drop)
+    if not ret:
+        return None, "no return type"
+    names = _param_names(params)
+    if names is None:
+        return None, f"parameter list not adaptable ({' '.join(params.split())})"
+    m = hits[0]
+    i, depth = m.end(), 1
+    while i < len(text) and depth:
+        depth += {"(": 1, ")": -1}.get(text[i], 0)
+        i += 1
+    j = text.find("{", i)
+    if j < 0 or text[i:j].strip():
+        return None, "no body after the parameter list"
+    k, depth = j + 1, 1
+    while k < len(text) and depth:
+        depth += {"{": 1, "}": -1}.get(text[k], 0)
+        k += 1
+    call = f"{FWD_PREFIX}{plain}({', '.join(names)})"
+    body = "{\n    " + (f"{call};" if ret == "void" else f"return {call};") + \
+        "   /* DDKOBJ-REGCONV-FALLBACK-7: generated forwarder (ddkobj.py) */\n}"
+    p = " ".join(params.split()) or "void"
+    decl = f"{ret} {cc} {FWD_PREFIX}{plain}({p});\n"
+    start = m.start() + len(m.group(1))
+    return text[:start] + decl + text[start:j] + body + text[k:], None
+
+
+def regconv_forwarder_recompile(u, helpers, pristine: bytes):
+    """(object bytes with forwarders, {helper: cc}, None) or (None, None, refusal reason)."""
+    import tempfile
+    info, defs = u["info"], u["defs"]
+    text, ccs = info["text"], {}
+    for plain in helpers:
+        tgt = defs.get(plain, plain)
+        deco = wrapper_decoration(u["wrapper"].stem, tgt)
+        cc = cc_of_decoration(deco) if deco else None
+        if cc is None:
+            return None, None, f"{plain}: no single C-named symbol of {tgt} in the VS2022 wrapper object"
+        text, why = forwarder_source(text, plain, cc)
+        if text is None:
+            return None, None, f"{plain}: {why}"
+        ccs[plain] = cc
+    src = u["src"]
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="ddkfwd_")) / src.name
+    tmp.write_text(text, encoding="utf-8")
+    r = M.compile_obj(tmp, info["flags"], info["lang"], info["toolchain"], errors_ok=True)
+    if r[0] is None:
+        return None, None, "forwarder compile failed: " + " ".join(r[1].split())[-300:]
+    data = pathlib.Path(r[0]).read_bytes()
+    before, after = _masked_funcs(CE.Coff(pristine)), _masked_funcs(CE.Coff(data))
+    for name, v in before.items():
+        if CE.undecorate(name) in helpers:
+            continue
+        if after.get(name) != v:
+            return None, None, (f"the forwarder changes {name}'s bytes" if name in after
+                                else f"the forwarder drops {name}")
+    co = CE.Coff(data)
+    for s in co.syms:
+        pl = CE.undecorate(s.name)
+        if s.sec > 0 and s.is_func and pl in helpers and s.cls == CE.IMAGE_SYM_CLASS_STATIC:
+            s.name = s.name + "__ddkfwd"
+        elif s.sec == 0 and pl.startswith(FWD_PREFIX) and pl[len(FWD_PREFIX):] in helpers:
+            s.name = CE.redecorate(s.name, pl[len(FWD_PREFIX):])
+    out = tmp.with_suffix(".fwd.obj")
+    co.save(out)
+    return out.read_bytes(), ccs, None
+
+
 def x87_set():
     s = set()
     for line in (MOD / "x87_tus.txt").read_text().splitlines():
@@ -1355,6 +1471,20 @@ def main_selftest(a):
           "FUN_00400070(e, v);" in a7 and "return" not in a7, f"adapter: void fastcall, array param ({a7!r})")
     check(regconv_adapter(src, "FUN_00400074", "__cdecl")[0] is None, "adapter: unnamed parameter -> refused")
     check(regconv_adapter(src, "FUN_00400078", "__cdecl")[0] is None, "adapter: variadic -> refused")
+    # DDKOBJ-REGCONV-FALLBACK-7 forwarder generator (pure text)
+    fsrc = ("#ifndef __cplusplus\nstatic int FUN_00400090(char *name)\n{\n    int f = 0;\n    if (name) { f = 1; }\n"
+            "    return f;\n}\n#else\nint FUN_00400090(char *name);\n#endif\n"
+            "static void FUN_00400094(short *a, float *b)\n{\n    a[0] = 0;\n}\n")
+    f1, _w = forwarder_source(fsrc, "FUN_00400090", "__cdecl")
+    check(f1 is not None and "int __cdecl __ddkfwd_FUN_00400090(char *name);\nstatic int FUN_00400090(char *name)\n{"
+          in f1 and "return __ddkfwd_FUN_00400090(name);" in f1 and "f = 1" not in f1 and
+          "#else\nint FUN_00400090(char *name);" in f1, f"forwarder: int, body replaced, port view kept ({f1!r})")
+    f2, _w = forwarder_source(fsrc, "FUN_00400094", "__stdcall")
+    check(f2 is not None and "void __stdcall __ddkfwd_FUN_00400094(short *a, float *b);" in f2 and
+          "__ddkfwd_FUN_00400094(a, b);" in f2 and "return __ddkfwd" not in f2 and "a[0] = 0" not in f2,
+          "forwarder: void stdcall")
+    check(forwarder_source(fsrc + "static int FUN_00400090(char *name)\n{\n    return 0;\n}\n", "FUN_00400090",
+                           "__cdecl")[0] is None, "forwarder: two static definitions -> refused")
     check([cc_of_decoration(x) for x in ("_a", "_a@8", "@a@4")] == ["__cdecl", "__stdcall", "__fastcall"],
           "decoration -> calling convention")
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="ddkst_"))

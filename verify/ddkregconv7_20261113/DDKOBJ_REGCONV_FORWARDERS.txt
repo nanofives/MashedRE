@@ -1,0 +1,13 @@
+re/match/t01g/004111c0.c Match\MatchT01G_004111c0.cpp | ok | forwarders {"FUN_004103a0": "__cdecl"}
+    local-static attempt unbindable: _FUN_00414220 _FUN_0040ddb0 _FUN_00471cf0 _FUN_00458bf0 _FUN_0041cb80 _FUN_0041b4d0 _FUN_0041d730 _FUN_0041bf20 _FUN_004046a0 _FUN_00419760 _FUN_00418990 _FUN_00477730 _FUN_00476430 _FUN_0045be90 _FUN_00475a60 _FUN_0040bd80 _FUN_0040b180 _FUN_0046b540 _FUN_0046b1c0 _FUN_00459560 _FUN_0040e480 _FUN_004073b0 _FUN_0048f260 _FUN_0041b510 _FUN_0045b9d0 _FUN_0040e340 _FUN_00471ac0
+re/match/s06/00427ca0.c Match\MatchS06_00427ca0.cpp | ok | forwarders {"FUN_00427880": "__cdecl"}
+re/match/s06/00427e00.c Match\MatchS06_00427e00.cpp | fail:externalized-static-register-convention | FUN_00427680: bytes differ when non-static (256 vs 272 B); FUN_004277a0: bytes differ when non-static (160 vs 176 B); forwarder refused: the forwarder changes _FUN_00427e00's bytes
+    local-static attempt unbindable: _FUN_005554d0 _FUN_0042b8c0 _FUN_0042b8b0
+re/match/s06/00427f00.c Match\MatchS06_00427f00.cpp | fail:externalized-static-register-convention | FUN_00427680: bytes differ when non-static (256 vs 272 B); FUN_00427840: bytes differ when non-static (64 vs 64 B); forwarder refused: the forwarder changes _FUN_00427f00's bytes
+    local-static attempt unbindable: _FUN_005554d0 _FUN_0042b8c0 _FUN_0042b8b0
+re/match/s06/00427ff0.c Match\MatchS06_00427ff0.cpp | fail:externalized-static-register-convention | FUN_00427680: bytes differ when non-static (256 vs 272 B); FUN_004277a0: bytes differ when non-static (160 vs 176 B); forwarder refused: the forwarder changes _FUN_00427ff0's bytes
+    local-static attempt unbindable: _FUN_005554d0 _FUN_0042b8c0 _FUN_0042b8b0
+re/match/s06/00428140.c Match\MatchS06_00428140.cpp | fail:externalized-static-register-convention | FUN_00427680: bytes differ when non-static (256 vs 272 B); FUN_004277a0: bytes differ when non-static (160 vs 176 B); forwarder refused: the forwarder changes _FUN_00428140's bytes
+    local-static attempt unbindable: _FUN_005554d0 _FUN_0042b8c0 _FUN_0042b8b0
+re/match/s09/00458920.c Match\MatchS09_00458920.cpp | fail:externalized-static-register-convention | FUN_00458570: bytes differ when non-static (192 vs 208 B); forwarder refused: the forwarder changes _FUN_00458920's bytes
+    local-static attempt unbindable: _FUN_004c39b0 _FUN_004c3ac0 _FUN_0046d4a0

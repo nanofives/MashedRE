@@ -1,0 +1,28 @@
+mashedmod/build/ddkobj/obj\ddk_s06_00427ca0_MatchS06_00427ca0.obj
+  _FUN_00427880__ddkfwd cls 3
+    00: push eax
+    01: call 6
+    06: add esp, 4
+    09: ret 
+    0a: nop 
+    0b: nop 
+    0c: nop 
+    0d: nop 
+    0e: nop 
+    0f: nop 
+    reloc +2 -> _MatchS06_00427ca0_Sel00427880
+mashedmod/build/ddkobj/obj\ddk_t01g_004111c0_MatchT01G_004111c0.obj
+  _FUN_004103a0__ddkfwd cls 3
+    00: push eax
+    01: call 6
+    06: pop ecx
+    07: ret 
+    08: nop 
+    09: nop 
+    0a: nop 
+    0b: nop 
+    0c: nop 
+    0d: nop 
+    0e: nop 
+    0f: nop 
+    reloc +2 -> _SubStateHeldCountdown5_C
