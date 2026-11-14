@@ -40,6 +40,6 @@ void FUN_004568a0(void)
     FUN_004e6e00(*puVar1);
     puVar1 = puVar1 + 0x12;
   } while ((int)puVar1 < 0x6887d8);
-  FUN_004768c0(&DAT_006887d0);
+  FUN_004768c0((int)&DAT_006887d0);
   return;
 }

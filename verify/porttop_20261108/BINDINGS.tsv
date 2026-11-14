@@ -872,3 +872,4 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005b3670	FUN_005b3670	matched	AudioListFind	PORT-TOP-AUDIOTICK-STOPS: existing exe body Audio/AudioList_ag.cpp	3	
 0x005b36b0	FUN_005b36b0	missing	PortTop_AStop_005b36b0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005aea00	FUN_005aea00	matched	PortTop_Bound_005aea00	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005aea00.c (c4=match), Match/PortTop_005aea00.cpp	3	
+0x004568a0	FUN_004568a0	matched	Orig_004568a0	PORT-TOP-AUDIOTICK-IMGTRAP-4568A0: Match/PortTop_004568a0.cpp = re/match/s09/004568a0.c (c4=match, BYTE-IDENTICAL 43 B), teardown table 0x005f99b0 entry 0 (+0x18 of 0x005f9998), bound by the code-pointer fix-up (Compat/PortTopCodePtr.inc)	3	0x0045b930
