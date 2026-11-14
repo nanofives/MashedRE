@@ -5309,6 +5309,12 @@ def main():
                          "after the track/mode writes and BEFORE the launch poke (unlike --poke-u32, which writes "
                          "inside the hold). Added for U-9783: 0067ea94 (the mode-10 handling index A3 reads at "
                          "0x0046b57d) has no harness writer.")
+    ap.add_argument("--access-watch", default="",
+                    help="[RO-PIZFS-READERS-RUN] lo:hi hex image range; sampled guard-page READ/WRITE accessors "
+                         "(MemoryAccessMonitor, re-armed every --access-watch-period ms; first access per page per "
+                         "cycle only), armed after attach, labelled boot/menu/load/race. Writes --access-watch-out.")
+    ap.add_argument("--access-watch-period", type=int, default=25)
+    ap.add_argument("--access-watch-out", default="log/access_watch.tsv")
     ap.add_argument("--watch-global", default="",
                     help="[D4-UNC-PHYS-2] comma list (max 4) of hex image RVAs; hardware WRITE watchpoints armed "
                          "after attach, at the menu and before launch. Hits are printed at the end as [gwatch] rows "
@@ -5399,6 +5405,12 @@ def main():
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
     E = scr.exports_sync
     AU = None
+    AW = None
+    if args.access_watch:
+        _aws = sess.create_script((Path(__file__).resolve().parent / "js" / "access_watch.js").read_text(encoding="utf-8"))
+        _aws.on("message", on_msg); _aws.load(); AW = _aws.exports_sync
+        _lo, _hi = args.access_watch.split(":", 1)
+        print("  [awatch]", AW.start(_lo, _hi, args.access_watch_period, str(Path(args.access_watch_out).resolve()) + ".stream.tsv"))
     if args.watch_global:
         print("  [gwatch]", E.global_watch_arm(args.watch_global))
     if args.audio_probe:
@@ -5454,6 +5466,7 @@ def main():
         if "asi:" in _count_csv:
             print("  [counters/asi]", E.rearm_asi())
         # 2) write the selection globals
+        if AW is not None: print("  [awatch] label", AW.label("menu"), AW.stats())
         if args.watch_global:
             print("  [gwatch] menu re-arm:", E.global_watch_arm(args.watch_global))
         if args.peek:
@@ -5668,6 +5681,7 @@ def main():
         # 3) poke the state machine into load+spawn
         if args.watch_global:
             print("  [gwatch] launch re-arm:", E.global_watch_arm(args.watch_global))
+        if AW is not None: print("  [awatch] label", AW.label("load"), AW.stats())
         print("  [launch] poke DAT_00771968 = 2 ->", E.launch())
         if args.oracle:
             print("  [oracle]", E.arm_oracle())
@@ -5675,6 +5689,7 @@ def main():
         ph3 = wait_phase(3, 40, "race running (phase 3)")
         if ph3 is None: raise SystemExit
         print("\n  *** RACE RUNNING (phase 3) ***")
+        if AW is not None: print("  [awatch] label", AW.label("race"), AW.stats())
         # [D3] Repair the output-slot table now that the race is up. It must happen
         # AFTER phase 3 (the spawn path is what would normally have populated it) and
         # BEFORE the AI has done meaningful work, so this is the only correct moment.
@@ -5915,6 +5930,19 @@ def main():
     except SystemExit:
         pass
     finally:
+        if AW is not None:
+            try:
+                print("  [awatch] stats", AW.stats()); AW.stop()
+                _r = AW.drain(); _o = Path(args.access_watch_out); _o.parent.mkdir(parents=True, exist_ok=True)
+                with open(_o, "w", encoding="utf-8") as _f:
+                    _f.write("window\tpc\top\taddr\tstack3\tcount\n")
+                    for _k, _n in sorted(_r["hits"].items()): _f.write(f"{_k}\t{_n}\n")
+                with open(str(_o) + ".first.tsv", "w", encoding="utf-8") as _f:
+                    _f.write("pc\top\tfirst_seen\n")
+                    for _k, _v in sorted(_r["first"].items()): _f.write(f"{_k}\t{_v}\n")
+                print(f"  [awatch] wrote {_o} ({len(_r['hits'])} keys)")
+            except Exception as ex:
+                print(f"  [awatch] drain failed: {ex}")
         if args.watch_global:
             try:
                 print("  [gwatch] stats", E.global_watch_stats())

@@ -1,0 +1,6 @@
+pc	insn	function	outside_004b6xxx	op	count	windows	runs	addresses	top_stack3
+0x004b2ec9	mov ah, byte ptr [edi]	FUN_004b2eb0	yes	read	139	boot/load	g3_dir_r2/g3_dir_t3	0x0090dac0,0x0090e040,0x0090f040	0x004b305c|0x004b6bcb|0x00550bb0 x115 ; 0x004b305c|0x004b6c68|0x00550637 x20 ; 0x004b305c|0x004b690e|0x0048ff58 x2
+0x004b6a60	rep stosd dword ptr es:[edi], eax	FUN_004b6940	no	write	101	boot/load	g3_dir_r2/g3_dir_t3	0x0090dac0,0x0090e000,0x0090f000,0x00910000,0x00911000	0x005a4950 x101
+0x004b6ab0	rep movsd dword ptr es:[edi], dword ptr [esi]	FUN_004b6940	no	write	57	boot/load	g3_dir_r2/g3_dir_t3	0x0090dac0,0x0090e000,0x0090e2c0,0x0090eac0,0x0090f000,0x0090f2c0	- x43 ; 0x0044454c|0x0044454c x4 ; 0x00464644|0x00464644 x2
+0x004b6b59	mov ecx, dword ptr [edx + 0x74]	FUN_004b6b20	no	read	195	boot/load	g3_dir_r2/g3_dir_t3	0x0090db34,0x0090dbb4,0x0090dc34,0x0090dcb4,0x0090dd34,0x0090ddb4,..(35)	0x004b6e3e|0x00550970|0x004cbd67 x185 ; 0x004b6e3e|0x00550970|0x0047b93c x5 ; 0x0049f800|0x004b6e3e|0x00550970 x2
+0x004b6cfa	mov eax, dword ptr [ecx + 0x78]	outside-inventory	no	read	6	boot/load	g3_dir_r2/g3_dir_t3	0x0090dbb8,0x0090e038,0x0090e5b8,0x0090e9b8	0x00550970|0x004cbd67|0x004a460a x2 ; 0x00550970|0x004cbd67|0x004cc4a3 x1 ; 0x004cc4a3|0x00550970|0x004cbd67 x1
