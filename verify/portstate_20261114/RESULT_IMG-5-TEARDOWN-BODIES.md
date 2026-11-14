@@ -18,8 +18,10 @@ paused for the LIVING-PC token-leak reboot at 13:56 and resumed after it. Nothin
   `[portstate-image] self-test PASS (0 of 8 checks failed)`, `witness PortStateSeed 272/272 PASS`,
   `[code-trap] self-test PASS (0 of 6 checks failed)`, and on the AUDIOTICK arms `[OT_TIMER] self-test PASS (0 of 8413
   checks failed)`.
-- **No new init stand-in in entries 3..8.** `0x0045bae0` logs `8 init pointers stored (8 matched, 1 provisional)`, and
-  entries 3..8 log `matched body returned`. **New rows: none.**
+- **[UNCERTAIN] Entries 3..8: no AV under the run-45 null guard.** `0x0045bae0` logs `8 init pointers stored (8 matched,
+  1 provisional)`, and entries 3..8 log `matched body returned`. This is not evidence that no init or load stand-in
+  remains: the boot reaches AppDestroy with the run-45 null guard live, and 130 of 286 teardown destroys are called with
+  0, so a missing init or load would not fault. Cause open in row IMG-5-TEARDOWN-NULLS (L0, parent check 2026-11-14).
 
 ### Run 46 knob boots (`D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/boots.sh`, `test-slot` outside with no hub override, `mashed_lock.py run` inside)
 
