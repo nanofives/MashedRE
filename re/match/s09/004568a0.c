@@ -27,7 +27,7 @@ typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 MGLOBAL(undefined4, DAT_006886b8, 0x006886b8);
 MGLOBAL(undefined1, DAT_006887d0, 0x006887d0);
-void FUN_004768c0(int p0);
+void FUN_004768c0(void *p0);   /* IMG-5: the body passes &DAT_...; same push as (int) under C, valid C++ */
 undefined4 FUN_004e6e00(int p0);
 // MATCH: 0x004568a0 FUN_004568a0
 void FUN_004568a0(void)

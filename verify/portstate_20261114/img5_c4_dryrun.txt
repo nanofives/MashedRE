@@ -1,0 +1,7 @@
+[1/7] 0x004555d0 match PASS byte-identical 61 B, relocheck OK (5/0)
+[2/7] 0x00457b10 match PASS byte-identical 93 B, relocheck OK (10/0)
+[3/7] 0x0045a790 match PASS byte-identical 39 B, relocheck OK (3/0)
+[4/7] 0x0045b2d0 match PASS byte-identical 45 B, relocheck OK (4/0)
+[5/7] 0x00454af0 match PASS byte-identical 55 B, relocheck OK (6/0)
+[6/7] 0x00456ca0 match PASS byte-identical 53 B, relocheck OK (6/0)
+[7/7] 0x004530b0 match PASS byte-identical 69 B, relocheck OK (5/0)

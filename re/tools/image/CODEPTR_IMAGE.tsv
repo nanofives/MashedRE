@@ -648,7 +648,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f99a4	0x004566d0	undefined *	-	-	yes		cp-slots	ghidra-ref
 0x005f99a8	0x004566f0	undefined *	-	-	yes		cp-slots	ghidra-ref
 0x005f99ac	0x00456760	pointer	PTR_FUN_005f99ac	FUN_00456760	yes	Orig_00456760	cp-slots	ghidra-ref
-0x005f99b0	0x004568a0	pointer	PTR_FUN_005f99b0	FUN_004568a0	yes		cp-slots	ghidra-ref
+0x005f99b0	0x004568a0	pointer	PTR_FUN_005f99b0	FUN_004568a0	yes	Orig_004568a0	cp-slots	ghidra-ref
 0x005f99b4	0x004568d0	pointer	PTR_FUN_005f99b4	FUN_004568d0	yes		cp-slots	ghidra-ref
 0x005f99b8	0x00456c30	pointer	PTR_FUN_005f99b8	FUN_00456c30	yes		cp-slots	ghidra-ref
 0x005f99bc	0x00456c90	pointer	PTR_thunk_FUN_00456c70_005f99bc	thunk_FUN_00456c70	yes		cp-slots	ghidra-ref
@@ -661,7 +661,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f99e4	0x00457ab0	undefined *	-	-	no		trap	ghidra-ref
 0x005f99e8	0x00457ad0	undefined *	-	-	no		trap	ghidra-ref
 0x005f99ec	0x004548e0	pointer	PTR_FUN_005f99ec	FUN_004548e0	no	Orig_004548e0	excluded	ghidra-ref
-0x005f99f0	0x004540c0	pointer	PTR_FUN_005f99f0	FUN_004540c0	no		trap	ghidra-ref
+0x005f99f0	0x004540c0	pointer	PTR_FUN_005f99f0	FUN_004540c0	no	Orig_004540c0	bound	ghidra-ref
 0x005f99f4	0x00454820	pointer	PTR_FUN_005f99f4	FUN_00454820	no		trap	ghidra-ref
 0x005f99f8	0x00454130	pointer	PTR_FUN_005f99f8	FUN_00454130	no		trap	ghidra-ref
 0x005f99fc	0x0045b350	pointer	PTR_FUN_005f99fc	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
@@ -673,7 +673,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f9a24	0x00455360	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a28	0x00455390	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a2c	0x00455400	undefined *	-	-	no		excluded	ghidra-ref
-0x005f9a30	0x004555d0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a30	0x004555d0	undefined *	-	-	no	Orig_004555d0	bound	ghidra-ref
 0x005f9a34	0x00455c90	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a38	0x00455f50	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a3c	0x00455fd0	undefined *	-	-	no		trap	ghidra-ref
@@ -687,7 +687,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f9a64	0x00457ab0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a68	0x00457ad0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a6c	0x004583a0	undefined *	-	-	no	Orig_004583a0	excluded	ghidra-ref
-0x005f9a70	0x00457b10	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a70	0x00457b10	undefined *	-	-	no	Orig_00457b10	bound	ghidra-ref
 0x005f9a74	0x004582f0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a78	0x00457b70	undefined *	-	-	no		trap	ghidra-ref
 0x005f9a7c	0x00457f30	undefined *	-	-	no		trap	ghidra-ref
@@ -702,7 +702,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f9aa4	0x0045a890	undefined *	-	-	no		trap	ghidra-ref
 0x005f9aa8	0x0045a8b0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9aac	0x0045a6b0	undefined *	-	-	no	Orig_0045a6b0	excluded	ghidra-ref
-0x005f9ab0	0x0045a790	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ab0	0x0045a790	undefined *	-	-	no	Orig_0045a790	bound	ghidra-ref
 0x005f9ab4	0x0045ae80	undefined *	-	FUN_0045ae80	no		trap	ghidra-ref
 0x005f9ab8	0x0045abb0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9abc	0x0045ac20	undefined *	-	-	no		trap	ghidra-ref
@@ -716,7 +716,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f9ae4	0x0045b260	undefined *	-	-	no		trap	ghidra-ref
 0x005f9ae8	0x0045b290	undefined *	-	-	no		trap	ghidra-ref
 0x005f9aec	0x0045b830	undefined *	-	-	no	Orig_0045b830	excluded	ghidra-ref
-0x005f9af0	0x0045b2d0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9af0	0x0045b2d0	undefined *	-	-	no	Orig_0045b2d0	bound	ghidra-ref
 0x005f9af4	0x0045b700	undefined *	-	-	no		trap	ghidra-ref
 0x005f9af8	0x0045b300	undefined *	-	-	no		trap	ghidra-ref
 0x005f9afc	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
@@ -729,7 +729,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f9b24	0x00454a90	undefined *	-	-	no		trap	ghidra-ref
 0x005f9b28	0x00454ab0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9b2c	0x00454e70	undefined *	-	-	no	Orig_00454e70	excluded	ghidra-ref
-0x005f9b30	0x00454af0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b30	0x00454af0	undefined *	-	-	no	Orig_00454af0	bound	ghidra-ref
 0x005f9b34	0x00454e00	undefined *	-	-	no		trap	ghidra-ref
 0x005f9b38	0x00454b30	undefined *	-	-	no		trap	ghidra-ref
 0x005f9b3c	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
@@ -742,7 +742,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f9b64	0x00456dd0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9b68	0x00456e00	undefined *	-	-	no		trap	ghidra-ref
 0x005f9b6c	0x004576f0	undefined *	-	-	no	Orig_004576f0	excluded	ghidra-ref
-0x005f9b70	0x00456ca0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b70	0x00456ca0	undefined *	-	-	no	Orig_00456ca0	bound	ghidra-ref
 0x005f9b74	0x004577b0	undefined *	-	-	no		trap	ghidra-ref
 0x005f9b78	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
 0x005f9b7c	0x00456ea0	undefined *	-	-	no		trap	ghidra-ref
@@ -755,7 +755,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x005f9ba4	0x00453610	undefined *	-	-	no		trap	ghidra-ref
 0x005f9ba8	0x00453630	undefined *	-	-	no		trap	ghidra-ref
 0x005f9bac	0x00452f70	undefined *	-	-	no	Orig_00452f70	excluded	ghidra-ref
-0x005f9bb0	0x004530b0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9bb0	0x004530b0	undefined *	-	-	no	Orig_004530b0	bound	ghidra-ref
 0x005f9bb4	0x00453b80	undefined *	-	-	no		trap	ghidra-ref
 0x005f9bb8	0x00453690	undefined *	-	-	no		trap	ghidra-ref
 0x005f9bbc	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
