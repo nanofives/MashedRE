@@ -2,11 +2,20 @@
 
 Row `IMG-5-ORIGTOP-DEFAULT` (D4, run 46). Branch `orch/IMG-5-ORIGTOP-DEFAULT` from `orch/integration` @ `d1e5ac586`.
 
-## Verdict: DECISION (the ON logs differ from the OFF logs, so the P1 criterion is not met; the flip is coded on the branch, not enqueued)
+## Verdict: GREEN (decided flip, L-159 (a))
 
-L-127 class P1 needs the knob-path captures and logs unchanged ON against OFF on OFF / ON / OFF / ON passes. They are not unchanged:
-448 `[RW_BIND]` teardown lines and 3 init/entry lines differ (section "Compare"). The cause is the intended behaviour of the image
-(the real teardown bodies run), which is why this goes to Mariano as a decision row and not as an auto P1.
+Mariano answered L-159 (a): ON (`MASHED_PORTSTATE_IMAGE` + `MASHED_OT_CODEPTR`) is the `MASHED_ORIG_TOP` default. The ON logs differ from the OFF logs
+by 451 masked lines (section "Compare"), which is the intended behaviour of the image (the real teardown bodies run), so the flip is a decided change and not an auto P1.
+No new game runs were needed. Gates not run here (top-down row, merge train runs them). IMG-5-TEARDOWN-NULLS and RWC-NULL-DESTROY-GUARD stay open, the guard is untouched.
+
+Statement (verbatim): no AV rests on the run-45 null guard, 130 of 286 teardown destroys receive 0, cause open in IMG-5-TEARDOWN-NULLS.
+
+## ON reference (knob path, committed)
+
+`verify/portstate_20261114/img5_origtop_on_ref/` holds the masked ON logs (default build on1, on2, object build on1; same filter as `img5_origtop_cmp2.py`, script `mask.py`),
+the loader/self-test lines the mask drops (`*.selftest_lines.txt`), the compare outputs (`cmp2.txt`, `cmp2_full.txt`, `cmp2_obj_full.txt`) and `SHA256SUMS.txt`.
+The three masked ON logs are byte-identical (sha256 55cf8b24f92be764e9f2925bc0343fb2379d7fe163c97c7e9c960554684fb87c, 1749 lines), so default and object build agree.
+Raw logs stay in `D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/` (sha256 below).
 
 ## Caveat (verbatim from the lead)
 
@@ -101,9 +110,9 @@ Raw files (not committed): `D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots_obj/{of
 G-CTRL / B / 12x4 captures (top-down row, merge train runs the default gates); menu walk (no menu code changed);
 `MASHED_CODE_TRAP` arms (knob untouched).
 
-## Decision for Mariano (filed with `roadmap.ps1 decision`)
+## Decision for Mariano (answered: L-159 (a), 2026-11-14)
 
-- (a) Accept ON as the ORIG_TOP default. The log difference is the teardown now running the real matched bodies, plus the loader lines. Recommended, but it
+- (a) **CHOSEN.** Accept ON as the ORIG_TOP default. The log difference is the teardown now running the real matched bodies, plus the loader lines. Recommended, but it
   rests on the caveat above: the ON teardown reaches AppDestroy only under the null guard, so its "no AV" is not evidence of a complete init.
 - (b) Hold the default OFF until IMG-5-TEARDOWN-NULLS explains the 130 null destroys, then re-run these arms.
 - (c) Make only the image default and leave `MASHED_OT_CODEPTR` opt-in. Not recommended: image-ON without the bound slots leaves slot 0x005f99b0 at its original `.text` address.
@@ -125,3 +134,6 @@ c7f59dc04bdf88ab645f8de8b0b54946c0c84a9d9ed88f52171e8e32db9e2200  D:/MashedWT/IM
 23747aa719f240a34cc9571a5fedc964628793d0f543728ed5f104e150727f93  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/cmp2_full.txt
 fbaaea5e454f3aaf4cc268ba7e24bb2f2d6f302eafaf064b1e1e6622417ef4a8  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/mashed_re_default.exe
 ```
+
+Raw object-build logs (sha256): 5b8758c23fb35790adb23b3b0e1b79f49b19249fd2680e02b66b77b2bef99e30 `D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots_obj/off1.log`,
+896327d7cfccde4555f7109741031b9ffaadbb72490f3bbffb9bebddccbf7e36 `.../boots_obj/on1.log`, a646c527e0b9b4e2665b73be264dde8c4694daf922e8cbd02e3c012ba7fd5ec3 `.../mashed_re_ddkobj.exe`.

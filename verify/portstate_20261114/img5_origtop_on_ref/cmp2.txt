@@ -1,0 +1,104 @@
+== off1 vs off2 : 1302 / 1302 lines, differing 0
+== on1 vs on2 : 1749 / 1749 lines, differing 0
+== off1 vs on1 : 1302 / 1749 lines, differing 451
+-[ORIG_TOP] rva H: type table +0x14 slots: 9 init pointers stored (8 matched, 1 provisional), 0 already non-zero, of 9 (POWERUPINIT-A)
++[ORIG_TOP] rva H: type table +0x14 slots: 8 init pointers stored (8 matched, 1 provisional), 1 already non-zero, of 9 (POWERUPINIT-A)
+-[ORIG_TOP] type table entry 0: rva H: matched body returned, first clone (H) = H (POWERUPINIT-A)
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
++[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
++[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
++[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+== off2 vs on2 : 1302 / 1749 lines, differing 451
+-[ORIG_TOP] rva H: type table +0x14 slots: 9 init pointers stored (8 matched, 1 provisional), 0 already non-zero, of 9 (POWERUPINIT-A)
++[ORIG_TOP] rva H: type table +0x14 slots: 8 init pointers stored (8 matched, 1 provisional), 1 already non-zero, of 9 (POWERUPINIT-A)
+-[ORIG_TOP] type table entry 0: rva H: matched body returned, first clone (H) = H (POWERUPINIT-A)
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
++[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
++[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
++[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
++[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree

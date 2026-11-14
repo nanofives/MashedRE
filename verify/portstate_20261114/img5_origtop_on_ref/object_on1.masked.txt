@@ -1,0 +1,1749 @@
+
+=== B17 region map [winmain-entry] H..H ===
+B17-TLS: reserved 0/0 needed granules at TLS time (seen-free; the rest were already occupied by kernel-early NLS)
+B17-PAD: image-pad arena [H .. H] (exe owns the MASHED RVA range)
+Frontend.piz loaded OK
+  path:    original/TOASTART/Common/Frontend.piz
+  size:    1257472 bytes
+  version: 3
+  entries: 2
+  mode:    raw
+
+  name                                                             offset     length         id
+  ------------------------------------------------------------ ---------- ---------- ----------
+  TEXTURES.TXD                                                 H H H
+  MAIN.BSP                                                     H H H
+
+TEXTURES.TXD extracted to extracted/TEXTURES.TXD (1031400 bytes)
+RWS chunk tree:
+[0] H (?) size=H version=H @ H
+
+  total chunks: 1 (containers: 0)
+
+TXD decode (Milestone B3):
+  OK: 8 textures, deviceId=1
+
+  #   name                     w     h  bpp fmt   mips palette
+  --- -------------------- ----- ----- ---- ----- ---- -------
+  0   skydomegs               32    32    8 PAL8     6 yes    
+  1   Shad_groundgs          128   128    8 PAL8     8 yes    
+  2   Shad_car               256   256   32 ARGB     9 -      
+  3   Shad_bild              256   256   32 ARGB     9 -      
+  4   rendergs                64    32   32 ARGB     7 -      
+  5   main                   256   256    8 PAL8     9 yes    
+  6   Gravel                 128   128   32 ARGB     8 -      
+  7   carbase                256   256    8 PAL8     9 yes    
+[ORIG_TOP] MASHED_ORIG_TOP=1: WinMain H (matched) takes over
+[ORIG_TOP] [BIND-CRT-STDIO] fopen("mashed.log", "wt") write -> overlay
+[ORIG_TOP] dinput seed: 3/3 written; c_dfDIKeyboard header equals the original's (0x18 0x10 2 0x100 0x100)
+dllguard: DINPUT8.dll -> C:\WINDOWS\SYSTEM32\DINPUT8.dll
+[ORIG_TOP] H -> H boot gate (matched) returned 1; QPF at H = H; DirectInput H = created, keyboard H = created, joypads H = 0
+[ORIG_TOP] H data init: stand-in (hand boot chain steps 1-3, run inside the H stand-in)
+[RW_BIND] RwEngineInit -> rw::Engine::init ok
+[RW_BIND] RtFSManagerOpen(-1): shim, librw has no RtFSManager
+[ORIG_TOP] H HardwareInstallFileSystem: missing (H unported, no RtFSManager in librw)
+[RW_BIND] H RenderwareAttachPlugins -> librw plugin registration (stand-in); [H] = 0x70 (PTank record)
+dllguard: d3d9.dll -> C:\WINDOWS\SYSTEM32\d3d9.dll
+[RW_BIND] RwEngineOpen(hwnd=H) -> rw::Engine::open ok
+[ORIG_TOP] H HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)
+
+=== B17 region map [pre-initd3d9] H..H ===
+InitD3D9: adapter mode 3840x2160 fmt=22 refresh=120
+InitD3D9: CreateDevice(HAL/HW,depthA,vsdef) -> OK hr=H OK
+
+=== B17 region map [post-initd3d9] H..H ===
+[RW_BIND] RwEngineStart -> exe device H adopted, rw::Engine::start ok
+[ORIG_TOP] printf: 	Using video mode 0 : 3840x2160
+[ORIG_TOP] printf: At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - H = -H bytes of video memory free
+[ORIG_TOP] H: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+[RW_BIND] H: shim, no librw counterpart (two RW-heap buffers, no exe reader)
+[ORIG_TOP] H RW engine bring-up (matched, RW calls on librw) returned 1
+[RW_BIND] RwCameraCreate -> rw::Camera::create: record H, librw camera H
+[RW_BIND] RwRasterCreate(640, 480, 0, 0x2) -> rw::Raster::create H
+[RW_BIND] RwRasterCreate(640, 480, 0, 0x1) -> rw::Raster::create H
+[RW_BIND] RwCameraClone(H) -> rw::Camera::clone: record H
+[RW_BIND] RwCameraCreate -> rw::Camera::create: record H, librw camera H
+[RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create H
+[RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create H
+[RW_BIND] RwCameraCreate -> rw::Camera::create: record H, librw camera H
+[RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create H
+[RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create H
+[RW_BIND] H: TXD (33932 bytes) -> rw::TexDictionary H with 1 of 1 textures
+[RW_BIND] RwCameraClear(H, H, 3) -> rw::Camera::clear
+[RW_BIND] camera begin update H -> rw::Camera::beginUpdate, BeginScene ok
+[ORIG_TOP] H loading-disc draw (32, -32): missing body, not drawn
+[RW_BIND] camera end update H -> EndScene, rw::Camera::endUpdate
+[RW_BIND] RwRasterShowRaster(H, flags 1) -> Present on the adopted device: H
+[ORIG_TOP] H SubsystemInit (matched) returned 1
+[RW_BIND] RwGlobals: H is 0 (no B15 device yet) -> record H with Im2D fields zero; strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+[ORIG_TOP] [PIZ_FS] H file system setup, mode flag 0 (exe piz reader, Piz/PizReader.h)
+[ORIG_TOP] [PIZ_FS] H callback H arg 0 recorded (not called by the exe reader)
+
+Milestone B7: granule walk over H..H â 0 granules covered, 80 blocked (first blocked at 0x
+Milestone B7: first blocked granule = H
+Milestone B7: g_mashed_data_mapped = false
+
+Milestone B7: wedge status = INACTIVE (VirtualAlloc failed)
+
+Milestone B10: frontend boot chain start
+  [1] DataZeroFill (page-granular): zeroed 226212, skipped 0 bytes
+  [2-pre] H state=H protect=H
+  [2] BootDefaultParamsInit OK
+  [3] DefaultParam_SetField00/04/08 OK; readback H=H 04=H 08=H (expect H)
+  [4] RaceStateArrayZero OK; readback H=H H=H (expect 0)
+  [5] MenuEntryArrayInit OK; readback H=H (expect 0)
+  [6] TimerSlotClear OK; readback H=H (expect 0)
+  [7] MainLoopInit returned 1
+Milestone B10: frontend boot chain complete
+
+input slots: game controllers 0, types 2 0 0 0, active 1, stored at H (PORT-TOP-08)
+
+Milestone B11: DirectInput8 + keyboard device acquired (cooperative = background+nonexclusive)
+[ORIG_TOP] H PCVS_Init: piece 1 HandTop_InitDataInput (data wedge, boot chain, DirectInput)
+[ORIG_TOP] H: stand-in device H (SetRenderState slot +0xe4 records only)
+[ORIG_TOP] H device stand-in: SetRenderState(0x19, 5) recorded, not sent to the D3D9 device
+[ORIG_TOP] H device stand-in: SetRenderState(0x18, 0) recorded, not sent to the D3D9 device
+dllguard: dsound.dll -> C:\WINDOWS\SYSTEM32\dsound.dll
+INTRO small.mpg: BUILT (graph built, not run) video=720x576
+[ORIG_TOP] H HardwareShowIntroVideo: piece 2 HandTop_InitMovies returned 1
+[ORIG_TOP] rva H: stand-in, not run (small.mpg graph setup; piece 2 plays the boot movies) (PORT-TOP-04E)
+[ORIG_TOP] [PIZ_FS] H mount d:\toastart\common\font36.piz -> original/toastart/common/font36.piz: OK, 26 entries (depth 1)
+[RW_BIND] RwImageSetPath("") -> rw::Image::setSearchPath
+[RW_BIND] RwTextureRead("MashedNEWLogo"): MashedNEWLogo.png from piz, 256x128 -> rw::Texture H
+[RW_BIND] RwTextureRead("bigE"): bigE.bmp from piz, 32x32 -> rw::Texture H
+[RW_BIND] RwTextureRead("proLogicII"): proLogicII.bmp from piz, 128x64 -> rw::Texture H
+[RW_BIND] RwTextureRead("DolbyDig"): DolbyDig.bmp from piz, 128x64 -> rw::Texture H
+[ORIG_TOP] rva H: RWMOD off: stand-in only (the body needs RwGlobals +0x118) (HUDINIT-A)
+[ORIG_TOP] rva H: stand-in, not run (fonts family; the exe copy of FontText_HudInit forwards to raw Rt2d font addresses) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (fonts family; Rt2d font toolkit callees (H, H) have no exe body) (PORT-TOP-04E)
+[ORIG_TOP] [RW_FS] H(2, 1, "english.dat"): 33626 bytes from piz -> memory stream H
+[ORIG_TOP] [PIZ_FS] H unmount d:\toastart\common\font36.piz (depth 0)
+[ORIG_TOP] rva H: stand-in, not run (0x24a3c block alloc) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (RW raster create, no source) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (H table init; 0 skips Rec18Create, DAT_007f0a30 stays 0) (PORT-TOP-04E)
+dllguard: dsound.dll -> C:\WINDOWS\SYSTEM32\dsound.dll
+[ORIG_TOP] H sound init: piece 3 HandTop_InitAudio
+[ORIG_TOP] [PIZ_FS] H mount d:\toastart\common\sfx.piz -> original/toastart/common/sfx.piz: OK, 30 entries (depth 1)
+[ORIG_TOP] [RW_FS] H(2, 1, "fx.txd"): 823308 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (823308 bytes) -> rw::TexDictionary H with 36 of 36 textures
+[RW_BIND] RwImageSetPath("") -> rw::Image::setSearchPath
+[ORIG_TOP] [RW_FS] H(2, 1, "badges.txd"): 165740 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (165740 bytes) -> rw::TexDictionary H with 23 of 23 textures
+[ORIG_TOP] [RW_FS] H(2, 1, "TrackImages.txd"): 1961640 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (1961640 bytes) -> rw::TexDictionary H with 39 of 39 textures
+[ORIG_TOP] [RW_FS] H(2, 1, "Interface.txd"): 354816 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (354816 bytes) -> rw::TexDictionary H with 30 of 30 textures
+[RW_BIND] RwTextureRead("test"): not in the current dictionary, no .png / .bmp found, returns 0
+[RW_BIND] RpWorldCreate(bbox H) -> rw::World::create H
+[ORIG_TOP] [RW_FS] H(2, 1, "cup.dff"): 24976 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (24964 bytes, 1 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] RpLightCreate(0x2) -> light record H (rw::Light H)
+[RW_BIND] RpLightCreate(0x82) -> light record H (rw::Light H)
+[RW_BIND] RpWorldAddLight(world H, light record H type 0x82 flags 1 radius 100 colour 1/1/1/1 minusCos -0.707107) -> rw::World::addLight
+[RW_BIND] RpWorldAddLight(world H, light record H type 0x02 flags 3 radius 0 colour 0.75/0.75/0.75/1 minusCos 0) -> rw::World::addLight
+[RW_BIND] H(world H, clump H) -> rw::World::addClump
+[ORIG_TOP] [PIZ_FS] H("Tri.dff") binding: found, length 664
+[ORIG_TOP] [RW_FS] H(2, 1, "Tri.dff"): 664 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpGeometryForAllMaterials(view H -> geometry H): flags H -> H (view +0x08), 1 materials
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpGeometryForAllMaterials(view H -> geometry H): flags H -> H (view +0x08), 1 materials
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (652 bytes, 1 atomics)
+[ORIG_TOP] rva H: matched body, 30 slots at H: (clump, atomic, material) set (30, 30, 30), slot 0 = H / H / H (PORT-OT-TRIPOOL)
+[ORIG_TOP] rva H: stand-in, not run (atomic / clump builder (RpAtomicCreate H tree, H no source)) (PORT-TOP-04G)
+[RW_BIND] RpPTankAtomicCreate(64, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(64, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(64, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(64, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(64, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(24, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(16, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(10, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(80, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(10, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(100, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(40, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(80, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(80, H -> H, 0) -> PTank record H
+[ORIG_TOP] rva H: stand-in, not run (clump builder (RpClumpDestroy, H.. no source)) (PORT-TOP-04G)
+[ORIG_TOP] [PIZ_FS] H unmount d:\toastart\common\sfx.piz (depth 0)
+[RW_BIND] RpPTankAtomicCreate(50, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(256, H -> H, 0) -> PTank record H
+[ORIG_TOP] rva H: matched body ran (EQUIV-FU-48E820); H built 17 of 17 records at H with +0x4 non-zero (rec[0] +0x4 = H, rec[16] +0x4 = H)
+[RW_BIND] RpPTankAtomicCreate(280, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(280, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(280, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(280, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(250, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(150, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(20, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(128, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(512, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(8192, H -> H, 0) -> PTank record H
+
+Milestone B14: MASHED input-globals wedge probe = OK (wrote 0xA5 to H, readback=0xA5)
+
+Milestone B5: uploading 8 textures for atlas
+  slot 0: 'skydomegs' 32x32 PAL8 mips=6 OK
+  slot 1: 'Shad_groundgs' 128x128 PAL8 mips=8 OK
+  slot 2: 'Shad_car' 256x256 ARGB mips=9 OK
+  slot 3: 'Shad_bild' 256x256 ARGB mips=9 OK
+  slot 4: 'rendergs' 64x32 ARGB mips=7 OK
+  slot 5: 'main' 256x256 PAL8 mips=9 OK
+  slot 6: 'Gravel' 128x128 ARGB mips=8 OK
+  slot 7: 'carbase' 256x256 PAL8 mips=9 OK
+  Milestone B5: 8/8 textures uploaded into atlas
+
+Milestone B15: RW Im2D->D3D9 bridge install = OK (fake RW device at *(H); HudIm2DQuad routes to D3D9)
+
+Milestone B16: standalone RVA thunks â map_text=1 map_scale=1 scale_ok=1 thunks=6/6 (b8b0=1 b8c0=1 d5a0=1 f40=1 30b0=1 2c60=1)
+Milestone B16: MenuChromeShellA ready = YES (real MASHED menu chrome via the B15 bridge)
+[ORIG_TOP] H(H) BackBuffRasterOpen: piece 4 HandTop_InitRasters
+[RW_BIND] RwGlobals: H H (B15 device) -> record H; Im2D +0x18/+0x20/+0x30 copied, strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+[RW_BIND] RwRasterCreate(0, 0, 0, 0x84) -> rw::Raster::create H
+[ORIG_TOP] [PIZ_FS] H mount d:\toastart\common\powerups\powerups.piz -> original/toastart/common/powerups/powerups.piz: OK, 36 entries (depth 1)
+[ORIG_TOP] rva H: type table +0x14 slots: 8 init pointers stored (8 matched, 1 provisional), 1 already non-zero, of 9 (POWERUPINIT-A)
+[ORIG_TOP] [RW_FS] H(2, 1, "PowerUpModels.txd"): 174296 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (174296 bytes) -> rw::TexDictionary H with 6 of 6 textures
+[RW_BIND] RpPTankAtomicCreate(50, H -> H, 0) -> PTank record H
+[ORIG_TOP] [RW_FS] H(2, 1, "GatlingGun.dff"): 36975 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (36963 bytes, 7 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[ORIG_TOP] [RW_FS] H(2, 1, "DepthCharge.dff"): 11731 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (11719 bytes, 3 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] [RW_FS] H(2, 1, "DepthChargeRound.dff"): 2636 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (2624 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 44 vertices)
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[RW_BIND] H(H) -> rw::Atomic::clone(atomic H) H
+[ORIG_TOP] type table entry 1: rva H: matched body returned, first DepthCharge clone (H) = H (POWERUPINIT-A)
+[ORIG_TOP] [RW_FS] H(2, 1, "MissileLauncher.dff"): 14550 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (14538 bytes, 2 atomics)
+[ORIG_TOP] [RW_FS] H(2, 1, "missile.dff"): 5278 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (5266 bytes, 2 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(10, H -> H, 0) -> PTank record H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(10, H -> H, 0) -> PTank record H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(10, H -> H, 0) -> PTank record H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(10, H -> H, 0) -> PTank record H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(10, H -> H, 0) -> PTank record H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[ORIG_TOP] type table entry 2: rva H: provisional body returned (PROVISIONAL.tsv, 94.0 percent), launcher clone H = H, missile particle H = H (POWERUPINIT-A)
+[ORIG_TOP] [RW_FS] H(2, 1, "MineDropper.dff"): 12548 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (12536 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] [RW_FS] H(2, 1, "Mine.dff"): 3094 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (3082 bytes, 2 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(32, H -> H, 0) -> PTank record H
+[ORIG_TOP] type table entry 3: rva H: matched body returned, first mine clone (H) = H (POWERUPINIT-A)
+[ORIG_TOP] [RW_FS] H(2, 1, "FlameThrower.dff"): 17310 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (17298 bytes, 2 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(record H): near-match body ran (L-115/L-117): table H cleared-field nonzero 0 -> 0 (poison=0), +0x00=H +0x0c=H +0x14=H +0x18=H (NEARMATCH-45A3A0)
+[RW_BIND] RpPTankAtomicCreate(180, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(record H): near-match body ran (L-115/L-117): table H cleared-field nonzero 0 -> 0 (poison=0), +0x00=H +0x0c=H +0x14=H +0x18=H (NEARMATCH-45A3A0)
+[RW_BIND] RpPTankAtomicCreate(180, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(record H): near-match body ran (L-115/L-117): table H cleared-field nonzero 0 -> 0 (poison=0), +0x00=H +0x0c=H +0x14=H +0x18=H (NEARMATCH-45A3A0)
+[RW_BIND] RpPTankAtomicCreate(180, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(record H): near-match body ran (L-115/L-117): table H cleared-field nonzero 0 -> 0 (poison=0), +0x00=H +0x0c=H +0x14=H +0x18=H (NEARMATCH-45A3A0)
+[RW_BIND] RpPTankAtomicCreate(180, H -> H, 0) -> PTank record H
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[ORIG_TOP] type table entry 4: rva H: matched body returned, first flame clone (H) = H (POWERUPINIT-A)
+[ORIG_TOP] [RW_FS] H(2, 1, "shotgun.dff"): 34007 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (33995 bytes, 3 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(frame H, combine 1) -> rw::Frame::scale
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] type table entry 5: rva H: matched body returned, first shotgun clone (H) = H (POWERUPINIT-A)
+[ORIG_TOP] [RW_FS] H(2, 1, "flashunit.dff"): 15934 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (15922 bytes, 2 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(4, H -> H, 0) -> PTank record H
+[ORIG_TOP] type table entry 6: rva H: matched body returned, first flashunit clone (H) = H (POWERUPINIT-A)
+[RW_BIND] RpPTankAtomicCreate(64, H -> H, 0) -> PTank record H
+[RW_BIND] RpPTankAtomicCreate(64, H -> H, 0) -> PTank record H
+[ORIG_TOP] [RW_FS] H(2, 1, "oilslicker.dff"): 7348 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (7336 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(clump H, 0.4, 0): matched body; DAT_0067ecb0 = 33, DAT_006905b0 = H (frame H), DAT_00636ad0 = 0 (ATOMIC-VIEW)
+[RW_BIND] H(H) -> rw::MatFX::enableEffects(atomic H)
+[RW_BIND] H(material H, 2) -> rw::MatFX::setEffects
+[RW_BIND] H(material H, texture H, frame H, fbAlpha 1, coef 0.4) -> MatFX env
+[RW_BIND] H(clump H) as views: 1 atomics
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(clump H, 0.4, 0): matched body; DAT_0067ecb0 = 33, DAT_006905b0 = H (frame H), DAT_00636ad0 = 0 (ATOMIC-VIEW)
+[RW_BIND] H(H) -> rw::MatFX::enableEffects(atomic H)
+[RW_BIND] H(material H, 2) -> rw::MatFX::setEffects
+[RW_BIND] H(material H, texture H, frame H, fbAlpha 1, coef 0.4) -> MatFX env
+[RW_BIND] H(clump H) as views: 1 atomics
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(clump H, 0.4, 0): matched body; DAT_0067ecb0 = 33, DAT_006905b0 = H (frame H), DAT_00636ad0 = 0 (ATOMIC-VIEW)
+[RW_BIND] H(H) -> rw::MatFX::enableEffects(atomic H)
+[RW_BIND] H(material H, 2) -> rw::MatFX::setEffects
+[RW_BIND] H(material H, texture H, frame H, fbAlpha 1, coef 0.4) -> MatFX env
+[RW_BIND] H(clump H) as views: 1 atomics
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[ORIG_TOP] rva H(clump H, 0.4, 0): matched body; DAT_0067ecb0 = 33, DAT_006905b0 = H (frame H), DAT_00636ad0 = 0 (ATOMIC-VIEW)
+[RW_BIND] H(H) -> rw::MatFX::enableEffects(atomic H)
+[RW_BIND] H(material H, 2) -> rw::MatFX::setEffects
+[RW_BIND] H(material H, texture H, frame H, fbAlpha 1, coef 0.4) -> MatFX env
+[RW_BIND] H(clump H) as views: 1 atomics
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[ORIG_TOP] type table entry 7: rva H: matched body returned, first oil clone (H) = H (POWERUPINIT-A)
+[ORIG_TOP] [RW_FS] H(2, 1, "mortar.dff"): 18591 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (18579 bytes, 3 atomics)
+[ORIG_TOP] [RW_FS] H(2, 1, "MortarRound.dff"): 1548 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1536 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] H(clump H) -> rw::Clump::clone H
+[RW_BIND] RpPTankAtomicCreate(30, H -> H, 0) -> PTank record H
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[ORIG_TOP] type table entry 8: rva H: matched body returned, first mortar clone (H) = H (POWERUPINIT-A)
+[RW_BIND] RpPTankAtomicCreate(25, H -> H, 0) -> PTank record H
+[ORIG_TOP] [RW_FS] H(2, 1, "TargetHUD.txd"): 5796 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (5796 bytes) -> rw::TexDictionary H with 1 of 1 textures
+[ORIG_TOP] [RW_FS] H(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[ORIG_TOP] [RW_FS] H(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[ORIG_TOP] [RW_FS] H(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[ORIG_TOP] [RW_FS] H(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[RW_BIND] RpPTankAtomicCreate(25, H -> H, 0) -> PTank record H
+[ORIG_TOP] [RW_FS] H(2, 1, "PowerUpIcons.txd"): 137828 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (137828 bytes) -> rw::TexDictionary H with 11 of 11 textures
+[ORIG_TOP] [PIZ_FS] H("IconCube.dff") binding: found, length 1076
+[ORIG_TOP] [RW_FS] H(2, 1, "IconCube.dff"): 1076 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (1064 bytes, 1 atomics)
+[ORIG_TOP] rva H: matched body, 25 of 25 pool entries hold a clump, record H +0x04 = H, DAT_0068b9ac = H (POWERUPINIT-A)
+[ORIG_TOP] rva H: deviation L-114, hand runner Save::RunTrackPowerupsScript on the span H: 4925 bytes, 39 Set_Track_Powerups calls, 0 statements skipped, from piz (POWERUPINIT-A)
+[ORIG_TOP] [PIZ_FS] H("lazer.dff") binding: found, length 972
+[ORIG_TOP] [RW_FS] H(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream H
+[ORIG_TOP] [RW_FS] H(2, 1, "LaserTower.dff"): 7956 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (7944 bytes, 1 atomics)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] rva H(clump H, colour H): stand-in, not run: its RpClumpForAllAtomics callback H has no matched source (POWERUPINIT-A)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 12 vertices)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] rva H(clump H, colour H): stand-in, not run: its RpClumpForAllAtomics callback H has no matched source (POWERUPINIT-A)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 12 vertices)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] rva H(clump H, colour H): stand-in, not run: its RpClumpForAllAtomics callback H has no matched source (POWERUPINIT-A)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 12 vertices)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] rva H(clump H, colour H): stand-in, not run: its RpClumpForAllAtomics callback H has no matched source (POWERUPINIT-A)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 12 vertices)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] rva H(clump H, colour H): stand-in, not run: its RpClumpForAllAtomics callback H has no matched source (POWERUPINIT-A)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 12 vertices)
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (960 bytes, 1 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] rva H(clump H, colour H): stand-in, not run: its RpClumpForAllAtomics callback H has no matched source (POWERUPINIT-A)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 12 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "Bomb.dff"): 7904 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (7892 bytes, 1 atomics)
+[ORIG_TOP] rva H: matched body returned: DAT_0068d4e0 = H, DAT_0068bb58 = H, record H +0x04 = H (POWERUPINIT-A)
+[ORIG_TOP] rva H: DAT_00636c00 (Bomb.dff) = H, DAT_0063bc40 (LaserTower.dff) = H, 6 of 6 laser records (POWERUPINIT-A)
+[ORIG_TOP] rva H: stand-in, not run (powerups family) (PORT-TOP-04E)
+[ORIG_TOP] [PIZ_FS] H unmount d:\toastart\common\powerups\powerups.piz (depth 0)
+[ORIG_TOP] [PIZ_FS] H mount d:\toastart\common\Panel\Panel.piz -> original/toastart/common/Panel/Panel.piz: OK, 15 entries (depth 1)
+[ORIG_TOP] rva H: stand-in, not run (Panel family) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (Panel family) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (Panel family; exe body exists, not run here yet) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (Panel family; exe body exists, not run here yet) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (Panel family) (PORT-TOP-04E)
+[ORIG_TOP] [RW_FS] H(2, 1, "startlights.dff"): 5838 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (5826 bytes, 6 atomics)
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[RW_BIND] H(atomic H): mask 0x40, set 1: geometry H flags H -> H
+[ORIG_TOP] rva H: stand-in, not run (Panel family) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (Panel family) (PORT-TOP-04E)
+[ORIG_TOP] rva H: stand-in, not run (Panel family) (PORT-TOP-04E)
+[ORIG_TOP] [PIZ_FS] H unmount d:\toastart\common\Panel\Panel.piz (depth 0)
+[ORIG_TOP] rva H: stand-in, not run (particle emitters) (PORT-TOP-04E)
+[ORIG_TOP] [PIZ_FS] H mount d:\ToastArt\common\perm.piz -> original/ToastArt/common/perm.piz: OK, 26 entries (depth 1)
+[ORIG_TOP] [RW_FS] H(2, 1, "ToastArt/common/perm/Copters/Copters.txd"): 151840 bytes from piz -> memory stream H
+[RW_BIND] H: TXD (151840 bytes) -> rw::TexDictionary H with 4 of 4 textures
+[ORIG_TOP] [RW_FS] H(2, 1, "map_0.dff"): 7412 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (7400 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 190 vertices)
+[ORIG_TOP] rva H: stand-in, not run (1-triangle clump; H RW geometry writes, RpGeometryCreate tree unbound) (PORT-TOP-04H)
+[ORIG_TOP] rva H: stand-in, not run (2-triangle clump; H RW geometry writes, RpGeometryCreate tree unbound) (PORT-TOP-04H)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_2.dff"): 6188 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (6176 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 156 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_3.dff"): 3524 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (3512 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 82 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_11.dff"): 7772 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (7760 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 200 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_25.dff"): 6476 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (6464 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 164 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_26.dff"): 9068 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (9056 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 236 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_30.dff"): 2804 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (2792 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 62 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_33.dff"): 10436 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (10424 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 274 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_34.dff"): 6476 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (6464 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 164 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_36.dff"): 4532 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (4520 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 110 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_37.dff"): 8636 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (8624 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 224 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_38.dff"): 9788 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (9776 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 256 vertices)
+[ORIG_TOP] [RW_FS] H(2, 1, "map_39.dff"): 5828 bytes from piz -> memory stream H
+[RW_BIND] RpClumpStreamRead(H) -> rw::Clump::streamRead H (5816 bytes, 1 atomics)
+[RW_BIND] H(clump H) -> atomic H view H (geometry H, 146 vertices)
+[ORIG_TOP] [PIZ_FS] H unmount d:\ToastArt\common\perm.piz (depth 0)
+[ORIG_TOP] [RW_FS] H(2, 1, "toastart\pc\pc.txd"): 33272 bytes from disk -> memory stream H
+[RW_BIND] H: TXD (33272 bytes) -> rw::TexDictionary H with 4 of 4 textures
+
+B19a: original/TOASTART/Common/Perm.piz :: BACKGROUND.PNG decode+upload OK (340x240) -> slot 8 handle 2
+
+B19a: original/TOASTART/Common/Font36.piz :: MASHEDNEWLOGO.PNG decode+upload OK (256x128) -> slot 9 handle 3
+
+B19b: message table original/TOASTART/Common/Font36.piz/ENGLISH.DAT loaded (33626 bytes)
+B19b: menu item id=33 "Single Player" 195x39 -> slot 10 handle 4
+B19b: menu item id=34 "Multi Player" 175x39 -> slot 11 handle 5
+B19b: menu item id=35 "Championship" 214x39 -> slot 12 handle 6
+B19b: menu item id=36 "Time Trial" 148x39 -> slot 13 handle 7
+B19b: menu item id=39 "Options" 120x39 -> slot 14 handle 8
+B19b: 5 menu items ready
+
+R2-5: badges.txd 'Button' 16x32 upload OK (dict has 23 textures)
+R2-5: badges.txd 'Arrow' 16x16 upload OK
+F38: badges.txd 'lock' 16x16 fmt=PAL4 upload OK (ok)
+F38: badges.txd 'check' 16x16 fmt=PAL4 upload OK (ok)
+F38: badges.txd 'dot' 16x16 fmt=PAL4 upload OK (ok)
+F2 track previews: 24/24 loaded; veh 8/8
+powerup icons: dict=11 loaded=11 ready=1
+standings assets: iface=6/6 epp=5/5 panel=2/2 ready=1
+text4: interface.txd 'Powerupshadow' 32x32 upload OK
+F38: interface.txd 'MultiPlayer' 64x64 upload OK
+
+#25 color-select: INTERFACE.TXD cars 10/10, vs OK, star OK (dict has 30 textures)
+
+#10 input icons: PC.TXD decode OK, 2/2 (kbd+joypad)
+
+loadicon: 256x128 decode+upload OK
+
+B19a: original/TOASTART/Common/Font36.piz :: BIGE.BMP decode+upload OK (32x32) -> slot 57 handle 48
+F1 frontend.mpg: RUNNING (512x512)
+settings: source=mashed_re_settings.bin-or-defaults music=7 sfx=7 insults=7 insults_on=2 gamma=3 autosave=1
+R2-2 gamesave load: LOADED (H save) (original/gamesave.bin)
+
+B19 faithful font (FGDC20): load OK (height=33.0)
+
+MenuStringTable (id->glyph-string): load OK size=33626 ids=677
+  self-check id 0x21 len=13 "Single Player"
+  self-check id 0x22 len=12 "Multi Player"
+  self-check id 0x23 len=12 "Championship"
+  self-check id 0x24 len=10 "Time Trial"
+  self-check id 0x27 len=7 "Options"
+
+B17-SUMMARY reached-main-loop chrome=YES thunks=6/6
+[ORIG_TOP] H FrontendStateSet(3): matched body ran (DAT_0067d960 = 3), piece 5 HandTop_InitFrontendAssets
+[RW_BIND] RwCameraClear(H, H, 3) -> rw::Camera::clear
+[RW_BIND] camera begin update H -> rw::Camera::beginUpdate, BeginScene ok
+[RW_BIND] camera end update H -> EndScene, rw::Camera::endUpdate
+[RW_BIND] RwRasterShowRaster(H, flags 1) -> Present on the adopted device: H
+[RW_BIND] RwCameraClear(H, H, 3) -> rw::Camera::clear
+[RW_BIND] camera begin update H -> rw::Camera::beginUpdate, BeginScene ok
+[RW_BIND] camera end update H -> EndScene, rw::Camera::endUpdate
+[RW_BIND] RwRasterShowRaster(H, flags 1) -> Present on the adopted device: H
+[RW_BIND] RwCameraClear(H, H, 3) -> rw::Camera::clear
+[RW_BIND] camera begin update H -> rw::Camera::beginUpdate, BeginScene ok
+[RW_BIND] camera end update H -> EndScene, rw::Camera::endUpdate
+[RW_BIND] RwRasterShowRaster(H, flags 1) -> Present on the adopted device: H
+[RW_BIND] RwCameraClear(H, H, 3) -> rw::Camera::clear
+[RW_BIND] camera begin update H -> rw::Camera::beginUpdate, BeginScene ok
+[RW_BIND] camera end update H -> EndScene, rw::Camera::endUpdate
+[RW_BIND] RwRasterShowRaster(H, flags 1) -> Present on the adopted device: H
+[ORIG_TOP] H AppInitialiseOnBootup (matched) returned 1
+[RW_BIND] RwGlobals: H already points at the record H
+[ORIG_TOP] H MainLoopInit returned 1
+[ORIG_TOP] first frame: run function H loop entered
+[ORIG_TOP] frame subtree: matched H and H (PORT-TOP-05)
+[ORIG_TOP] frame 0 before H: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] rva H: stand-in (PORT-TOP-05) hand menu navigation + input globals (HandTop_FrameMenu, HandTop_FrameInputGlobals)
+[ORIG_TOP] frame 0: H (matched) returned 1, phase 1, H stand-in calls 1, H calls 0
+[ORIG_TOP] frame 0 rendered (1)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_AUDIOTICK off: H stays a no-op
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER off: H stays a no-op
+[ORIG_TOP] frame 120: H (matched) returned 1, phase 1, H stand-in calls 121, H calls 0
+[ORIG_TOP] frame 120 rendered (1)
+[ORIG_TOP] frame 240: H (matched) returned 1, phase 1, H stand-in calls 241, H calls 0
+[ORIG_TOP] frame 240 rendered (1)
+[ORIG_TOP] frame 360: H (matched) returned 1, phase 1, H stand-in calls 361, H calls 0
+[ORIG_TOP] frame 360 rendered (1)
+[ORIG_TOP] frame 480: H (matched) returned 1, phase 1, H stand-in calls 481, H calls 0
+[ORIG_TOP] frame 480 rendered (1)
+[ORIG_TOP] frame 1800: H (matched) returned 1, phase 1, H stand-in calls 1801, H calls 0
+[ORIG_TOP] H AppDestroy (matched) enter: cameras H=H H=H H=H H=H, DAT_005f9bd8=9, DAT_00771a04=0, DAT_007f0a30=H, DAT_008a94a8=H
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[RW_BIND] H(H): shim, null, nothing to destroy
+[RW_BIND] H(H): shim, null, nothing to destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[ORIG_TOP] rva H: matched body (records built, of 6) (6, 6) (PORT-OT-PICKUPPOOL)
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[ORIG_TOP] rva H: matched body after the hand pickup code released its binds (released, foreign) (0, 0) (PORT-OT-PICKUPPOOL)
+[ORIG_TOP] rva H: POWERUPINIT-A: builder clumps in the pool, entries the hand tick borrowed (clumps, lent) (25, 0) (PORT-OT-PICKUPPOOL)
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[ORIG_TOP] rva H(H): matched body (record +0x04 set) (PORT-OT-PICKUPPOOL)
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[ORIG_TOP] rva H: stand-in (RWMOD off) (0, 0) (PORT-OT-PICKUPPOOL)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpWorldRemoveLight(H, light record H) -> rw::World::removeLight
+[RW_BIND] RpWorldRemoveLight(H, light record H) -> rw::World::removeLight
+[RW_BIND] RpLightDestroy(light record H) -> rw::Light::destroy H, record freed
+[RW_BIND] RpLightDestroy(light record H) -> rw::Light::destroy H, record freed
+[RW_BIND] H(world H, clump H) -> rw::World::removeClump
+[RW_BIND] RpWorldDestroy(H) -> rw::World::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[ORIG_TOP] rva H: matched body (30 slots built) (PORT-OT-TRIPOOL)
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[ORIG_TOP] rva H: matched body ran, H on 17 records (17 with +0x4 non-zero before the call) (PARTICLE-3-SWAP)
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpAtomicDestroy(PTank record H): material texture H released, record freed
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwGlobals +0x10c free(H) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RwCameraDestroy(H) -> rw::Camera::destroy: librw camera H, rasters H / H
+[RW_BIND] RwCameraDestroy(H) -> rw::Camera::destroy: librw camera H, rasters H / H
+[RW_BIND] RwCameraDestroy(H) -> rw::Camera::destroy: librw camera H, rasters H / H
+[RW_BIND] RwCameraDestroy(H) -> rw::Camera::destroy: librw camera H, rasters H / H
+[ORIG_TOP] rva H(H): stand-in (RWMOD off) (PORT-OT-HUD-2)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[ORIG_TOP] rva H(H): stand-in (RWMOD off) (PORT-OT-HUD-2)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(H) -> rw::Clump::destroy
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva H: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RwImageSetPath("") -> rw::Image::setSearchPath
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[RW_BIND] RwTextureDestroy(H) -> rw::Texture::destroy
+[ORIG_TOP] H AppDestroy (matched) returned; then HandTop_AppDestroy for the exe audio / DirectInput / small.mpg
+[RW_BIND] RwTexDictionaryDestroy(H) -> rw::TexDictionary::destroy
+[ORIG_TOP] H -> H SoftwareTidyUpBeforeExiting (matched, RW calls on librw)
+[RW_BIND] RtFSManagerClose: shim, librw has no RtFSManager
+[RW_BIND] RwEngineStop -> rw::Engine::stop, exe device released
+[RW_BIND] RwEngineClose -> rw::Engine::close
+[RW_BIND] RwEngineTerm -> rw::Engine::term
+[ORIG_TOP] H -> H HardwareExitApplication (matched) returned 0; DirectInput H = released, keyboard H = released
+[ORIG_TOP] WinMain H returned 0 after 3000 frames
