@@ -162,6 +162,10 @@ Next session: start from this branch (`orch/RWC-FRAME-CLUMP`), build with `bash 
 `PROYECTOS_TEST_MEM_GB=3`: the 8 GB default waits up to 10 min for memory) before `iter.sh` or `run_arms.sh`. The
 branch is in a mergeable state for a top-down row: all six arms pass, both self-tests PASS, every 100% unit IDENTICAL.
 
+Note 2026-11-14: the advice above to set `PROYECTOS_TEST_HUB=off` is superseded. The hub was fixed 2026-11-13 21:00 and
+Mashed is out of `hub.exclude`. Paths outside the repo, builds and harness-lock runs stay local automatically, so do not
+set `PROYECTOS_TEST_HUB=off` for these runs.
+
 Raw data: `D:/MashedWT/RWC-FRAME-CLUMP_data` (`vs_frameN_d9..d20.log`, the six final arm logs, `build_d20.log`,
 `build_ddk21.log`, `build_ddk22.log` (the ddkobj relink after the fix), `ddkcheck22.out`), sha256 in
 `RAW_SHA256_RWC-FRAME-CLUMP.txt` (run 44 block). Every game launch went through `test-slot` -> `mashed_lock.py run`.
