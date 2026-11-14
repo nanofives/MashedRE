@@ -26,6 +26,13 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-14  0x004555d0  FUN_004555d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004555d0.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
+2026-11-14  0x00457b10  FUN_00457b10  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00457b10.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
+2026-11-14  0x0045a790  FUN_0045a790  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a790.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
+2026-11-14  0x0045b2d0  FUN_0045b2d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045b2d0.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
+2026-11-14  0x00454af0  FUN_00454af0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454af0.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
+2026-11-14  0x00456ca0  FUN_00456ca0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456ca0.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
+2026-11-14  0x004530b0  FUN_004530b0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004530b0.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
 2026-11-14  0x004dcbb0  FUN_004dcbb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004dcbb0.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S5.md
 2026-11-13  0x004b3f90  FUN_004b3f90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwfc/004b3f90.c; evidence: verify/rwcframeclump_20261113/RESULT_RWC-FRAME-CLUMP.md
 2026-11-13  0x004e4c30  RpLightStreamRead  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl02/004e4c30.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S7.md
