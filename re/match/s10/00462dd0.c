@@ -88,10 +88,10 @@ void FUN_00462dd0(void)
       _DAT_0068fcb4 = 2;
       _DAT_0068fcb8 = 1;
       puVar4 = &DAT_0069045c;
-      piVar3 = &DAT_007f1a1c;
+      piVar3 = (int *)&DAT_007f1a1c;
       do {
-        _DAT_0068fc98 = &DAT_00690158 + *piVar3 * 0x80;
-        FUN_005a8890(*puVar4,&DAT_0068fc98);
+        _DAT_0068fc98 = (int)(&DAT_00690158 + *piVar3 * 0x80);
+        FUN_005a8890(*puVar4,(undefined4 *)&DAT_0068fc98);
         piVar3 = piVar3 + 4;
         puVar4 = puVar4 + 1;
       } while ((int)piVar3 < 0x7f1a5c);

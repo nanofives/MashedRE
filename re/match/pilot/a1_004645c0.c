@@ -9,8 +9,10 @@
    Residual: none. Class of the starting gap: (b) Ghidra-merged temporary (param slot reuse). */
 typedef struct { unsigned char pad[0x30]; int h; unsigned char flags; unsigned char p2[7]; float f3c; } Obj;
 typedef struct { Obj *obj; int pad; } Slot;
+#ifndef MATCH_PORT
 extern int DAT_00604a10;
 extern Slot DAT_0068f640[];
+#endif
 void FUN_0045daf0(int a, int b);
 void FUN_0045e0f0(int a, float b);
 int FUN_0046cbb0(int a, int *b, int *c);

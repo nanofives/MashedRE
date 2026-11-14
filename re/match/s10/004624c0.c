@@ -35,7 +35,7 @@ void FUN_004624c0(void)
   int iVar1;
   
   DAT_0068f4cc = FUN_00551190(5,0x5cc4de,0x5cc4de);
-  iVar1 = FUN_00550430(DAT_0068f4cc);
+  iVar1 = FUN_00550430((undefined4 *)DAT_0068f4cc);
   if (iVar1 != 0) {
     FID_conflict__wprintf("RtFSManagerRegister successful\n");
     return;

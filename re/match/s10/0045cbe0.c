@@ -30,7 +30,10 @@ typedef struct { int f[10]; } Rec28;
 MGLOBAL(int *, DAT_0088fbc4, 0x0088fbc4);
 MGLOBAL(Rec28 *, DAT_0088fbc8, 0x0088fbc8);
 void FUN_0045c640(int param_1);
-// MATCH: 0x0045c4e0 FUN_0045c4e0
+/* PORT-TOP-AUDIO-RWA: the port takes 0x0045c4e0 from the one exe copy in re/match/s10/0045cb20.c (one exe body per rva);
+   the DDK compile does not define MATCH_PORT_SHARED_0045c4e0, so the object is unchanged. */
+#ifndef MATCH_PORT_SHARED_0045c4e0
+// (match line dropped by PORT-TOP-AUDIO-RWA: 0x0045c4e0 is matched in re/match/s10/0045c4e0.c and 0045cb20.c; this copy only serves the DDK object of 0x0045cbe0)
 int FUN_0045c4e0(int param_1, Rec28 *param_2, int param_3)
 {
   int i;
@@ -41,6 +44,9 @@ int FUN_0045c4e0(int param_1, Rec28 *param_2, int param_3)
   }
   return -1;
 }
+#else
+int FUN_0045c4e0(int param_1, Rec28 *param_2, int param_3);
+#endif
 
 // MATCH: 0x0045cbe0 FUN_0045cbe0
 void FUN_0045cbe0(int param_1, int param_2)

@@ -10,8 +10,10 @@ void FUN_0045ca30(void);
 int FUN_0045cab0(int);
 void FUN_0045cb20(int, int, int);
 void FUN_0045d080(void);
+#ifndef MATCH_PORT
 extern int DAT_007f0fd0;
 extern int DAT_0088fbc0;
+#endif
 
 // MATCH: 0x0045d250 _FUN_0045d250
 void FUN_0045d250(void)
