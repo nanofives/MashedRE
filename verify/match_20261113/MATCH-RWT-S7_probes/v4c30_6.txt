@@ -1,0 +1,45 @@
+void *memset(void *, int, unsigned int);
+#pragma intrinsic(memset)
+typedef struct { undefined4 code; undefined4 data; } Err;
+typedef struct { undefined4 v[4]; float angle; uchar b0; uchar b1; uchar type; uchar b3; } Chunk;
+MGLOBAL(float, DAT_005cc320, 0x005cc320);
+MGLOBAL(undefined4, DAT_0061862c, 0x0061862c);
+float FUN_004c3b30(float p0);
+uint FUN_004cbd30(int p0, Chunk *p1, uint p2);
+int FUN_004cc5e0(int p0, int p1, int *p2, uint *p3);
+undefined4 FUN_004d7ff0(undefined4 p0);
+undefined4 *FUN_004d8480(Err *p0);
+int FUN_004e1b60(undefined4 *p0, int p1, int p2);
+int FUN_004e4dd0(int p0);
+@@ m1
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int stream)
+{
+  Chunk ck;
+  memset(&ck, 0, sizeof(ck));
+  return FUN_004cbd30(stream, &ck, 0);
+}
+@@ m2
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int stream)
+{
+  Chunk ck;
+  FUN_004cbd30(stream, &ck, 0);
+  return ck.type;
+}
+@@ m3
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int stream)
+{
+  uint v;
+  FUN_004cc5e0(stream, 1, &stream, &v);
+  return v;
+}
+@@ m4
+// MATCH: 0x004e4c30 RpLightStreamRead
+int RpLightStreamRead(int stream)
+{
+  int ck[6];
+  FUN_004cbd30(stream, (Chunk *)ck, 0);
+  return ck[5];
+}
