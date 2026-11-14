@@ -13,6 +13,7 @@ import importlib.util
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -64,6 +65,49 @@ def stand_ok(sd: Path, shots):
     return all((sd / "d1r2" / f"stand_row_{k:05d}.draws.json").exists() for k in shots)
 
 
+def start_key_poster(pid, d, out):
+    """[HB-RUN13-LIVE-INPUT] RUN13_POST_KEYS=1: post WM_KEYDOWN/WM_KEYUP (Enter, then Down arrow, alternating every 2 s) to the
+    top-level windows owned by THIS pid only (EnumWindows + GetWindowThreadProcessId). No focus change, no SendInput, no image
+    name. Posted messages reach the window procedure; they do not change DirectInput device state (exe_main.cpp:1286)."""
+    import ctypes
+    import threading
+    import time
+    from ctypes import wintypes
+    u = ctypes.windll.user32
+    WM_KEYDOWN, WM_KEYUP = 0x0100, 0x0101
+    VK_RETURN, VK_DOWN = 0x0D, 0x28
+    st = {"stop": threading.Event(), "posted": 0, "hwnds": set()}
+    cb_t = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+
+    def windows():
+        found = []
+
+        def cb(h, _):
+            p = wintypes.DWORD(0)
+            u.GetWindowThreadProcessId(h, ctypes.byref(p))
+            if p.value == pid:
+                found.append(h)
+            return True
+        u.EnumWindows(cb_t(cb), 0)
+        return found
+
+    def run():
+        n = 0
+        while not st["stop"].wait(2.0):
+            vk = VK_RETURN if n % 2 == 0 else VK_DOWN
+            sc = u.MapVirtualKeyW(vk, 0)
+            for h in windows():
+                st["hwnds"].add(h)
+                u.PostMessageW(h, WM_KEYDOWN, vk, 1 | (sc << 16))
+                time.sleep(0.05)
+                u.PostMessageW(h, WM_KEYUP, vk, 1 | (sc << 16) | (1 << 30) | (1 << 31))
+                st["posted"] += 1
+            n += 1
+    st["thread"] = threading.Thread(target=run, daemon=True)
+    st["thread"].start()
+    return st
+
+
 def run_one(exe, root, out, t, knobs, att):
     d, view, cap, _, frames = TRACKS[t]
     shots = shots_of(t)
@@ -95,11 +139,20 @@ def run_one(exe, root, out, t, knobs, att):
         # MASHED_SUBSTATE off; the knob argument MASHED_CAM_REPLAY_P3=0 turns it off.
         "MASHED_CAM_REPLAY_P3": "1",
     })
+    # [HB-RUN13-LIVE-INPUT] The exe reads the live keyboard (DISCL_BACKGROUND, exe_main.cpp:1207) and cooks Enter / joypad
+    # button 0 into the ctrl byte 0x007f1042 + i*0x4c every frame (CookCtrlByteAFromKeyboard, exe_main.cpp:3086-3121), which
+    # can end phase 3 early (CameraEntries.cpp:405-407). MASHED_NO_R7_INPUT=1 makes that function return at once
+    # (exe_main.cpp:3087, R7InputOn() at exe_main.cpp:1114-1117) and keeps no joypad device (exe_main.cpp:1122), so a
+    # key typed anywhere on the machine cannot change the table. RUN13_LIVE_INPUT=1 restores the old live-input run.
+    # A knob argument (MASHED_NO_R7_INPUT=0) is applied after this and wins.
+    if os.environ.get("RUN13_LIVE_INPUT", "") in ("", "0"):
+        env["MASHED_NO_R7_INPUT"] = "1"
     for k in knobs:
         a, _, b = k.partition("=")
         env[a] = b if b else "1"
     p = subprocess.Popen([str(exe)], cwd=str(root), env=env)
     print(f"[{d}] attempt {att} pid={p.pid} frames={frames} shots={shots}", flush=True)
+    poster = start_key_poster(p.pid, d, out) if os.environ.get("RUN13_POST_KEYS", "") not in ("", "0") else None
     try:
         rc = p.wait(900)
     except subprocess.TimeoutExpired:
@@ -107,6 +160,17 @@ def run_one(exe, root, out, t, knobs, att):
         p.kill()
         rc = p.wait(15)
     print(f"[{d}] exit={rc}", flush=True)
+    if poster:
+        poster["stop"].set()
+        poster["thread"].join(5)
+        print(f"[{d}] key poster: {poster['posted']} posts, windows seen {sorted(poster['hwnds'])}", flush=True)
+        (sd / "key_poster.txt").write_text(f"posts={poster['posted']}\nhwnds={sorted(poster['hwnds'])}\npid={p.pid}\n")
+    # [HB-RUN13-LIVE-INPUT] the private root's mashed_re.log is rewritten by the next track and by the next run; keep this
+    # track's copy beside its dumps so an `R7IN byte0xa ... test=0` line (a live input event) can be read after the fact.
+    try:
+        shutil.copyfile(root / "mashed_re.log", sd / "mashed_re.log")
+    except OSError as e:
+        print(f"[{d}] mashed_re.log not kept: {e}", flush=True)
     return sd, shots
 
 
