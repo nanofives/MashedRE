@@ -4,7 +4,54 @@ Row `IMG-5-TEARDOWN-BODIES` (D4-image, run 45). Worker cmwflfaca2xsulh1nry13sxjw
 cmwfldvnw2xialh1nug92xgbo. Row kind: top-down (bindings + `re/match` sources + promotion TSV). Branch
 `orch/IMG-5-TEARDOWN-BODIES` from `orch/integration` @ `ba39eeb6b`.
 
-## Verdict: DECISION (all 9 bodies are matched, bound and byte-identical in the object build. The image-ON boot still AVs in teardown, now at entry 2, because entry 2's INIT 0x00455400 is a stand-in)
+## Run 46 (L-153 (a)): HANDOFF, stopped at a safe point for the LIVING-PC token-leak reboot
+
+Worker cmwggddr302qfmz1bzmrq12pz (moved claude2 -> claude3, Opus 5.5 high), lead cmwggc20n02d3mz1bg1met74h.
+
+Done so far (branch `orch/IMG-5-TEARDOWN-BODIES`):
+- **Restack:** `orch/IMG-5-TEARDOWN-FAULT` @ 5ba576e3c fast-forwarded onto this branch (`git -c merge.autoStash=false merge
+  --ff-only`, it was one commit on top of ab68c1f06). One enqueue now carries both.
+- **Shaping 0x00455400: not reached, 94.0% stays.** 52 source variants and 12 flag or toolchain sets in this row,
+  none past 94.0% (scripts and variants: session scratchpad `var.py`, `v1.py`..`v7.py`; not committed). Findings:
+  - The residual is c2's strength reduction. The original recomputes `i*0x6c` (`mov eax,[esp+0x14]; imul eax,eax,0x6c` at
+    0x00455581 / 0x00455585) for missile +0x48 / +0x58 / +0x20. Our source makes c2 fold those stores into the missile
+    induction register.
+  - An index c2 cannot treat as linear (`i + n`, `i - n`, `i | n`) does give the imul form, but it keeps `n` live and
+    moves the registers (80.6 to 85.1%).
+  - Identity folds (`i|0`, `i*1`, `i<<0`, a zero local), record pointers, int-array or char-offset forms, two counters,
+    `if` guards and loop forms all give 94.0%. A second array symbol gives a third IV (68.6%).
+  - Flags: `/G5` 85.0%, `/Op` 91.0%, `/O1` 35.3%, others 94.0%. Toolchain rw9044: 85.0%, the same imul residual.
+- **Provisional body (L-126):** `re/match/PROVISIONAL.tsv` row 0x00455400. The verdict comes from `equiv.py` @ fea5b5483,
+  the same file as on orch/integration 2c7f97e41: `NOT-PROVEN call-memory: region ours +0x181 / orig 0x00455581 call
+  0x4e6ab0: memory differs (...) (fallback: stack address inside a non-linear term)`.
+- **Port:**
+  - `Match/PortTop_00455400.cpp` (new) runs the unedited `re/match/s29/00455400.c` as `Orig_00455400`.
+  - `Match/PortTop_0045bae0.cpp`: entry 2 calls `PortTop_PWI_InitProv_2` in place of the stand-in. It logs 0x006885e8
+    and 0x00688418 after the body returns.
+  - Callee 0x00489940 (C4 by match) got its exe body `Match/PortTop_00489940.cpp`. `re/match/s14/00489940.c` prototypes
+    were made C++-valid (`undefined4 FUN_004892c0(...)`, `void FUN_004893a0(undefined4, int, int)`), and it is still
+    100% BYTE-IDENTICAL 127 B with relocheck OK 6/0.
+  - `exe_sources.rsp` +2 TUs. `BINDINGS.tsv`: 0x00455400 is kind `near-match`, and 0x00489940 is a new `matched` row.
+- **Default build (VS2022, NO_DEPLOY):** `=== Build OK ===`, rva-lint OK (237 known, 0 new), asm-lint OK,
+  portstate-seed OK (272). The exe is `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/default/mashed_re.exe`, sha256
+  c5bce682...539422a. Log: `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/build_default.log`.
+- **Object build (`MASHED_DDKOBJ=1`):** started before the reboot notice and was in its final link at the handoff. Log:
+  `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/build_ddkobj.log`. Its result is not checked yet.
+
+Next, after the reboot (nothing else is pending):
+1. Check `build_ddkobj.log` for `=== Build OK ===` (re-run `cmd /c "set MASHED_NO_DEPLOY=1&& set MASHED_DDKOBJ=1&&
+   mashedmod\build.bat"` if it is cut off). Copy that exe to `run46/ddkobj/`.
+2. Run `py.exe -3.12 re/tools/ddkobj/ddkobj.py check`. Expected: 0x00489940 IDENTICAL, and 0x00455400 is the only new
+   DIFFERENT (the provisional residue).
+3. Knob boots, image ON, through AppDestroy, on both builds, with `test-slot` outside and `mashed_lock.py run --label
+   IMG-5-TEARDOWN-BODIES` inside. Do not set PROYECTOS_TEST_HUB=off: the earlier runs above did. Use the arms
+   `on_img1_cp_trap1` and `aud_img1_cp_trap1` from `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/boots.sh` on
+   `D:/MashedWT/IMG-5-TEARDOWN-BODIES_root`, plus `def_off`. Record the self-test lines (OT_CODEPTR, portstate-image,
+   code-trap) and whether entries 2..8 of the teardown run with no AV.
+4. Any entry 3..8 that hits another init stand-in becomes its own open row, named in this RESULT.
+5. Write the final verdict, then `roadmap.ps1 set IMG-5-TEARDOWN-BODIES review -Evidence <this file>`.
+
+## Verdict (run 45): DECISION (all 9 bodies are matched, bound and byte-identical in the object build. The image-ON boot still AVs in teardown, now at entry 2, because entry 2's INIT 0x00455400 is a stand-in)
 
 - **Master Ghidra:** the 7 missing functions were created (`CreateMissedFunctions.java ... apply`), with sizes 61 / 93 / 39 / 45 /
   55 / 53 / 69 B (`img5_create7_master.tsv`). Pools were synced (14 refreshed, 2 locked slots skipped).
