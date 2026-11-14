@@ -121,18 +121,6 @@
   "verdict": "EQUIV"
  },
  {
-  "addr": 5956400,
-  "sym": "FUN_005ae330",
-  "bytes_bad": 17,
-  "classes": [
-   "ORDER",
-   "FRAME"
-  ],
-  "mode": "frame",
-  "rules": [],
-  "verdict": "EQUIV"
- },
- {
   "addr": 5957040,
   "sym": "FUN_005ae5b0",
   "bytes_bad": 11,
