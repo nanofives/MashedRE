@@ -1,2 +1,2 @@
-rva	route	evidence	result
-0x004dcbb0	match	re/match/rwl01/004dcbb0.c	verify/match_20261113/RESULT_MATCH-RWT-S5.md
+rva	route	evidence	result	lever
+0x004dcbb0	match	re/match/rwl01/004dcbb0.c	verify/match_20261113/RESULT_MATCH-RWT-S5.md	lever=volatile
