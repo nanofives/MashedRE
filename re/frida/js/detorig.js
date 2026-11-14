@@ -966,6 +966,8 @@ rpc.exports = {
              ended: rd(() => ga(0x0063b90c).readS32()), winner: rd(() => ga(0x0063b914).readS32()), depth: d,
              fphase: rd(() => ga(0x0067eca4).readS32()), screen: d === null ? null : rd(() => ga(0x0067ed3c + d * 0x40).readS32()),
              mode: rd(() => ga(0x0067e9fc).readS32()), cars,
+             // cooked input block 0x007f1038 (detorig.py REGIONS: 4 x 0x4c), players 0 and 1, raw dwords
+             cin: rd(() => [0, 1].map((p) => Array.from(new Uint32Array(ga(0x007f1038 + p * 0x4c).readByteArray(0x4c))))),
              slot: rd(() => [0, 1, 2, 3].map((k) => ga(0x005f2770).readPointer().add(k * 4 + 0x34).readS32())) };
   },
   phase() { return ga(0x00771968).readU8(); },
