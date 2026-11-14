@@ -258,7 +258,7 @@ SEEDED_ARG_TYPES = {
     'structptr_seeded_array', 'thiscall_field_get', 'thread_desc_init',
     'track_record_deref', 'transform_vector', 'vec2_normalize', 'vec2_ptr',
     'vec3_global_mul_observe', 'vec3_ptr', 'void_write_observe',
-    'write_global_call_int0',
+    'write_global_call_int0', 'near_leaf_seed_multi_obs',
 }
 
 
@@ -476,6 +476,8 @@ def build_config(hook, asi_path=None):
                'outer_off', 'inner_off', 'struct_size', 'inner_size',
                # cache_setter_observe (2026-06-25): scattered output-global list.
                'obs_globals',
+               # near_leaf_seed_multi_obs (HB-RUNDIFF-MULTIOBS 2026-11-13): per-test seed sets + observed addresses.
+               'seed_sets', 'observe_addrs',
                # scalars_to_scattered_globals scratch buffer (negctl re-earn 2026-10-11).
                'scratch_size', 'scratch_fill', 'recorder',
                # real dialog window tree + EAX-delivered arg (reearn/settings 2026-10-12).
