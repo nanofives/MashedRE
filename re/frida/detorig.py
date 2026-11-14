@@ -190,6 +190,15 @@ def run(args):
     if getattr(args, "asi", False):
         return run_asi(args)
     import frida
+    global SCENARIO, INPUT, CKPTS
+    if args.scen:   # SOAK-P0: scenario JSON {track, mode, rule, car, team, cars, slots?, input?}
+        sj = json.loads(Path(args.scen).read_text(encoding="utf-8"))
+        SCENARIO = {k: sj[k] for k in ("track", "mode", "rule", "car", "team", "cars")}
+        if "slots" in sj:
+            SCENARIO["slots"] = sj["slots"]
+        INPUT = sj.get("input", [])
+    if args.probe:
+        CKPTS = []
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ)
     env["MASHED_FPS_CAP"] = str(args.fps)
@@ -238,6 +247,8 @@ def run(args):
                "callLogRace": args.call_log_race}
         if args.rec:
             cfg["rec"] = True
+        if args.probe:
+            cfg["probe"] = True
         if args.input_json:
             rj = json.loads(Path(args.input_json).read_text(encoding="utf-8"))
             cfg["input"] = [[int(r[0]), int(r[2]), int(r[3])] for r in rj["input"] if int(r[1]) == 0]
@@ -385,7 +396,26 @@ def run(args):
             print("  install", E.install(), flush=True)
         t_end = time.time() + args.timeout
         last = 0
+        t_start = time.time(); plast = 0; pf = None; hold = 0
+        if args.probe:
+            pf = open(out / "probe.jsonl", "w")
+            meta["probe_t0"] = t_start
         while time.time() < t_end and not state["done"] and not state["err"]:
+            if args.probe and time.time() - plast >= args.probe_every:
+                plast = time.time()
+                try:
+                    pr = json.loads(json.dumps(E.probe())); pr["wall"] = round(plast - t_start, 2)
+                    pf.write(json.dumps(pr) + "\n"); pf.flush()
+                    # stop rule: match end (0x0063ba8c == 0xb) seen, then the results screen held, or --probe-after-end s elapsed
+                    if pr.get("ui") == 0xb and "end_wall" not in meta:
+                        meta["end_wall"] = pr["wall"]; meta["end_tick"] = pr["tick"]; print(f"  match end ui=0xb at tick {pr['tick']} wall {pr['wall']}", flush=True)
+                    if "end_wall" in meta and pr["wall"] - meta["end_wall"] >= args.probe_after_end:
+                        state["done"] = True; meta["probe_stop"] = "after_end"
+                    if args.probe_stop_results and pr.get("fphase") == 3 and pr.get("screen") == 5:
+                        hold += 1
+                        if hold >= 3: state["done"] = True; meta["probe_stop"] = "results_screen"
+                except Exception as e:
+                    print("  probe failed", e, flush=True)
             if proc.poll() is not None:
                 print(f"  game exited rc={proc.returncode}"); meta["exit"] = proc.returncode; break
             if time.time() - last > 5:
@@ -551,6 +581,11 @@ if __name__ == "__main__":
     ap.add_argument("--rec", action="store_true", help="RO-INPUT-RECORD: log the FUN_00497310 player-0 return values from the race anchor on (inputrec.json / inputrec.bin), native, no Interceptor")
     ap.add_argument("--input-json", default="", help="RO-INPUT-RECORD: scripted input from a replay.json (rows [tick after anchor, player, control, value], player 0 only), keyed by tick instead of by clock call")
     ap.add_argument("--asi", action="store_true", help="RO-ORIG-ASI: run the boot-mode replay in mashed_re_dev.asi (MASHED_REPLAY_ASI), no Frida; needs --boot --clock tick")
+    ap.add_argument("--scen", default="", help="SOAK-P0: scenario JSON {track, mode, rule, car, team, cars, slots?, input?} replacing SCENARIO and INPUT")
+    ap.add_argument("--probe", action="store_true", help="SOAK-P0: no checkpoints / no end event; poll rpc probe() into probe.jsonl until the stop rule or --timeout")
+    ap.add_argument("--probe-every", type=float, default=1.0, help="SOAK-P0: seconds between probe samples")
+    ap.add_argument("--probe-after-end", type=float, default=60.0, help="SOAK-P0: seconds to keep sampling after DAT_0063ba8c == 0xb")
+    ap.add_argument("--probe-stop-results", action="store_true", help="SOAK-P0: stop once frontend phase 3 and screen type 5 hold for 3 samples")
     ap.add_argument("--menu-wait", type=float, default=2.0)
     ap.add_argument("--timeout", type=float, default=600)
     ap.add_argument("--compare", nargs=2, metavar=("DIR_A", "DIR_B"))
