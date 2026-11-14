@@ -71,11 +71,34 @@ log-only, and the row changed no menu code.
   (the 12 of the previous rows) plus `0x00552890 0x005530f0 0x005533d0 0x005538a0 0x00554200 0x00554940 0x005572c0`. This row edits only the two Compat files
   above, so it did not touch those units. [UNCERTAIN] The baseline of `orch/integration` @ d1e5ac586 was not measured here. Test: run `ddkobj.py check`
   on that head. Missing: that baseline.
-- No knob boot of the object-build exe was run in this row. Test: the same off/on arms with `KNOB_EXE` pointing at the object build.
+- Object-build knob boot (added 2026-11-14, lead follow-up): see "Object-build boot arms" below.
+
+## Object-build boot arms (exe = `mashedmod/build/mashed_re.exe` from the `MASHED_DDKOBJ=1` + `MASHED_NO_DEPLOY=1` build, copied to `mashed_re_ddkobj.exe`, sha256 a646c527e0b9b4e2665b73be264dde8c4694daf922e8cbd02e3c012ba7fd5ec3)
+
+Same method as the default-build arms (`boots_obj.sh`: test-slot outside, `mashed_lock.py run` inside, private root `D:\MashedWT\IMG-5-ORIGTOP-DEFAULT_root`, 3000 frames, `MASHED_ORIG_TOP=1`, `PROYECTOS_TEST_HUB` untouched). One pass only (off1, on1), not OFF/ON/OFF/ON. Slot wait 600 s (memory gate), lock queue behind a merge-train SOLO.
+OFF = `MASHED_PORTSTATE_IMAGE=0 MASHED_OT_CODEPTR=0`. ON = neither set.
+
+| arm | rc | time | AppDestroy reached | WinMain line | log sha256 |
+|---|---|---|---|---|---|
+| off1 | 0 | 36.7 s | yes (`AppDestroy (matched) enter` and `returned`) | `[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames` | 5b8758c23fb35790adb23b3b0e1b79f49b19249fd2680e02b66b77b2bef99e30 |
+| on1 | 0 | 44.3 s | yes (`AppDestroy (matched) enter` and `returned`) | `[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames` | 896327d7cfccde4555f7109741031b9ffaadbb72490f3bbffb9bebddccbf7e36 |
+
+Self-test lines. OFF: `[portstate-seed] on entries=272/272 ...`, `[OT_CODEPTR] off (MASHED_OT_CODEPTR=0): no slot written`. ON: `witness PortStateSeed: 272/272 entries equal ... PASS`,
+`witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188`, `[portstate-image] ... self-test PASS (0 of 8 checks failed)`,
+`[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk) ... self-test PASS (0 of 335 checks failed)`, and `[OT_CODEPTR] image slots (IMG-4): 75 written (75 bound to an exe body), 0 refused`.
+
+OFF-vs-ON compare (`img5_origtop_cmp2_obj.py`, same filters as cmp2, raw output `cmp2_obj_full.txt` sha256 7029f7293f20d54e917e2ce81f91edbc6042d595d04397f6419a787f7c4ad89b):
+1302 / 1749 lines, 451 differing. Identical in shape to the default build: 448 `[RW_BIND]` teardown lines plus the 3 POWERUPINIT-A init/entry lines. Verdict stays DECISION.
+The object build changes nothing about the L-159 question: it boots and exits the same way as the default build.
+
+Caveat (verbatim, applies to these ON arms too): IMG-5's image-ON boots reach AppDestroy with no AV only under the run-45 null guard, with 130 of 286 teardown destroys called with 0
+([UNCERTAIN], cause open in IMG-5-TEARDOWN-NULLS). Do not read "no AV" as "no init or load stand-in left". The null guard is untouched (separate row RWC-NULL-DESTROY-GUARD).
+
+Raw files (not committed): `D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots_obj/{off1,on1}.log`, `boots_obj.sh`, `boots_obj.out`, `mashed_re_ddkobj.exe`.
 
 ## Not run
 
-G-CTRL / B / 12x4 captures (top-down row, merge train runs the default gates); object-build knob boot; menu walk (no menu code changed);
+G-CTRL / B / 12x4 captures (top-down row, merge train runs the default gates); menu walk (no menu code changed);
 `MASHED_CODE_TRAP` arms (knob untouched).
 
 ## Decision for Mariano (filed with `roadmap.ps1 decision`)
