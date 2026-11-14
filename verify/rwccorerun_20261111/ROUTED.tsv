@@ -54,7 +54,7 @@ rva	binding	symbol	kind	verdict
 0x004e7420	MashedRw_ClumpStreamRead_004e7420	RwCore_004e7420	provisional	routed
 0x004e66d0	MashedRw_ClumpForAllAtomics_004e66d0	RwCore_004e66d0	provisional	routed
 0x004c0e50	MashedRw_FrameUpdateObjects_004c0e50	RwCore_004c0e50	match100	routed
-0x004b3f90	MashedRw_ClumpFirstAtomic_004b3f90			not routed: not in the closure
+0x004b3f90	MashedRw_ClumpFirstAtomic_004b3f90	RwCore_004b3f90	provisional	routed
 0x0048fef0	MashedRw_AtomicView_0048fef0			not routed: not in the closure
 0x004e66d0	MashedRw_ClumpForAllAtomicsAsViews_004e66d0	RwCore_004e66d0	provisional	routed
 0x0053fb70	MashedRw_MatFXAtomicEnableEffects_0053fb70	RwCore_0053fb70	match100	routed
@@ -78,11 +78,11 @@ rva	binding	symbol	kind	verdict
 0x004e4860	MashedRw_WorldRemoveLight_004e4860	RwCore_004e4860	match100	routed
 0x004e4450	MashedRw_WorldAddClump_004e4450	RwCore_004e4450	match100	routed
 0x004e45b0	MashedRw_WorldRemoveClump_004e45b0	RwCore_004e45b0	match100	routed
-0x004b5300	MashedRw_AtomicGeometryFlags_004b5300			not routed: not in the closure
+0x004b5300	MashedRw_AtomicGeometryFlags_004b5300	RwCore_004b5300	provisional	routed
 0x004e6ab0	MashedRw_ClumpClone_004e6ab0	RwCore_004e6ab0	provisional	routed
 0x004e4800	MashedRw_ClumpGetWorld_004e4800	RwCore_004e4800	match100	routed
-0x004b5190	MashedRw_AtomicPartCode_004b5190			not routed: not in the closure
-0x004b52f0	MashedRw_AtomicGeometryFlags_004b52f0			not routed: not in the closure
+0x004b5190	MashedRw_AtomicPartCode_004b5190	RwCore_004b5190	match100	routed
+0x004b52f0	MashedRw_AtomicGeometryFlags_004b52f0	RwCore_004b52f0	match100	routed
 0x004c13e0	MashedRw_FrameScale_004c13e0	RwCore_004c13e0	match100	routed
 0x004c0ed0	MashedRw_FrameGetLTM_004c0ed0	RwCore_004c0ed0	match100	routed
 0x004de1b0	MashedRw_ImageGetRaster_004de1b0	RwCore_004de1b0	provisional	routed

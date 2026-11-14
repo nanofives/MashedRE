@@ -6,7 +6,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_004c1be0 RwCore_004c1be0
-#define FUN_004c7730 RwCore_004c7730
+#define FUN_004c7730 RwCore_FrameShowRaster   // binding entry, RwCore/RwCore_Knob.cpp
 extern "C" {
 #include "../../../../re/match/s19/004c1be0.c"
 }

@@ -43,6 +43,8 @@ LIFT_INSTEAD = {
     're/match/s19/004c6580.c', 're/match/s19/004c6ba0.c',
     # run 40 (node-definition callbacks joined the closure): C++ type errors under VS2022 (build_vs9.log)
     're/match/rwl03/00530650.c', 're/match/rwl03/00530c00.c', 're/match/rwl04/0054ba20.c', 're/match/rwl04/0054bda0.c',
+    # RWC-FRAME-CLUMP run 44 (Rt2d font read root 0x00554390): 18.7% source, 5 C2664 errors (build_d14.log)
+    're/match/rwl04/00553620.c',
 }
 # run 40 (librw binding RVAs as roots): sources that failed VS2022 C++ in a build, one per line (collected from the
 # build logs by the build loop, see RESULT 3.2)
@@ -64,6 +66,20 @@ ROOTS = [
     '004b3eb0',                                                                # run 40: TXD loader, frame knob
     '00428450',                                                                # RWC-FIRST-FRAME-IM2D: loading-disc draw
     '00492e90',                                                                # RWC-FRAME-492E90: frame render
+    # RWC-FRAME-CLUMP: game-side RW helpers the knob path calls through librw bindings (LibRw/RwApiBind.cpp
+    # MashedRw_ClumpFirstAtomic_004b3f90 / _AtomicPartCode_004b5190 / _AtomicGeometryFlags_004b52f0 / _004b5300); on
+    # the core they run their re/match sources (route_bindings.py routes a binding whose RVA is in the closure)
+    '004b3f90', '004b5190', '004b52f0', '004b5300',
+    # RWC-FRAME-CLUMP run 44: the Rt2d font stream read 0x00554390 that the HUD font-file loader 0x00427880 calls. Under
+    # the frame knob the exe body of 0x00427880 (Match/MatchS06_00427880.cpp) opens and closes the stream through the
+    # PORT-TOP-04F bindings (the core RwStreamOpen has no RtFS) and reads the font with this core body. Before it the
+    # loader was a stand-in, the font 0x0067d838 stayed 0 and the first-frame text draw 0x00427e00 -> 0x00427680 ->
+    # 0x005554d0 read +0x134 of NULL.
+    '00554390',
+    # RWC-FRAME-CLUMP run 44: the HUD font camera set-up 0x004275d0 (re/match/s06, 100%) that the matched 0x00402750 calls
+    # with 0x004671a0(0) right after 0x00427ca0; on the exe path a stand-in (PortTop_StandIn04E_004275d0). Its 0x00552a60
+    # call sets the Rt2d camera 0x00912c0c, which the first 0x00552e40 reads (+0x14 of NULL without it).
+    '004275d0',
 ]
 # Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
 # re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
@@ -82,7 +98,11 @@ XFOLLOW = {0x493640, 0x472380, 0x472330, 0x472360, 0x52d8e0, 0x52d910, 0x52d950,
            # RWC-FIRST-FRAME-IM2D (MASHED_RWC_FRAME): ViewportInit 0x00428590's loading-disc draw 0x00428450
            # (re/match/s06, 84.6%), its Im2D quad 0x00450b10 (re/match/s08, 86.6%) and the two screen-dim getters
            # (exe bodies, EXE_BODY below)
-           0x428450, 0x450b10, 0x42b8b0, 0x42b8c0}
+           0x428450, 0x450b10, 0x42b8b0, 0x42b8c0,
+           # RWC-FRAME-CLUMP: the game-side RW helper roots above and their game callees (re/match/rwfc, re/match/s18)
+           0x4b3f90, 0x4b4070, 0x4b5190, 0x4b52f0, 0x4b52c0, 0x4b5300, 0x55deb0,
+           # RWC-FRAME-CLUMP run 44: the HUD font camera set-up root 0x004275d0 (game callee 0x00427580 binds through EXT)
+           0x4275d0}
 # RWC-FRAME-492E90 (MASHED_RWC_FRAME): the frame render 0x00492e90 and the game functions of its menu-executed slice
 # (verify/rwcframe_20261113/SLICE_EXEC_reach_menu.tsv: reachable from 0x00492e90 through functions the INT3 census
 # re/coverage/reach.tsv marks reached_menu = 1) are followed like RW code and compiled from their re/match sources. A game
@@ -98,6 +118,9 @@ if os.path.exists(_SLICE):
             FRAME_SLICE.add(int(_f[0], 16))
 XFOLLOW |= FRAME_SLICE
 XFOLLOW.add(0x5c4d30)   # RWC-FRAME-492E90: re/match/s28/005c4d30.c (100%), called by RtCharset sources 0x005554d0 / 0x005555b0
+# RWC-FRAME-CLUMP run 44: re/match/s28 callees of the Rt2d font read root 0x00554390 and its callees (0x005533d0,
+# 0x00553590, 0x00553620, 0x005538a0, 0x00553f40): 0x005c4ba0 / 0x005c4bb0 / 0x005c4df0 (100%), 0x005c4c60 (93.0%)
+XFOLLOW |= {0x5c4ba0, 0x5c4bb0, 0x5c4c60, 0x5c4df0}
 FRAME_STOP = set()   # filled while walking: 8-digit hex RVAs
 # Not roots in this row: 0x00493710's calls after RwEngineStart (GetCurrentMode 0x004c2f00, GetModeInfo 0x004c2ed0,
 # 0x004cbc60..0x004cbc90, RwTexDictionarySetCurrent 0x004c5c80) are not reached, since the knob ends the boot at Start.
@@ -120,6 +143,7 @@ RDATA_WINDOW = 0x100
 EXT = {
     'FUN_0045b350': ('RwInitNullStub', 'exe body, Match/MatchS09_0045b350.cpp'),
     'FUN_005c9d00': ('GetRaceEndTrigger', 'exe body, Util/GameStateGetters.cpp'),
+    'FUN_00427580': ('FrontendQuadParamInit427580', 'exe body, Match/MatchS06_00427580.cpp (100%), called by 0x004275d0'),
     'FUN_004a2b60': ('RwCoreCrt_sprintf', 'CRT sprintf'),
     'FUN_004a42c5': ('RwCoreCrt_vsprintf', 'CRT vsprintf'),
     'FUN_004ac560': ('RwCoreCrt_strcpy', 'CRT strcpy'),
@@ -164,6 +188,10 @@ EXE_BODY = {
 # matched body through the one entry (knob check + self-test).
 CALL_VIA = {
     '004c5890': ('RwCoreBind_TexDictionaryCreate_004c5890', 'RwCore/RwCore_Bind_004c5890.cpp'),
+    # RWC-FRAME-CLUMP run 44: RwRasterShowRaster. The frame render 0x00492e90 presents through core callers, which bound
+    # to the body and so bypassed the MASHED_RWC_FRAME_N count (d18: 481 frames, 605 presents, the N=120 stop never
+    # fired). Through the knob wrapper every present on the core counts (the wrapper calls RwCore_004c7730).
+    '004c7730': ('RwCore_FrameShowRaster', 'RwCore/RwCore_Knob.cpp'),
 }
 # RW-band RVAs with a hand body in RwCore/RwCore_Hand.cpp (no source; written from the disassembly, provisional).
 HAND = {}
@@ -785,7 +813,7 @@ def main(check):
     if HAND:
         fixed.append('RwCore\\RwCore_Hand.cpp')
     fixed += lifted_files
-    fixed += sorted(set('RwCore\\' + os.path.basename(v[1]) for v in CALL_VIA.values()))
+    fixed += sorted(set('RwCore\\' + os.path.basename(v[1]) for v in CALL_VIA.values()) - set(fixed))
     rsp += [b0] + ['"%s"' % t for t in fixed + tus] + [b1]
     open(RSP, 'w', encoding='utf-8', newline='').write('\r\n'.join(rsp) + '\r\n')
     print('wrote %d TUs, %d lifted, %d missing stubs (%d lift refusals, LIFT_REFUSED.tsv)'

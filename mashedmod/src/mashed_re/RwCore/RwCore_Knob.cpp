@@ -244,14 +244,22 @@ extern "C" int RwCore_FrameShowRaster(int raster, int dev, int flags) {
                        static_cast<unsigned>(r), calls, MashedD3D9Wrap_PresentCount());
         return r;
     }
-    RwCore_Log("RwRasterShowRaster 0x004c7730(raster %08X, dev %08X, flags 0x%X) = %08X on the RW core: first frame "
-               "presented; device [0x007d4110] %08X", static_cast<unsigned>(raster), static_cast<unsigned>(dev), flags,
-               static_cast<unsigned>(r), U32(0x007d4110));
+    RwCore_Log("RwRasterShowRaster 0x004c7730(raster %08X, dev %08X, flags 0x%X) = %08X on the RW core: call %u, the "
+               "last; presents %ld; device [0x007d4110] %08X", static_cast<unsigned>(raster), static_cast<unsigned>(dev),
+               flags, static_cast<unsigned>(r), calls, MashedD3D9Wrap_PresentCount(), U32(0x007d4110));
     RwCore_Probe();
-    RwCore_EngineStop();
-    RwCore_EngineClose();
-    RwCore_EngineTerm();
-    RwCore_Log("MASHED_RWC_FRAME: boot ends after the first frame on the RW core (exit 0x%08X)", 0x5257F000u | (r ? 1u : 0u));
+    // [RWC-FRAME-CLUMP] N > 1: the call comes from inside the main loop (RwCameraShowRaster 0x004c1be0 under the frame
+    // render 0x00492e90), with the game's clumps, worlds and cameras alive. The original frees them in AppDestroy 0x00402a40
+    // before RwEngineStop; stopping the engine here runs plugin closes over live objects (d19: RwFreeListFree 0x004ccba0
+    // on a closed freelist from 0x004e4130). So the engine teardown runs only for the boot-time stop (N = 1).
+    if (RwCore_FrameLimit() == 1) {
+        RwCore_EngineStop();
+        RwCore_EngineClose();
+        RwCore_EngineTerm();
+    } else {
+        RwCore_Log("MASHED_RWC_FRAME_N %u: engine teardown not run (game objects alive, AppDestroy not reached)", calls);
+    }
+    RwCore_Log("MASHED_RWC_FRAME: boot ends after present %u on the RW core (exit 0x%08X)", calls, 0x5257F000u | (r ? 1u : 0u));
     ExitProcess(0x5257F000u | (r ? 1u : 0u));
     return r;
 }
