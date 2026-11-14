@@ -11,3 +11,9 @@ bc2756f167b4c210eb1925e2a54ad66a3b3bc482cddd29b93454718709a2fc74  D:/MashedWT/RO
 401d1e0582c2f60e53da25ba04b0e31aa693f6ca527d7be2807bab9245cd7026  D:/MashedWT/RO-FIRST-DIVERGENCE_data/RO_ROIMG-fdimg/ticks.bin
 81cc77758ffe93ac0b681eb1fed3d63912d25e7d059503af6d4f871dea9afcd8  D:/MashedWT/RO-ORACLE-GATE_root/original/mashed_image.bin
 294fae63b3c06bbdb5bbedd009e273dfcb232e2279232c98f83b2afe45965710  mashedmod/build/ddkobj/mashed_re_ddk.exe (not committed, build output)
+c1ab908bb7a4e18e0e62e157348ab9f07294609847ef258a3690e9f0b132957f  D:/MashedWT/RO-ORACLE-GATE_data/RO_ROIMG-og1i/meta.json
+338feb35362f4179764444c08b1916409b339fbf527808a4d7bf4c0919db6508  D:/MashedWT/RO-ORACLE-GATE_data/RO_ROIMG-og1i/ticks.bin
+4f3c92976e2db74be613a9b7c05e86cd66e619f4fbfec3f5d8e09d1589dbe79f  D:/MashedWT/RO-ORACLE-GATE_data/RO_ROIMG-og1i.out
+e48bfb99e9801ff16a117a13bf5ab4c48e339a719a3e6557408760c400c23a98  D:/MashedWT/RO-ORACLE-GATE_data/fd_og1_og1i.json
+aaf96e3e1bc4b8d61c9acb6fa2e3e672ab64721d8dac7c4fd75d1ab5fbc9b9e6  D:/MashedWT/RO-ORACLE-GATE_data/rawdiff_o2_og1.txt
+b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87  D:/MashedWT/RO-ORACLE-GATE_root/original/MASHED.exe

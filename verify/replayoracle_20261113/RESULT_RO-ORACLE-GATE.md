@@ -2,15 +2,42 @@
 
 Run 46 comes first, run 45 (history, unchanged) below it.
 
-# Run 46 (2026-11-14): pizfs mask (L-152 (a)) and the oracle forward. HANDOFF at the LIVING-PC reboot
+# Run 46 (2026-11-14): pizfs mask (L-152 (a)) and the oracle forward
 
 Worker on claude3, lead cmwggc54z02ehmz1bcgkcra7l. Branch `orch/RO-ORACLE-GATE`. Merged `orch/integration` `2c7f97e41`
-(merge `635286e09`, so RWC-FRAME-CLUMP and DDKOBJ-REGCONV-FALLBACK-7 are in).
+(merge `635286e09`, so RWC-FRAME-CLUMP and DDKOBJ-REGCONV-FALLBACK-7 are in). Part 1 ran before the LIVING-PC reboot
+(handoff `e2e47db2a`). Part 2 ran after it (sections 0, 5, 6, 7).
 
-**Status: HANDOFF.** The mask is in, verified by a static scan and by re-scoring the run-44 pair. The object build is built
-and checked, and a fresh original reference (`og1`) has run. The conductor's reboot notice arrived while the exe arm
-`RO_ROIMG-og1i` was still queued on test-slot memory (it had not launched). It was cancelled, so the oracle verdict on the
-current head has not been measured yet. The exact next command is below.
+## 0. Verdict (run 46, final)
+
+**The oracle on the current head, with the pizfs mask in place, gives first divergence at record 0 (tick 1).**
+
+- Pair: exe arm `RO_ROIMG-og1i` (object build `294fae63...`, `MASHED_PORTSTATE_IMAGE=1`) against the original `og1`. Both
+  were run in this row on the current head.
+- **First VALUE dword: `0x00604604`**, ref `0x00000004` (signed 4), run `0x00000000` (signed 0).
+  - It is the FUN_0045d460 store `0x0045d6a5` of run 45 (a), reached from FUN_004669b0 at `0x004669f6`.
+  - The exe arm's write watch on `0x00604604` had 0 hits over 600 ticks.
+  - This needs a boot-side body (FUN_0045d460 on the ORIG_TOP audio-init path), not a mask. No mask, admission or stand-in
+    was added for it. A row for the lead to file.
+- **detorig_ticks verdict (NEW blocks): IDENTICAL-FOR-N 17 of 566.** The first NEW block is `0x00898c00` at record 17, the
+  `0x0043dfd0` body lane (RO-FIRST-DIVERGENCE (c), PORT-TOP-08). Unchanged from run 44.
+- **No reference race is named.** The original-vs-original control (o2 against og1) is not clean (section 6). That noise
+  belongs to row RO-REF-CONTROL-NOISE.
+- **Self-test:** exe `meta.json` `selftest` gives checks 27,745, fails 0. There are no `[TRACE]` / `[REPLAY]` self-test log
+  lines, because the arm AVs in AppDestroy after frame 480 (`exit=3221225477`, IMG-4's teardown AV, the same as run 44).
+  `ticks.bin` holds 566 complete records, and all checkpoint dumps are complete.
+- **Object build:** `ddkobj.py check` IDENTICAL 1229/1263, DIFFERENT 19, the same as the integration head (section 3).
+
+The run-44 → run-46 change at record 0, image ON:
+
+| | run 44 | run 46 (current head, pizfs mask) |
+|---|---|---|
+| counted blocks | 260 | 139 |
+| VALUE dwords | 32,942 | 5,687 |
+| `MASK:pizfs` dwords dropped | n/a | 239 |
+| first VALUE dword | `0x00604604` | `0x00604604` |
+
+`0x005f9800` is now explained (IMGPTR) by the fresh exe map. Report: `oraclegate/run46_fd_og1_og1i.md`.
 
 ## 1. The mask (done)
 
@@ -117,12 +144,118 @@ Not masked, as the brief requires: `0x008cd9c0`, `0x008eda38`, `0x0090dac0`, `0x
   - Report: `oraclegate/run46_fd_o2_og1.md`.
   - [UNCERTAIN] Whether these are the run-to-run original drift already handled in RO-CONTROL-DRIFT / `ticks_o1_o2_masked`.
     This run did not check them against those masks. They decide whether og1 or o2 is the reference race for the verdict.
-- **Self-test:** not reached. It is printed by the exe arm (`[TRACE] self-test`, `[REPLAY] self-test` in `mashed_re.log`),
-  and that arm did not launch. On the original side `og1` exited rc 0 with every checkpoint written.
+- **Self-test:** see section 0 (exe `meta.json` selftest 27,745 checks, 0 fails, post-reboot run). On the original side
+  `og1` exited rc 0 with every checkpoint written.
 - **Tool fix:** `re/frida/detorig_firstdiv.py` `ExeMap` now sets `lo` / `hi` to None when no map is given. Before, the
   report stopped with `AttributeError: 'ExeMap' object has no attribute 'lo'` whenever `--exe-map` was absent.
 
-## 4. Next (after the reboot)
+## 5. The counter rows: FUN_004b65c0 (caller `0x00495312`)
+
+From disassembly of the anchored binary and of the patched reference binary. The tool is `oraclegate/disrange.py`; output
+is in `oraclegate/fun_004b65c0_unpatched.txt`, `oraclegate/fun_004b65c0_patched.txt` and
+`oraclegate/fun_004b65c0_callers.txt`. The scan of section 1 started at `0x008ad800`, so it did not see this copy, whose
+source base is `0x008ab7e0`.
+
+**FUN_004b65c0:**
+
+| addr | instruction |
+|---|---|
+| `0x004b65c1` | `mov edi,[esp+8]` |
+| `0x004b65c5` / `0x004b65c7` | `test edi,edi` / `je` |
+| `0x004b65ca` | `mov ecx,0x82b` |
+| `0x004b65cf` | `mov esi,0x8ab7e0` |
+| `0x004b65d4` | `rep movsd` |
+
+- The copy is 0x82b dwords = 0x20ac B, from `0x008ab7e0..0x008ad88b`. The source range ends at the last counter
+  (`0x008ad888` + 4 = `0x008ad88c`), so it holds all six masked counters.
+- Its only caller in `.text` is `0x00495312 call 0x4b65c0`: one rel32 call, no other rel32 jump, no absolute dword
+  reference.
+
+**(a) Where the destination buffer lives: on the stack of the function at `0x004952f0`.**
+
+| addr | instruction | effect |
+|---|---|---|
+| `0x004952f0` | `mov eax,0x20b0` | |
+| `0x004952f5` | `call 0x4a3440` | moves ESP by EAX. [UNCERTAIN] I did not read `0x004a3440`; the frame size follows from the epilogue `0x00495339 add esp,0x20bc` |
+| `0x00495306` | | stores a cookie (`[0x00616038]` xor) at `[esp+0x20ac]` |
+| `0x0049530d` / `0x00495311` | `lea eax,[esp]` / `push eax` | |
+| `0x00495312` | `call 0x4b65c0` | |
+
+- So the 0x20ac bytes land at the frame's `[esp+0..0x20ab]`, just below the cookie.
+- The buffer is a local of that frame. It is not in the image.
+
+**(b) Is the buffer in the oracle's compared set: no.**
+
+- The compare hashes 3245 blocks x 1024 B from `DATA_LO = 0x005ea000` (`re/frida/detorig.py:22`, `meta.json` `nblk`
+  3245, `block` 1024), so `0x005ea000..0x00915400`.
+- Its raw words lie inside that range (the `meta.json` `raw` list).
+- A stack address of the main thread is outside it. Nothing in the frame copies the buffer back into `.data`. After
+  `0x00496400` the frame does:
+  - `0x00495326 call 0x4b6590`
+  - `0x0049532b..0x00495339`: the cookie check and `add esp,0x20bc`
+  - `0x0049533f jmp 0x4a2be9`
+
+**(c) What the patched `0x00496400` does with it in the reference binary: nothing. It returns at once.**
+
+- The reference binary is the root's `original\MASHED.exe`, SHA-256 `b9977dab70607720...fe87`, byte-identical to the
+  patched `original\MASHED.exe`.
+- Its byte at `0x00496400` is `C3` (`ret`), the disable_log patch. The unpatched binary has `81 EC 04 02 00 00`
+  (`sub esp,0x204`) there.
+- The caller passes it `push ecx` (`lea ecx,[esp+4]` at `0x00495317`, the buffer, since the `push eax` before
+  `0x004b65c0` is still on the stack) and `push 0x5cfe94` (`"Closing piz file %s\n"`).
+- Unpatched, when `[0x00772fbc]` is non-zero:
+  - `0x00496437` calls `0x004a42c5` with a 0x200-byte local, the format argument and `lea eax,[esp+0x20c]`.
+  - `0x00496447` calls `0x004a4254` with that local and `[0x00772fbc]`.
+  - [UNCERTAIN] what those two callees are. They were not read, and with the patch they are not reached.
+- After the `ret`, `0x00495326` calls `0x004b6590`, which is `jmp 0x4b67a0`. `0x004b67a0..0x004b67d1` reads no caller
+  stack word: it calls `0x004b6770`, pushes `[0x007d3e58]` for `0x00550790`, writes `0x007d3e4c`, `0x007d3e58` and
+  `0x007d3e48`, then `jmp 0x4b65e0`. [UNCERTAIN] `0x004b6770` was not read.
+
+**Conclusion for the counter rows.** In the reference binary the counters reach the stack copy, and nothing consumes the
+copy before the frame returns, apart from the [UNCERTAIN] `0x004b6770` and the `0x004a3440` probe named above. No compared
+word is written from it. The counter rows stand on this disassembly, not on a run: no watch was set on the stack buffer.
+The cache rows keep their own evidence, the reader `0x004b6db2` (section 1).
+
+## 6. Reference control (o2 vs og1): moved to RO-REF-CONTROL-NOISE
+
+Per the lead, this noise belongs to row **RO-REF-CONTROL-NOISE**, together with the `0x00914700 MASK:audio` regeneration
+drift (section 1). Found here, not dug further:
+
+- **18 blocks** differ between o2 (run 43) and og1 (run 46) at any of the 600 records, and the set does not grow later in
+  the race:
+  - 13 differ at all 600 records, of which 10 are explained at tick 1 by mask, rule or PTR.
+  - `0x00771800`: records 0..301, then single records from 334 onward (364 records in all).
+  - `0x00614400`: from record 3, 201 records.
+  - Three blocks differ only at record 301: `0x007dcc00`, `0x007dd000`, `0x007f0c00`.
+  - Script output: `D:/MashedWT/RO-ORACLE-GATE_data/rawdiff_o2_og1.txt`, plus the per-block census in this run's log.
+- **Raw-word evidence** (`oraclegate/rawdiff.py`, records 0..12):
+  - In block `0x00614400` the only differing raw word is `0x006147d8`, the window-message flag already masked
+    `MASK:os` (writers `0x00493eeb`, `0x0049479a`). Values alternate 0/1.
+  - **`0x007f102c` / `0x007f1030`** (frame timer):
+    - Both runs advance by 50,000 per record.
+    - og1 sits 9,000 (`0x2328`) below o2 at every record from 0.
+    - Block `0x007f1000` differs at records 0..300 only, which ends at the warp's `pinTimer()` (RESULT_RO-WARP-NORMALIZE).
+  - **`0x007f1010`:** o2 minus og1 = 393 at each of records 1..3.
+- **Not explained:**
+  - `0x0068bc2c`: o2 `0x00000000`, og1 `0x00000004` (signed 4), at all 600 records.
+  - The `0x00771800` block after the warp.
+
+## 7. Lock and runs after the reboot
+
+- `mashed_lock.py status` showed `HELD pid=19856 alive=True label=SOAK-P0 since 11:11:26`.
+  - PID 19856 was by then an unrelated `pwsh.exe` started 14:30:57, after the 13:56:52 boot.
+  - The record holds `owner_start` 1794665447.1, so the tool's acquire path (`_holder_stale` → `_owner_dead`, PID-reuse
+    check) treats it as stale.
+  - My run's acquire took the lock (`HELD 'mashed_machine' pid=14908 (RO-ORACLE-GATE)`, then released). Nothing was deleted
+    by hand.
+  - Only `status` prints `alive=True`, because it uses the plain PID check. That is a display fault for whoever owns
+    mashed_lock.
+- **Exe arm:** `RO_ROIMG-og1i`, under test-slot and mashed_lock. It waited 600 s for memory, then started under the cap
+  in slot 5/8.
+  - Run: pid 5756, 24 s, `exit=3221225477`.
+  - Root: `D:\MashedWT\RO-ORACLE-GATE_root`.
+
+## 4. Next (historical: the post-reboot plan, now carried out in sections 0, 5, 6 and 7)
 
 1. `py -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py status`
    must show free or no PRIORITY-HOLD / SOLO.
@@ -163,6 +296,15 @@ Not masked, as the brief requires: `0x008cd9c0`, `0x008eda38`, `0x0090dac0`, `0x
 | `D:/MashedWT/RO-FIRST-DIVERGENCE_data/RO_ROIMG-fdimg/meta.json` | `bc2756f167b4c210eb1925e2a54ad66a3b3bc482cddd29b93454718709a2fc74` |
 | `D:/MashedWT/RO-FIRST-DIVERGENCE_data/RO_ROIMG-fdimg/ticks.bin` | `401d1e0582c2f60e53da25ba04b0e31aa693f6ca527d7be2807bab9245cd7026` |
 | root `original/mashed_image.bin` | `81cc77758ffe93ac0b681eb1fed3d63912d25e7d059503af6d4f871dea9afcd8` |
+| `RO_ROIMG-og1i/meta.json` | `c1ab908bb7a4e18e0e62e157348ab9f07294609847ef258a3690e9f0b132957f` |
+| `RO_ROIMG-og1i/ticks.bin` | `338feb35362f4179764444c08b1916409b339fbf527808a4d7bf4c0919db6508` |
+| `RO_ROIMG-og1i.out` | `4f3c92976e2db74be613a9b7c05e86cd66e619f4fbfec3f5d8e09d1589dbe79f` |
+| `fd_og1_og1i.json` | `e48bfb99e9801ff16a117a13bf5ab4c48e339a719a3e6557408760c400c23a98` |
+| `rawdiff_o2_og1.txt` | `aaf96e3e1bc4b8d61c9acb6fa2e3e672ab64721d8dac7c4fd75d1ab5fbc9b9e6` |
+| root `original/MASHED.exe` (reference binary) | `b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87` |
+
+Post-reboot committed additions: `oraclegate/run46_fd_og1_og1i.md`, `oraclegate/disrange.py`, `oraclegate/rawdiff.py`,
+`oraclegate/fun_004b65c0_unpatched.txt`, `oraclegate/fun_004b65c0_patched.txt`, `oraclegate/fun_004b65c0_callers.txt`.
 
 - Gates: not run (top-down row, no G-CTRL, no B, no 12 captures). No tracker, hooks.csv, ROADMAP or `.asi` edit. Nothing pushed.
 
