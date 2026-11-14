@@ -12,7 +12,9 @@
 // FUN_004c5a60: RW: RwTextureDestroy -> rw::Texture::destroy (LibRw/RwApiBind.cpp)
 #define FUN_004c5a60 MashedRw_TextureDestroy_004c5a60
 // FUN_00556e90: stand-in, Match/PortTop_StandInsHIB.cpp: re/match/s24/00556e90.c is 97.5%, residual outside L-115 (RESULT_HUDINIT-B.md)
-#define FUN_00556e90 PortTop_StandInHIB_00556e90
+// [RWC-FRAME-CLUMP] through the selector MatchS06_00427ca0_Sel00556e90 (Match/MatchS06_00427ca0.cpp): the RW core body
+// RwCore_00556e90 (provisional) under MASHED_RWC_FRAME, else the same stand-in.
+#define FUN_00556e90 MatchS06_00427ca0_Sel00556e90
 // FUN_00557110: matched, Match/PortTop_00557110.cpp
 #define FUN_00557110 Orig_00557110
 extern "C" {

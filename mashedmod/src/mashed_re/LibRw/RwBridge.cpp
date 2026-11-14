@@ -390,7 +390,16 @@ void EngineStop() {
 // the same operation on librw's engine (started in RaceSubmit_Init before ExecuteFrontendBootChain): a 64-byte
 // RwMatrix, identity, flags TYPEORTHONORMAL (3) | IDENTITY (0x20000) = 0x20003. MainLoopInit stores the pointer at
 // 0x007e9dc0 (no exe reader). Returns 0 when librw has no engine (the matched body's NULL branch).
+// RWC-FRAME-CLUMP: under the frame route (MASHED_ORIG_TOP + MASHED_RWC_CORE + MASHED_RWC_FRAME) the engine runs on the
+// RW core and librw has none, so the binding calls the core body RwCore_004c57a0 (re/match/rwl01/004c57a0.c, match100),
+// as route_bindings.py does for the RwApiBind.cpp bindings. The powerup init 0x00459290 writes through the result.
+extern "C" bool RwCore_FrameRoute(void);   // RwCore/RwCore_Knob.cpp, C linkage
+extern "C" void RwCore_004c57a0(void);
 extern "C" unsigned int __cdecl MashedRw_MatrixCreate_004c57a0(void) {
+    if (RwCore_FrameRoute()) {
+        return static_cast<unsigned int>(reinterpret_cast<std::uintptr_t>(
+            reinterpret_cast<void* (__cdecl*)(void)>(&RwCore_004c57a0)()));
+    }
     if (rw::engine == nullptr) return 0u;
     rw::Matrix* const m = rw::Matrix::create();
     return static_cast<unsigned int>(reinterpret_cast<std::uintptr_t>(m));

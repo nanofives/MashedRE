@@ -112,8 +112,12 @@ void PortTop_FontSysInit_00552b60(int camera) {
 // of that RVA (Match/MatchS06_00427ca0.cpp, re/match/s06/00427ca0.c), whose first call is this Rt2d open with camera 0,
 // then the brushes and handles 0x0067d838..0x0067d848. RWMOD off: the stand-in (the body allocates through RwGlobals
 // +0x118, which is 0 without RWMOD).
+// [RWC-FRAME-CLUMP] MASHED_RWC_FRAME (RwCore_FrameRoute, RwCore/RwCore_Knob.cpp): the RW core's RwGlobals is at 0x007d3ff8
+// (MashedRw_InstallRwGlobals) with its +0x118 slot set, so the matched body runs there too. Without it the Rt2d matrix
+// stack 0x00912a84[0] stays 0 and the first 0x00552d10 push (from 0x00427e00 in the first frame) reads NULL.
+bool RwCore_FrameRoute(void);
 int PortTop_00402750_Call00427ca0() {
-    const bool on = MashedRw_RwModKnob() != 0;
+    const bool on = MashedRw_RwModKnob() != 0 || RwCore_FrameRoute();
     if (!on) {
         HiaLog("rva 0x00427ca0: RWMOD off: stand-in only (the body needs RwGlobals +0x118)");
         return PortTop_StandIn04E_00427ca0();
@@ -124,6 +128,21 @@ int PortTop_00402750_Call00427ca0() {
     HiaLog("rva 0x00427ca0 ran: font 0x0067d838=%08X brushes 0x0067d83c=%08X 0x0067d840=%08X 0x0067d844=%08X 0x0067d848=%08X, "
            "dictionary 0x00912a20=%08X", h[0], h[1], h[2], h[3], h[4], D(0x00912a20u));
     return 0;
+}
+
+// [RWC-FRAME-CLUMP] The 0x004275d0 call of the matched 0x00402750 (its argument is 0x004671a0(0)). Under MASHED_RWC_FRAME:
+// the RW core body RwCore_004275d0 (re/match/s06/004275d0.c, 100%, a gen_rwcore_tus.py root since run 44), whose
+// 0x00552a60 call sets the Rt2d camera 0x00912c0c that the first-frame 0x00552e40 reads. Otherwise the stand-in.
+int PortTop_StandIn04E_004275d0();
+void RwCore_004275d0(void);
+void PortTop_00402750_Call004275d0(int camera) {
+    if (!RwCore_FrameRoute()) {
+        PortTop_StandIn04E_004275d0();
+        return;
+    }
+    reinterpret_cast<void (__cdecl*)(int)>(&RwCore_004275d0)(camera);
+    HiaLog("rva 0x004275d0 ran on the RW core (camera 0x%08X): Rt2d camera 0x00912c0c=%08X, depth 0x00912b04=%u",
+           static_cast<unsigned>(camera), D(0x00912c0cu), D(0x00912b04u));
 }
 }  // extern "C"
 #endif  // MASHED_STANDALONE

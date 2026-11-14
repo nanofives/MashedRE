@@ -43,6 +43,7 @@ int FUN_004d8060(void * p0, void * p1);
 undefined4 * FUN_004d8480(void * p0);
 int FUN_004e1b60(void * p0, int p1, void * p2);
 uint FUN_004e1c90(void * p0, int p1, void * p2, undefined4 p3);
+/* RWC-FRAME-CLUMP 2026-11-13: the material struct buffer at [esp+0x1c] (0x004e816c, 7 dwords cleared by rep stosd, then chunk-size bytes read at 0x004e8179) is one int[7] in place of int[4] plus three separate locals (the surface properties, copied to +0xc..+0x14). The 7-dword clear overran the port's VS2022 frame (stack cookie failure 0xC0000409 in the cup.dff material read, verify/rwcframeclump_20261113). Body otherwise unchanged. */
 // MATCH: 0x004e8120 FUN_004e8120
 /* [C1 2026-05-18] Signature `int *FUN_004e8120(undefined4 stream)`. RpGeometry stream-read entry.
     */
@@ -55,10 +56,7 @@ int * FUN_004e8120(undefined4 param_1)
   int *piVar3;
   uint local_2c;
   int local_28 [3];
-  int local_1c [4];
-  int iStack_c;
-  int iStack_8;
-  int iStack_4;
+  int local_1c [7];
   
   iVar2 = FUN_004cc5e0(param_1,1,local_28,&local_2c);
   if (iVar2 == 0) {
@@ -94,9 +92,9 @@ LAB_004e838b:
   piVar3[5] = DAT_006186c4;
   FUN_004d8000(&DAT_006186a4,piVar3);
   piVar3[1] = local_1c[1];
-  piVar3[3] = iStack_c;
-  piVar3[4] = iStack_8;
-  piVar3[5] = iStack_4;
+  piVar3[3] = local_1c[4];
+  piVar3[4] = local_1c[5];
+  piVar3[5] = local_1c[6];
   *piVar3 = 0;
   if (local_1c[3] != 0) {
     iVar2 = FUN_004cc5e0(param_1,6,0,&local_2c);

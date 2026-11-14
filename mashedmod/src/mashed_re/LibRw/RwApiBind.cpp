@@ -94,8 +94,8 @@ extern "C" {
 // bring-up on the matched RW core bodies instead of librw. These bindings stay as the fallback (L-124).
 bool RwCore_Enabled(void);
 bool RwCore_FrameRoute(void);   // [RWC-FRAME]
+extern "C" { void RwCoreLift_004b3eb0(void); void RwCoreLift_004c2b80(void); void RwCoreLift_004c2bb0(void); void RwCoreLift_004e5850(void); void RwCoreLift_004e89a0(void); void RwCoreLift_0054f8d0(void); void RwCoreMissing_00513f90(void); void RwCoreMissing_00514330(void); void RwCore_004b3f90(void); void RwCore_004b5190(void); void RwCore_004b52f0(void); void RwCore_004b5300(void); void RwCore_004c0740(void); void RwCore_004c0b30(void); void RwCore_004c0c20(void); void RwCore_004c0e50(void); void RwCore_004c0ed0(void); void RwCore_004c1040(void); void RwCore_004c1210(void); void RwCore_004c13e0(void); void RwCore_004c15c0(void); void RwCore_004c1a40(void); void RwCore_004c1b10(void); void RwCore_004c1bb0(void); void RwCore_004c1c80(void); void RwCore_004c1cf0(void); void RwCore_004c1d30(void); void RwCore_004c2bf0(void); void RwCore_004c2ed0(void); void RwCore_004c2f00(void); void RwCore_004c39b0(void); void RwCore_004c5930(void); void RwCore_004c5a60(void); void RwCore_004c5bc0(void); void RwCore_004c5c00(void); void RwCore_004c5c80(void); void RwCore_004c5cb0(void); void RwCore_004c7650(void); void RwCore_004c7760(void); void RwCore_004c77c0(void); void RwCore_004cbc60(void); void RwCore_004cbc70(void); void RwCore_004cbc80(void); void RwCore_004cbc90(void); void RwCore_004ce2d0(void); void RwCore_004d41e0(void); void RwCore_004d52d0(void); void RwCore_004de1b0(void); void RwCore_004e43b0(void); void RwCore_004e4440(void); void RwCore_004e4450(void); void RwCore_004e45b0(void); void RwCore_004e4800(void); void RwCore_004e4810(void); void RwCore_004e4860(void); void RwCore_004e4d90(void); void RwCore_004e4dd0(void); void RwCore_004e5700(void); void RwCore_004e66d0(void); void RwCore_004e6920(void); void RwCore_004e69a0(void); void RwCore_004e6ab0(void); void RwCore_004e6e00(void); void RwCore_004e7420(void); void RwCore_004e7e30(void); void RwCore_00534b60(void); void RwCore_0053fb70(void); void RwCore_0053fbb0(void); void RwCore_0053fd30(void); void RwCore_00550350(void); void RwCore_00550390(void); void RwCore_00558470(void); void RwCore_005584c0(void); void RwCore_FrameShowRaster(void); }   // [RWC-FRAME]
 void* RwCore_GlobalsAtInit(void);   // RWC-FRAME-492E90
-extern "C" { void RwCoreLift_004b3eb0(void); void RwCoreLift_004c2b80(void); void RwCoreLift_004c2bb0(void); void RwCoreLift_004e5850(void); void RwCoreLift_004e89a0(void); void RwCoreLift_0054f8d0(void); void RwCoreMissing_00513f90(void); void RwCoreMissing_00514330(void); void RwCore_004c0740(void); void RwCore_004c0b30(void); void RwCore_004c0c20(void); void RwCore_004c0e50(void); void RwCore_004c0ed0(void); void RwCore_004c1040(void); void RwCore_004c1210(void); void RwCore_004c13e0(void); void RwCore_004c15c0(void); void RwCore_004c1a40(void); void RwCore_004c1b10(void); void RwCore_004c1bb0(void); void RwCore_004c1c80(void); void RwCore_004c1cf0(void); void RwCore_004c1d30(void); void RwCore_004c2bf0(void); void RwCore_004c2ed0(void); void RwCore_004c2f00(void); void RwCore_004c39b0(void); void RwCore_004c5930(void); void RwCore_004c5a60(void); void RwCore_004c5bc0(void); void RwCore_004c5c00(void); void RwCore_004c5c80(void); void RwCore_004c5cb0(void); void RwCore_004c7650(void); void RwCore_004c7760(void); void RwCore_004c77c0(void); void RwCore_004cbc60(void); void RwCore_004cbc70(void); void RwCore_004cbc80(void); void RwCore_004cbc90(void); void RwCore_004ce2d0(void); void RwCore_004d41e0(void); void RwCore_004d52d0(void); void RwCore_004de1b0(void); void RwCore_004e43b0(void); void RwCore_004e4440(void); void RwCore_004e4450(void); void RwCore_004e45b0(void); void RwCore_004e4800(void); void RwCore_004e4810(void); void RwCore_004e4860(void); void RwCore_004e4d90(void); void RwCore_004e4dd0(void); void RwCore_004e5700(void); void RwCore_004e66d0(void); void RwCore_004e6920(void); void RwCore_004e69a0(void); void RwCore_004e6ab0(void); void RwCore_004e6e00(void); void RwCore_004e7420(void); void RwCore_004e7e30(void); void RwCore_00534b60(void); void RwCore_0053fb70(void); void RwCore_0053fbb0(void); void RwCore_0053fd30(void); void RwCore_00550350(void); void RwCore_00550390(void); void RwCore_00558470(void); void RwCore_005584c0(void); void RwCore_FrameShowRaster(void); }   // [RWC-FRAME]
 int  RwCore_EngineInit(int memFuncs, int initFlags);
 int  RwCore_EngineOpen(int* params);
 int  RwCore_EngineStart(void);
@@ -1038,6 +1038,7 @@ void MashedRw_FrameUpdateObjects_004c0e50(int frame) {
 // teardown 0x00412010 reads atomic +0x3c (RpAtomic.clump, the clump the atomic belongs to) and destroys it. The view
 // carries that field: the clump argument, which owns the atomic.
 int MashedRw_ClumpFirstAtomic_004b3f90(int clump) {
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004b3f90)(clump);   // [RWC-FRAME]
     rw::Clump* const c = FromInt<rw::Clump>(clump);
     if (!c) return 0;
     rw::Atomic* const a = RwOrderAtomic(c, c->atomics.link.prev);
@@ -1054,6 +1055,8 @@ int MashedRw_ClumpFirstAtomic_004b3f90(int clump) {
 // site passes the slot's atomic (+0x08, stored by the matched callback 0x0048fed0) and the slot's clump (+0x04).
 // Returns 0 for a null atomic.
 int MashedRw_AtomicView_0048fef0(int atomic, int clump) {
+    // 0x004e7420 on the core built it), already the RW 3.x layout 0x0048fef0 reads; 0 stays 0.
+    if (RwCore_FrameRoute()) return atomic;
     rw::Atomic* const a = FromInt<rw::Atomic>(atomic);
     if (!a) return 0;
     return ToInt(NewAtomicView(a, FromInt<rw::Clump>(clump)));
@@ -1584,6 +1587,7 @@ int MashedRw_WorldRemoveClump_004e45b0(int world, int clump) {
 // Thunk4b52f0), and one RVA has one body per target (rva-lint CROSS-TARGET). Call site: 0x00401000 -> 0x004b5320(cup
 // clump, 0x40, 1).
 void* MashedRw_AtomicGeometryFlags_004b5300(void* atomic, void* data) {
+    if (RwCore_FrameRoute()) return reinterpret_cast<void* (__cdecl*)(void*, void*)>(&RwCore_004b5300)(atomic, data);   // [RWC-FRAME]
     rw::Atomic* const a = static_cast<rw::Atomic*>(atomic);
     const unsigned* const d = static_cast<const unsigned*>(data);
     if (!a || !a->geometry) return atomic;
@@ -1625,6 +1629,7 @@ int MashedRw_ClumpGetWorld_004e4800(int clump) {
 // p2 as an int (0x00543d70 / 0x00543df0). librw: rw::UserDataArray on a->geometry. The original has no guard for a
 // geometry without user data. The binding returns -1 there, which no init's switch takes (cases 0..6), and logs it.
 int MashedRw_AtomicPartCode_004b5190(int atomic, int array, int element) {
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int, int, int)>(&RwCore_004b5190)(atomic, array, element);   // [RWC-FRAME]
     rw::Atomic* const a = FromInt<rw::Atomic>(atomic);
     rw::Geometry* const g = a ? a->geometry : nullptr;
     if (!g || rw::UserDataArray::geometryGetCount(g) <= array) {
@@ -1642,6 +1647,7 @@ int MashedRw_AtomicPartCode_004b5190(int atomic, int array, int element) {
 // rva 0x004b52f0 (re/match/s18/004b52f0.c, BYTE-IDENTICAL): geometry (atomic +0x18) -> 0x004b52c0: geometry +0x08 |=
 // mask when set != 0, else &= ~mask. The same work as the 0x004b5300 binding above, on a->geometry->flags.
 void MashedRw_AtomicGeometryFlags_004b52f0(int atomic, int mask, int set) {
+    if (RwCore_FrameRoute()) { reinterpret_cast<void (__cdecl*)(int, int, int)>(&RwCore_004b52f0)(atomic, mask, set); return; }   // [RWC-FRAME]
     unsigned d[2] = {static_cast<unsigned>(mask), static_cast<unsigned>(set)};
     MashedRw_AtomicGeometryFlags_004b5300(FromInt<void>(atomic), d);
 }

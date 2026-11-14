@@ -44,7 +44,7 @@
 #define FUN_00429290 PortTop_StandIn04E_00429290
 #define FUN_00494c80 PortTop_StandIn04E_00494c80
 #define FUN_00427ca0 PortTop_00402750_Call00427ca0           // HUDINIT-A selector, Match/PortTop_00552b60.cpp: RWMOD runs the Rt2d open 0x00552b60(0) first, then the stand-in
-#define FUN_004275d0 PortTop_StandIn04E_004275d0
+#define FUN_004275d0 PortTop_00402750_Call004275d0          // [RWC-FRAME-CLUMP] selector, Match/PortTop_00552b60.cpp: RW core body under MASHED_RWC_FRAME, else the stand-in
 #define FUN_004113b0 PortTop_StandIn04E_004113b0
 #define FUN_00558240 PortTop_StandIn04E_00558240
 #define FUN_004841d0 PortTop_StandIn04E_004841d0
