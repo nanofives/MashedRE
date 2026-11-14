@@ -1,0 +1,11 @@
+0x00427e00	cw=0x037f	ignore_ecx_556ca0=0	runs=300	same=300	differs=0	inconclusive=0	calls(orig)=2826
+0x00427f00	cw=0x037f	ignore_ecx_556ca0=0	runs=300	same=0	differs=300	inconclusive=0	calls(orig)=2529
+  first non-same: differs: call 7 to 0x556ca0 live-in regs: (('ecx', ('stk',)),) | (('ecx', 3268308804),)
+  vector args: ['0x55000000', '0x41a32853', '0xc2075e25', '0xd5f4b3b2', '0x3fcb7cc2', '0x1']
+0x00427ff0	cw=0x037f	ignore_ecx_556ca0=0	runs=300	same=0	differs=300	inconclusive=0	calls(orig)=3722
+  first non-same: differs: call 11 to 0x556ca0 live-in regs: (('ecx', 1873581951),) | (('ecx', ('stk',)),)
+  vector args: ['0x9b81', '0x41a32853', '0xc2075e25', '0xd5f4b3b2', '0x3fcb7cc2', '0x1', '0xc324c985']
+0x00428140	cw=0x037f	ignore_ecx_556ca0=0	runs=300	same=0	differs=300	inconclusive=0	calls(orig)=2831
+  first non-same: differs: call 8 to 0x556ca0 live-in regs: (('ecx', 1097209476),) | (('ecx', ('stk',)),)
+  vector args: ['0x9b81', '0x41a32853', '0xc2075e25', '0xd5f4b3b2', '0x3fcb7cc2', '0x1', '0x180']
+0x00458920	cw=0x037f	ignore_ecx_556ca0=0	runs=300	same=300	differs=0	inconclusive=0	calls(orig)=930

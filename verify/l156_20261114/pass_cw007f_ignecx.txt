@@ -1,0 +1,5 @@
+0x00427e00	cw=0x007f	ignore_ecx_556ca0=1	runs=300	same=300	differs=0	inconclusive=0	calls(orig)=2826
+0x00427f00	cw=0x007f	ignore_ecx_556ca0=1	runs=300	same=300	differs=0	inconclusive=0	calls(orig)=2529
+0x00427ff0	cw=0x007f	ignore_ecx_556ca0=1	runs=300	same=300	differs=0	inconclusive=0	calls(orig)=3722
+0x00428140	cw=0x007f	ignore_ecx_556ca0=1	runs=300	same=300	differs=0	inconclusive=0	calls(orig)=2831
+0x00458920	cw=0x007f	ignore_ecx_556ca0=1	runs=300	same=300	differs=0	inconclusive=0	calls(orig)=930
