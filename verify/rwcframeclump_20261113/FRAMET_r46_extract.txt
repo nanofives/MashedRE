@@ -1,0 +1,13 @@
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0184736C; RwGlobals 017A5340, module offset 0x3F4, texdict freelist 007D4030, list head 017A5734 -> 0184737C; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 0184739C; RwGlobals 017A5340, module offset 0x3F4, texdict freelist 007D4030, list head 01847394 -> 018473AC; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[ORIG_TOP] rva 0x0045bae0: RW core frame route: type table +0x18 slots: 9 teardown pointers stored (9 matched), 0 already non-zero, of 9 (POWERUPINIT-A)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 1: DAT_0067eca4 = 1, DAT_0067eca8 = 0, DAT_007f1004 = 0.000000, DAT_0067f19c = 0, DAT_00771964 = 00000000 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 1 -> 2, DAT_0067eca8 = 255, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 2 -> 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 60: DAT_0067eca4 = 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067f19c = 0, DAT_00771964 = 00000000 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) returned; then HandTop_AppDestroy for the exe audio / DirectInput / small.mpg
+[RWC_CORE] live clump 1 at RwEngineStop: 0F827D38 frame +0x4 0F842660 atomics +0x8 0F817330
+[RWC_CORE] live clumps at RwEngineStop: 1 (clump freelist 007D7208)
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 6000 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 0; bodies at 001866A0 / 001865C0 / 00186840; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 0018CD80

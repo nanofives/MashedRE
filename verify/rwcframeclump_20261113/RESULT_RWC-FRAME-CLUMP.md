@@ -1,6 +1,19 @@
-# RESULT RWC-FRAME-CLUMP (runs 43 to 45; RED: the draw compare runs and is RED on one named cause)
+# RESULT RWC-FRAME-CLUMP (runs 43 to 46; RED: 80 of 82 menu draws match per frame, 2 residual rows named)
 
-Runs 43, 44 and 45, 2026-11-13. Branch `orch/RWC-FRAME-CLUMP`, based on `orch/integration` 69cd03777. Top-down row.
+Runs 43, 44 and 45, 2026-11-13, run 46 2026-11-14. Branch `orch/RWC-FRAME-CLUMP`, merged with `orch/integration`
+d1e5ac586 in run 46 (was based on 69cd03777). Top-down row.
+
+**Run 46 summary (section 12).** (1) The core frame reaches `DAT_0067eca4` = 3: a phase-ladder stand-in of 0x0043dfd0
+(source lines 310..338) runs on the RW core frame route, with the matched clock (`MASHED_OT_TIMER=1`) writing
+`DAT_007f1004`. (2) The nine powerup teardown slots (type table 0x005f9998 + 0x18) hold the matched teardown bodies on
+the frame route, and **vs_frameT / ddk_frameT now end `WinMain 0x00492370 returned 0 after 600 frames`, rc 0, with 1
+clump alive at RwEngineStop** (run 45: AV in RwEngineStop, 103 alive). (3) **Draw compare: RED.** Strict: 38 of 82
+original draws match per frame, 42 moved, 2 missing (run 45: 0 of 82). With `--tol-anim 8` (same colour, moved or
+resized by up to 8 px, the checker jitter phase): **80 of 82 match per frame, 0 mismatched, 2 missing**, on both builds.
+The 2 missing draws are rows RWC-FRAME-MOVIE-BACKDROP and RWC-FRAME-TITLE-LOGO. **Self-test: PASS** on every arm with
+the frame route (binding self-test `self-test PASS (0 of 11 checks failed)`, `[RWC-DEVICE] selftest PASS (0 fail)`,
+and on the OT_TIMER arms `[OT_TIMER] self-test PASS (0 of 6000 checks failed)`). Both builds Build OK. `ddkobj.py
+check`: IDENTICAL 1241/1275, no 100% unit DIFFERENT. G-CTRL / B / 12 captures: not run (top-down row).
 
 **Run 45 summary (section 11).** (1) A core-side Im2D draw dump exists (`MASHED_RWC_DRAWDUMP`, default OFF) in the
 schema of the original-side capture, and the draw compare ran: **RED, 0 of 82 original draws matched in each of 4 frame
@@ -308,3 +321,139 @@ Changed files: `RwCore/RwCore_Knob.cpp`, `RwCore/RwCore_0042aad0.cpp` (generated
 Committed extracts: `DRAWDIFF_r45.txt`, `CORE_DRAWDUMP_r45_summary.txt`, `TEARDOWN_vs_frameT_r45.txt`,
 `orig_burst_492e90.peek.json`. Raw data `D:/MashedWT/RWC-FRAME-CLUMP_data`, sha256 in `RAW_SHA256_RWC-FRAME-CLUMP.txt`
 (run 45 block).
+
+## 12. Run 46 (2026-11-14): core frame to DAT_0067eca4 = 3, powerup teardown slots, draw compare 80 of 82
+
+Worker on claude3 (Opus 5.5 high), lead cmwgrs33714x7mz1b0c5e2219. Merged `orch/integration` d1e5ac586 into the
+branch first (`git -c merge.autoStash=false merge`, merge commit 7b4454fb1, no conflict). The merge brings
+IMG-5-TEARDOWN-BODIES: matched bodies for the nine teardown targets (Match/PortTop_<rva>.cpp) and the provisional
+0x00455400. All run 46 code is default OFF: it runs only on the RW core frame route (`RwCore_FrameRoute()`, i.e.
+MASHED_ORIG_TOP + MASHED_RWC_CORE + MASHED_RWC_FRAME). L-124 holds: no librw binding added. No tracker edit, no
+promotion. The run-45 null guard (row RWC-NULL-DESTROY-GUARD) is untouched.
+
+### 12.1 Powerup teardown slots (type table 0x005f9998 + 0x18)
+
+`Match/PortTop_0045bae0.cpp`: on the frame route, before the matched 0x0045bae0, each of the nine +0x18 slots that is 0
+or holds its entry's original value gets the matched teardown body: 0x004568a0, 0x004540c0, 0x004555d0, 0x00457b10,
+0x0045a790, 0x0045b2d0, 0x00454af0, 0x00456ca0, 0x004530b0 (the section 11.3 table, all with a matched source since
+IMG-5). The same rule as the +0x14 init slots, so a MASHED_OT_CODEPTR binding (non-zero, not the original value) is kept.
+Log: `type table +0x18 slots: 9 teardown pointers stored (9 matched), 0 already non-zero, of 9`.
+Only reader of the slots: a byte scan of MASHED.exe.unpatched for the dword 0x005f99b0 finds 1 absolute reference,
+.text 0x0045b957, inside 0x0045b930 (`PTR_FUN_005f99b0[i].m_fn`, re/match/s09/0045b930.c). The +0x14 base 0x005f99ac
+has 1 reference, 0x0045bb45 (in 0x0045bae0).
+
+Result, vs_frameT and ddk_frameT (`MASHED_RWC_FRAME_N=100000`, the 600-frame loop ends): AppDestroy 0x00402a40 returns,
+**`[RWC_CORE] live clumps at RwEngineStop: 1`** (run 45: 103 and an AV in the clump module close), RwEngineStop
+0x004c2f60 returns, **`WinMain 0x00492370 returned 0 after 600 frames`, rc 0**. The one survivor is Bomb.dff:
+`live clump 1 at RwEngineStop: 0F827D38` = `DAT_00636c00 (Bomb.dff) = 0F827D38` (0x0045bae0 log line). Row
+RWC-FRAME-BOMB-DESTROY. Control: the same arm with MASHED_OT_TIMER off (`vs_frameT_r46_timer0.log`) also ends rc 0 with
+1 live clump, so the teardown result does not depend on the timer knob. [UNCERTAIN] the share of the 103 -> 1 drop due
+to the +0x18 store and not to the merged IMG-5 bodies: a slots-off control on this tree was not run (in row
+RWC-FRAME-BOMB-DESTROY).
+
+### 12.2 Core frame to DAT_0067eca4 = 3
+
+In the original the word goes 1 -> 2 -> 3 inside 0x0043dfd0 (re/match/s08/0043dfd0.c lines 317..338): phase 1 adds
+`(int)(DAT_007f1004 * _DAT_005cc9fc)` to DAT_0067eca8 (0x0043e0a7) and at >= 0xff sets 2 and calls
+`FUN_0043d2a0(DAT_0067ecac, 0)`, phase 2 calls `FUN_004325c0()` and adds `(int)(DAT_007f1004 * _DAT_005cda88)`
+(0x0043e101) and below 0 sets 3. Constants read from MASHED.exe.unpatched: 0x005cc9fc = 0x447a0000 = 1000.0,
+0x005cda88 = 0xc3fa0000 = -500.0. On the exe 0x0043dfd0 is the hand stand-in, whose menu keeps its phase in
+`g_anim_phase` (Frontend/MenuNavSM.cpp:795) and writes 0x0067eca4 only for the length of one 0x004325c0 call
+(Anim_Tick restores it), so the word stays 1.
+
+`Match/PortTop_StandIns05.cpp`: `PortTop_RwcPhaseLadder_0043dfd0`, called from the 0x0043dfd0 stand-in on the frame
+route only, transcribes those lines. Declared deviations of this stand-in: 0x0067f19c == 2 skips the ladder but is not
+written; FUN_0043d2a0 is not called (54.3%, no exe body, the hand menu builds its own screen stack); FUN_004325c0 is not
+called there (the hand Anim_Tick already runs the matched body once per frame); the constants are literals (the exe image
+may not hold the original .rdata). Phases 3 and up (the 3 -> 4 write when DAT_0067e914 != 0, the menu rows) are not
+ported here (PORT-TOP-08). The ladder needs DAT_007f1004: it is 0 on the frame route unless `MASHED_OT_TIMER=1` runs the
+matched clock 0x00493480 (first vs_dump: `DAT_007f1004 = 0.000000` at call 60, phase stuck at 1). The dump and teardown
+arms now set it.
+
+Log (vs_dump, `CORE_DRAWDUMP_r46_summary.txt`): `DAT_0067eca4 1 -> 2, DAT_0067eca8 = 255, DAT_007f1004 = 0.016667,
+DAT_0067e914 = 0, DAT_0067ecac = 22`, then `2 -> 3, DAT_0067eca8 = 0`; call 60 reads `DAT_0067eca4 = 3`.
+[UNCERTAIN] from code reading: that the original reaches 3 at the same frame and with the screen 0x0043d2a0(22, 0)
+builds. Row RWC-FRAME-LADDER-CHECK (original-side write watch of 0x0067eca4 / 0x0067eca8).
+
+### 12.3 Draw compare (original 4 frames at DAT_0067eca4 = 3 vs core frames 200..207)
+
+Original side: the run-45 capture `orig_burst_492e90.json` (`menu_draw_burst.py --frames 4 --delim 0x00492e90`, peek
+`0x0067eca4 3, 0x0067ecb0 33, 0x00771968 1`). Core side: vs_dump / ddk_dump, `MASHED_RWC_FRAME_N=590 MASHED_OT_TIMER=1
+MASHED_RWC_DRAWDUMP_SKIP=200 MASHED_RWC_DRAWDUMP_FRAMES=8`, delimiter 0x00492e90. Every dumped core frame: `80 Im2D prim
+draws, 0 indexed; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1`. `drawlist_diff.py --scale-b 1`, orig_f0..3 vs
+core_f0..3:
+
+| build | tolerance | matched | mismatched | missing | extra | verdict |
+|---|---|---|---|---|---|---|
+| VS2022 | strict (`--tol-anim 0`) | 152 (38 / frame) | 168 (42 / frame) | 8 (2 / frame) | 0 | RED |
+| VS2022 | `--tol-anim 8` | 320 (80 / frame) | 0 | 8 (2 / frame) | 0 | RED |
+| object build | strict | 152 | 168 | 8 | 0 | RED |
+| object build | `--tol-anim 8` | 320 | 0 | 8 | 0 | RED |
+
+Run 45: 0 of 82 per frame. VS dump vs object-build dump: strict 304 matched / 336 mismatched, all mismatches on the two
+builds' 0x00473ee0 jitter rows; with `--tol-anim 8` GREEN 640 / 640.
+
+- The 42 moved rows per frame: all A-side `@0x474464,0x42e89c`, B-side `RwCore_00473ee0+0x70c`, same colour, displaced
+  or resized by under 8 px (strict `MISMATCH(moved)` rows in `DRAWDIFF_r46_strict.txt`). With `--tol-anim 4` 155 match,
+  with 8 and 12 all 320. They match only under the animation tolerance: row RWC-FRAME-JITTER-STRICT (align the jitter
+  counter, then strict).
+- Missing A[0] (x 0 y 0 w 512 h 512, `@0x473ebd,0x42e65a`): the backdrop quad of 0x00473c20 from 0x0042e5b0
+  (re/match/s07/0042e5b0.c line 65). 0x00473c20 draws only when `FUN_00494ef0(0)` != 0 (re/match/s11/00473c20.c line 68),
+  a thunk of 0x00493f70 = `return DAT_00771a04` (re/match/s15/00493f70.c). Logged on the core: `DAT_00771a04 = 00000000`.
+  [UNCERTAIN] from code reading: the writer is the movie module 0x0043dfd0 line 300 calls (0x00494a80 / 0x00494480 /
+  0x00494f30, stand-ins on this path). Row RWC-FRAME-MOVIE-BACKDROP.
+- Missing A[81] (x 80 y 80 w 480 h 240, `@0x450c7a,0x428750`): the title quad, 0x00403050 -> 0x00428760 -> 0x00428610 ->
+  0x00450b10 (all on the core: RwCore_00403050 / _00428760 / _00428610 / _00450b10). 0x00450b10 draws with no gate
+  (re/match/s08/00450b10.c line 94). 0x00403050 calls 0x00428760 only when `DAT_00771964 != 0` (re/match/s01/00403050.c
+  line 27). Logged on the core: `DAT_00771964 = 00000000`. Its writer is the matched 0x004283a0 (`DAT_00771964 =
+  DAT_0067d964 = FUN_004c5cb0("MashedNEWLogo", 0)`, re/match/s06/004283a0.c), run from 0x00402750 after the font36.piz
+  mount (logged OK, 26 entries); FUN_004c5cb0 routes to the provisional RwCore_004c5cb0 (ROUTED.tsv). [UNCERTAIN] why
+  the core read returns 0: not traced. Row RWC-FRAME-TITLE-LOGO. This replaces the run-45 [UNCERTAIN] on the title gate.
+
+### 12.4 Arms, builds, checks (final tree)
+
+| arm | exit | note |
+|---|---|---|
+| vs_off / ddk_off | 0 / 0 | `WinMain 0x00492370 returned 0 after 600 frames`; logcmp 1186 / 1186, 1 differs (the cfglog clock line) |
+| vs_frame / ddk_frame | 0x5257F001 | present 1, both self-tests PASS, 0 live clumps at the N = 1 engine teardown |
+| vs_frameN / ddk_frameN (N=120) | 0x5257F001 | logcmp 207 / 207, 1 differs (the clock line) |
+| vs_frameT / ddk_frameT (N=100000, OT_TIMER) | 0 / 0 | WinMain returned 0, 1 live clump (12.1); logcmp 242 / 242, 7 differ (clock line + the wall-clock `[OT_TIMER] call` lines) |
+| vs_frameT, OT_TIMER off (control) | 0 | 1 live clump, WinMain returned 0 |
+| vs_dump / ddk_dump (N=590, OT_TIMER) | 0x5257F001 | 8 frames dumped at phase 3, 80 draws each (12.3); logcmp 222 / 222, 6 differ (clock + `[OT_TIMER] call`) |
+
+Self-test on every frame-route arm: `self-test PASS (0 of 11 checks failed)` (RwTexDictionaryCreate binding, calls 1
+and 2) and `[RWC-DEVICE] selftest PASS (0 fail)`; on the OT_TIMER teardown arms `[OT_TIMER] self-test PASS (0 of 6000
+checks failed)` (vs_frameT, ddk_frameT). 0 `FAIL` lines in any arm log.
+
+Builds: VS2022 (`MASHED_NO_DEPLOY=1`) `=== Build OK ===`, rva-lint OK (249 known, 0 new); object build
+(`MASHED_DDKOBJ=1`, NO_DEPLOY) `=== Build OK ===`, `[ddkobj] link rc=0`, units 1501, ddk objects 1222.
+`ddkobj.py check`: **IDENTICAL 1241/1275, DIFFERENT 19, not-in-map 15** (`BYTECHECK.tsv` refreshed). The 19 DIFFERENT are
+the 18 of run 45 plus 0x00498510, a 95.3% provisional source from the merge (BIND-CRT-498510, PROVISIONAL.tsv). No unit
+with a 100% source is DIFFERENT. Exe sha256 prefixes: mashed_re.exe 71cb8f749ebfca5d, mashed_re_ddk.exe
+dda09c71bfeb1927 (rebuilt from the branch, not committed). G-CTRL / B / 12 captures: not run (top-down row, the knob is
+off for those hashes).
+
+`gen_rwcore_tus.py` regenerated after the merge: RwCore_Missing.cpp drops the stub for 0x004dcc4c (a label inside a
+known function), renumbering the stop codes after it; RwCore_004dcbb0.cpp drops the matching define; LIFT_REFUSED.tsv /
+RwCore_Bodies.tsv lose the row. `exe_sources.rsp`: the generator reordered it (same 1823 files); the committed order is
+restored so the default exe's link order does not move.
+
+Process notes: every game launch went through `test-slot` (outside, no hub override) -> `mashed_lock.py run` (inside),
+private root `D:/MashedWT/RWC-FRAME-CLUMP_root`. No build ran during a PRIORITY-HOLD or SOLO (`mashed_lock.py status`
+before each build showed the machine lock free or `HELD` by SOAK-P0, never PRIORITY-HOLD / SOLO). The final arm batch
+waited 10 min on the test-slot memory gate and then started under the cap. `mashed_lock.py status` takes 38 s here
+because its priority-file glob scans %TEMP% (606,377 entries): row HB-MASHEDLOCK-TEMPGLOB.
+
+**RO-FIRST-DIVERGENCE's compare has to be re-run after this row merges** (the frame-route teardown slots and the phase
+ladder change what the core frame runs).
+
+Changed files: `Match/PortTop_0045bae0.cpp`, `Match/PortTop_StandIns05.cpp`, the regenerated `RwCore/RwCore_*.cpp` and
+`verify/rwccorerun_20261111/{LIFT_REFUSED.tsv, RwCore_Bodies.tsv}`, `verify/rwcframeclump_20261113/run_arms.sh` (arms
+vs_frameT / ddk_frameT / vs_dump / ddk_dump). Committed extracts: `DRAWDIFF_r46_tolanim8.txt`, `DRAWDIFF_r46_strict.txt`,
+`CORE_DRAWDUMP_r46_summary.txt`, `FRAMET_r46_extract.txt`, `BYTECHECK.tsv`. Raw data `D:/MashedWT/RWC-FRAME-CLUMP_data`
+(`core_burst_r46.json`, `core_burst_ddk_r46.json`, the ten arm logs, `vs_frameT_r46_timer0.log` / `_timer1.log`,
+`build_r46d.log`, `build_ddk_r46.log`, `ddkcheck_r46.out`, `orig_burst_492e90.json`), sha256 in
+`RAW_SHA256_RWC-FRAME-CLUMP.txt` (run 46 block).
+
+Open rows filed in run 46: RWC-FRAME-MOVIE-BACKDROP, RWC-FRAME-TITLE-LOGO, RWC-FRAME-LADDER-CHECK,
+RWC-FRAME-BOMB-DESTROY, RWC-FRAME-JITTER-STRICT, HB-MASHEDLOCK-TEMPGLOB.

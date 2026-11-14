@@ -1,0 +1,12 @@
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 1: DAT_0067eca4 = 1, DAT_0067eca8 = 0, DAT_007f1004 = 0.000000, DAT_0067f19c = 0, DAT_00771964 = 00000000 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 1 -> 2, DAT_0067eca8 = 255, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 2 -> 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 60: DAT_0067eca4 = 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067f19c = 0, DAT_00771964 = 00000000 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[RWC_CORE] drawdump core_f0: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f1: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f2: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f3: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f4: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f5: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f6: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f7: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1

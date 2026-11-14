@@ -7,7 +7,6 @@
 #define MATCH_PORT 1
 #define FUN_004dcaa0 RwCore_004dcaa0
 #define FUN_004dcbb0 RwCore_004dcbb0
-#define LAB_004dcc4c RwCoreMissing_004dcc4c
 extern "C" {
 #include "../../../../re/match/rwl01/004dcbb0.c"
 }
