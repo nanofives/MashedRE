@@ -119,3 +119,37 @@ RWC-FRAME-CLUMP. No librw binding added (L-124). No tracker edit, no promotion. 
 `verify/rwcframeclump_20261113/run_arms.sh` (RWC_DATA / RWC_ROOT pointed here) inside test-slot, then
 `mashed_lock.py run --label DDKOBJ-REGCONV-FALLBACK-7`. The test slot waited 10 min for memory and started under the
 cap.
+
+## 6. Hand merge run 45
+
+The merge train 20261113_212426 refused the branch (conflict). Hand merge on `orch/DDKOBJ-REGCONV-FALLBACK-7-hm`, from
+`orch/integration` c64092b0c, merging `orch/DDKOBJ-REGCONV-FALLBACK-7` @ 3f39d5a0b (which carries RWC-FRAME-CLUMP).
+
+- Conflicts: `mashedmod/exe_sources.rsp`, `RwCore/RwCore_Lifted_10.cpp`, `re/tools/dual_copy_allowlist.txt`.
+- RwCore TUs, lift chunks, `exe_sources.rsp` generated block and the `verify/rwccorerun_20261111` tables: regenerated with
+  `gen_rwcore_tus.py` (not hand edited). The generator reorders the rsp, so the committed rsp keeps integration's order:
+  lines the regeneration dropped are removed, the 43 new TUs are added after the last RwCore line (set equal to the
+  regenerated one).
+- `dual_copy_allowlist.txt`: both sides' rows kept. Two branch keys (0x004b52c0, 0x004b52f0) now name
+  `Match/MatchS18_*.cpp` instead of `Util/PromoLoop_sessionB.cpp`, because integration moved those asi bodies (PORT-TOP-04K).
+- `gen_rwcore_tus.py` MATCHLINE now also accepts a `// MATCH:` label glued after a prototype
+  (`re/match/rwl02/004e4c30.c` line 41, from MATCH-RWT-S7). Without it the generator dropped the `RwCore_004e4c30.cpp`
+  TU and the exe failed to link (`_RwCore_004e4c30` unresolved). No `re/match` source was touched.
+
+| Check | Result |
+|---|---|
+| default VS2022 build | OK (`D:/MashedWT/ddkregconv7_hm_build_vs.log`) |
+| object build (`MASHED_DDKOBJ=1`) | OK |
+| `ddkobj.py selftest` | OK, 0 failures |
+| `ddkobj.py check` | IDENTICAL 1229/1263, DIFFERENT 19, not-in-map 15, units linked 1210/1488, refusals 9. The 19 are the branch's 18 plus 0x00498510, which is integration's own DIFFERENT (BIND-CRT-498510 RESULT) |
+| knob boot vs_off / ddk_off | both `WinMain 0x00492370 returned 0 after 600 frames`, 1363 log lines each, only the commit totals line and addresses differ |
+
+Boots: test-slot outside, `mashed_lock.py run` inside, `PROYECTOS_TEST_HUB=off`, private root
+`D:/MashedWT/DDKOBJ-REGCONV-FALLBACK-7_root`, arms from `verify/rwcframeclump_20261113/run_arms.sh`. No G-CTRL, no B.
+Raw files (`D:/MashedWT/`), sha256:
+```
+  f88e341133d03574287b2f381544850fb23c92b5b0ac5aa1d667c7a72f451c25 *DDKOBJ-REGCONV-FALLBACK-7-merge_data/ddk_off.log
+  de962f57c4c4abb7c36a9a0f12821b79e17ddb8332e4e4d7753dee1b748605eb *DDKOBJ-REGCONV-FALLBACK-7-merge_data/vs_off.log
+  77aabbd66e7200ec6edc517de1eec4296ee1eb8b49f55d0db9680c2f06518b82 *ddkregconv7_hm_build_ddk.log
+  1decd3ccd6f29d1ad79aa3ec4230b5e43f8ca258f8a7347bd282fabcedf7891e *ddkregconv7_hm_build_vs.log
+```
