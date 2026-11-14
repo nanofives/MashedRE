@@ -65,6 +65,49 @@ def stand_ok(sd: Path, shots):
     return all((sd / "d1r2" / f"stand_row_{k:05d}.draws.json").exists() for k in shots)
 
 
+def start_key_poster(pid, d, out):
+    """[HB-RUN13-LIVE-INPUT] RUN13_POST_KEYS=1: post WM_KEYDOWN/WM_KEYUP (Enter, then Down arrow, alternating every 2 s) to the
+    top-level windows owned by THIS pid only (EnumWindows + GetWindowThreadProcessId). No focus change, no SendInput, no image
+    name. Posted messages reach the window procedure; they do not change DirectInput device state (exe_main.cpp:1286)."""
+    import ctypes
+    import threading
+    import time
+    from ctypes import wintypes
+    u = ctypes.windll.user32
+    WM_KEYDOWN, WM_KEYUP = 0x0100, 0x0101
+    VK_RETURN, VK_DOWN = 0x0D, 0x28
+    st = {"stop": threading.Event(), "posted": 0, "hwnds": set()}
+    cb_t = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+
+    def windows():
+        found = []
+
+        def cb(h, _):
+            p = wintypes.DWORD(0)
+            u.GetWindowThreadProcessId(h, ctypes.byref(p))
+            if p.value == pid:
+                found.append(h)
+            return True
+        u.EnumWindows(cb_t(cb), 0)
+        return found
+
+    def run():
+        n = 0
+        while not st["stop"].wait(2.0):
+            vk = VK_RETURN if n % 2 == 0 else VK_DOWN
+            sc = u.MapVirtualKeyW(vk, 0)
+            for h in windows():
+                st["hwnds"].add(h)
+                u.PostMessageW(h, WM_KEYDOWN, vk, 1 | (sc << 16))
+                time.sleep(0.05)
+                u.PostMessageW(h, WM_KEYUP, vk, 1 | (sc << 16) | (1 << 30) | (1 << 31))
+                st["posted"] += 1
+            n += 1
+    st["thread"] = threading.Thread(target=run, daemon=True)
+    st["thread"].start()
+    return st
+
+
 def run_one(exe, root, out, t, knobs, att):
     d, view, cap, _, frames = TRACKS[t]
     shots = shots_of(t)
@@ -109,6 +152,7 @@ def run_one(exe, root, out, t, knobs, att):
         env[a] = b if b else "1"
     p = subprocess.Popen([str(exe)], cwd=str(root), env=env)
     print(f"[{d}] attempt {att} pid={p.pid} frames={frames} shots={shots}", flush=True)
+    poster = start_key_poster(p.pid, d, out) if os.environ.get("RUN13_POST_KEYS", "") not in ("", "0") else None
     try:
         rc = p.wait(900)
     except subprocess.TimeoutExpired:
@@ -116,6 +160,11 @@ def run_one(exe, root, out, t, knobs, att):
         p.kill()
         rc = p.wait(15)
     print(f"[{d}] exit={rc}", flush=True)
+    if poster:
+        poster["stop"].set()
+        poster["thread"].join(5)
+        print(f"[{d}] key poster: {poster['posted']} posts, windows seen {sorted(poster['hwnds'])}", flush=True)
+        (sd / "key_poster.txt").write_text(f"posts={poster['posted']}\nhwnds={sorted(poster['hwnds'])}\npid={p.pid}\n")
     # [HB-RUN13-LIVE-INPUT] the private root's mashed_re.log is rewritten by the next track and by the next run; keep this
     # track's copy beside its dumps so an `R7IN byte0xa ... test=0` line (a live input event) can be read after the fact.
     try:
