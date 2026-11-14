@@ -4,11 +4,84 @@ Row `IMG-5-TEARDOWN-BODIES` (D4-image, run 45). Worker cmwflfaca2xsulh1nry13sxjw
 cmwfldvnw2xialh1nug92xgbo. Row kind: top-down (bindings + `re/match` sources + promotion TSV). Branch
 `orch/IMG-5-TEARDOWN-BODIES` from `orch/integration` @ `ba39eeb6b`.
 
-## Run 46 (L-153 (a)): HANDOFF, stopped at a safe point for the LIVING-PC token-leak reboot
+## Run 46 (L-153 (a)): GREEN. Entry 2 runs a provisional init, and the image-ON boot passes AppDestroy with no AV on both builds
 
-Worker cmwggddr302qfmz1bzmrq12pz (moved claude2 -> claude3, Opus 5.5 high), lead cmwggc20n02d3mz1bg1met74h.
+Worker cmwggddr302qfmz1bzmrq12pz (moved claude2 -> claude3, Opus 5.5 high), lead cmwggc20n02d3mz1bg1met74h. The run
+paused for the LIVING-PC token-leak reboot at 13:56 and resumed after it. Nothing was in flight at the reboot.
 
-Done so far (branch `orch/IMG-5-TEARDOWN-BODIES`):
+**Verdict: GREEN.**
+- 0x00455400 could not be shaped past 94.0%. It runs as a **provisional body** (L-126, `PROVISIONAL.tsv`, equiv NOT-PROVEN),
+  and its callee 0x00489940 runs as a matched body.
+- With `MASHED_ORIG_TOP=1 MASHED_PORTSTATE_IMAGE=1 MASHED_OT_CODEPTR=1`, all 6 image arms run teardown entries 0..8 and
+  reach `WinMain 0x00492370 returned 0`, rc 0, on both builds. The run-45 entry-2 AV is gone.
+- Self-tests: `[OT_CODEPTR] self-test PASS (0 of 335 checks failed)`, image slots 75 written / 0 refused,
+  `[portstate-image] self-test PASS (0 of 8 checks failed)`, `witness PortStateSeed 272/272 PASS`,
+  `[code-trap] self-test PASS (0 of 6 checks failed)`, and on the AUDIOTICK arms `[OT_TIMER] self-test PASS (0 of 8413
+  checks failed)`.
+- **No new init stand-in in entries 3..8.** `0x0045bae0` logs `8 init pointers stored (8 matched, 1 provisional)`, and
+  entries 3..8 log `matched body returned`. **New rows: none.**
+
+### Run 46 knob boots (`D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/boots.sh`, `test-slot` outside with no hub override, `mashed_lock.py run` inside)
+
+| arm | exe | env | rc | end |
+|---|---|---|---|---|
+| def_off | default | DET_FRAMES=3000 | 0 (29.7 s) | knobs off |
+| def_on_img1_cp_trap1 | default | ORIG_TOP + IMAGE + OT_CODEPTR + CODE_TRAP=1, 3000 frames | 0 (39.7 s) | WinMain returned 0 after 3000 frames |
+| ddk_on_img1_cp_trap1 | object | same | 0 (39.3 s) | same |
+| def_on_img1_cp_trap2 | default | same, CODE_TRAP=2 | 0 (27.5 s) | same |
+| ddk_on_img1_cp_trap2 | object | same | 0 (27.2 s) | same |
+| def_aud_img1_cp_trap1 | default | ORIG_TOP + OT_TIMER + OT_AUDIOTICK + IMAGE + OT_CODEPTR + CODE_TRAP=1, 600 frames | 0 (8.0 s) | WinMain returned 0 after 600 frames |
+| ddk_aud_img1_cp_trap1 | object | same | 0 (7.4 s) | same |
+
+- **Entry 2 init, from `def_on_img1_cp_trap1.log`:**
+  - Line 417: `type table entry 2: rva 0x00455400: provisional body returned ..., launcher clone 0x006885e8 = 10ABAC70,
+    missile particle 0x00688418 = 10ABAD50`.
+- **Entry 2 teardown, same log:**
+  - Line 925 is `RpClumpDestroy(0x10ABAC70)`, the clone the init stored at 0x006885e8. In run 45 this call got 0.
+  - Line 937 is `RwGlobals +0x10c free(10ABAD50)`. That is the 0x00489940 object stored at 0x00688418, freed on the
+    0x00489c60 path. In run 45 that path faulted on a null read.
+- **Same sequence on both builds:** from `Calling AppDestroy` to the end, the logs with 8-digit hex masked are identical.
+  The 4 `on_img1` arms all hash `5651aab4` (1027 lines) and the 2 AUDIOTICK arms hash `890b1c0a` (1028 lines).
+- Observed, not analyzed: from the `0x00404820` stand-in line to the end, each image arm logs 286 `RpClumpDestroy`
+  calls, and 130 of them get 0x00000000. This is a count from the log only. Which records they come from, and whether
+  the original passes the same nulls, needs an original-side teardown trace (row below).
+- Row PORT-TOP-AUDIOTICK-IMGTRAP-4568A0: the AUDIOTICK arms with `MASHED_OT_CODEPTR=1` now also reach `WinMain
+  returned 0` (600 frames), with 0 trap reports.
+
+### Run 46 checks
+
+| check | result |
+|---|---|
+| default build (`MASHED_NO_DEPLOY=1`) | `=== Build OK ===`, rva-lint OK (237 known, 0 new), asm-lint OK, portstate-seed OK (272, fnv 0x5ecb7d52) |
+| object build (`MASHED_DDKOBJ=1`, NO_DEPLOY) | `=== Build OK ===`, `[ddkobj] link rc=0`, units 1459, ddk objects 1184 |
+| `ddkobj.py check` | IDENTICAL 1209/1236 (was 1208/1235, +0x00489940), the same 12 DIFFERENT as run 45, not-in-map 15, refusals 4 (wrapper-redefines-globals). 0x00455400 is `skip:provisional`: the object build keeps its VS2022 body, as L-126 (6a) says |
+| `codeptr_image.py` (dry) | 75 bound / 1012 trap, unchanged, so no `--write` was needed |
+| self-tests | listed above, all PASS on both builds |
+| G-CTRL / B / 12x4 captures / menu walk | not run: top-down row, no menu code changed |
+| `original/mashed_image.bin` | absent in the real `original\` (untouched) |
+
+### [UNCERTAIN] claimed from reading, not from a run
+
+- The run-45 byte table shows that 0x00455400's residual writes the same addresses and values per pass
+  (`RESULT_POWERUPINIT-B2.md`). That is static evidence. No replay of this body has been run, so `replay_prov_insitu` is
+  `not run`. Test: suggested new row **PROV-INSITU-455400**, the provisional body replayed inside the original
+  (`re/frida/detorig.py --prov`, the PROV-INSITU harness). Missing: whether 0x00455400 executes inside the replay window.
+- The 130 null `RpClumpDestroy` calls in teardown. Test: suggested new row **IMG-5-TEARDOWN-NULLS**, the same teardown
+  traced on the original side (0x0045b930 entries 0..8), compared with the port's sequence.
+
+### Run 46 raw files (not committed)
+
+sha256 list of every run-46 log, script, build log and exe: `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/sha256.txt`
+(20 files). The two exes:
+
+```
+c5bce6827823795d0c9556161b76ef833bdfc213e30c1a6a06c56eb85539422a  D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/default/mashed_re.exe
+44e3983dd232d55d8a76bc1bb9004fc3352e4f25bc25de4b7f65f81e3e100059  D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/ddkobj/mashed_re_ddk.exe
+```
+
+### Run 46 work log
+
+Changes on branch `orch/IMG-5-TEARDOWN-BODIES`:
 - **Restack:** `orch/IMG-5-TEARDOWN-FAULT` @ 5ba576e3c fast-forwarded onto this branch (`git -c merge.autoStash=false merge
   --ff-only`, it was one commit on top of ab68c1f06). One enqueue now carries both.
 - **Shaping 0x00455400: not reached, 94.0% stays.** 52 source variants and 12 flag or toolchain sets in this row,
@@ -39,17 +112,6 @@ Done so far (branch `orch/IMG-5-TEARDOWN-BODIES`):
   Log: `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/build_ddkobj.log`. Exe:
   `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/run46/ddkobj/mashed_re_ddk.exe`, sha256 44e3983d...e100059.
 
-Next, after the reboot (nothing else is pending):
-1. (done) Object build OK.
-2. Run `py.exe -3.12 re/tools/ddkobj/ddkobj.py check`. Expected: 0x00489940 IDENTICAL, and 0x00455400 is the only new
-   DIFFERENT (the provisional residue).
-3. Knob boots, image ON, through AppDestroy, on both builds, with `test-slot` outside and `mashed_lock.py run --label
-   IMG-5-TEARDOWN-BODIES` inside. Do not set PROYECTOS_TEST_HUB=off: the earlier runs above did. Use the arms
-   `on_img1_cp_trap1` and `aud_img1_cp_trap1` from `D:/MashedWT/IMG-5-TEARDOWN-BODIES_data/boots.sh` on
-   `D:/MashedWT/IMG-5-TEARDOWN-BODIES_root`, plus `def_off`. Record the self-test lines (OT_CODEPTR, portstate-image,
-   code-trap) and whether entries 2..8 of the teardown run with no AV.
-4. Any entry 3..8 that hits another init stand-in becomes its own open row, named in this RESULT.
-5. Write the final verdict, then `roadmap.ps1 set IMG-5-TEARDOWN-BODIES review -Evidence <this file>`.
 
 ## Verdict (run 45): DECISION (all 9 bodies are matched, bound and byte-identical in the object build. The image-ON boot still AVs in teardown, now at entry 2, because entry 2's INIT 0x00455400 is a stand-in)
 
