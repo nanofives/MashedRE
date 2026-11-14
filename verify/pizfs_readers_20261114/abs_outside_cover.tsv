@@ -1,0 +1,89 @@
+CODE	004044a6	value=0090850f	hitbytes@004044a7	anchor=00404320(FUN_00404320)	linear=004044a7 jne 0x40453d	MISDECODE
+CODE	00405ec9	value=009086d8	hitbytes@00405eca	anchor=00405ab0(FUN_00405ab0)	linear=00405eca fadd dword ptr [esi + 0x90]	MISDECODE
+CODE	00405fca	value=008f8a0f	hitbytes@00405fcc	anchor=00405f60(FUN_00405f60)	linear=00405fcc jp 0x406061	MISDECODE
+CODE	0040894f	value=008de906	hitbytes@00408951	anchor=00408610(FUN_00408610)	linear=00408950 mov dword ptr [esi], eax	MISDECODE
+CODE	004121a6	value=00902484	hitbytes@004121a8	anchor=00412190(FUN_00412190)	linear=004121a7 mov dword ptr [esp + 0x90], eax	MISDECODE
+CODE	0041344e	value=00902484	hitbytes@00413450	anchor=00412f30(FUN_00412f30)	linear=0041344f mov eax, dword ptr [esp + 0x90]	MISDECODE
+CODE	00420513	value=00902494	hitbytes@00420515	anchor=00420420(FUN_00420420)	linear=00420514 lea edx, [esp + 0x90]	MISDECODE
+CODE	00422c4b	value=0090248c	hitbytes@00422c4d	anchor=00422ba0(FUN_00422ba0)	linear=00422c4c mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	0042ccc3	value=008e68f8	hitbytes@0042ccc5	anchor=0042c960(FUN_0042c960)	linear=0042ccc4 mov edi, eax	MISDECODE
+CODE	00434898	value=009024b4	hitbytes@0043489a	anchor=00434720(FUN_00434720)	linear=00434899 mov dword ptr [esp + 0x90], esi	MISDECODE
+CODE	004348ab	value=009024b4	hitbytes@004348ad	anchor=00434720(FUN_00434720)	linear=004348ac mov dword ptr [esp + 0x90], esi	MISDECODE
+CODE	0043543a	value=00902484	hitbytes@0043543c	anchor=00434720(FUN_00434720)	linear=0043543b mov eax, dword ptr [esp + 0x90]	MISDECODE
+CODE	00438279	value=00902484	hitbytes@0043827b	anchor=004368e0(FUN_004368e0)	linear=0043827a mov eax, dword ptr [esp + 0x90]	MISDECODE
+CODE	004388d3	value=0090248c	hitbytes@004388d5	anchor=004368e0(FUN_004368e0)	linear=004388d4 mov ecx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0043a11f	value=00902494	hitbytes@0043a121	anchor=00439210(FUN_00439210)	linear=0043a120 mov edx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0043a2e1	value=00902494	hitbytes@0043a2e3	anchor=00439210(FUN_00439210)	linear=0043a2e2 mov edx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0043a4b4	value=00902494	hitbytes@0043a4b6	anchor=00439210(FUN_00439210)	linear=0043a4b5 mov edx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0044c495	value=0090248c	hitbytes@0044c497	anchor=0044c490(FUN_0044c490)	linear=0044c496 mov ecx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0044fa0c	value=0090248c	hitbytes@0044fa0e	anchor=0044f970(after FUN_0044f830 body)	linear=0044fa0d mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	0045a545	value=0090248c	hitbytes@0045a547	anchor=0045a530(FUN_0045a530)	linear=0045a546 mov ecx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0045afd6	value=0090248c	hitbytes@0045afd8	anchor=0045ae80(FUN_0045ae80)	linear=0045afd7 mov ecx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0045b4a9	value=0090248c	hitbytes@0045b4ab	anchor=0045b390(FUN_0045b390)	linear=0045b4aa lea ecx, [esp + 0x90]	MISDECODE
+CODE	0045bd29	value=008f840f	hitbytes@0045bd2c	anchor=0045bba0(FUN_0045bba0)	linear=0045bd2c je 0x45bdc1	MISDECODE
+CODE	00465151	value=008f8c0f	hitbytes@00465153	anchor=00464e10(FUN_00464e10)	linear=00465153 jl 0x4651e8	MISDECODE
+CODE	00469246	value=0090248c	hitbytes@00469248	anchor=00468d80(FUN_00468d80)	linear=00469247 mov ecx, dword ptr [esp + 0x90]	MISDECODE
+CODE	004693c1	value=00902494	hitbytes@004693c3	anchor=00468d80(FUN_00468d80)	linear=004693c2 mov edx, dword ptr [esp + 0x90]	MISDECODE
+CODE	00469ebe	value=0090249c	hitbytes@00469ec0	anchor=00469df0(FUN_00469df0)	linear=00469ebf mov dword ptr [esp + 0x90], ebx	MISDECODE
+CODE	0046dfcc	value=008d8b0f	hitbytes@0046dfce	anchor=0046ddb0(FUN_0046ddb0)	linear=0046dfce jnp 0x46e061	MISDECODE
+CODE	00477956	value=0090840f	hitbytes@00477959	anchor=00477920(FUN_00477920)	linear=00477959 je 0x4779ef	MISDECODE
+CODE	00478808	value=0090248c	hitbytes@0047880a	anchor=00478660(FUN_00478660)	linear=00478809 lea ecx, [esp + 0x90]	MISDECODE
+CODE	0047df1c	value=0090b484	hitbytes@0047df1e	anchor=0047def0(FUN_0047def0)	linear=0047df1d mov dword ptr [esp + esi*4 + 0x90], eax	MISDECODE
+CODE	0047e377	value=00902494	hitbytes@0047e379	anchor=0047def0(FUN_0047def0)	linear=0047e378 mov dword ptr [esp + 0x90], edx	MISDECODE
+CODE	0047e5a5	value=0090248c	hitbytes@0047e5a7	anchor=0047def0(FUN_0047def0)	linear=0047e5a6 mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	0047e766	value=0090248c	hitbytes@0047e768	anchor=0047def0(FUN_0047def0)	linear=0047e767 mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	0047ee94	value=008d8a0f	hitbytes@0047ee96	anchor=0047eb30(FUN_0047eb30)	linear=0047ee96 jp 0x47ef29	MISDECODE
+CODE	0047f16c	value=00902484	hitbytes@0047f16e	anchor=0047eb30(FUN_0047eb30)	linear=0047f16d lea eax, [esp + 0x90]	MISDECODE
+CODE	00487899	value=0090248c	hitbytes@0048789b	anchor=00487280(FUN_00487280)	linear=0048789a mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	00487b93	value=00902484	hitbytes@00487b95	anchor=00487280(FUN_00487280)	linear=00487b94 mov eax, dword ptr [esp + 0x90]	MISDECODE
+CODE	004b5645	value=0090248c	hitbytes@004b5647	anchor=004b55a0(FUN_004b55a0)	linear=004b5646 mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	004b5c9d	value=0090248c	hitbytes@004b5c9f	anchor=004b5af0(FUN_004b5af0)	linear=004b5c9e mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	004c6cc5	value=009004bb	hitbytes@004c6cc6	anchor=004c6ba0(FUN_004c6ba0)	linear=004c6cc6 mov ebx, 0x9004	MISDECODE
+CODE	004d0adc	value=00902484	hitbytes@004d0ade	anchor=004d07b0(FUN_004d07b0)	linear=004d0add mov eax, dword ptr [esp + 0x90]	MISDECODE
+CODE	004d253e	value=009000e3	hitbytes@004d2540	anchor=004d2340(FUN_004d2340)	linear=004d253f and ebx, 0x9000	MISDECODE
+CODE	004d2544	value=009000fb	hitbytes@004d2546	anchor=004d2340(FUN_004d2340)	linear=004d2545 cmp ebx, 0x9000	MISDECODE
+CODE	004d2608	value=009000fb	hitbytes@004d260a	anchor=004d2340(FUN_004d2340)	linear=004d2609 cmp ebx, 0x9000	MISDECODE
+CODE	004d3561	value=009000f9	hitbytes@004d3563	anchor=004d3510(FUN_004d3510)	linear=004d3562 cmp ecx, 0x9000	MISDECODE
+CODE	004d9813	value=008d048d	hitbytes@004d9814	anchor=004d9530(FUN_004d9530)	linear=004d9814 lea eax, [ecx*4]	MISDECODE
+CODE	004d99ff	value=00902484	hitbytes@004d9a01	anchor=004d9530(FUN_004d9530)	linear=004d9a00 mov eax, dword ptr [esp + 0x90]	MISDECODE
+CODE	004dd798	value=009000e1	hitbytes@004dd79a	anchor=004dd2e0(after FUN_004dd150 body)	linear=004dd799 and ecx, 0x9000	MISDECODE
+CODE	004dd79e	value=009000f9	hitbytes@004dd7a0	anchor=004dd2e0(after FUN_004dd150 body)	linear=004dd79f cmp ecx, 0x9000	MISDECODE
+CODE	004df0a0	value=009000e6	hitbytes@004df0a2	anchor=004df030(after FUN_004dee40 body)	linear=004df0a1 and esi, 0x9000	MISDECODE
+CODE	005004b5	value=008f840f	hitbytes@005004b6	anchor=0050042f(FUN_0050042f)	linear=005004b6 je 0x50054b	MISDECODE
+CODE	0050e422	value=008e850f	hitbytes@0050e423	anchor=0050e1dd(FUN_0050e1dd)	linear=0050e423 jne 0x50e4b7	MISDECODE
+CODE	0052c15b	value=00908c8c	hitbytes@0052c15d	anchor=0052bff0(FUN_0052bff0)	linear=0052c15c lea ecx, [esp + ecx*4 + 0x90]	MISDECODE
+CODE	0052c184	value=00900c8c	hitbytes@0052c186	anchor=0052bff0(FUN_0052bff0)	linear=0052c185 mov ecx, dword ptr [esp + ecx + 0x90]	MISDECODE
+CODE	00539116	value=008fe903	hitbytes@00539118	anchor=00538d60(FUN_00538d60)	linear=00539117 mov dword ptr [ebx], eax	MISDECODE
+CODE	005391d2	value=00902484	hitbytes@005391d4	anchor=00538d60(FUN_00538d60)	linear=005391d3 mov dword ptr [esp + 0x90], eax	MISDECODE
+CODE	00539525	value=0090248c	hitbytes@00539527	anchor=00538d60(FUN_00538d60)	linear=00539526 mov ecx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0053b2bd	value=0090248c	hitbytes@0053b2bf	anchor=0053a7a0(FUN_0053a7a0)	linear=0053b2be mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	0053c09e	value=009024bc	hitbytes@0053c0a0	anchor=0053bdf0(FUN_0053bdf0)	linear=0053c09f lea edi, [esp + 0x90]	MISDECODE
+CODE	0053cfc9	value=00902494	hitbytes@0053cfcb	anchor=0053cd80(FUN_0053cd80)	linear=0053cfca mov edx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0054a658	value=00902494	hitbytes@0054a65a	anchor=0054a120(FUN_0054a120)	linear=0054a659 mov dword ptr [esp + 0x90], edx	MISDECODE
+CODE	0054fa80	value=009004bf	hitbytes@0054fa81	anchor=0054f8d0(FUN_0054f8d0)	linear=0054fa81 mov edi, 0x9004	MISDECODE
+CODE	0054fe7e	value=009004bd	hitbytes@0054fe7f	anchor=0054fd60(FUN_0054fd60)	linear=0054fe7f mov ebp, 0x9004	MISDECODE
+CODE	005510d6	value=0090850f	hitbytes@005510d7	anchor=00551090(FUN_00551090)	linear=005510d7 jne 0x55116d	MISDECODE
+CODE	00554f62	value=009024b4	hitbytes@00554f64	anchor=005547f0(after FUN_00554390 body)	linear=00554f63 mov dh, byte ptr [esp + 0x90]	MISDECODE
+CODE	00556099	value=0090249c	hitbytes@0055609b	anchor=00555ff0(FUN_00555ff0)	linear=0055609a mov ebx, dword ptr [esp + 0x90]	MISDECODE
+CODE	005566f8	value=0090249c	hitbytes@005566fa	anchor=00555ff0(FUN_00555ff0)	linear=005566f9 mov ebx, dword ptr [esp + 0x90]	MISDECODE
+CODE	00557767	value=009024a4	hitbytes@00557769	anchor=005572c0(FUN_005572c0)	linear=00557768 mov ah, byte ptr [esp + 0x90]	MISDECODE
+CODE	00558ad7	value=009024ac	hitbytes@00558ad9	anchor=00558860(FUN_00558860)	linear=00558ad8 mov ebp, dword ptr [esp + 0x90]	MISDECODE
+CODE	0055a038	value=008d4c8b	hitbytes@0055a039	anchor=00559ff0(after FUN_00559ee0 body)	linear=0055a039 mov ecx, dword ptr [ebp + ecx*4]	MISDECODE
+CODE	0055d5f4	value=00902494	hitbytes@0055d5f6	anchor=0055cdd0(after FUN_0055cd40 body)	linear=0055d5f5 mov edx, dword ptr [esp + 0x90]	MISDECODE
+CODE	0055db88	value=008ee924	hitbytes@0055db89	anchor=0055cdd0(after FUN_0055cd40 body)	linear=0055db86 mov dword ptr [esp + edi*4 + 0x24], eax	MISDECODE
+CODE	00560ccf	value=0090248c	hitbytes@00560cd1	anchor=00560260(FUN_00560260)	linear=00560cd0 mov dword ptr [esp + 0x90], ecx	MISDECODE
+CODE	005611f0	value=0090248c	hitbytes@005611f2	anchor=00561040(FUN_00561040)	linear=005611f1 lea ecx, [esp + 0x90]	MISDECODE
+CODE	005634dd	value=008e0fc0	hitbytes@005634df	anchor=00563000(after FUN_00562fd0 body)	linear=005634de test eax, eax	MISDECODE
+CODE	0056a9e5	value=0090248c	hitbytes@0056a9e7	anchor=0056a7a0(FUN_0056a7a0)	linear=0056a9e6 lea ecx, [esp + 0x90]	MISDECODE
+CODE	0056ceb1	value=009024bc	hitbytes@0056ceb3	anchor=0056caa0(FUN_0056caa0)	linear=0056ceb2 lea edi, [esp + 0x90]	MISDECODE
+CODE	0056e23b	value=00902494	hitbytes@0056e23c	anchor=0056dd40(FUN_0056dd40)	linear=0056e23a unpckhps xmm2, xmmword ptr [esp + 0x90]	MISDECODE
+CODE	0056e2e1	value=0090249c	hitbytes@0056e2e2	anchor=0056dd40(FUN_0056dd40)	linear=0056e2e0 unpckhps xmm3, xmmword ptr [esp + 0x90]	MISDECODE
+CODE	0056e700	value=00902494	hitbytes@0056e702	anchor=0056e680(FUN_0056e680)	linear=0056e701 mov edx, dword ptr [esp + 0x90]	MISDECODE
+CODE	00570131	value=0090248c	hitbytes@00570133	anchor=00570090(FUN_00570090)	linear=00570132 mov ecx, dword ptr [esp + 0x90]	MISDECODE
+CODE	005710db	value=00908dd8	hitbytes@005710dc	anchor=00570090(FUN_00570090)	linear=005710dc fmul dword ptr [ebp + 0x90]	MISDECODE
+CODE	00572a37	value=00902494	hitbytes@00572a39	anchor=005729a0(FUN_005729a0)	linear=00572a38 lea edx, [esp + 0x90]	MISDECODE
+CODE	00572e6d	value=00902494	hitbytes@00572e6f	anchor=005729a0(FUN_005729a0)	linear=00572e6e mov dword ptr [esp + 0x90], edx	MISDECODE
+CODE	005781a3	value=008f8a0f	hitbytes@005781a5	anchor=00577ec0(FUN_00577ec0)	linear=005781a5 jp 0x57823a	MISDECODE
+CODE	005868d8	value=008dc2e8	hitbytes@005868d9	anchor=005868a0(FUN_005868a0)	linear=005868d9 call 0x58f6a0	MISDECODE
+CODE	005afd94	value=009024bc	hitbytes@005afd96	anchor=005afcf0(FUN_005afcf0)	linear=005afd95 mov dword ptr [esp + 0x90], edi	MISDECODE
+CODE	005c867d	value=0090248c	hitbytes@005c867f	anchor=005c8390(after FUN_005c8120 body)	linear=005c867e mov ecx, dword ptr [esp + 0x90]	MISDECODE

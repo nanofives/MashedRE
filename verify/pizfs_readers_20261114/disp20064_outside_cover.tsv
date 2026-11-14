@@ -1,0 +1,9 @@
+CODE	0040dd58	value=00020063	hitbytes@0040dd59	anchor=0040dcb0(FUN_0040dcb0)	linear=0040dd55 mov dword ptr [0x63b90c], 2	MISDECODE
+CODE	0040dda6	value=00020063	hitbytes@0040dda7	anchor=0040dd80(after FUN_0040dd60 body)	linear=0040dda3 mov dword ptr [0x63ba8c], 2	MISDECODE
+CODE	004100e0	value=00020063	hitbytes@004100e1	anchor=0040fe6d(after FUN_0040fc00 body)	linear=004100dd mov dword ptr [0x63ba8c], 2	MISDECODE
+CODE	004636b0	value=00020069	hitbytes@004636b1	anchor=00463640(FUN_00463640)	linear=004636ad mov dword ptr [0x69055c], 2	MISDECODE
+CODE	004636c6	value=00020069	hitbytes@004636c7	anchor=00463640(FUN_00463640)	linear=004636c3 mov dword ptr [0x69055c], 2	MISDECODE
+CODE	0046381c	value=00020069	hitbytes@0046381d	anchor=00463640(FUN_00463640)	linear=00463818 mov dword ptr [esi*4 + 0x69054c], 2	MISDECODE
+CODE	004b00d5	value=00020077	hitbytes@004b00d7	anchor=004b008f(___crtLCMapStringA)	linear=004b00d3 mov dword ptr [0x773dc0], 2	MISDECODE
+CODE	004b21ed	value=00020077	hitbytes@004b21ee	anchor=004b21a8(FUN_004b21a8)	linear=004b21ea mov dword ptr [0x773dfc], 2	MISDECODE
+CODE	004b224c	value=00020077	hitbytes@004b224d	anchor=004b222e(FUN_004b222e)	linear=004b2249 mov dword ptr [0x773dfc], 2	MISDECODE
