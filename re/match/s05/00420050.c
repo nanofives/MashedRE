@@ -1,7 +1,8 @@
 // FLAGS: /O2 /GS /Ob1
 /* 0x00420050 FUN_00420050 (474 B): best 99.3% exact (regs 99.3%, ops 99.3%), 151/151 ins. Raw g2s 46.4%.
    This file also holds the three register-convention callees as statics defined before the caller (pilot
-   finding 1): 0x0041f8f0 (record in ESI, 100%, byte-identical), 0x0041faf0 (ESI + cam, 90.8%), 0x0041fcc0
+   finding 1): 0x0041f8f0 (record in ESI, 100%, byte-identical), 0x0041faf0 (ESI + cam, 100%, byte-identical
+   since MATCH-NM-41FAF0, same body as re/match/s05/0041faf0.c), 0x0041fcc0
    (EDI + cam, 98.9%). With them static here the caller's ESI/EDI handling (lazy push edi / pop edi around the
    0x0041faf0..0x004c1a00 range) comes out as the original.
    Moved it: record array DAT_0063d9e0 of 0x2ac-byte CarRec; FUN_00426060 takes no argument and FUN_004e4320 /
@@ -177,9 +178,9 @@ static void FUN_0041faf0(CarRec *r, char *cam)
   if (r->x294 & 0x40) {
     FUN_004c52f0(&a, FUN_004c0ed0(*(char **)(r->obj[0x19] + 4)), 0);
     FUN_004c52f0(&b, FUN_004c0ed0(*(char **)(r->obj[0x1c] + 4)), 0);
-    d.x = a.pos.x - b.pos.x;
+    d.x = (a.pos.x - b.pos.x);
     d.y = a.pos.y - b.pos.y;
-    d.z = a.pos.z - b.pos.z;
+    d.z = (float)((double)a.pos.z - b.pos.z);
     FUN_004c4d20(&b, &axis, 90.0f, 1);
     b.pos.x += b.up.x * (s.y * 0.5f);
     b.pos.y += (s.y * 0.5f) * b.up.y;
@@ -190,7 +191,7 @@ static void FUN_0041faf0(CarRec *r, char *cam)
     FUN_004c5010(&b, &s, 1);
     FUN_004c45f0(&b);
     fr = *(RwFrame **)(cam + 4);
-    dot = fr->m.at.x * b.at.x + fr->m.at.y * b.at.y + fr->m.at.z * b.at.z;
+    dot = (float)((double)fr->m.at.z * b.at.z + (double)fr->m.at.x * b.at.x + (double)fr->m.at.y * b.at.y);
     if (0.0f >= dot)
       dot = 0.0f;
     col.a = (unsigned char)(dot * 32.0f);

@@ -1,0 +1,12 @@
+0x0041f8f0 _FUN_0041f8f0: 100.0% (regs 100.0%, ops 100.0%)  143/143 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 500 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0041faf0 _FUN_0041faf0: 100.0% (regs 100.0%, ops 100.0%)  119/119 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 458 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0041fcc0 _FUN_0041fcc0: 98.9% (regs 98.9%, ops 98.9%)  92/92 ins  flags=/O2 /GS /Ob1 tc=ddk
+   ! pop esi                                      | 
+   !                                              | pop esi
+   bytes: 329 B whole symbol, 7 differing unmasked bytes (first at +0xf1)
+0x00420050 _FUN_00420050: 99.3% (regs 99.3%, ops 99.3%)  151/151 ins  flags=/O2 /GS /Ob1 tc=ddk
+   !                                              | fmul dword ptr [esi + 0x284]
+   ! fmul dword ptr [esi + 0x284]                 | 
+   bytes: 474 B whole symbol, 9 differing unmasked bytes (first at +0xb4)

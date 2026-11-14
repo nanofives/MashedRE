@@ -1,0 +1,92 @@
+0x0041fcc0  sub esp, 0x68
+0x0041fcc3  mov eax, dword ptr [edi + 0x268]
+0x0041fcc9  mov byte ptr [esp], 0
+0x0041fcce  mov byte ptr [esp + 1], 0
+0x0041fcd3  mov byte ptr [esp + 2], 0
+0x0041fcd8  mov byte ptr [esp + 3], 0xff
+0x0041fcdd  mov dword ptr [esp + 4], 0x3f800000
+0x0041fce5  mov dword ptr [esp + 8], 0
+0x0041fced  mov dword ptr [esp + 0xc], 0
+0x0041fcf5  mov ecx, dword ptr [eax + 0x80]
+0x0041fcfb  mov eax, 0x2aaaaaab
+0x0041fd00  imul ecx
+0x0041fd02  mov ecx, edx
+0x0041fd04  shr ecx, 0x1f
+0x0041fd07  add edx, ecx
+0x0041fd09  lea eax, [edx + edx*2]
+0x0041fd0c  shl eax, 2
+0x0041fd0f  lea edx, [eax + 0x5f5fe8]
+0x0041fd15  mov ecx, dword ptr [edx]
+0x0041fd17  mov dword ptr [esp + 0x1c], ecx
+0x0041fd1b  mov ecx, dword ptr [edx + 4]
+0x0041fd1e  mov edx, dword ptr [edx + 8]
+0x0041fd21  lea eax, [eax + 0x5f6088]
+0x0041fd27  mov dword ptr [esp + 0x20], ecx
+0x0041fd2b  mov ecx, dword ptr [eax]
+0x0041fd2d  mov dword ptr [esp + 0x24], edx
+0x0041fd31  mov edx, dword ptr [eax + 4]
+0x0041fd34  mov eax, dword ptr [eax + 8]
+0x0041fd37  push esi
+0x0041fd38  mov dword ptr [esp + 0x14], ecx
+0x0041fd3c  mov ecx, dword ptr [edi + 0x26c]
+0x0041fd42  mov dword ptr [esp + 0x18], edx
+0x0041fd46  mov dword ptr [esp + 0x1c], eax
+0x0041fd4a  mov esi, dword ptr [ecx + 4]
+0x0041fd4d  push 0
+0x0041fd4f  add esi, 0x10
+0x0041fd52  lea edx, [esp + 0x30]
+0x0041fd56  push esi
+0x0041fd57  push edx
+0x0041fd58  call 0x4c52f0
+0x0041fd5d  push 1
+0x0041fd5f  push 0x42b40000
+0x0041fd64  lea eax, [esp + 0x1c]
+0x0041fd68  push eax
+0x0041fd69  lea ecx, [esp + 0x44]
+0x0041fd6d  push ecx
+0x0041fd6e  call 0x4c4d20
+0x0041fd73  push 1
+0x0041fd75  lea edx, [esp + 0x34]
+0x0041fd79  push edx
+0x0041fd7a  lea eax, [esp + 0x50]
+0x0041fd7e  push eax
+0x0041fd7f  call 0x4c51a0
+0x0041fd84  push 1
+0x0041fd86  lea ecx, [esp + 0x4c]
+0x0041fd8a  push ecx
+0x0041fd8b  lea edx, [esp + 0x5c]
+0x0041fd8f  push edx
+0x0041fd90  call 0x4c5010
+0x0041fd95  lea eax, [esp + 0x60]
+0x0041fd99  push eax
+0x0041fd9a  call 0x4c45f0
+0x0041fd9f  fld dword ptr [esi + 0x10]
+0x0041fda2  fmul dword ptr [0x5d757c]
+0x0041fda8  add esp, 0x38
+0x0041fdab  fadd dword ptr [esi + 0x14]
+0x0041fdae  fld dword ptr [esi + 0x18]
+0x0041fdb1  fmul dword ptr [0x5d757c]
+0x0041fdb7  faddp st(1)
+0x0041fdb9  fld dword ptr [0x5d757c]
+0x0041fdbf  pop esi
+0x0041fdc0  fcomp st(1)
+0x0041fdc2  fnstsw ax
+0x0041fdc4  test ah, 1
+0x0041fdc7  jne 0x41fdd1
+0x0041fdc9  fstp st(0)
+0x0041fdcb  fld dword ptr [0x5d757c]
+0x0041fdd1  fmul dword ptr [edi + 0x288]
+0x0041fdd7  fmul dword ptr [0x5cd04c]
+0x0041fddd  call 0x4a2c48
+0x0041fde2  lea ecx, [esp]
+0x0041fde6  push ecx
+0x0041fde7  mov byte ptr [esp + 7], al
+0x0041fdeb  call 0x4769f0
+0x0041fdf0  lea edx, [esp + 0x2c]
+0x0041fdf4  push edx
+0x0041fdf5  call 0x476a10
+0x0041fdfa  mov eax, dword ptr [0x63e4a0]
+0x0041fdff  push eax
+0x0041fe00  call 0x476d00
+0x0041fe05  add esp, 0x74
+0x0041fe08  ret 

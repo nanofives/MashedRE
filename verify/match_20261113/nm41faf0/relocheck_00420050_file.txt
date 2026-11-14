@@ -1,0 +1,4 @@
+0x0041f8f0	OK	checked=26	unchecked=0	00420050.c	
+0x0041faf0	OK	checked=18	unchecked=1	00420050.c	  unchecked: __ftol
+0x0041fcc0	BAD	checked=16	unchecked=1	00420050.c	+0xf4 const __real@00000000: ours 00000000 vs orig@0xde005d75 3c6f75747369646520696d6167653e; +0xfc const __real@00000000: ours 00000000 vs orig@0x5e005d75 3c6f75747369646520696d6167653e  unchecked: __ftol
+0x00420050	OK	checked=23	unchecked=0	00420050.c	
