@@ -400,3 +400,6 @@ va	count	stride	width	action	value	writer	readers	note
 0x006fe7dc	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370 (rep movsd of an RwMatrix into the particle ring 0x006fe790)	-	RwMatrix pad m[7], stale stack
 0x006fe7ec	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[11], held code address 0x004671a5 (run n3_w2)
 0x006fe7fc	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[15], stale stack
+0x008ad9c0	1	0	131072	MASK:pizfs	-	0x004b69a3/0x004b69b4 FUN_004b6940, 0x004b6b83/0x004b6b88 FUN_004b6b20 (rep movsd, dst 0x008ad9c0, 0x8000 dwords)	0x004b6db2 FUN_004b6cd0 (lea esi -> rep movsd/movsb 0x004b6dc0/0x004b6dc7 into the caller buffer)	piz chunk cache 0x008ad9c0..0x008cd9bf (0x20000 B). Sole code reader 0x004b6db2 by the static scan verify/replayoracle_20261113/oraclegate/pizfs_refscan.txt (RESULT_RO-ORACLE-GATE run 46)
+0x008ad868	1	0	4	MASK:pizfs	-	0x004b6ce0 FUN_004b6cd0	0x004b6cd0 FUN_004b6cd0	FUN_004b6cd0 counter, no other code reference (pizfs_refscan.txt)
+0x008ad878	1	0	20	MASK:pizfs	-	0x004b6d7d 0x004b6d82 0x004b6df2 0x004b6df7 0x004b6e12 FUN_004b6cd0	0x004b6d6c 0x004b6d72 0x004b6de1 0x004b6de7 0x004b6e04 FUN_004b6cd0	FUN_004b6cd0 counters 0x008ad878 0x008ad87c 0x008ad880 0x008ad884 0x008ad888, no other code reference (pizfs_refscan.txt)

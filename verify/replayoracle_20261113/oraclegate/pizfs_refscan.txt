@@ -1,0 +1,46 @@
+exe C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe.unpatched
+.text	0x004b688a	push 0x8ad8a0	imm	0x008ad8a0	-
+.text	0x004b68f0	mov eax, dword ptr [0x8ad9a8]	mem	0x008ad9a8	read
+.text	0x004b6915	mov eax, dword ptr [0x8ad9a8]	mem	0x008ad9a8	read
+.text	0x004b6982	push 0x8ad8a0	imm	0x008ad8a0	-
+.text	0x004b69a3	mov edi, 0x8ad9c0	imm	0x008ad9c0	-
+.text	0x004b69b6	mov edx, 0x8ad8a0	imm	0x008ad8a0	-
+.text	0x004b69df	push 0x8ad8a0	imm	0x008ad8a0	-
+.text	0x004b6a33	mov dword ptr [0x8ad9a0], ecx	mem	0x008ad9a0	write
+.text	0x004b6a39	mov dword ptr [0x8ad9ac], eax	mem	0x008ad9ac	write
+.text	0x004b6a54	mov dword ptr [0x8ad9a4], edx	mem	0x008ad9a4	write
+.text	0x004b6a5a	mov dword ptr [0x8ad9a8], ebp	mem	0x008ad9a8	write
+.text	0x004b6b83	mov edi, 0x8ad9c0	imm	0x008ad9c0	-
+.text	0x004b6ba0	mov ecx, dword ptr [0x8ad860]	mem	0x008ad860	read
+.text	0x004b6ba6	mov eax, dword ptr [0x8ad9a8]	mem	0x008ad9a8	read
+.text	0x004b6bb3	mov dword ptr [0x8ad860], ecx	mem	0x008ad860	write
+.text	0x004b6bd2	mov eax, dword ptr [0x8ad9a8]	mem	0x008ad9a8	read
+.text	0x004b6c00	mov eax, dword ptr [0x8ad864]	mem	0x008ad864	read
+.text	0x004b6c27	mov eax, dword ptr [0x8ad864]	mem	0x008ad864	read
+.text	0x004b6c38	inc dword ptr [0x8ad864]	mem	0x008ad864	rw
+.text	0x004b6c51	mov eax, dword ptr [0x8ad9a8]	mem	0x008ad9a8	read
+.text	0x004b6c6f	mov eax, dword ptr [0x8ad9a8]	mem	0x008ad9a8	read
+.text	0x004b6cd0	mov ecx, dword ptr [0x8ad868]	mem	0x008ad868	read
+.text	0x004b6ce0	mov dword ptr [0x8ad868], ecx	mem	0x008ad868	write
+.text	0x004b6d6c	mov ecx, dword ptr [0x8ad878]	mem	0x008ad878	read
+.text	0x004b6d72	mov eax, dword ptr [0x8ad87c]	mem	0x008ad87c	read
+.text	0x004b6d7d	mov dword ptr [0x8ad87c], eax	mem	0x008ad87c	write
+.text	0x004b6d82	mov dword ptr [0x8ad878], ecx	mem	0x008ad878	write
+.text	0x004b6db2	lea esi, [eax + esi + 0x8ad9c0]	mem+reg	0x008ad9c0	read
+.text	0x004b6de1	mov ecx, dword ptr [0x8ad880]	mem	0x008ad880	read
+.text	0x004b6de7	mov eax, dword ptr [0x8ad884]	mem	0x008ad884	read
+.text	0x004b6df2	mov dword ptr [0x8ad884], eax	mem	0x008ad884	write
+.text	0x004b6df7	mov dword ptr [0x8ad880], ecx	mem	0x008ad880	write
+.text	0x004b6e04	mov edi, dword ptr [0x8ad888]	mem	0x008ad888	read
+.text	0x004b6e12	mov dword ptr [0x8ad888], edi	mem	0x008ad888	write
+.text	0x004b6ed0	mov edx, dword ptr [0x8ad86c]	mem	0x008ad86c	read
+.text	0x004b6ee1	mov dword ptr [0x8ad86c], edx	mem	0x008ad86c	write
+.text	0x004b6f60	inc dword ptr [0x8ad870]	mem	0x008ad870	rw
+.text	0x004b6f90	mov ecx, dword ptr [0x8ad874]	mem	0x008ad874	read
+.text	0x004b6f9b	mov dword ptr [0x8ad874], ecx	mem	0x008ad874	write
+.data	0x0061d05c	dword 0x008b0a07	data-ptr	0x008b0a07	-
+.data	0x0061d474	dword 0x008c0045	data-ptr	0x008c0045	-
+.data	0x0061eeec	dword 0x008c0077	data-ptr	0x008c0077	-
+.data	0x0061eef0	dword 0x008c007c	data-ptr	0x008c007c	-
+.data	0x0061ef08	dword 0x008c007c	data-ptr	0x008c007c	-
+.data	0x0061f018	dword 0x008c0124	data-ptr	0x008c0124	-

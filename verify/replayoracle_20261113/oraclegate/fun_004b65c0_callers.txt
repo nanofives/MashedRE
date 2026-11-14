@@ -1,0 +1,3 @@
+0x4b65c0 rel32 callers ['0x495312 call'] abs dword refs []
+0x4952f0 rel32 callers ['0x40286f call', '0x402971 call', '0x4029ad call', '0x4029df call', '0x40795d call', '0x40977a call', '0x40bc96 call', '0x40cf0d call', '0x40d230 call', '0x423618 call', '0x426334 jmp', '0x42643e call', '0x426615 call', '0x426f81 call'] abs dword refs []
+0x005cfe94: b'Closing piz file %s\n'

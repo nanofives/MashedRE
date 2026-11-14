@@ -24,14 +24,13 @@ ROOT = Path("D:/MashedWT/RWC-THUNK-BIND-AUDIT_root")
 def main():
     data = Path(sys.argv[1])
     arms = [a.split(":", 1) for a in sys.argv[2:]]
-    env = dict(os.environ, PROYECTOS_TEST_HUB="off")
     n = len(arms)
     for i, (name, exe) in enumerate(arms, 1):
         out = data / f"{i:02d}_{name}"
         cmd = ["py", "-3.12", str(SLOT), "py", "-3.12", str(LOCK), "run", "--label", "RWC-THUNK-BIND-AUDIT", "--",
                "py", "-3.12", str(RUN13), "run", "--exe", exe, "--root", str(ROOT), "--out", str(out),
                "--tracks", "12", "--attempts", "1"]
-        rc = subprocess.call(cmd, env=env)
+        rc = subprocess.call(cmd)
         sc = subprocess.run(["py", "-3.12", str(RUN13), "score", "--out", str(out), "--cite", str(CITE), "--tracks", "12"],
                             capture_output=True, text=True)
         (out / "tracks_score.txt").write_text(sc.stdout + sc.stderr)

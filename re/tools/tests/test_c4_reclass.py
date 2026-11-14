@@ -123,7 +123,7 @@ def test_match_refusals(mod, tmp_path, capsys, ev, needle):
 def test_toolchain_must_be_ddk(mod, tmp_path, capsys):
     mod._evals["src/00426070.c"]["_toolchain"] = "vc19"
     batch(mod, tmp_path, [("0x00426070", "match", "src/00426070.c")])
-    assert "is not the recorded compiler" in capsys.readouterr().out
+    assert "is not a recorded compiler" in capsys.readouterr().out
 
 
 def test_second_apply_is_a_noop(mod, tmp_path, capsys):

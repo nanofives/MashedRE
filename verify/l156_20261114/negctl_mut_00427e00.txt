@@ -1,0 +1,3 @@
+0x00427e00	cw=0x037f	ignore_ecx_556ca0=0	runs=10	same=0	differs=10	inconclusive=0	calls(orig)=95
+  first non-same: differs: call 8 to 0x556ca0 arg 3: ours ('stk', 'b', '371d40c14c7a813f') | orig ('stk', 'b', '371d40c163ae813f')
+  vector args: ['0x9b81', '0x41a32853', '0xc2075e25', '0xd5f4b3b2', '0x3fcb7cc2', '0x1']

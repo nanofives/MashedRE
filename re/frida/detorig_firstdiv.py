@@ -201,6 +201,7 @@ class Statics:
 class ExeMap:
     def __init__(self, path):
         self.addr, self.name = [], []
+        self.lo = self.hi = None   # no map: in_image() is False (RO-ORACLE-GATE run 46, AttributeError without --exe-map)
         if not path or not Path(path).exists():
             return
         import re

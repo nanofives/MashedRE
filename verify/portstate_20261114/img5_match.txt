@@ -1,0 +1,22 @@
+0x004530b0 _FUN_004530b0: 100.0% (regs 100.0%, ops 100.0%)  22/22 ins  flags=/O2 /GS tc=ddk
+0x004530b0	OK	checked=5	unchecked=0	004530b0.c	
+0x00454af0 _FUN_00454af0: 100.0% (regs 100.0%, ops 100.0%)  17/17 ins  flags=/O2 /GS tc=ddk
+0x00454af0	OK	checked=6	unchecked=0	00454af0.c	
+0x004555d0 _FUN_004555d0: 100.0% (regs 100.0%, ops 100.0%)  22/22 ins  flags=/O2 /GS tc=ddk
+0x004555d0	OK	checked=5	unchecked=0	004555d0.c	
+0x00456ca0 _FUN_00456ca0: 100.0% (regs 100.0%, ops 100.0%)  16/16 ins  flags=/O2 /GS tc=ddk
+0x00456ca0	OK	checked=6	unchecked=0	00456ca0.c	
+0x00457b10 _FUN_00457b10: 100.0% (regs 100.0%, ops 100.0%)  28/28 ins  flags=/O2 /GS tc=ddk
+0x00457b10	OK	checked=10	unchecked=0	00457b10.c	
+0x0045a790 _FUN_0045a790: 100.0% (regs 100.0%, ops 100.0%)  14/14 ins  flags=/O2 /GS tc=ddk
+0x0045a790	OK	checked=3	unchecked=0	0045a790.c	
+0x0045b2d0 _FUN_0045b2d0: 100.0% (regs 100.0%, ops 100.0%)  15/15 ins  flags=/O2 /GS tc=ddk
+0x0045b2d0	OK	checked=4	unchecked=0	0045b2d0.c	
+0x004568a0 _FUN_004568a0: 100.0% (regs 100.0%, ops 100.0%)  14/14 ins  flags=/O2 /GS /Ob1 tc=ddk
+0x004568a0	OK	checked=4	unchecked=0	004568a0.c	
+0x004540c0 _FUN_004540c0: 100.0% (regs 100.0%, ops 100.0%)  35/35 ins  flags=/O2 /GS /Ob1 tc=ddk
+0x004540c0	OK	checked=11	unchecked=0	004540c0.c	
+0x00489c60 _FUN_00489c60: 100.0% (regs 100.0%, ops 100.0%)  25/25 ins  flags=/O2 /GS /Ob1 tc=ddk
+0x00489c60	OK	checked=5	unchecked=0	00489c60.c	
+0x004898d0 _FUN_004898d0: 100.0% (regs 100.0%, ops 100.0%)  13/13 ins  flags=/O2 /GS /Ob1 tc=ddk
+0x004898d0	OK	checked=2	unchecked=0	004898d0.c	
