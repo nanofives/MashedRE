@@ -32,6 +32,14 @@ batch     Reads a TSV with columns `rva`, `route`, `evidence` (header required; 
           is the row's `// MATCH:` symbol, the others `// HIDDEN:` functions of the same source, and every member must
           be insn 100% at its size, whole-symbol BYTE-IDENTICAL and relocheck OK. Rows not in that table take the
           default path unchanged.
+          Optional 5th column `lever`: when --apply promotes the row, that tag (e.g. `lever=volatile`) is appended to
+          the notes in the same write (skipped when the notes already carry it). No other behaviour changes.
+tag       c4_reclass.py tag --tsv <file> [--apply] [--strict] [--result <RESULT.md>] [--hooks <copy>] [--changelog <copy>]
+          Notes-only tag for an EXISTING row (any confidence, e.g. lever=volatile on a row already C4). TSV header
+          `rva`, `tag` required. Dry run by default (`TAG` / `SKIP` / `REFUSED` per row). A row with no hooks.csv row is
+          REFUSED; a tag already present as a whole token in the notes is SKIP (idempotent). --apply rewrites only the
+          tagged lines (confidence and status untouched) and prepends ONE CHANGELOG line for the run. --strict writes
+          nothing if any row is refused. --hooks / --changelog point at copies for a rehearsal.
 make-tsv  Turns MATCH slice results.tsv files into a batch TSV: every row whose recorded score is 100 becomes
           `rva  match  <source>`. The batch gate still recompiles each one.
 
@@ -117,6 +125,17 @@ def prepend_changelog(ctext, entries):
         sys.exit("REFUSED: CHANGELOG marker line missing")
     cl[idx + 1:idx + 1] = entries
     return ceol.join(cl)
+
+
+def has_tag(notes, tag):
+    """A tag is present when it appears as a whole token (delimited by start/end, space, `|`, `;`, `,`)."""
+    return re.search(r"(?:^|[\s|;,])" + re.escape(tag) + r"(?=$|[\s|;,])", notes) is not None
+
+
+def add_tag(notes, tag):
+    if has_tag(notes, tag):
+        return notes
+    return (notes + " | " if notes else "") + tag
 
 
 def load_tsv(path):
@@ -488,6 +507,9 @@ def cmd_batch(a):
         frag = f"{date} C4 by route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): c4={route}; {note}; {res}"
         r[col["confidence"]] = "C4"
         r[col["notes"]] = (r[col["notes"]] + " | " if r[col["notes"]] else "") + frag
+        lever = (b.get("lever") or "").strip()      # optional 5th column: a notes tag added in the same transaction
+        if lever:
+            r[col["notes"]] = add_tag(r[col["notes"]], lever)
         lines[index[rva]] = dump_line(r)
         why = {"match": "byte-identical + relocheck OK", "libid": "library identity"}.get(route, "replay IDENTICAL-FOR-N, JMP live") + f", {evid}"
         log.append(f"{date}  0x{rva}  {r[col['name']]}  {old}->C4  route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): {why}; evidence: {res}")
@@ -512,6 +534,68 @@ def cmd_batch(a):
     write_raw(HOOKS, eol.join(lines))
     write_raw(CHANGELOG, prepend_changelog(read_raw(CHANGELOG), log))
     print(f"wrote hooks.csv ({npass} rows -> C4) and {len(log)} CHANGELOG lines")
+    return 0
+
+
+def cmd_tag(a):
+    """Notes-only tag operation: append `tag` to the notes of an existing hooks.csv row if absent. Touches only that
+    row's line (key-merge friendly), changes no confidence or status, writes one CHANGELOG line per run."""
+    global HOOKS, CHANGELOG
+    if a.hooks:
+        HOOKS = pathlib.Path(a.hooks)
+    if a.changelog:
+        CHANGELOG = pathlib.Path(a.changelog)
+    rows = load_tsv(pathlib.Path(a.tsv))
+    if not rows or not {"rva", "tag"} <= set(rows[0]):
+        sys.exit("REFUSED: tag TSV needs a header with columns rva, tag")
+    lines, col, index, eol = load_hooks(read_raw(HOOKS))
+    date = a.date or datetime.date.today().isoformat()
+    seen, would, nref, nskip, total, changed = set(), 0, 0, 0, len(rows), {}
+    for k, t in enumerate(rows, 1):
+        tag = (t["tag"] or "").strip()
+        try:
+            rva = norm_rva(t["rva"])
+        except ValueError as e:
+            verdict, detail, rva = "REFUSED", str(e), t["rva"]
+        else:
+            ri = index.get(rva)
+            if not tag or re.search(r"[\r\n\t]", tag):
+                verdict, detail = "REFUSED", "empty tag or tag with a control character"
+            elif ri is None:
+                verdict, detail = "REFUSED", "no hooks.csv row"
+            elif (rva, tag) in seen:
+                verdict, detail = "REFUSED", "duplicate rva+tag in the TSV"
+            else:
+                r = parse_line(lines[ri], col)
+                if has_tag(r[col["notes"]], tag):
+                    verdict, detail = "SKIP", f"{tag} already in notes (no write)"
+                else:
+                    verdict, detail = "TAG", f"would append {tag}" if not a.apply else f"appended {tag}"
+                    r[col["notes"]] = add_tag(r[col["notes"]], tag)
+                    lines[ri] = dump_line(r)
+                    changed.setdefault(rva, []).append((tag, r[col["name"]]))
+        seen.add((rva, tag))
+        print(f"[{k}/{total}] 0x{rva} tag {verdict} {detail}", flush=True)
+        would += verdict == "TAG"
+        nref += verdict == "REFUSED"
+        nskip += verdict == "SKIP"
+    print(f"tag: {would} {'tagged' if a.apply else 'would-tag'}, {nref} refused, {nskip} skipped (already tagged), {total} rows")
+    if not a.apply:
+        print("dry run: nothing written")
+        return 0
+    if a.strict and nref:
+        print(f"--strict: {nref} refused rows, nothing written")
+        return 1
+    if not would:
+        print("nothing to write")
+        return 0
+    res = f"; {a.result}" if a.result else ""
+    summary = ", ".join(sorted({tg for v in changed.values() for tg, _ in v}))
+    rvas = " ".join(f"0x{r}" for r in sorted(changed))
+    entry = f"{date}  tag  {would} hooks.csv rows  notes-only tag {summary} (c4_reclass tag): {rvas}{res}"
+    write_raw(HOOKS, eol.join(lines))
+    write_raw(CHANGELOG, prepend_changelog(read_raw(CHANGELOG), [entry]))
+    print(f"wrote hooks.csv ({would} rows tagged) and 1 CHANGELOG line")
     return 0
 
 
@@ -549,8 +633,16 @@ def main(argv=None):
     m = sub.add_parser("make-tsv")
     m.add_argument("--results", nargs="+", required=True)
     m.add_argument("--out", required=True)
+    t = sub.add_parser("tag")
+    t.add_argument("--tsv", required=True)
+    t.add_argument("--apply", action="store_true")
+    t.add_argument("--strict", action="store_true")
+    t.add_argument("--result")
+    t.add_argument("--date")
+    t.add_argument("--hooks", help="hooks.csv to edit instead of the repo's (rehearsal on a copy)")
+    t.add_argument("--changelog", help="CHANGELOG.md to edit instead of the repo's (rehearsal on a copy)")
     a = ap.parse_args(argv)
-    return cmd_batch(a) if a.cmd == "batch" else cmd_make_tsv(a)
+    return {"batch": cmd_batch, "tag": cmd_tag}.get(a.cmd, cmd_make_tsv)(a)
 
 
 if __name__ == "__main__":
