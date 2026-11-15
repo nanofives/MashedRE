@@ -174,6 +174,23 @@ def test_references():
     assert not bad, bad
 
 
+def test_indirect_callers():
+    """EQUIV-CALLER-0045AC2A: 0x0045ac20 has no direct caller; its ret hands EAX to the table call at 0x0045b9e2."""
+    assert equiv.callers(0x0045ac20) == []
+    assert equiv.indirect_sites(0x0045ac20) == [(0x0045b9e2, 2)]
+    assert equiv.caller_reads(0x0045ac2a, "eax") == "ignores"
+    saved = dict(equiv.INDIRECT_CALLERS[0x0045ac20]["routes"][0])
+    try:                                                # a wrong slot is refused, not trusted
+        equiv.INDIRECT_CALLERS[0x0045ac20]["routes"][0]["slot"] = 0x005f9ab8
+        try:
+            equiv.indirect_sites(0x0045ac20)
+            raise AssertionError("bad slot accepted")
+        except ValueError:
+            pass
+    finally:
+        equiv.INDIRECT_CALLERS[0x0045ac20]["routes"][0].update(saved)
+
+
 def test_summary_precision():
     """EQUIV-NORETURN-RECHECK: the no-return reason, r11 / r12, the constant idioms, frame alignment, A7."""
     s = equiv.summary(0x00408b00)                       # 6 rets; it calls CRT acos 0x004a3384 (r11, not no-return)

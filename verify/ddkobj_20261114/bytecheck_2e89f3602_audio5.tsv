@@ -1,0 +1,6 @@
+rva	exe_symbol	exe_va	size	relocs_masked	abs_data_refs_exact	diff_bytes	result	first_diff	vs_copy_in_map	src
+0x0045cd30	_PortTop_Bound_0045cd30	0x00043600	752	42	18	319	DIFFERENT	+0x119	False	re/match/s10/0045cd30.c
+0x004647f0	_PortTop_Bound_004647f0	0x000438f0	208	4	16	61	DIFFERENT	+0x71	False	re/match/s10/004647f0.c
+0x005a6d60	_PortTop_Bound_005a6d60	0x000439c0	48	0	0	47	DIFFERENT	+0x0	False	re/match/s25/005a6d60.c
+0x005aab70	_PortTop_Bound_005aab70	0x000439f0	96	0	0	65	DIFFERENT	+0x10	False	re/match/s25/005aab70.c
+0x005acda0	_PortTop_Bound_005acda0	0x00043b90	176	5	3	126	DIFFERENT	+0x2	False	re/match/s26/005acda0.c

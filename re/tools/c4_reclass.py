@@ -32,6 +32,46 @@ batch     Reads a TSV with columns `rva`, `route`, `evidence` (header required; 
           is the row's `// MATCH:` symbol, the others `// HIDDEN:` functions of the same source, and every member must
           be insn 100% at its size, whole-symbol BYTE-IDENTICAL and relocheck OK. Rows not in that table take the
           default path unchanged.
+          Optional 5th column `lever`: when --apply promotes the row, that tag (e.g. `lever=volatile`) is appended to
+          the notes in the same write (skipped when the notes already carry it). No other behaviour changes.
+            route demote  (C4RECLASS-DEMOTE-OP, L-166) C4 -> C3. evidence = a committed file (repo-relative) that names
+                          the RVA (an audit table, a RESULT); column `reason` (required, one line) says why. Refused: row
+                          not in hooks.csv, evidence missing or not naming the RVA, empty reason, and a row whose notes
+                          carry a `c4=` route tag (c4=match / c4=libid / c4=frida-replay: certified by a route, not this
+                          op's business). SKIP: row not at C4 (no write). --apply sets confidence C3 (status and every
+                          other column untouched), appends `<date> C4->C3 demoted (L-166): <reason>; evidence <evidence>;
+                          <RESULT>` to the notes and writes one CHANGELOG line `C4->C3  demoted (L-166): ...`. Counted
+                          apart in the summary (`by route: demote=N`). `c4_reclass.py demote --tsv <file>` is the same run with
+                          header `rva`, `evidence`, `reason` and the route implied; the merge train applies a
+                          `re/promotions/<ID>.tsv` whose rows say route `demote` through its usual `batch --apply --strict`.
+          Optional column `reearn` (`1`): a route match / libid / frida-replay row already at C4 whose notes carry no
+          `c4=` tag is gated like a new promotion instead of skipped; PASS keeps C4 and appends the route note
+          (CHANGELOG `C4->C4  re-earned route <route>`). A row already tagged still SKIPs. Without the column nothing
+          changes.
+          Optional column `frida_diff`: when the row is written (promoted, re-earned or demoted), its `frida_diff` cell
+          is replaced by this value in the same write (e.g. a bare `green` corrected to the RESULT it rests on).
+tag       c4_reclass.py tag --tsv <file> [--apply] [--strict] [--result <RESULT.md>] [--hooks <copy>] [--changelog <copy>]
+          Notes-only tag for an EXISTING row (any confidence, e.g. lever=volatile on a row already C4). TSV header
+          `rva`, `tag` required. Dry run by default (`TAG` / `SKIP` / `REFUSED` per row). A row with no hooks.csv row is
+          REFUSED; a tag already present as a whole token in the notes is SKIP (idempotent). --apply rewrites only the
+          tagged lines (confidence and status untouched) and prepends ONE CHANGELOG line for the run. --strict writes
+          nothing if any row is refused. --hooks / --changelog point at copies for a rehearsal.
+refresh   c4_reclass.py refresh --tsv <file> [--apply] [--strict] [--result <RESULT.md>] [--jobs N] [--hooks <copy>] [--changelog <copy>]
+          (C4RECLASS-SHA-REFRESH) Refreshes the `src sha256 <16 hex>` token in the C4 note of a row that is ALREADY C4
+          by route match, when the source file changed after the promotion (formatting, comments, unrelated edits) and
+          the recorded hash went stale. TSV `re/promotions/<ID>-refresh.tsv`, header (tab separated, required):
+          `rva`, `src`, `result`. `src` = the matched source, repo-relative (.c / .cpp), and it must be the same file the
+          row's C4 note names after `match.py`. `result` = the RESULT file the CHANGELOG cites (first row's value is used
+          for --result when the flag is absent). Each row is gated on its own, like the match route: the tool recompiles
+          the source now (match.compare --bytes) and runs relocheck, and REFUSES unless the function is byte-identical,
+          insn 100% (or the same shorter-Ghidra-body case the match gate accepts) and relocheck OK, with the recorded
+          compiler. Other REFUSED cases: row not in hooks.csv, row not at C4, row not C4 by `c4=match`, source differs
+          from the note's source, no `src sha256` token in the notes. SKIP: the token already equals the current hash
+          (idempotent, no write). Only that 16-hex token changes (the last one in the notes); confidence, status, every
+          other column and the rest of the notes stay byte-identical. --apply prepends ONE CHANGELOG line per refreshed
+          row (`C4->C4 sha refresh old->new`). Dry run by default. --strict writes nothing if any row is refused.
+          The merge train applies `<ID>-refresh.tsv` with `refresh --apply --strict` on the current head and moves it to
+          re/promotions/applied/, like a promotions TSV.
 make-tsv  Turns MATCH slice results.tsv files into a batch TSV: every row whose recorded score is 100 becomes
           `rva  match  <source>`. The batch gate still recompiles each one.
 
@@ -117,6 +157,17 @@ def prepend_changelog(ctext, entries):
         sys.exit("REFUSED: CHANGELOG marker line missing")
     cl[idx + 1:idx + 1] = entries
     return ceol.join(cl)
+
+
+def has_tag(notes, tag):
+    """A tag is present when it appears as a whole token (delimited by start/end, space, `|`, `;`, `,`)."""
+    return re.search(r"(?:^|[\s|;,])" + re.escape(tag) + r"(?=$|[\s|;,])", notes) is not None
+
+
+def add_tag(notes, tag):
+    if has_tag(notes, tag):
+        return notes
+    return (notes + " | " if notes else "") + tag
 
 
 def load_tsv(path):
@@ -430,6 +481,22 @@ def gate_libid(rva, tsv_rel, cache):
     return True, f"{r['status']} {r.get('lib_function', '')}", note
 
 
+def gate_demote(rva, evid, reason, notes):
+    """C4RECLASS-DEMOTE-OP: (ok, detail, note) for route demote. The caller has checked the row is at C4."""
+    if not reason or re.search(r"[\r\n\t]", reason):
+        return False, "empty reason or reason with a control character", None
+    tags = re.findall(r"(?:^|[\s|;,])(c4=[A-Za-z-]+)", notes or "")
+    if tags:
+        return False, f"row carries {', '.join(sorted(set(tags)))} (C4 by a route; demote only untagged C4 rows)", None
+    path = ROOT / evid
+    if not evid or not path.is_file():
+        return False, f"evidence {evid or '<empty>'} not found", None
+    txt = path.read_text(encoding="utf-8", errors="replace")
+    if not re.search(r"(?i)\b(?:0x)?0*" + rva.lstrip("0") + r"\b", txt):
+        return False, f"0x{rva} not named in {evid}", None
+    return True, f"C4->C3: {reason}", f"{reason}; evidence {evid}"
+
+
 # ---------------------------------------------------------------- batch
 def cmd_batch(a):
     if a.apply and not a.result:
@@ -437,6 +504,11 @@ def cmd_batch(a):
     if a.result and not (ROOT / a.result).is_file():
         sys.exit(f"REFUSED: --result {a.result} does not exist")
     batch = load_tsv(pathlib.Path(a.tsv))
+    if a.cmd == "demote":       # same run, route implied (C4RECLASS-DEMOTE-OP)
+        if not batch or not {"rva", "evidence", "reason"} <= set(batch[0]):
+            sys.exit("REFUSED: demote TSV needs a header with columns rva, evidence, reason")
+        for b in batch:
+            b["route"] = "demote"
     if not batch or not {"rva", "route", "evidence"} <= set(batch[0]):
         sys.exit("REFUSED: batch TSV needs a header with columns rva, route, evidence")
     raw = read_raw(HOOKS)
@@ -460,7 +532,15 @@ def cmd_batch(a):
                 ok, detail, note = False, "duplicate rva in the batch", None
             elif ri is None:
                 ok, detail, note = False, "no hooks.csv row (add it first: C1 by the identity)", None
-            elif parse_line(lines[ri], col)[col["confidence"]] == "C4":
+            elif route == "demote":
+                cur = parse_line(lines[ri], col)
+                if cur[col["confidence"]] != "C4":
+                    ok, detail, note = None, f"row is {cur[col['confidence']] or 'C0'}, not C4 (no write)", None
+                else:
+                    ok, detail, note = gate_demote(rva, evid, (b.get("reason") or "").strip(), cur[col["notes"]])
+            elif parse_line(lines[ri], col)[col["confidence"]] == "C4" and not (
+                    (b.get("reearn") or "").strip() == "1"
+                    and not re.search(r"(?:^|[\s|;,])c4=", parse_line(lines[ri], col)[col["notes"]])):
                 ok, detail, note = None, "already C4 (no write)", None
             elif route == "match":
                 ok, detail, note = gate_match(rva, evid, evals.get(evid, {}))
@@ -469,7 +549,7 @@ def cmd_batch(a):
             elif route == "frida-replay":
                 ok, detail, note = gate_replay(rva, evid, parse_line(lines[ri], col)[col["notes"]])
             else:
-                ok, detail, note = False, f"unknown route {route!r} (match | libid | frida-replay)", None
+                ok, detail, note = False, f"unknown route {route!r} (match | libid | frida-replay | demote)", None
         seen.add(rva)
         verdict = "PASS" if ok else ("SKIP" if ok is None else "REFUSED")
         print(f"[{k}/{total}] 0x{rva} {route} {verdict} {detail}", flush=True)
@@ -485,12 +565,25 @@ def cmd_batch(a):
         r = parse_line(lines[index[rva]], col)
         old = r[col["confidence"]] or "C0"
         res = a.result or "<RESULT>"
+        fd = (b.get("frida_diff") or "").strip()    # optional column: corrected frida_diff cell, same write
+        if fd:
+            r[col["frida_diff"]] = fd
+        if route == "demote":
+            r[col["confidence"]] = "C3"
+            r[col["notes"]] = (r[col["notes"]] + " | " if r[col["notes"]] else "") + f"{date} C4->C3 demoted (L-166): {note}; {res}"
+            lines[index[rva]] = dump_line(r)
+            log.append(f"{date}  0x{rva}  {r[col['name']]}  C4->C3  demoted (L-166): {note}; evidence: {res}")
+            continue
         frag = f"{date} C4 by route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): c4={route}; {note}; {res}"
         r[col["confidence"]] = "C4"
         r[col["notes"]] = (r[col["notes"]] + " | " if r[col["notes"]] else "") + frag
+        lever = (b.get("lever") or "").strip()      # optional 5th column: a notes tag added in the same transaction
+        if lever:
+            r[col["notes"]] = add_tag(r[col["notes"]], lever)
         lines[index[rva]] = dump_line(r)
         why = {"match": "byte-identical + relocheck OK", "libid": "library identity"}.get(route, "replay IDENTICAL-FOR-N, JMP live") + f", {evid}"
-        log.append(f"{date}  0x{rva}  {r[col['name']]}  {old}->C4  route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): {why}; evidence: {res}")
+        how = "re-earned route" if old == "C4" else "route"
+        log.append(f"{date}  0x{rva}  {r[col['name']]}  {old}->C4  {how} {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): {why}; evidence: {res}")
     print(f"batch: {npass} pass, {nref} refused, {nskip} skipped (already C4), {total} rows"
           + ("  [by route: " + ", ".join(f"{k}={v}" for k, v in sorted(by_route.items())) + "]" if by_route else ""))
     if a.report:
@@ -512,6 +605,152 @@ def cmd_batch(a):
     write_raw(HOOKS, eol.join(lines))
     write_raw(CHANGELOG, prepend_changelog(read_raw(CHANGELOG), log))
     print(f"wrote hooks.csv ({npass} rows -> C4) and {len(log)} CHANGELOG lines")
+    return 0
+
+
+def cmd_tag(a):
+    """Notes-only tag operation: append `tag` to the notes of an existing hooks.csv row if absent. Touches only that
+    row's line (key-merge friendly), changes no confidence or status, writes one CHANGELOG line per run."""
+    global HOOKS, CHANGELOG
+    if a.hooks:
+        HOOKS = pathlib.Path(a.hooks)
+    if a.changelog:
+        CHANGELOG = pathlib.Path(a.changelog)
+    rows = load_tsv(pathlib.Path(a.tsv))
+    if not rows or not {"rva", "tag"} <= set(rows[0]):
+        sys.exit("REFUSED: tag TSV needs a header with columns rva, tag")
+    lines, col, index, eol = load_hooks(read_raw(HOOKS))
+    date = a.date or datetime.date.today().isoformat()
+    seen, would, nref, nskip, total, changed = set(), 0, 0, 0, len(rows), {}
+    for k, t in enumerate(rows, 1):
+        tag = (t["tag"] or "").strip()
+        try:
+            rva = norm_rva(t["rva"])
+        except ValueError as e:
+            verdict, detail, rva = "REFUSED", str(e), t["rva"]
+        else:
+            ri = index.get(rva)
+            if not tag or re.search(r"[\r\n\t]", tag):
+                verdict, detail = "REFUSED", "empty tag or tag with a control character"
+            elif ri is None:
+                verdict, detail = "REFUSED", "no hooks.csv row"
+            elif (rva, tag) in seen:
+                verdict, detail = "REFUSED", "duplicate rva+tag in the TSV"
+            else:
+                r = parse_line(lines[ri], col)
+                if has_tag(r[col["notes"]], tag):
+                    verdict, detail = "SKIP", f"{tag} already in notes (no write)"
+                else:
+                    verdict, detail = "TAG", f"would append {tag}" if not a.apply else f"appended {tag}"
+                    r[col["notes"]] = add_tag(r[col["notes"]], tag)
+                    lines[ri] = dump_line(r)
+                    changed.setdefault(rva, []).append((tag, r[col["name"]]))
+        seen.add((rva, tag))
+        print(f"[{k}/{total}] 0x{rva} tag {verdict} {detail}", flush=True)
+        would += verdict == "TAG"
+        nref += verdict == "REFUSED"
+        nskip += verdict == "SKIP"
+    print(f"tag: {would} {'tagged' if a.apply else 'would-tag'}, {nref} refused, {nskip} skipped (already tagged), {total} rows")
+    if not a.apply:
+        print("dry run: nothing written")
+        return 0
+    if a.strict and nref:
+        print(f"--strict: {nref} refused rows, nothing written")
+        return 1
+    if not would:
+        print("nothing to write")
+        return 0
+    res = f"; {a.result}" if a.result else ""
+    summary = ", ".join(sorted({tg for v in changed.values() for tg, _ in v}))
+    rvas = " ".join(f"0x{r}" for r in sorted(changed))
+    entry = f"{date}  tag  {would} hooks.csv rows  notes-only tag {summary} (c4_reclass tag): {rvas}{res}"
+    write_raw(HOOKS, eol.join(lines))
+    write_raw(CHANGELOG, prepend_changelog(read_raw(CHANGELOG), [entry]))
+    print(f"wrote hooks.csv ({would} rows tagged) and 1 CHANGELOG line")
+    return 0
+
+
+SHA_TOKEN = re.compile(r"src sha256 ([0-9a-f]{16})")
+
+
+def cmd_refresh(a):
+    """Refresh only the src sha256 token of a C4 note (see the module docstring, `refresh`)."""
+    global HOOKS, CHANGELOG
+    if a.hooks:
+        HOOKS = pathlib.Path(a.hooks)
+    if a.changelog:
+        CHANGELOG = pathlib.Path(a.changelog)
+    rows = load_tsv(pathlib.Path(a.tsv))
+    if not rows or not {"rva", "src", "result"} <= set(rows[0]):
+        sys.exit("REFUSED: refresh TSV needs a header with columns rva, src, result")
+    res = (a.result or rows[0]["result"] or "").strip()
+    if a.apply and not res:
+        sys.exit("REFUSED: --apply needs a result (the `result` column or --result)")
+    lines, col, index, eol = load_hooks(read_raw(HOOKS))
+    sources = sorted({r["src"].strip().replace("\\", "/") for r in rows})
+    evals = evaluate(sources, a.jobs) if sources else {}
+    date = a.date or datetime.date.today().isoformat()
+    seen, log, total, nref, nskip = set(), [], len(rows), 0, 0
+    for k, b in enumerate(rows, 1):
+        src = b["src"].strip().replace("\\", "/")
+        try:
+            rva = norm_rva(b["rva"])
+        except ValueError as e:
+            verdict, detail, rva = "REFUSED", str(e), b["rva"]
+        else:
+            ri = index.get(rva)
+            verdict = "REFUSED"
+            if rva in seen:
+                detail = "duplicate rva in the TSV"
+            elif ri is None:
+                detail = "no hooks.csv row"
+            else:
+                r = parse_line(lines[ri], col)
+                notes = r[col["notes"]]
+                nm = re.search(r"c4=match; match\.py (\S+)", notes)
+                old = SHA_TOKEN.findall(notes)
+                if r[col["confidence"]] != "C4":
+                    detail = f"row is {r[col['confidence']] or 'C0'}, not C4 (refresh only touches rows already at C4)"
+                elif not nm:
+                    detail = "row is not C4 by route match (no `c4=match; match.py <src>` in the notes)"
+                elif nm.group(1) != src:
+                    detail = f"source {src} is not the row's recorded source {nm.group(1)}"
+                elif not old:
+                    detail = "no `src sha256 <16 hex>` token in the notes"
+                else:
+                    ok, detail, note = gate_match(rva, src, evals.get(src, {}))
+                    if ok:
+                        new = SHA_TOKEN.findall(note)[-1]
+                        if new == old[-1]:
+                            verdict, detail = "SKIP", f"src sha256 {new} already current (no write)"
+                        else:
+                            verdict = "REFRESH"
+                            detail = f"src sha256 {old[-1]} -> {new} ({detail})"
+                            m = list(SHA_TOKEN.finditer(notes))[-1]
+                            r[col["notes"]] = notes[:m.start(1)] + new + notes[m.end(1):]
+                            lines[ri] = dump_line(r)
+                            log.append(f"{date}  0x{rva}  {r[col['name']]}  C4->C4  sha refresh (c4_reclass refresh): "
+                                       f"src sha256 {old[-1]} -> {new}, {src} still byte-identical + relocheck OK; "
+                                       f"evidence: {res or '<RESULT>'}")
+        seen.add(rva)
+        nref += verdict == "REFUSED"
+        nskip += verdict == "SKIP"
+        print(f"[{k}/{total}] 0x{rva} refresh {verdict} {detail}", flush=True)
+    print(f"refresh: {len(log)} {'refreshed' if a.apply else 'would-refresh'}, {nref} refused, {nskip} skipped (already current), {total} rows")
+    if not a.apply:
+        print("dry run: nothing written. CHANGELOG lines that --apply would prepend:")
+        for l in log:
+            print("  " + l)
+        return 0
+    if a.strict and nref:
+        print(f"--strict: {nref} refused rows, nothing written")
+        return 1
+    if not log:
+        print("nothing to write")
+        return 0
+    write_raw(HOOKS, eol.join(lines))
+    write_raw(CHANGELOG, prepend_changelog(read_raw(CHANGELOG), log))
+    print(f"wrote hooks.csv ({len(log)} rows refreshed) and {len(log)} CHANGELOG lines")
     return 0
 
 
@@ -546,11 +785,36 @@ def main(argv=None):
     b.add_argument("--jobs", type=int, default=4)
     b.add_argument("--report")
     b.add_argument("--date")
+    d = sub.add_parser("demote")
+    d.add_argument("--tsv", required=True)
+    d.add_argument("--result")
+    d.add_argument("--apply", action="store_true")
+    d.add_argument("--strict", action="store_true")
+    d.add_argument("--jobs", type=int, default=4)
+    d.add_argument("--report")
+    d.add_argument("--date")
     m = sub.add_parser("make-tsv")
     m.add_argument("--results", nargs="+", required=True)
     m.add_argument("--out", required=True)
+    t = sub.add_parser("tag")
+    t.add_argument("--tsv", required=True)
+    t.add_argument("--apply", action="store_true")
+    t.add_argument("--strict", action="store_true")
+    t.add_argument("--result")
+    t.add_argument("--date")
+    t.add_argument("--hooks", help="hooks.csv to edit instead of the repo's (rehearsal on a copy)")
+    t.add_argument("--changelog", help="CHANGELOG.md to edit instead of the repo's (rehearsal on a copy)")
+    f = sub.add_parser("refresh")
+    f.add_argument("--tsv", required=True)
+    f.add_argument("--apply", action="store_true")
+    f.add_argument("--strict", action="store_true")
+    f.add_argument("--result")
+    f.add_argument("--jobs", type=int, default=4)
+    f.add_argument("--date")
+    f.add_argument("--hooks", help="hooks.csv to edit instead of the repo's (rehearsal on a copy)")
+    f.add_argument("--changelog", help="CHANGELOG.md to edit instead of the repo's (rehearsal on a copy)")
     a = ap.parse_args(argv)
-    return cmd_batch(a) if a.cmd == "batch" else cmd_make_tsv(a)
+    return {"batch": cmd_batch, "demote": cmd_batch, "tag": cmd_tag, "refresh": cmd_refresh}.get(a.cmd, cmd_make_tsv)(a)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,57 @@
+re/match/topm01/00493900.c ok
+    s__l5_005cf89c -> __ddkabs_005cf89c data-abs
+    s__l4_005cf8a0 -> __ddkabs_005cf8a0 data-abs
+    s__l3_005cf8a4 -> __ddkabs_005cf8a4 data-abs
+    s__l2_005cf8a8 -> __ddkabs_005cf8a8 data-abs
+    s__l1_005cf8ac -> __ddkabs_005cf8ac data-abs
+    DAT_007719e8 -> __ddkabs_007719e8 data-abs
+    s__l0_005cf8b0 -> __ddkabs_005cf8b0 data-abs
+    s__cs1_005cf8b4 -> __ddkabs_005cf8b4 data-abs
+    DAT_007719e4 -> __ddkabs_007719e4 data-abs
+    DAT_006147c0 -> __ddkabs_006147c0 data-abs
+    s__cs0_005cf8bc -> __ddkabs_005cf8bc data-abs
+    s__vs1_005cf8c4 -> __ddkabs_005cf8c4 data-abs
+    DAT_007719e0 -> __ddkabs_007719e0 data-abs
+    DAT_006147bc -> __ddkabs_006147bc data-abs
+    FUN_004b302f -> __stricmp wrapper-bound
+    s__vs0_005cf8cc -> __ddkabs_005cf8cc data-abs
+    FUN_004a3ac9 -> _strtok wrapper-bound
+    FUN_00499730 -> _BootPtr773818Get in-set
+    __security_cookie -> ___security_cookie crt
+    __security_check_cookie -> @__security_check_cookie@4 crt
+   dropped_refs None
+re/match/pilot/a2_00493710.c ok
+    FUN_004cbc60 -> _MashedRw_Set7d4598_004cbc60 wrapper-bound
+    DAT_007719dc -> __ddkabs_007719dc data-abs
+    FUN_00493700 -> _PortTop_Missing_00493700 wrapper-bound
+    FUN_004cbc70 -> _MashedRw_Get7d4598_004cbc70 wrapper-bound
+    FUN_004cbc80 -> _MashedRw_Set7d459c_004cbc80 wrapper-bound
+    DAT_007719d8 -> __ddkabs_007719d8 data-abs
+    FUN_004936f0 -> _PortTop_Missing_004936f0 wrapper-bound
+    FUN_004cbc90 -> _MashedRw_Get7d459c_004cbc90 wrapper-bound
+    FUN_004c5c80 -> _MashedRw_TexDictionarySetCurrent_004c5c80 wrapper-bound
+    FUN_005584c0 -> _MashedRw_Alloc7dc8b8_005584c0 wrapper-bound
+    FUN_00493600 -> _PortTop_Bound_00493600 wrapper-bound
+    printf -> _PortTop_Crt_004a2cbd wrapper-bound
+    FUN_004c2ed0 -> _MashedRw_EngineGetModeInfo_004c2ed0 wrapper-bound
+    FUN_004c2f00 -> _MashedRw_EngineGetCurrentMode_004c2f00 wrapper-bound
+    FUN_0045b350 -> _RwInitNullStub in-set
+    FUN_004c3040 -> _MashedRw_EngineClose_004c3040 wrapper-bound
+    FUN_004c2fb0 -> _MashedRw_EngineStart_004c2fb0 wrapper-bound
+    FUN_004c9f60 -> _MashedRw_D3D9Set7d413c_004c9f60 wrapper-bound
+    FUN_004c9eb0 -> _MashedRw_D3D9SetRefreshRate_004c9eb0 wrapper-bound
+    FUN_004c9f50 -> _MashedRw_D3D9Set7d4134_004c9f50 wrapper-bound
+    FUN_004951f0 -> _PortTop_StandIn_004951f0 wrapper-bound
+    FUN_004c3270 -> _MashedRw_EngineTerm_004c3270 wrapper-bound
+    FUN_00550390 -> _MashedRw_RtFSManagerClose_00550390 wrapper-bound
+    FUN_004c30b0 -> _MashedRw_EngineOpen_004c30b0 wrapper-bound
+    FUN_00493640 -> _MashedRw_AttachPlugins_00493640 wrapper-bound
+    FUN_00495270 -> _HWNDGet in-set
+    FUN_004951e0 -> _PortTop_Thunk_004951e0 wrapper-bound
+    FUN_00550350 -> _MashedRw_RtFSManagerOpen_00550350 wrapper-bound
+    FUN_004c32b0 -> _MashedRw_EngineInit_004c32b0 wrapper-bound
+    StubC -> _PortTop93_StubC_005c9d00 wrapper-bound
+    FUN_004963e0 -> _Orig_004963e0 in-set
+    StubB -> _GetRaceEndTrigger in-set
+    StubA -> _GetRaceEndTrigger in-set
+   dropped_refs None

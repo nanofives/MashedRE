@@ -1,0 +1,13 @@
+v0	0x005adc10 _FUN_005adc10: 78.9% (regs 89.8%, ops 96.9%)  125/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+v1	0x005adc10 _FUN_005adc10: 85.9% (regs 96.9%, ops 98.4%)  127/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+v2	0x005adc10 _FUN_005adc10: 92.2% (regs 99.2%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+v3	0x005adc10 _FUN_005adc10: 83.6% (regs 93.8%, ops 96.9%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+s0	0x005adc10 _FUN_005adc10: 68.8% (regs 71.9%, ops 93.8%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+s1	0x005adc10 _FUN_005adc10: 64.1% (regs 70.3%, ops 93.0%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+wa	0x005adc10 _FUN_005adc10: 92.2% (regs 99.2%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+wb	0x005adc10 _FUN_005adc10: 92.2% (regs 99.2%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+wc	0x005adc10 _FUN_005adc10: 75.0% (regs 78.1%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+wd	0x005adc10 _FUN_005adc10: 75.0% (regs 78.1%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+xe	0x005adc10 _FUN_005adc10: 92.2% (regs 99.2%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+xf	0x005adc10 _FUN_005adc10: 92.2% (regs 99.2%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+xg	0x005adc10 _FUN_005adc10: 92.2% (regs 99.2%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk

@@ -1,0 +1,159 @@
+=== target 00550910
+  jmp  004b5370  fn 004b5370  jmp 0x550910
+  call 004cc17c  fn 004cc160  call 0x550910
+  call 00555a9f  fn 00555830  call 0x550910
+  jmp  005ab16f  fn 005ab150  jmp 0x550910
+=== target 00550950
+  jmp  004b5380  fn 004b5380  jmp 0x550950
+  call 004cbd62  fn 004cbd30  call 0x550950
+  call 005ab943  fn 005ab710  call 0x550950
+=== target 00550980
+  call 004cbead  fn 004cbe80  call 0x550980
+=== target 005509b0
+  jmp  004b5390  fn 004b5390  jmp 0x5509b0
+  call 004cc084  fn 004cc050  call 0x5509b0
+  call 005ab1ef  fn 005ab1c0  call 0x5509b0
+  call 005ab2e3  fn 005ab1c0  call 0x5509b0
+  call 005ab95b  fn 005ab710  call 0x5509b0
+=== target 00550a20
+  call 005559fa  fn 00555830  call 0x550a20
+  call 00555b8e  fn 00555af0  call 0x550a20
+  call 00555c71  fn 00555af0  call 0x550a20
+  call 00555cb7  fn 00555af0  call 0x550a20
+  call 005560a8  fn 00555ff0  call 0x550a20
+  call 005561d5  fn 00555ff0  call 0x550a20
+  call 00556368  fn 00555ff0  call 0x550a20
+  call 00556381  fn 00555ff0  call 0x550a20
+  call 005567c4  fn 00556780  call 0x550a20
+  call 00556868  fn 00556780  call 0x550a20
+=== target 00550af0
+  call 004cbd71  fn 004cbd30  call 0x550af0
+  call 004cc091  fn 004cc050  call 0x550af0
+=== target 00550bd0
+  call 005ab66b  fn 005ab620  call 0x550bd0
+=== target 00550bc0
+  call 004517e0  fn 00451730  call 0x550bc0
+  call 00451cea  fn 00451ce0  call 0x550bc0
+  call 00484395  fn 00484310  call 0x550bc0
+  jmp  004b53a0  fn 004b53a0  jmp 0x550bc0
+  call 004cc28b  fn 004cc230  call 0x550bc0
+  call 005ab29b  fn 005ab1c0  call 0x550bc0
+  call 005ab91f  fn 005ab710  call 0x550bc0
+  call 005b16fb  fn 005b15d0  call 0x550bc0
+=== target 00550580
+  call 00550728  fn 00550670  call 0x550580
+  call 005508f5  fn 005507b0  call 0x550580
+=== target 005507b0
+  jmp  004b5360  fn 004b5360  jmp 0x5507b0
+  call 004cc304  fn 004cc230  call 0x5507b0
+  call 005559c8  fn 00555830  call 0x5507b0
+=== target 00550670
+  call 005ab0ee  fn 005ab090  call 0x550670
+=== target 00550430
+  call 004624d7  fn 004624c0  call 0x550430
+  call 00495663  fn 004955d0  call 0x550430
+  call 00495700  fn 004955d0  call 0x550430
+  call 004b66e9  fn 004b6640  call 0x550430
+=== target 00551190
+  call 004624cc  fn 004624c0  call 0x551190
+  call 0049564e  fn 004955d0  call 0x551190
+  call 004956f1  fn 004955d0  call 0x551190
+=== target 00550790
+  call 00495725  fn 004955d0  call 0x550790
+  call 004b67b5  fn 004b67a0  call 0x550790
+  call 004b6ad6  fn 004b6940  call 0x550790
+=== target 00550be0
+  call 0045d40a  fn 0045d3f0  call 0x550be0
+  call 00462ee1  fn 00462ec0  call 0x550be0
+=== target 00550b00
+  call 00404f85  fn 00404f80  call 0x550b00
+  jmp  004b5350  fn 004b5350  jmp 0x550b00
+  call 004ce696  fn 004ce690  call 0x550b00
+  call 004ce74d  fn 004ce6c0  call 0x550b00
+  call 00555bf8  fn 00555af0  call 0x550b00
+  dword .rsrc 0098a533
+=== target 004b5350
+  call 0042a4e5  fn 0042a470  call 0x4b5350
+=== target 004b5360
+  call 0047b90b  fn 0047b8d0  call 0x4b5360
+=== target 004b5370
+  call 0047b93f  fn 0047b8d0  call 0x4b5370
+=== target 004b5380
+  call 0047b937  fn 0047b8d0  call 0x4b5380
+=== target 004b5390
+  call 0047b917  fn 0047b8d0  call 0x4b5390
+  call 0047b929  fn 0047b8d0  call 0x4b5390
+=== target 004b53a0
+  call 0047b91d  fn 0047b8d0  call 0x4b53a0
+=== target 00550da0
+  dword .text 005511eb  005511e8 fn 00551190 mov dword ptr [esi + 0x30], 0x550da0
+=== target 00550f20
+  dword .text 005511f2  005511ef fn 00551190 mov dword ptr [esi + 0x34], 0x550f20
+=== target 00551090
+  call 005512be  fn 005512b0  call 0x551090
+  dword .text 00551200  005511fd fn 00551190 mov dword ptr [esi + 0x3c], 0x551090
+=== target 005512b0
+  dword .text 00551215  00551212 fn 00551190 mov dword ptr [esi + 0x48], 0x5512b0
+=== target 00551330
+  call 004b66e3  fn 004b6640  call 0x551330
+  call 00551253  fn 00551190  call 0x551330
+=== target 004cc230
+  call 004096b1  fn 004096a0  call 0x4cc230
+  call 00409731  fn 00409710  call 0x4cc230
+  call 0042354f  fn 00423540  call 0x4cc230
+  call 004235cf  fn 004235b0  call 0x4cc230
+  call 0042751e  fn 004274e0  call 0x4cc230
+  call 00427889  fn 00427880  call 0x4cc230
+  call 0042a7a2  fn 0042a740  call 0x4cc230
+  call 0045d47c  fn 0045d460  call 0x4cc230
+  call 00462a58  fn 00462950  call 0x4cc230
+  call 00478139  fn 00478110  call 0x4cc230
+  call 004781ce  fn 004781b0  call 0x4cc230
+  call 00483d7e  fn 00483d10  call 0x4cc230
+  call 00483de1  fn 00483d10  call 0x4cc230
+  call 004b3b7d  fn 004b3b70  call 0x4cc230
+  call 004b3bb9  fn 004b3bb0  call 0x4cc230
+  call 004b3bfd  fn 004b3bf0  call 0x4cc230
+  call 004b3c6d  fn 004b3c60  call 0x4cc230
+  call 004b3ccd  fn 004b3cc0  call 0x4cc230
+  call 004b3d2d  fn 004b3d20  call 0x4cc230
+  call 004b3d8d  fn 004b3d80  call 0x4cc230
+  call 004b3ded  fn 004b3de0  call 0x4cc230
+  call 004b3e60  fn 004b3e40  call 0x4cc230
+  call 004b3ed0  fn 004b3eb0  call 0x4cc230
+  call 00513fb6  fn 00513f90  call 0x4cc230
+  call 0051434b  fn 00514330  call 0x4cc230
+  call 0052cb16  fn 0052cb00  call 0x4cc230
+  call 0052d53e  fn 0052d170  call 0x4cc230
+=== target 00555830
+  call 00427626  fn 00427620  call 0x555830
+  call 00554505  fn 00554390  call 0x555830
+  call 0055467f  fn 00554390  call 0x555830
+  call 005547c5  fn 00554390  call 0x555830
+  call 005552a2  fn 00555280  call 0x555830
+  call 00555ac3  fn 00555830  call 0x555830
+=== target 00555af0
+  call 00555a2e  fn 00555830  call 0x555af0
+=== target 00555ff0
+  call 00555a61  fn 00555830  call 0x555ff0
+=== target 00556780
+  call 00555a94  fn 00555830  call 0x556780
+  dword .rsrc 00918470
+=== target 005ab090
+  call 005b14e5  fn 005b1260  call 0x5ab090
+=== target 005ab150
+  call 005b1521  fn 005b1500  call 0x5ab150
+=== target 005ab1c0
+  call 005b1a7c  fn 005b15d0  call 0x5ab1c0
+  call 005b1ad0  fn 005b15d0  call 0x5ab1c0
+  call 005b1bae  fn 005b15d0  call 0x5ab1c0
+  call 005b2212  fn 005b2190  call 0x5ab1c0
+  call 005b2e5d  fn 005b2de0  call 0x5ab1c0
+  call 005b2f68  fn 005b2de0  call 0x5ab1c0
+  call 005b2fb5  fn 005b2de0  call 0x5ab1c0
+=== target 005ab620
+  jmp  005ab180  fn 005ab180  jmp 0x5ab620
+=== target 005ab710
+  call 005ab5da  fn 005ab560  call 0x5ab710
+  call 005ab6fd  fn 005ab620  call 0x5ab710
+  dword .text 005ab0b7  005ab0b6 fn 005ab090 push 0x5ab710

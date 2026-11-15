@@ -266,7 +266,11 @@ function Get-BuildMatchRefs([string]$wt) {
   return @($set)
 }
 # One changed path: text-only by the globs, or under a text_only_unless_built root and not read by the build.
+# HB-TRAIN-MATCHTABLES-BUILD: the match tables decide which units ddkobj.py links, so a change to one is never text-only
+# (it needs at least the object build and ddkobj.py check), whatever folder holds it and whatever the text-only globs say.
+function Test-MatchTablePath([string]$f) { return ([IO.Path]::GetFileName($f) -match '^(ADMITTED|PROVISIONAL|PROVISIONAL_RWC|REFUSED_UNITS)\.tsv$') }
 function Test-TextOnlyPath([string]$f, $matchRefs) {
+  if (Test-MatchTablePath $f) { return $false }
   if (Like-Any $f $CFG.text_only_globs) { return $true }
   $roots = @($CFG.text_only_unless_built); if (-not $roots.Count -or -not $roots[0]) { $roots = @('re/match/') }
   foreach ($r in $roots) {
@@ -321,8 +325,14 @@ function Merge-One([string]$wt, $item) {
 # every earlier row of the batch), commits hooks.csv + CHANGELOG + the TSV moved to re/promotions/applied/, and a refused
 # row sets the whole branch aside (strict: nothing written).
 function Apply-Promotions([string]$wt, $item) {
-  $new = @((Git -C $wt diff --name-only --diff-filter=A 'HEAD^1' 'HEAD') | Where-Object { $_ -match '^re/promotions/[^/]+\.tsv$' })
-  if (-not $new.Count) { return @{ ok = $true; n = 0 } }
+  $added = @((Git -C $wt diff --name-only --diff-filter=A 'HEAD^1' 'HEAD') | Where-Object { $_ -match '^re/promotions/[^/]+\.tsv$' })
+  # HB-TRAIN-TAG-TSV: re/promotions/<ID>-tag.tsv (header rva, tag; optional result) is a notes-only tag file for
+  # `c4_reclass.py tag --apply --strict`, not a batch file. Same failure handling: a refused row sets the branch aside.
+  $tags = @($added | Where-Object { $_ -match '-tag\.tsv$' })
+  # C4RECLASS-SHA-REFRESH: re/promotions/<ID>-refresh.tsv (header rva, src, result) is applied with `c4_reclass.py refresh --apply --strict`.
+  $refresh = @($added | Where-Object { $_ -match '-refresh\.tsv$' })
+  $new = @($added | Where-Object { $_ -notmatch '-tag\.tsv$' -and $_ -notmatch '-refresh\.tsv$' })
+  if (-not $new.Count -and -not $tags.Count -and -not $refresh.Count) { return @{ ok = $true; n = 0 } }
   $py = Join-Path $wt 're/tools/c4_reclass.py'
   if (-not (Test-Path -LiteralPath $py)) { return @{ ok = $false; why = "promotions: no re/tools/c4_reclass.py in the merged tree" } }
   foreach ($t in $new) {
@@ -342,7 +352,41 @@ function Apply-Promotions([string]$wt, $item) {
     if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
     Say "  promotions applied: $t ($(($po | Select-Object -Last 1)))"
   }
-  return @{ ok = $true; n = $new.Count }
+  foreach ($t in $tags) {
+    $rows = @(Import-Csv -LiteralPath (Join-Path $wt $t) -Delimiter "`t")
+    $res = if ($rows.Count -and $rows[0].PSObject.Properties['result']) { ([string]$rows[0].result).Trim() } else { '' }
+    if (-not $res) { $res = $t }   # no result column: the CHANGELOG line cites the tag TSV itself
+    $plog = Join-Path $DATA ("promo_" + ($t -replace '[\\/]', '_') + '.log')
+    Push-Location $wt
+    try { $po = & py.exe -3.12 $py tag --tsv $t --result $res --apply --strict 2>&1; $prc = $LASTEXITCODE } finally { Pop-Location }
+    $po | Set-Content $plog
+    if ($prc -ne 0) { return @{ ok = $false; why = "promotions: c4_reclass tag refused $t ($(($po | Where-Object { $_ -match 'REFUSED|refused' } | Select-Object -First 2) -join ' | ')) ($plog)" } }
+    $dest = $t -replace '^re/promotions/', 're/promotions/applied/'
+    New-Item -ItemType Directory -Force -Path (Join-Path $wt 're/promotions/applied') | Out-Null
+    Git -C $wt mv $t $dest | Out-Null
+    Git -C $wt add -- hooks.csv re/analysis/CHANGELOG.md | Out-Null
+    Git -C $wt commit -q -m "Apply tags $($item.id) ($t) via merge train (c4_reclass tag on the current head)" | Out-Null
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
+    Say "  tags applied: $t ($(($po | Select-Object -Last 1)))"
+  }
+  foreach ($t in $refresh) {
+    $rows = @(Import-Csv -LiteralPath (Join-Path $wt $t) -Delimiter "`t")
+    $res = if ($rows.Count -and $rows[0].PSObject.Properties['result']) { ([string]$rows[0].result).Trim() } else { '' }
+    if (-not $res) { return @{ ok = $false; why = "promotions: $t has no `result` column (the RESULT path the CHANGELOG cites)" } }
+    $plog = Join-Path $DATA ("promo_" + ($t -replace '[\\/]', '_') + '.log')
+    Push-Location $wt
+    try { $po = & py.exe -3.12 $py refresh --tsv $t --result $res --apply --strict 2>&1; $prc = $LASTEXITCODE } finally { Pop-Location }
+    $po | Set-Content $plog
+    if ($prc -ne 0) { return @{ ok = $false; why = "promotions: c4_reclass refresh refused $t ($(($po | Where-Object { $_ -match 'REFUSED|refused' } | Select-Object -First 2) -join ' | ')) ($plog)" } }
+    $dest = $t -replace '^re/promotions/', 're/promotions/applied/'
+    New-Item -ItemType Directory -Force -Path (Join-Path $wt 're/promotions/applied') | Out-Null
+    Git -C $wt mv $t $dest | Out-Null
+    Git -C $wt add -- hooks.csv re/analysis/CHANGELOG.md | Out-Null
+    Git -C $wt commit -q -m "Apply sha refresh $($item.id) ($t) via merge train (c4_reclass refresh on the current head)" | Out-Null
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
+    Say "  sha refresh applied: $t ($(($po | Select-Object -Last 1)))"
+  }
+  return @{ ok = $true; n = ($new.Count + $tags.Count + $refresh.Count) }
 }
 function Ensure-Root([string]$root) {
   if (Test-Path (Join-Path $root 'original\MASHED.exe')) { return }
@@ -944,6 +988,16 @@ if ($SelfTest) {
   $aPB = Apply-Promotions $wt2 @{ id = 'P-B'; branch = 'p-b' }
   $hP2 = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv'))
   Check ($mPB.ok -and (-not $aPB.ok) -and $aPB.why -match 'c4_reclass refused' -and $hP2 -match '00401020,FunC,boot,C3,' ) "tracker: a refused promotion row (write-set not covered) = whole branch set aside, hooks.csv left at C3 ($($aPB.why))"
+  # HB-TRAIN-TAG-TSV: re/promotions/<ID>-tag.tsv (rva, tag) is applied with `c4_reclass.py tag --apply --strict` and moved to applied/.
+  Br 't-a' 're/promotions/TA-tag.tsv' "rva`ttag`n0x00401000`tlever=volatile`n"
+  Br 't-b' 're/promotions/TB-tag.tsv' "rva`ttag`n0x00409999`tlever=volatile`n"
+  $mTA = Merge-One $wt2 @{ id = 'T-A'; branch = 't-a' }
+  $aTA = Apply-Promotions $wt2 @{ id = 'T-A'; branch = 't-a' }
+  $hT = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv')); $cT = [IO.File]::ReadAllText((Join-Path $wt2 're\analysis\CHANGELOG.md'))
+  Check ($mTA.ok -and $aTA.ok -and $aTA.n -eq 1 -and $hT -match '00401000,FunA,boot,C3,impl,a.cpp,,,na edited by A.*lever=volatile' -and $cT -match '(?m)^<!-- ENTRIES -->\r?\n.*tag .*0x00401000' -and (Test-Path (Join-Path $wt2 're\promotions\applied\TA-tag.tsv')) -and -not (Test-Path (Join-Path $wt2 're\promotions\TA-tag.tsv'))) "tracker: a <ID>-tag.tsv is applied at merge time (c4_reclass tag --strict): notes tagged, confidence untouched, CHANGELOG line written, TSV moved to applied/"
+  $mTB = Merge-One $wt2 @{ id = 'T-B'; branch = 't-b' }
+  $aTB = Apply-Promotions $wt2 @{ id = 'T-B'; branch = 't-b' }
+  Check ($mTB.ok -and (-not $aTB.ok) -and $aTB.why -match 'c4_reclass tag refused') "tracker: a refused tag row (no hooks.csv row) = whole branch set aside ($($aTB.why))"
   Git -C $f2 worktree remove --force $wt2 2>&1 | Out-Null
   Check ((Get-Content (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') -Raw) -and ((& py.exe -3.12 (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') | Select-Object -Last 1) -match '\[11/11\].*PASS')) "tracker: tracker_merge3_selftest.py 11/11 PASS"
 
@@ -1133,7 +1187,9 @@ if ($SelfTest) {
   Put 're\match\rsp1\a.c' "int a;`n"
   Put 're\match\s99\00499999.c' "int g(void){return 2;}`n"
   Put 're\match\s99\RESULT.json' "{}`n"
-  Git -C $fake add mashedmod re | Out-Null; Git -C $fake commit -q -m 'match base' | Out-Null
+  New-Item -ItemType Directory -Force -Path (Join-Path $fake 'verify\rwc') | Out-Null
+  Put 're\match\ADMITTED.tsv' "rva`tstatus`n"; Put 're\match\PROVISIONAL.tsv' "rva`tstatus`n"; Put 're\match\REFUSED_UNITS.tsv' "unit`treason`n"; Put 'verify\rwc\PROVISIONAL_RWC.tsv' "rva`tstatus`n"
+  Git -C $fake add mashedmod re verify | Out-Null; Git -C $fake commit -q -m 'match base' | Out-Null
   $mrefs = @(Get-BuildMatchRefs $fake)
   Check ((($mrefs | Sort-Object) -join ',') -eq 're/match/rsp1/a.c,re/match/t01g/004111c0.c,re/match/t01g/common.h') "match-textonly: build refs = rsp entry + #include from a mashedmod TU + the include inside it ($(($mrefs | Sort-Object) -join ','))"
   $mcases = [ordered]@{
@@ -1142,11 +1198,15 @@ if ($SelfTest) {
     'm-trans'  = @{ files = @('re\match\t01g\common.h'); text = $false }
     'm-rsp'    = @{ files = @('re\match\rsp1\a.c'); text = $false }
     'm-mix'    = @{ files = @('re\match\s99\00499999.c', 'mashedmod\src\mashed_re\Match\MatchT01g.cpp'); text = $false }
+    'm-tbl-adm' = @{ files = @('re\match\ADMITTED.tsv'); text = $false; tbl = $true }
+    'm-tbl-prov' = @{ files = @('re\match\PROVISIONAL.tsv'); text = $false; tbl = $true }
+    'm-tbl-ref' = @{ files = @('re\match\REFUSED_UNITS.tsv'); text = $false; tbl = $true }
+    'm-tbl-rwc' = @{ files = @('verify\rwc\PROVISIONAL_RWC.tsv'); text = $false; tbl = $true }
   }
   foreach ($k in $mcases.Keys) {
     Git -C $fake checkout -q -b "step-$k" integration | Out-Null
     foreach ($fl in $mcases[$k].files) { Put $fl "// changed by $k`n$((Get-Content (Join-Path $fake $fl) -Raw))" }
-    Git -C $fake add mashedmod re | Out-Null; Git -C $fake commit -q -m "step $k" | Out-Null
+    Git -C $fake add mashedmod re verify | Out-Null; Git -C $fake commit -q -m "step $k" | Out-Null
     Git -C $fake checkout -q integration | Out-Null
   }
   $base = (Git -C $fake rev-parse integration) | Select-Object -First 1
@@ -1154,6 +1214,7 @@ if ($SelfTest) {
     $res = Try-Batch @(@{ id = "T-$k"; branch = "step-$k" })
     if ($mcases[$k].text) { Check ($res.ok -and $res.textOnly -and $res.gates -match '^not run: text-only') "match-textonly: $k (re/match files no build reads) = text-only, no build, no gates (gates '$($res.gates)')" }
     else { Check (-not $res.textOnly -and $res.why -match '^build failed') "match-textonly: $k = not text-only, the train goes on to the build (fake repo has no build.bat: '$($res.why)')" }
+    if ($mcases[$k].tbl) { Check (-not $res.textOnly -and $res.gates -notmatch '^not run: text-only' -and $res.why -match '^build failed') "matchtables-build: $k (a match table decides which units ddkobj links) is not text-only, the pass goes on to the build with the object build (gates '$($res.gates)', '$($res.why)')" }
     Remove-Temp $res.wt
   }
   $FullEff = $true
@@ -1164,6 +1225,7 @@ if ($SelfTest) {
   Check ((@(Get-BuildMatchRefs $fake) -join ',') -eq '*') 'match-textonly: a build script naming re/match makes every re/match file a build input'
   Remove-Item -LiteralPath (Join-Path $fake 'mashedmod\build_objs.ps1') -Force
   Check (-not (Test-TextOnlyPath 're/match/s99/x.c' @('*')) -and (Test-TextOnlyPath 're/match/s99/x.c' @('re/match/t01g/a.c')) -and -not (Test-TextOnlyPath 're/matchx/a.c' @()) -and -not (Test-TextOnlyPath 're/tools/match/match.py' @())) 'match-textonly: Test-TextOnlyPath only frees re/match/ (not re/matchx/, not re/tools/match/)'
+  Check ((Test-MatchTablePath 're/match/ADMITTED.tsv') -and (Test-MatchTablePath 're/match/PROVISIONAL.tsv') -and (Test-MatchTablePath 're/match/REFUSED_UNITS.tsv') -and (Test-MatchTablePath 'verify/x/PROVISIONAL_RWC.tsv') -and -not (Test-MatchTablePath 're/match/s99/NOTES.tsv') -and -not (Test-MatchTablePath 're/match/ADMITTED.tsv.bak') -and -not (Test-TextOnlyPath 're/match/ADMITTED.tsv' @()) -and -not (Test-TextOnlyPath 'verify/x/PROVISIONAL_RWC.tsv' @()) -and (Test-TextOnlyPath 'verify/x/other.tsv' @())) 'matchtables-build: Test-TextOnlyPath is false for the four match tables (any folder, even under verify/*), other tsv files stay text-only'
   # -Full only with a decided flip
   Check (-not (Resolve-FullFlag $true $false @()) -and (Resolve-FullFlag $true $false @('X-FLIP')) -and (Resolve-FullFlag $false $true @()) -and -not (Resolve-FullFlag $false $false @('X-FLIP'))) 'match-textonly: -Full counts only with a decided flip in the batch, -ForceFull always, no flag never'
   # live tree: the spec's example is a build input, and most of re/match is not

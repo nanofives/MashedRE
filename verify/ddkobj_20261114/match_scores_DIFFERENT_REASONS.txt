@@ -1,0 +1,106 @@
+== re/match/s01/00401690.c
+  match: 0x00401690 _FUN_00401690: 60.2% (regs 60.2%, ops 63.5%)  460/292 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x004025f0 _FUN_004025f0: 96.2% (regs 96.2%, ops 96.2%)  53/51 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00401690	BAD	checked=9	unchecked=0	00401690.c	+0x480 const __real@3f000000: ours 0000003f vs orig@0xc6ff4424 3c6f75747369646520696d6167653e; +0x492 const __real@3f000000: ours 0000003f vs orig@0x88f
+  reloc: 0x004025f0	OK	checked=6	unchecked=0	00401690.c
+== re/match/s08/004332a0.c
+  match: 0x0042ac50 _FUN_0042ac50: 100.0% (regs 100.0%, ops 100.0%)  24/24 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x00430760 _FUN_00430760: 100.0% (regs 100.0%, ops 100.0%)  15/15 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x004332a0 _FUN_004332a0: 97.3% (regs 97.3%, ops 98.9%)  262/262 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x0042ac50	OK	checked=0	unchecked=0	004332a0.c
+  reloc: 0x00430760	OK	checked=1	unchecked=0	004332a0.c
+  reloc: 0x004332a0	BAD	checked=41	unchecked=0	004332a0.c	+0x302 const __real@42080000: ours 00000842 vs orig@0x470cc683 3c6f75747369646520696d6167653e; +0x310 _DAT_0067eaf0: ours 0x0067eb80 vs orig 0x08c4835e
+== re/match/s08/0043c5b0.c
+  match: 0x0042aad0 _FUN_0042aad0: 100.0% (regs 100.0%, ops 100.0%)  3/3 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x0043c5b0 _FUN_0043c5b0: 40.5% (regs 61.1%, ops 70.3%)  960/963 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x0042aad0	OK	checked=1	unchecked=0	0043c5b0.c
+  reloc: 0x0043c5b0	BAD	checked=97	unchecked=4	0043c5b0.c	+0x16e _DAT_00898ac0: ours 0x00898ac4 vs orig 0x8aecbe00; +0x1cc _DAT_0067ed78: ours 0x0067ed38 vs orig 0x05d806e0; +0x1d2 const __real@3f800000: ours 
+== re/match/s09/0045a3a0.c
+  match: 0x0045a3a0 _FUN_0045a3a0: 81.0% (regs 90.5%, ops 90.5%)  40/42 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x0045a3a0	BAD	checked=2	unchecked=0	0045a3a0.c	+0x4 _DAT_0068bd00: ours 0x0068d76c vs orig 0x57560c24
+== re/match/s12/00475a00.c
+  match: 0x00475a00 _FUN_00475a00: 93.1% (regs 100.0%, ops 100.0%)  29/29 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00475a00	OK	checked=9	unchecked=0	00475a00.c
+== re/match/s15/004929d0.c
+  match: 0x004929d0 _FUN_004929d0: 100.0% (regs 100.0%, ops 100.0%)  235/235 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x004929d0	OK	checked=67	unchecked=0	004929d0.c
+== re/match/gffu/004929d0.c
+  match: 0x004929d0 _FUN_004929d0: 95.7% (regs 95.7%, ops 96.2%)  235/235 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x004929d0	BAD	checked=67	unchecked=0	004929d0.c	+0x5 _FUN_004927c0: ours 0x004927c0 vs orig 0xa24929d6; +0xa _DAT_00771968: ours 0x00771968 vs orig 0x48007719
+== re/match/s15/00493710.c
+  match: 0x00493710 _FUN_00493710: 94.2% (regs 94.2%, ops 99.2%)  119/120 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00493710	BAD	checked=52	unchecked=0	00493710.c	+0x2a _FUN_005c9d00: ours 0x005c9d00 vs orig 0xc031375e; +0x31 _FUN_004c32b0: ours 0x004c32b0 vs orig 0x69318d95; +0x41 _s_Calling_RtFSManagerOpen_005c
+== re/match/pilot/a2_00493710.c
+  match: 0x00493710 _FUN_00493710: 100.0% (regs 100.0%, ops 100.0%)  120/120 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00493710	OK	checked=47	unchecked=5	a2_00493710.c	  unchecked: _StubA,_StubB,_StubC,_printf
+== re/match/s15/00493900.c
+  match: 0x00493900 _FUN_00493900: 66.9% (regs 67.7%, ops 87.7%)  130/122 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00493900	BAD	checked=37	unchecked=2	00493900.c	+0x23 _FUN_00499730: ours 0x00499730 vs orig 0x20595d6b; +0x45 _FUN_004a3ac9: ours 0x004a3ac9 vs orig 0xe89e8959; +0x61 _s__vs0_005cf8cc: ours 0x005cf8
+== re/match/topm01/00493900.c
+  match: 0x00493900 _FUN_00493900: 100.0% (regs 100.0%, ops 100.0%)  122/122 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00493900	OK	checked=36	unchecked=2	00493900.c	  unchecked: @__security_check_cookie@4,___security_cookie
+== re/match/s16/00498510.c
+  match: 0x00497190 _FUN_00497190: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x004971b0 _FUN_004971b0: 100.0% (regs 100.0%, ops 100.0%)  43/43 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x00498510 _FUN_00498510: 95.3% (regs 95.3%, ops 95.3%)  171/164 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00497190	OK	checked=4	unchecked=0	00498510.c
+  reloc: 0x004971b0	OK	checked=12	unchecked=0	00498510.c
+  reloc: 0x00498510	OK	checked=34	unchecked=4	00498510.c	  unchecked: @__security_check_cookie@4,___security_cookie,__imp__DialogBoxParamA@20,__imp__LoadStringA@16
+== re/match/s16/00498810.c
+  match: 0x00498810 _FUN_00498810: 86.7% (regs 100.0%, ops 100.0%)  30/30 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x00498860 _FUN_00498860: 100.0% (regs 100.0%, ops 100.0%)  47/47 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x00498810	OK	checked=5	unchecked=0	00498810.c
+  reloc: 0x00498860	OK	checked=7	unchecked=2	00498810.c	  unchecked: @__security_check_cookie@4,___security_cookie
+== re/match/s19/004c0c20.c
+  match: 0x004c0ad0 _FUN_004c0ad0: 100.0% (regs 100.0%, ops 100.0%)  18/18 ins  flags=/O2 /GS /Ob1 /G5 tc=ddk
+  match: 0x004c0c20 _FUN_004c0c20: 98.9% (regs 100.0%, ops 100.0%)  92/92 ins  flags=/O2 /GS /Ob1 /G5 tc=ddk
+  reloc: 0x004c0ad0	OK	checked=0	unchecked=0	004c0c20.c
+  reloc: 0x004c0c20	OK	checked=9	unchecked=0	004c0c20.c
+== re/match/s19/004c0f00.c
+  match: 0x004c0ad0 _FUN_004c0ad0: 100.0% (regs 100.0%, ops 100.0%)  18/18 ins  flags=/O2 /GS /Ob1 /G5 tc=ddk
+  match: 0x004c0f00 _FUN_004c0f00: 98.8% (regs 100.0%, ops 100.0%)  80/80 ins  flags=/O2 /GS /Ob1 /G5 tc=ddk
+  reloc: 0x004c0ad0	OK	checked=0	unchecked=0	004c0f00.c
+  reloc: 0x004c0f00	OK	checked=6	unchecked=0	004c0f00.c
+== re/match/rwl04/00552890.c
+  match: 0x00552890 _FUN_00552890: 91.2% (regs 91.2%, ops 94.1%)  34/34 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x00552890	BAD	checked=11	unchecked=0	00552890.c	+0x3e _DAT_00912be0: ours 0x00912be0 vs orig 0x00912be4; +0x44 _DAT_00912be4: ours 0x00912be4 vs orig 0x00912be0; +0x66 _DAT_00912bec: ours 0x00912bec 
+== re/match/rwl04/005530f0.c
+  match: 0x005530f0 _FUN_005530f0: 67.8% (regs 67.8%, ops 90.8%)  85/87 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x005530f0	BAD	checked=5	unchecked=0	005530f0.c	+0x70 _FUN_004c3b30: ours 0x004c3b30 vs orig 0x34798e3d; +0x7a _FUN_004c3b90: ours 0x004c3b90 vs orig 0x24797647; +0xc5 _DAT_005cc320: ours 0x005cc320 v
+== re/match/rwl04/005533d0.c
+  match: 0x005533d0 _FUN_005533d0: 55.0% (regs 61.1%, ops 87.9%)  146/149 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x005533d0	BAD	checked=13	unchecked=0	005533d0.c	+0x4a _DAT_005d757c: ours 0x005d757c vs orig 0x2464d804; +0x5e _DAT_005d757c: ours 0x005d757c vs orig 0x44d9157a; +0x74 _FUN_0055deb0: ours 0x0055deb0 
+== re/match/rwl04/005538a0.c
+  match: 0x005538a0 _FUN_005538a0: 19.7% (regs 29.8%, ops 44.1%)  302/315 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x005538a0	BAD	checked=11	unchecked=12	005538a0.c	+0x55 __DAT_00912be8: ours 0x00912be8 vs orig 0x54d91860; +0xd2 _FUN_0055deb0: ours 0x0055deb0 vs orig 0x5f2f034e; +0xe3 _FUN_005c4bb0: ours 0x005c4bb
+== re/match/s24/00554200.c
+  match: 0x00553e80 _FUN_00553e80: 100.0% (regs 100.0%, ops 100.0%)  37/37 ins  flags=/O2 /Ob1 /G5 tc=rw9044
+  match: 0x00554200 _FUN_00554200: 99.3% (regs 99.3%, ops 100.0%)  141/141 ins  flags=/O2 /Ob1 /G5 tc=rw9044
+  reloc: 0x00553e80	OK	checked=4	unchecked=0	00554200.c
+  reloc: 0x00554200	OK	checked=13	unchecked=0	00554200.c
+== re/match/s24/00554940.c
+  match: 0x00554940 _FUN_00554940: 12.5% (regs 31.7%, ops 52.9%)  437/584 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x00554940	BAD	checked=24	unchecked=16	00554940.c	+0x4 _DAT_00912be0: ours 0x00912be0 vs orig 0xe0a10000; +0x28 _FUN_005c4d30: ours 0x005c4d30 vs orig 0x041831bd; +0x6c _FUN_00552d10: ours 0x00552d10 
+== re/match/s24/005572c0.c
+  match: 0x005572c0 _FUN_005572c0: 17.9% (regs 38.4%, ops 64.1%)  381/448 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x005572c0	BAD	checked=25	unchecked=8	005572c0.c	+0x14 _FUN_00552e40: ours 0x00552e40 vs orig 0x56a872d8; +0x24 _DAT_00912be0: ours 0x00912be0 vs orig 0x10558b00; +0x41 _FUN_00553590: ours 0x00553590 
+== re/match/pilot/a6_0045cd30.c
+  match: 0x0045cd30 _FUN_0045cd30: 51.4% (regs 62.6%, ops 82.7%)  162/179 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x0045cd30	BAD	checked=25	unchecked=0	a6_0045cd30.c	+0xa _DAT_0088f6a0: ours 0x0088f6a0 vs orig 0xf6a0ad0c; +0x2b _DAT_007f1a1c: ours 0x007f1a1c vs orig 0x1a1c808b; +0x43 _DAT_007f1a1c: ours 0x007f1a1
+== re/match/s10/0045cd30.c
+  match: 0x0045c820 _FUN_0045c820: 100.0% (regs 100.0%, ops 100.0%)  13/13 ins  flags=/O2 /GS /Ob1 tc=ddk
+  match: 0x0045cd30 _FUN_0045cd30: 62.8% (regs 78.1%, ops 92.3%)  183/179 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x0045c820	OK	checked=2	unchecked=0	0045cd30.c
+  reloc: 0x0045cd30	BAD	checked=25	unchecked=0	0045cd30.c	+0x189 _DAT_0088f680: ours 0x0088f680 vs orig 0x4c8dff85; +0x1a3 _DAT_0088f680: ours 0x0088f680 vs orig 0xeb000000; +0x1bb _DAT_0088f680: ours 0x0088f6
+== re/match/s10/004647f0.c
+  match: 0x004647f0 _FUN_004647f0: 83.3% (regs 83.3%, ops 92.6%)  54/51 ins  flags=/O2 /GS /Ob1 tc=ddk
+  reloc: 0x004647f0	BAD	checked=20	unchecked=0	004647f0.c	+0xa3 _DAT_0068f640: ours 0x0068f640 vs orig 0xe856241c; +0xa9 _DAT_006036b8: ours 0x006036b8 vs orig 0x74a1ffff; +0xb6 _FUN_0045e0f0: ours 0x0045e0f0 
+== re/match/s25/005a6d60.c
+  match: 0x005a6d60 _FUN_005a6d60: 50.0% (regs 72.7%, ops 77.3%)  20/22 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x005a6d60	OK	checked=0	unchecked=0	005a6d60.c
+== re/match/s25/005aab70.c
+  match: 0x005aab70 _FUN_005aab70: 75.6% (regs 75.6%, ops 91.1%)  43/45 ins  flags=/O2 /Ob1 /G5 tc=ddk
+  reloc: 0x005aab70	OK	checked=0	unchecked=0	005aab70.c
+== re/match/s26/005acda0.c
+  match: 0x005acda0 _FUN_005acda0: 44.3% (regs 50.0%, ops 67.1%)  55/70 ins  flags=/O2 /Op /Ob1 /G5 tc=ddk
+  reloc: 0x005acda0	BAD	checked=7	unchecked=1	005acda0.c	+0x28 _FUN_005adf30: ours 0x005adf30 vs orig 0x856b924f; +0x37 _DAT_005e64b4: ours 0x005e64b4 vs orig 0x1153e851; +0x3d _FUN_005adf30: ours 0x005adf30 v

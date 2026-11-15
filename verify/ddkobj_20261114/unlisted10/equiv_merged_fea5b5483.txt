@@ -1,0 +1,20 @@
+=== s01/00401690
+0x00401690	NOT-PROVEN	branch-condition: region ours +0xa / orig 0x0040169a: P1('slt',ld32(Mc0(call0(0x4b3f90,(ld32(M00(),esi_in),),(('ebp', ebp_in), ('ebx', ebx_in), ('edi', edi_in), ('edx', edx_in), ('esi', esi_in)),M00(),X00())),(ld32(Mc0(call0(0x4b3f90,(ld32(M00(),esi_in),),(('ebp', ebp_in), ('ebx', ebx_in), ('edi', edi_in), ('edx', edx_in), ('esi', esi_in)),M00(),X00())),(ret32(call0(...,(ld32
+=== s09/0045a3a0
+0x0045a3a0	EQUIV-IF-CALLERS-IGNORE(EAX)	[ENC,FRAME,VALUE-FLOW]	callers 3, scan says ignore: 2/3: 0x0045a741:ignores 0x0045a7d9:ignores 0x0045ac2a:unknown
+=== s16/00498810
+0x00498810	NOT-PROVEN	call-regargs: region ours +0x21 / orig 0x00498831 call 0x4d52d0: (('ecx', retc32(call0(0x4cdd60,(ret32(call0(0x4cdca0,(ld32(M00(),(ld32(M00(),(eax_in+0x60))+0xc)), ld32(M00(),(ld32(M00(),(eax_in+0x60))+0x10)), 0x20),(('ebx', ebx_in), ('edi', ld32(M00(),(eax_in+0x60))), ('esi', esi_in)),M00(),X00())),),(('ebp', ebp_in), ('ebx', ebx_in), ('edi', ld32(M00(),(eax_in+0x60))), ('es
+=== rwl04/00552890
+0x00552890	NOT-PROVEN	call-memory: region ours +0xc / orig 0x0055289c call 0x4c3dc0: memory differs (st0(st0(st0(Mc0(call0(0x552e40,(),(('esi', esi_in),),M00(),X00())),(esp0+-0xc),x87o32(X0(X0(X0(...,'fdiv',('m4',),...),'fmul',('m4',),ld32(...,...)),'fmul',('m4',),ld32(Mc0(...),0x912be4)),'fstp'),4),(esp0+-0x8),0x0,4),(esp0+-0x4),0x0,4) | st0(st0(st0(Mc0(call0(0x552e40,(),(('esi', esi_in),),M00(),
+=== rwl04/005530f0
+0x005530f0	NOT-PROVEN	call-args: region ours +0x0 / orig 0x005530f0 call 0x4c3b30 arg 0: x87o32(X0(X0(X0(X0(X0(X0(...,'fstp',('m4',),None),'fld',('m4',),x87o32(...,'fstp')),'fmul',('m4',),x87o32(X0(...,'fsub',('m4',),...),'fstp')),'fld',('m4',),x87o32(X0(X0(...,'fld',('m4',),...),'fsub',('m4',),arg32(8)),'fstp')),'fmul',('m4',),x87o32(X0(X0(X0(...,'fstp',('m4',),None),'fld',('m4',),ld32(...,...)),
+=== rwl04/005533d0
+0x005533d0	NOT-PROVEN	x87-region: region ours +0x0 / orig 0x005533d0 x87 instruction 3 differs: fld m4[esp+0x20] | fld m4[esp+0x1c]
+=== rwl04/005538a0
+0x005538a0	NOT-PROVEN	branch-condition: region ours +0x0 / orig 0x005538a0: P1('sle',(arg32(12)+-0x1),0xffffffff) | P1('sle',0x0,(arg32(12)+-0x1))
+=== s24/00554200
+0x00554200	EQUIV	[ORDER]
+=== s24/00554940
+0x00554940	NOT-PROVEN	x87-region: region ours +0x3a / orig 0x0055497f x87 instruction 3 differs: fld m4[ebx+0x8] | fld m4[ebp+0x8]
+=== s24/005572c0
+0x005572c0	NOT-PROVEN	call-regargs: region ours +0x40 / orig 0x00557309 call 0x553590: (('ebp', ebp_in), ('edx', ld32(Mc0(call0(0x552e40,(),(('esi', esi_in),),M00(),X00())),(arg32(8)+0x70)))) | (('ebp', arg32(4)), ('edx', ld32(Mc0(call0(0x552e40,(),(('esi', esi_in),),M00(),X00())),(arg32(4)+0x10))))

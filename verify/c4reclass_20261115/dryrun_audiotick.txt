@@ -1,0 +1,9 @@
+[1/7] 0x00462dd0 refresh SKIP src sha256 ea5082998cc2a73b already current (no write)
+[2/7] 0x00462ec0 refresh SKIP src sha256 aff0cadf0330f224 already current (no write)
+[3/7] 0x0045cc50 refresh SKIP src sha256 07f440b85d1a5fb7 already current (no write)
+[4/7] 0x004645c0 refresh SKIP src sha256 bb2e111af766ce04 already current (no write)
+[5/7] 0x0045d250 refresh SKIP src sha256 b636755ba58c30c7 already current (no write)
+[6/7] 0x00411530 refresh SKIP src sha256 0f47729eea7fbbd5 already current (no write)
+[7/7] 0x004115c0 refresh SKIP src sha256 30da0a03283117cd already current (no write)
+refresh: 0 would-refresh, 0 refused, 7 skipped (already current), 7 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:

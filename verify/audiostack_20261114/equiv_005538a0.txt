@@ -1,0 +1,2 @@
+0x005538a0	NOT-PROVEN	branch-condition: region ours +0x0 / orig 0x005538a0: P1('sle',(arg32(12)+-0x1),0xffffffff) | P1('sle',0x0,(arg32(12)+-0x1))
+exit 0

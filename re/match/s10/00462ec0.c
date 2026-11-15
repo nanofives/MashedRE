@@ -52,7 +52,7 @@ void FUN_00462ec0(void)
     FUN_00550be0();
     puVar2 = &DAT_0069045c;
     do {
-      FUN_005aaa00(*puVar2,0,0);
+      FUN_005aaa00((int *)*puVar2,0,0);
       puVar2 = puVar2 + 1;
     } while ((int)puVar2 < 0x69046c);
     iVar1 = 0;

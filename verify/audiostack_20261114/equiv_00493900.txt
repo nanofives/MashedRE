@@ -1,0 +1,2 @@
+0x00493900	NOT-PROVEN	call-regargs: region ours +0x3a / orig 0x0049393d call 0x4a3ac9: (('ebp', ebp_in), ('ebx', 0x0), ('ecx', (esp0+-0x104)), ('edi', edi_in), ('edx', (esp0+-0x103)), ('esi', esi_in)) | (('ebp', (esp0+-0x104)), ('ebx', 0x0), ('ecx', ins32(retc32(call0(0x499730,(),(),M00(),X00()),ecx_in),ld8(Mc0(call0(0x499730,(),(),M00(),X00())),ret32(call0(0x499730,(),(),M00(),X00()))),0)), ('edi', 0x1), ('edx', (esp0+-0x103)), ('esi', esi_in))
+exit 0

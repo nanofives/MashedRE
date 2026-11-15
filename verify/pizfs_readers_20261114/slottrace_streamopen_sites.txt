@@ -1,0 +1,162 @@
+--- site 004096b1 in fn 004096a0
+004096a3  call 0x4095a0
+004096a8  push 0x63b7f0
+004096ad  push 2
+004096af  push 2
+004096b1  call 0x4cc230
+--- site 00409731 in fn 00409710
+00409723  call 0x495280
+00409728  push 0x63b7f0
+0040972d  push 1
+0040972f  push 2
+00409731  call 0x4cc230
+--- site 0042354f in fn 00423540
+00423541  call 0x423480
+00423546  push 0x644110
+0042354b  push 2
+0042354d  push 2
+0042354f  call 0x4cc230
+--- site 004235cf in fn 004235b0
+004235c1  call 0x495280
+004235c6  push 0x644110
+004235cb  push 1
+004235cd  push 2
+004235cf  call 0x4cc230
+--- site 0042751e in fn 004274e0
+00427513  jmp 0x42751a
+00427515  push 0x5cd5ac
+0042751a  push 1
+0042751c  push 2
+0042751e  call 0x4cc230
+--- site 00427889 in fn 00427880
+00427882  push eax
+00427883  push 1
+00427885  push 2
+00427887  xor edi, edi
+00427889  call 0x4cc230
+--- site 0042a7a2 in fn 0042a740
+0042a797  je 0x42a7e9
+0042a799  push 0x67e2a8
+0042a79e  push 1
+0042a7a0  push 2
+0042a7a2  call 0x4cc230
+--- site 0045d47c in fn 0045d460
+0045d46f  push 0x5ce68c
+0045d474  push 1
+0045d476  push 2
+0045d478  mov dword ptr [esp + 0x1c], eax
+0045d47c  call 0x4cc230
+--- site 00462a58 in fn 00462950
+00462a4f  lea edx, [esp + 0x28]
+00462a53  push edx
+00462a54  push 1
+00462a56  push 2
+00462a58  call 0x4cc230
+--- site 00478139 in fn 00478110
+00478132  je 0x4781a5
+00478134  push eax
+00478135  push 1
+00478137  push 2
+00478139  call 0x4cc230
+--- site 004781ce in fn 004781b0
+004781c5  mov eax, dword ptr [esp + 0xc]
+004781c9  push eax
+004781ca  push 1
+004781cc  push 2
+004781ce  call 0x4cc230
+--- site 00483d7e in fn 00483d10
+00483d75  lea eax, [esp + 0x10]
+00483d79  push eax
+00483d7a  push 1
+00483d7c  push 3
+00483d7e  call 0x4cc230
+--- site 00483de1 in fn 00483d10
+00483dd8  lea edx, [esp + 0x10]
+00483ddc  push edx
+00483ddd  push 1
+00483ddf  push 3
+00483de1  call 0x4cc230
+--- site 004b3b7d in fn 004b3b70
+004b3b76  push eax
+004b3b77  push 1
+004b3b79  push 2
+004b3b7b  xor edi, edi
+004b3b7d  call 0x4cc230
+--- site 004b3bb9 in fn 004b3bb0
+004b3bb0  mov eax, dword ptr [esp + 4]
+004b3bb4  push eax
+004b3bb5  push 2
+004b3bb7  push 2
+004b3bb9  call 0x4cc230
+--- site 004b3bfd in fn 004b3bf0
+004b3bf6  push eax
+004b3bf7  push 1
+004b3bf9  push 2
+004b3bfb  xor esi, esi
+004b3bfd  call 0x4cc230
+--- site 004b3c6d in fn 004b3c60
+004b3c66  push eax
+004b3c67  push 1
+004b3c69  push 2
+004b3c6b  xor edi, edi
+004b3c6d  call 0x4cc230
+--- site 004b3ccd in fn 004b3cc0
+004b3cc6  push eax
+004b3cc7  push 1
+004b3cc9  push 2
+004b3ccb  xor edi, edi
+004b3ccd  call 0x4cc230
+--- site 004b3d2d in fn 004b3d20
+004b3d26  push eax
+004b3d27  push 1
+004b3d29  push 2
+004b3d2b  xor edi, edi
+004b3d2d  call 0x4cc230
+--- site 004b3d8d in fn 004b3d80
+004b3d86  push eax
+004b3d87  push 1
+004b3d89  push 2
+004b3d8b  xor edi, edi
+004b3d8d  call 0x4cc230
+--- site 004b3ded in fn 004b3de0
+004b3de6  push eax
+004b3de7  push 1
+004b3de9  push 2
+004b3deb  xor edi, edi
+004b3ded  call 0x4cc230
+--- site 004b3e60 in fn 004b3e40
+004b3e54  push 3
+004b3e56  xor edi, edi
+004b3e58  mov dword ptr [esp + 0x14], eax
+004b3e5c  mov dword ptr [esp + 0x18], ecx
+004b3e60  call 0x4cc230
+--- site 004b3ed0 in fn 004b3eb0
+004b3ec4  push 3
+004b3ec6  xor edi, edi
+004b3ec8  mov dword ptr [esp + 0x14], eax
+004b3ecc  mov dword ptr [esp + 0x18], ecx
+004b3ed0  call 0x4cc230
+--- site 00513fb6 in fn 00513f90
+00513fab  je 0x5142bc
+00513fb1  push eax
+00513fb2  push 2
+00513fb4  push 2
+00513fb6  call 0x4cc230
+--- site 0051434b in fn 00514330
+00514340  je 0x514716
+00514346  push eax
+00514347  push 1
+00514349  push 2
+0051434b  call 0x4cc230
+--- site 0052cb16 in fn 0052cb00
+0052cb10  push edi
+0052cb11  push eax
+0052cb12  push 1
+0052cb14  push 2
+0052cb16  call 0x4cc230
+--- site 0052d53e in fn 0052d170
+0052d538  push esi
+0052d539  push eax
+0052d53a  push 2
+0052d53c  push 2
+0052d53e  call 0x4cc230

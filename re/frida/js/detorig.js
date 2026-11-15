@@ -275,7 +275,8 @@ function warp() {
   ga(0x0067ea98).writeS32(s.car);
   ga(0x0067ea64).writeS32(s.team);
   const e480 = new NativeFunction(ga(0x0040e480), 'void', ['int', 'int'], 'mscdecl');
-  for (let k = 0; k < 4; k++) e480(k, k === 0 ? 1 : (k < s.cars ? 2 : 0));
+  // SOAK-P0: scenario field `slots` (4 states, default = the old [1, 2, 2, 2] shape cut at cars) feeds FUN_0040e480 per slot
+  for (let k = 0; k < 4; k++) e480(k, s.slots ? s.slots[k] : (k === 0 ? 1 : (k < s.cars ? 2 : 0)));
   const pins = pinRngs();
   // PROV-INSITU (cfg.warpClock = K ticks): the virtual clock at the warp is the start value plus however many ticks the
   // menu ran since the install, and that count is not a function of N (the warp is scheduled on clock calls). Runs one
@@ -867,6 +868,8 @@ function install() {
       if (CFG.rec && TK) { recAnchor = tickNow(); REC.add(8).writeU32(TK.st.add(8).toUInt32()); REC.writeU32(1); }
       if (CFG.inputTick) { const t0 = tickNow(); for (const [dt, c, v] of CFG.input) tickSchedule(t0 + dt, () => { CTL.add(c * 4).writeS32(v); }); }
       else for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
+      // SOAK-P0 probe (cfg.probe): no checkpoints and no end event; detorig.py polls rpc probe() until its own stop rule
+      if (CFG.probe) return;
       CFG.ckpts.forEach((dn, k) => schedule(raceN + dn, () => checkpoint(k)));
       schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => {
         setDue(0xffffffff);
@@ -949,6 +952,24 @@ rpc.exports = {
     return t.state + ' ' + f(t.context.pc) + ' | ' + bt.join(' ');
   },
   tick() { return tickNow(); },
+  // SOAK-P0: read-only sample, plain memory reads, no Interceptor. Car records 0x008815a0 + k * 0xd04 (detorig.py REGIONS),
+  // world position = the +0x928 matrix row +0x30 = +0x958 / +0x95c / +0x960 (float x, y, z).
+  probe() {
+    const rd = (f) => { try { return f(); } catch (e) { return null; } };
+    const d = rd(() => ga(0x0067e9f8).readS32());
+    const cars = [];
+    for (let k = 0; k < 4; k++) {
+      const r = 0x008815a0 + k * 0xd04;
+      cars.push(rd(() => [ga(r + 0x958).readFloat(), ga(r + 0x95c).readFloat(), ga(r + 0x960).readFloat()]));
+    }
+    return { tick: tickNow(), phase: rd(() => ga(0x00771968).readU8()), ui: rd(() => ga(0x0063ba8c).readS32()),
+             ended: rd(() => ga(0x0063b90c).readS32()), winner: rd(() => ga(0x0063b914).readS32()), depth: d,
+             fphase: rd(() => ga(0x0067eca4).readS32()), screen: d === null ? null : rd(() => ga(0x0067ed3c + d * 0x40).readS32()),
+             mode: rd(() => ga(0x0067e9fc).readS32()), cars,
+             // cooked input block 0x007f1038 (detorig.py REGIONS: 4 x 0x4c), players 0 and 1, raw dwords
+             cin: rd(() => [0, 1].map((p) => Array.from(new Uint32Array(ga(0x007f1038 + p * 0x4c).readByteArray(0x4c))))),
+             slot: rd(() => [0, 1, 2, 3].map((k) => ga(0x005f2770).readPointer().add(k * 4 + 0x34).readS32())) };
+  },
   phase() { return ga(0x00771968).readU8(); },
   install() { return JSON.stringify(install()); },
   stats() { return { qpf: ga(0x00771e70).readU32(), N: N(), T: D.readU32(), tgt: D.add(0x20).readU32(), qpc: D.add(0x24).readU32(), fwd: D.add(0x28).readU32(), clk: ga(0x007f0ff0).readU32(), phase: ga(0x00771968).readU8(), tick: tickNow() }; },

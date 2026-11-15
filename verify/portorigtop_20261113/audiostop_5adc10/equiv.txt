@@ -1,0 +1,1 @@
+0x005adc10	NOT-PROVEN	call-regargs: region ours +0x23 / orig 0x005adc33 call 0x5ad910: (('ecx', ld32(Mc0(call0(0x5b3620,(0x9146f0, ld32(M00(),(arg32(4)+0x14))),(),M00(),X00())),(arg32(4)+0x8))),) | (('ecx', ld32(Mc0(call0(0x5b3620,(0x9146f0, ld32(M00(),(arg32(4)+0x14))),(),M00(),X00())),(arg32(4)+0x18))),)

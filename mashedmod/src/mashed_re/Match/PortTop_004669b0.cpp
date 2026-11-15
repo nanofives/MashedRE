@@ -11,9 +11,9 @@
 //
 // Callees of 0x004669b0 (re/match/topm01/004669b0.c):
 //  - 0x004625b0 -> AudioCharacterBankPathsBuild (Audio/AudioCharacterBankPaths.cpp, exe body, writes 0x00690158..).
-//  - 0x004627f0 (sound engine HW init, no exe body) -> hand piece 3 (HandTop_InitAudio: exe audio, permdict.rws, menu
-//    music). The piece does the job the original's callees 0x004627f0 + 0x0045d460 do, at the first of the two points.
-//  - 0x0045d460 (permdict.rws loader, no exe body) -> stand-in, logs its first call: piece 3 already loaded the bank.
+//  - 0x004627f0 (sound engine HW init) -> its exe body PortTop_Bound_004627f0 (L-126 provisional, re/match/s10/004627f0.c;
+//    PORT-TOP-AUDIO-HWINIT-4627F0). Before that row: hand piece 3 (HandTop_InitAudio: exe audio, permdict.rws, menu music).
+//  - 0x0045d460 (permdict.rws loader, no exe body) -> stand-in, logs its first call. With the knob on, no permdict bank.
 //  - 0x00429290 (called 3 times with the 0x006036e8 / 0x00603768 / 0x006037e8 strings) -> stand-in, logs its first
 //    call. Same choice as 0x00402750's binding of 0x00429290 (PortTop_StandIn04E_00429290).
 // RVA-LINT: ORIGTOP-ONLY
@@ -61,15 +61,20 @@ extern "C" {
 extern int g_PortTop04E_InitFailed;          // Match/PortTop_00402750_Pieces.cpp
 void PortTop_Piece_004669b0(void);           // Match/PortTop_00402750_Pieces.cpp (piece 3)
 
-// rva 0x004627f0 sound engine HW init (no exe body) -> hand piece 3
+// rva 0x004627f0 sound engine HW init -> its exe body PortTop_Bound_004627f0 (Match/PortTop_004627f0.cpp, L-126
+// provisional body re/match/s10/004627f0.c, PORT-TOP-AUDIO-HWINIT-4627F0). Before that row it ran hand piece 3.
+void PortTop_Bound_004627f0(void);
 void PortTop_AInit_004627f0(void) {
-    LogAI("0x004627f0 sound engine HW init: hand piece 3 (HandTop_InitAudio)");
-    PortTop_Piece_004669b0();
+    LogAI("0x004627f0 sound engine HW init: provisional exe body (re/match/s10/004627f0.c)");
+    PortTop_Bound_004627f0();
+    LogAI("0x004627f0 returned: DAT_00632ba0=0x%08X DAT_0069049c=0x%08X DAT_0068f61c=0x%08X DAT_006904a0=%d DAT_0068f4c8=%d "
+          "DAT_007dcd20=0x%08X", MemU(0x00632ba0u), MemU(0x0069049cu), MemU(0x0068f61cu), MemI(0x006904a0u), MemI(0x0068f4c8u),
+          MemU(0x007dcd20u));
 }
 // rva 0x0045d460 permdict.rws loader (no exe body) -> stand-in
 void PortTop_AInit_0045d460(void) {
     static int once;
-    if (!once) { once = 1; LogAI("rva 0x0045d460: stand-in, not run (permdict.rws; piece 3 loaded the bank)"); }
+    if (!once) { once = 1; LogAI("rva 0x0045d460: stand-in, not run (permdict.rws not loaded on this path)"); }
 }
 // rva 0x00429290 (string arg calls inside 0x004669b0) -> stand-in
 void PortTop_AInit_00429290(char* a, char* b, int c) {

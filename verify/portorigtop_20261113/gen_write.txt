@@ -1,0 +1,324 @@
+Counter({'bind': 132, 'reuse': 35, 'stop': 23}) Counter({'match': 122, 'replay': 6, 'admitted': 2, 'provisional': 2})
+00405890 reuse Pred405890 C4
+004075a0 stop  C4
+00407600 bind re/match/s01/00407600.c C4
+00408ad0 reuse RaceScoreFloatGetBySlot C4
+0040b6d0 reuse UtilArrayGet8a94e0 C4
+0040e340 reuse GetLiveCarCount C4
+0040e350 reuse GetRenderSubMode C4
+0040e370 reuse IsCarSlotActive C4
+0040e450 reuse Flag63b908Get C4
+0040e470 reuse CarSlotStateGet C4
+0040e4b0 bind re/match/s02/0040e4b0.c C4
+0040e500 bind re/match/s02/0040e500.c C4
+00411350 bind re/match/s02/00411350.c C4
+00411530 bind re/match/s02/00411530.c C4
+004115c0 bind re/match/s02/004115c0.c C4
+0041da90 reuse DeltaTimeOutGet C4
+00425ee0 reuse SlotWordPtrGet C4
+00425ef0 reuse ActiveSlotCount C4
+00426c00 reuse GameStateFlagGet C4
+0042b8d0 stop  C4
+0042b8f0 reuse StatePhaseIsFinal C4
+0042b900 stop  C4
+0042f500 reuse GetDat0067ea64 C4
+0042f6a0 reuse GetRaceSubMode C4
+0042f760 bind re/match/s07/0042f760.c C4
+0042f770 bind re/match/s07/0042f770.c C4
+0042f780 bind re/match/s07/0042f780.c C4
+00430790 reuse GetDat0067f17c C4
+00431b20 reuse SinGlobalProduct431b20 C4
+00431b50 reuse SinGlobalProduct431b50 C4
+00431b60 reuse SinGlobalProduct431b60 C4
+00431b70 reuse MenuFlagDat007f0f10Get C4
+00432230 bind re/match/s07/00432230.c C4
+00432260 bind re/match/s08/00432260.c C4
+00432290 bind re/match/s08/00432290.c C4
+004417e0 bind re/match/s08/004417e0.c C4
+004495d0 bind re/match/s08/004495d0.c C4
+0044b000 bind re/match/s08/0044b000.c C4
+0044dfe0 bind re/match/s08/0044dfe0.c C4
+0044dff0 bind re/match/s08/0044dff0.c C4
+0044e020 bind re/match/s08/0044e020.c C4
+0044e050 bind re/match/s08/0044e050.c C4
+0044e070 bind re/match/s08/0044e070.c C4
+00452160 bind re/match/s09/00452160.c C4
+0045b350 reuse RwInitNullStub C4
+0045c480 bind re/match/s10/0045c480.c C3
+0045c640 reuse PortTop_Bound_0045c640 C4
+0045c6b0 bind re/match/s10/0045c6b0.c C4
+0045c720 bind re/match/s10/0045c720.c C4
+0045c7f0 bind re/match/s10/0045c7f0.c C4
+0045c810 bind re/match/s10/0045c810.c C4
+0045c850 bind re/match/s10/0045c850.c C4
+0045c860 bind re/match/s10/0045c860.c C4
+0045c880 bind re/match/s10/0045c880.c C4
+0045ca30 bind re/match/s10/0045ca30.c C4
+0045cab0 bind re/match/s10/0045cab0.c C4
+0045caf0 stop  C4
+0045cb20 bind re/match/s10/0045cb20.c C4
+0045cbe0 bind re/match/s10/0045cbe0.c C4
+0045cc50 bind re/match/s10/0045cc50.c C4
+0045cc80 bind re/match/s10/0045cc80.c C4
+0045cd30 bind re/match/s10/0045cd30.c C4
+0045cfe0 bind re/match/s10/0045cfe0.c C4
+0045d080 bind re/match/s10/0045d080.c C4
+0045d0e0 bind re/match/s10/0045d0e0.c C4
+0045d1e0 bind re/match/s10/0045d1e0.c C4
+0045d250 bind re/match/pilot/a4_0045d250.c C4
+0045d330 bind re/match/s10/0045d330.c C4
+0045d3a0 bind re/match/s10/0045d3a0.c C4
+0045d3f0 bind re/match/s10/0045d3f0.c C4
+0045d430 bind re/match/s10/0045d430.c C4
+0045d7a0 stop  C2
+0045da90 bind re/match/s10/0045da90.c C4
+0045daf0 bind re/match/s10/0045daf0.c C4
+0045db50 reuse FloatSliderStep C4
+0045dbe0 bind re/match/s10/0045dbe0.c C4
+0045dc80 bind re/match/s10/0045dc80.c C4
+0045dd60 stop  C2
+0045df70 bind re/match/s10/0045df70.c C4
+0045dfc0 bind re/match/s10/0045dfc0.c C4
+0045dff0 bind re/match/s10/0045dff0.c C4
+0045e0f0 bind re/match/s10/0045e0f0.c C4
+0045e460 bind re/match/s10/0045e460.c C4
+0045e990 stop  C2
+0045efe0 stop  C2
+0045f5f0 bind re/match/s10/0045f5f0.c C4
+0045faa0 bind re/match/s10/0045faa0.c C4
+0045ff50 bind re/match/s10/0045ff50.c C4
+00460270 bind re/match/s10/00460270.c C4
+00460350 bind re/match/s10/00460350.c C4
+00460df0 bind re/match/s10/00460df0.c C4
+00461650 bind re/match/s10/00461650.c C4
+00461e90 stop  C3
+004623e0 bind re/match/s10/004623e0.c C4
+00462520 bind re/match/s10/00462520.c C4
+00462760 bind re/match/s10/00462760.c C4
+004627b0 bind re/match/s10/004627b0.c C4
+00462dd0 bind re/match/s10/00462dd0.c C4
+00462ec0 bind re/match/s10/00462ec0.c C4
+00462f50 bind re/match/s10/00462f50.c C4
+00463150 bind re/match/s10/00463150.c C4
+004631f0 bind re/match/s10/004631f0.c C4
+00463590 bind re/match/s10/00463590.c C4
+00463640 stop  C2
+00463c80 bind re/match/s10/00463c80.c C4
+00463f40 bind re/match/s10/00463f40.c C4
+004642f0 bind re/match/s10/004642f0.c C4
+004644a0 bind re/match/s10/004644a0.c C4
+004645c0 bind re/match/pilot/a1_004645c0.c C4
+00464670 bind re/match/s10/00464670.c C4
+004647f0 bind re/match/s10/004647f0.c C4
+004648b0 bind re/match/s10/004648b0.c C4
+00464a50 bind re/match/s10/00464a50.c C4
+00464ca0 stop  C2
+00464e10 bind re/match/s10/00464e10.c C4
+004652b0 bind re/match/s10/004652b0.c C4
+004656e0 bind re/match/s10/004656e0.c C4
+004657b0 bind re/match/s10/004657b0.c C4
+00465a30 bind re/match/s10/00465a30.c C4
+00465b20 bind re/match/s10/00465b20.c C4
+004661f0 bind re/match/s10/004661f0.c C4
+00466b50 bind re/match/s10/00466b50.c C4
+004671a0 reuse RwCore_004671a0 C4
+0046c730 reuse EntityDamageStateGet C4
+0046c7b0 stop  C4
+0046cbb0 stop  C4
+0046cc10 reuse VehicleFloatFieldAsInt C4
+0046d2e0 bind re/match/s11/0046d2e0.c C4
+0046d4a0 reuse PtrCompute881ec8 C4
+0046d6a0 bind re/match/s11/0046d6a0.c C4
+0046d6d0 bind re/match/s11/0046d6d0.c C4
+00472650 bind re/match/s11/00472650.c C4
+0047d150 bind re/match/s13/0047d150.c C4
+00492d10 bind re/match/s15/00492d10.c C4
+00493f70 stop  C4
+004943f0 bind re/match/s15/004943f0.c C4
+004a2c48 reuse MashedCrt_ftol2_004a2c48 C4
+004a34b0 stop  C2
+004b44f0 bind re/match/s18/004b44f0.c C4
+004c3ac0 stop  C4
+004d8560 reuse UtilReturnOne4d8560 C4
+00534870 reuse RwCore_00534870 C4
+005459c0 stop  C2
+00550be0 bind re/match/s24/00550be0.c C4
+0057c210 stop  C4
+005a60b0 bind re/match/s25/005a60b0.c C4
+005a60e0 bind re/match/s25/005a60e0.c C4
+005a66d0 bind re/match/s25/005a66d0.c C4
+005a6d60 bind re/match/s25/005a6d60.c C4
+005a6d90 bind re/match/s25/005a6d90.c C4
+005a6dc0 bind re/match/s25/005a6dc0.c C4
+005a6df0 bind re/match/s25/005a6df0.c C4
+005a6e10 bind re/match/s25/005a6e10.c C4
+005a6ea0 bind re/match/s25/005a6ea0.c C2
+005a6f30 bind re/match/s25/005a6f30.c C2
+005a7460 bind re/match/s25/005a7460.c C4
+005a7520 bind re/match/s25/005a7520.c C4
+005a7560 bind re/match/s25/005a7560.c C4
+005a75b0 stop  C2
+005a7f70 bind re/match/s25/005a7f70.c C4
+005a86a0 bind re/match/s25/005a86a0.c C4
+005a8750 bind re/match/s25/005a8750.c C4
+005a8890 bind re/match/s25/005a8890.c C2
+005a8960 bind re/match/s25/005a8960.c C4
+005a89a0 reuse VoiceFieldD6cGet C4
+005a89b0 reuse VoiceFieldD70Get C4
+005a89c0 reuse VoiceFieldD74Get C4
+005a89d0 bind re/match/s25/005a89d0.c C4
+005a9f60 stop  C2
+005aa560 stop  C2
+005aaa00 bind re/match/s25/005aaa00.c C4
+005aab00 bind re/match/s25/005aab00.c C4
+005aab70 bind re/match/s25/005aab70.c C4
+005aac20 stop  C2
+005aacf0 bind re/match/s25/005aacf0.c C4
+005aad40 bind re/match/s25/005aad40.c C4
+005ab040 bind re/match/s25/005ab040.c C4
+005ab070 bind re/match/s25/005ab070.c C4
+005ac650 bind re/match/s25/005ac650.c C4
+005acda0 bind re/match/s26/005acda0.c C4
+005ace70 bind re/match/s26/005ace70.c C4
+005adf30 reuse AudioFmtKeyCompare C4
+005af040 bind re/match/s26/005af040.c C4
+005af700 bind re/match/s26/005af700.c C4
+005b0c70 bind re/match/s26/005b0c70.c C4
+005b0ca0 bind re/match/s26/005b0ca0.c C4
+005b0cf0 stop  C3
+005b0dc0 bind re/match/s26/005b0dc0.c C4
+005b10e0 reuse AudioTableDispatchAt8 C4
+005b1110 bind re/match/s26/005b1110.c C4
+wrote 132 bind files + 23 stops
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00407600.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0040e4b0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0040e500.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00411350.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00411530.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004115c0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0042f760.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0042f770.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0042f780.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00432230.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00432260.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00432290.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004417e0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004495d0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0044b000.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0044dfe0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0044dff0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0044e020.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0044e050.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0044e070.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00452160.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c480.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c6b0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c720.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c7f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c810.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c850.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c860.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045c880.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045ca30.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045cab0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045cb20.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045cbe0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045cc50.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045cc80.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045cd30.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045cfe0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d080.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d0e0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d1e0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d250.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d330.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d3a0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d3f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045d430.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045da90.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045daf0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045dbe0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045dc80.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045df70.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045dfc0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045dff0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045e0f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045e460.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045f5f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045faa0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0045ff50.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00460270.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00460350.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00460df0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00461650.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004623e0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00462520.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00462760.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004627b0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00462dd0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00462ec0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00462f50.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00463150.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004631f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00463590.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00463c80.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00463f40.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004642f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004644a0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004645c0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00464670.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004647f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004648b0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00464a50.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00464e10.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004652b0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004656e0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004657b0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00465a30.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00465b20.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004661f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00466b50.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0046d2e0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0046d6a0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0046d6d0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00472650.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_0047d150.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00492d10.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004943f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_004b44f0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_00550be0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a60b0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a60e0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a66d0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a6d60.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a6d90.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a6dc0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a6df0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a6e10.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a6ea0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a6f30.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a7460.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a7520.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a7560.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a7f70.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a86a0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a8750.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a8890.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a8960.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005a89d0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005aaa00.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005aab00.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005aab70.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005aacf0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005aad40.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005ab040.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005ab070.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005ac650.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005acda0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005ace70.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005af040.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005af700.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005b0c70.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005b0ca0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005b0dc0.cpp
+NEWFILE mashedmod/src/mashed_re/Match/PortTop_005b1110.cpp

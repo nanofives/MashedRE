@@ -1,0 +1,833 @@
+// FUN_005a5e70 @ 0x005a5e70  size=101  (MASHED.exe)
+// NOTE: 0x005a5e70 is not a function entry; showing containing function
+// undefined FUN_005a5e70(void)
+// callees: FUN_004c2fb0@0x004c2fb0, FUN_004c3040@0x004c3040, FUN_004c30b0@0x004c30b0, FUN_004c3270@0x004c3270, FUN_004c32b0@0x004c32b0
+// callers: (none)
+
+undefined4 FUN_005a5e70(void)
+
+{
+  int iVar1;
+  undefined4 uStack_4;
+  
+  if (DAT_007dc960 == 0) {
+    iVar1 = FUN_004c32b0(DAT_007dc954,0,0x400);
+    if (iVar1 == 0) {
+      return 0;
+    }
+    uStack_4 = 1;
+    iVar1 = FUN_004c30b0(&uStack_4);
+    if (iVar1 == 0) {
+      FUN_004c3270();
+      return 0;
+    }
+    iVar1 = FUN_004c2fb0();
+    if (iVar1 == 0) {
+      FUN_004c3040();
+      FUN_004c3270();
+      return 0;
+    }
+  }
+  return 1;
+}
+
+
+
+// FUN_005a5ee0 @ 0x005a5ee0  size=25  (MASHED.exe)
+// NOTE: 0x005a5ee0 is not a function entry; showing containing function
+// undefined FUN_005a5ee0(void)
+// callees: FUN_004c2f60@0x004c2f60, FUN_004c3040@0x004c3040, FUN_004c3270@0x004c3270
+// callers: (none)
+
+void FUN_005a5ee0(void)
+
+{
+  if (DAT_007dc960 == 0) {
+    FUN_004c2f60();
+    FUN_004c3040();
+    FUN_004c3270();
+    return;
+  }
+  return;
+}
+
+
+
+// FUN_005ae5b0 @ 0x005ae5b0  size=94  (MASHED.exe)
+// NOTE: 0x005ae5b0 is not a function entry; showing containing function
+// undefined FUN_005ae5b0(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005ae5b0(void)
+
+{
+  DAT_007dda80 = &DAT_007dda80;
+  _DAT_007dda84 = &DAT_007dda80;
+  _DAT_007ddaac = 1;
+  DAT_007ddab0 = FUN_005ae650(0x24,0x10,4,0,&DAT_007dda88,0x40800);
+  if (DAT_007ddab0 == 0) {
+    _DAT_007ddaac = DAT_007ddab0;
+    return 0;
+  }
+  **(undefined4 **)(DAT_007ddab0 + 0x20) = *(undefined4 *)(DAT_007ddab0 + 0x1c);
+  *(undefined4 *)(*(int *)(DAT_007ddab0 + 0x1c) + 4) = *(undefined4 *)(DAT_007ddab0 + 0x20);
+  return 1;
+}
+
+
+
+// FUN_005ae610 @ 0x005ae610  size=63  (MASHED.exe)
+// NOTE: 0x005ae610 is not a function entry; showing containing function
+// undefined FUN_005ae610(void)
+// callees: FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005ae610(void)
+
+{
+  while ((undefined4 **)DAT_007dda80 != &DAT_007dda80) {
+    FUN_005ae7e0(DAT_007dda80 + -7);
+  }
+  FUN_005ae7e0(DAT_007ddab0);
+  DAT_007ddab0 = 0;
+  _DAT_007ddaac = 0;
+  return;
+}
+
+
+
+// FUN_005ae1d0 @ 0x005ae1d0  size=59  (MASHED.exe)
+// NOTE: 0x005ae1d0 is not a function entry; showing containing function
+// undefined FUN_005ae1d0(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005ae1d0(void)
+
+{
+  int iVar1;
+  
+  DAT_007dda74 = &DAT_007dda74;
+  _DAT_007dda78 = &DAT_007dda74;
+  iVar1 = FUN_005ae650(0x1c,8,4,0,&DAT_007dda50,0x40800);
+  if (iVar1 != 0) {
+    _DAT_007dda7c = 1;
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_005ae210 @ 0x005ae210  size=60  (MASHED.exe)
+// NOTE: 0x005ae210 is not a function entry; showing containing function
+// undefined FUN_005ae210(void)
+// callees: FUN_005ae330@0x005ae330, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005ae210(void)
+
+{
+  while ((undefined4 **)DAT_007dda74 != &DAT_007dda74) {
+    FUN_005ae330(DAT_007dda74 + -5);
+  }
+  FUN_005ae7e0(&DAT_007dda50);
+  _DAT_007dda7c = 0;
+  return;
+}
+
+
+
+// FUN_005adf90 @ 0x005adf90  size=44  (MASHED.exe)
+// NOTE: 0x005adf90 is not a function entry; showing containing function
+// undefined FUN_005adf90(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005adf90(void)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_005ae650(0x10,8,4,0,&DAT_007dda28,0x40802);
+  if (iVar1 != 0) {
+    _DAT_007dda4c = 1;
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_005adfc0 @ 0x005adfc0  size=24  (MASHED.exe)
+// NOTE: 0x005adfc0 is not a function entry; showing containing function
+// undefined FUN_005adfc0(void)
+// callees: FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005adfc0(void)
+
+{
+  FUN_005ae7e0(&DAT_007dda28);
+  _DAT_007dda4c = 0;
+  return;
+}
+
+
+
+// FUN_005add80 @ 0x005add80  size=44  (MASHED.exe)
+// NOTE: 0x005add80 is not a function entry; showing containing function
+// undefined FUN_005add80(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005add80(void)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_005ae650(0xc,0x20,0,0,&DAT_009146c0,0x40804);
+  if (iVar1 != 0) {
+    _DAT_007dda24 = 1;
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_005addb0 @ 0x005addb0  size=24  (MASHED.exe)
+// NOTE: 0x005addb0 is not a function entry; showing containing function
+// undefined FUN_005addb0(void)
+// callees: FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005addb0(void)
+
+{
+  FUN_005ae7e0(&DAT_009146c0);
+  _DAT_007dda24 = 0;
+  return;
+}
+
+
+
+// FUN_005ada90 @ 0x005ada90  size=214  (MASHED.exe)
+// NOTE: 0x005ada90 is not a function entry; showing containing function
+// undefined FUN_005ada90(void)
+// callees: FUN_005add60@0x005add60, FUN_005ae650@0x005ae650, FUN_005ae7e0@0x005ae7e0, FUN_005b3580@0x005b3580
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005ada90(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  undefined4 *puVar4;
+  
+  FUN_005b3580(&DAT_009146f0);
+  uVar2 = 0;
+  do {
+    iVar1 = FUN_005ae650((&DAT_006336fc)[uVar2 * 2],8,4,0,(&PTR_DAT_006336f8)[uVar2 * 2],0x40803);
+    uVar3 = uVar2;
+    if ((iVar1 == 0) && (uVar2 != 0)) {
+      puVar4 = &DAT_006336f0 + uVar2 * 2;
+      do {
+        FUN_005ae7e0(*puVar4);
+        uVar3 = uVar3 - 1;
+        puVar4 = puVar4 + -2;
+        uVar2 = uVar2 - 1;
+      } while (uVar2 != 0);
+    }
+    uVar2 = uVar3 + 1;
+  } while (uVar2 < 5);
+  _DAT_007dd6b8 = 0;
+  _DAT_007dda20 = 1;
+  iVar1 = FUN_005ae650(0x28,0x10,4,0,&DAT_007dd6c4,0x40803);
+  if (iVar1 != 0) {
+    iVar1 = FUN_005add60();
+    if (iVar1 == 1) {
+      return 1;
+    }
+    FUN_005ae7e0(&DAT_007dd6c4);
+  }
+  if (uVar2 != 0) {
+    puVar4 = &DAT_006336f0 + uVar2 * 2;
+    do {
+      FUN_005ae7e0(*puVar4);
+      puVar4 = puVar4 + -2;
+      uVar2 = uVar2 - 1;
+    } while (uVar2 != 0);
+  }
+  _DAT_007dda20 = 0;
+  return 0;
+}
+
+
+
+// FUN_005adb70 @ 0x005adb70  size=106  (MASHED.exe)
+// NOTE: 0x005adb70 is not a function entry; showing containing function
+// undefined FUN_005adb70(void)
+// callees: FUN_005ada40@0x005ada40, FUN_005ae7e0@0x005ae7e0, FUN_005b3580@0x005b3580, FUN_005b36b0@0x005b36b0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005adb70(void)
+
+{
+  int iVar1;
+  undefined **ppuVar2;
+  
+  _DAT_007dd6b8 = 1;
+  while( true ) {
+    iVar1 = FUN_005b36b0(&DAT_009146f0,0);
+    if (iVar1 == 0) break;
+    FUN_005ada40(iVar1,1);
+  }
+  FUN_005b3580(&DAT_009146f0);
+  FUN_005ae7e0(&DAT_007dd6c4);
+  ppuVar2 = (undefined **)&DAT_00633720;
+  do {
+    FUN_005ae7e0(ppuVar2[-2]);
+    ppuVar2 = ppuVar2 + -2;
+  } while (&PTR_DAT_006336f8 < ppuVar2);
+  _DAT_007dda20 = 0;
+  return;
+}
+
+
+
+// FUN_005a9970 @ 0x005a9970  size=249  (MASHED.exe)
+// NOTE: 0x005a9970 is not a function entry; showing containing function
+// undefined FUN_005a9970(void)
+// callees: FUN_005a9ab0@0x005a9ab0, FUN_005a9e10@0x005a9e10, FUN_005ae650@0x005ae650, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005a9970(void)
+
+{
+  int iVar1;
+  
+  _DAT_007dcbf0 = 0;
+  DAT_007dccc4 = 1;
+  iVar1 = FUN_005ae650(0x5c,8,4,0,&DAT_007dcc9c,0x40809);
+  if (iVar1 != 0) {
+    iVar1 = FUN_005ae650(0x18,8,4,0,&DAT_007dcbf4,0x40809);
+    if (iVar1 != 0) {
+      iVar1 = FUN_005ae650(8,8,4,0,&DAT_007dcc18,0x40809);
+      if (iVar1 != 0) {
+        _DAT_007dccc0 = 1;
+        DAT_009146fc = FUN_005a9ab0(0,0,&DAT_007dcc40,0,0,0x40809);
+        if (DAT_009146fc != 0) {
+          FUN_005a9e10(DAT_009146fc,&DAT_00633234,0);
+          *(undefined2 *)(DAT_009146fc + 0x46) = 1;
+          DAT_007dccc4 = 0;
+          return 1;
+        }
+        FUN_005ae7e0(&DAT_007dcc18);
+      }
+      FUN_005ae7e0(&DAT_007dcbf4);
+    }
+    FUN_005ae7e0(&DAT_007dcc9c);
+  }
+  _DAT_007dccc0 = 0;
+  DAT_007dccc4 = 0;
+  return 0;
+}
+
+
+
+// FUN_005a9a70 @ 0x005a9a70  size=64  (MASHED.exe)
+// NOTE: 0x005a9a70 is not a function entry; showing containing function
+// undefined FUN_005a9a70(void)
+// callees: FUN_005a9d00@0x005a9d00, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005a9a70(void)
+
+{
+  _DAT_007dcbf0 = 1;
+  FUN_005a9d00(&DAT_007dcc40);
+  FUN_005ae7e0(&DAT_007dcc18);
+  FUN_005ae7e0(&DAT_007dcbf4);
+  FUN_005ae7e0(&DAT_007dcc9c);
+  _DAT_007dccc0 = 0;
+  return;
+}
+
+
+
+// FUN_005aa480 @ 0x005aa480  size=133  (MASHED.exe)
+// NOTE: 0x005aa480 is not a function entry; showing containing function
+// undefined FUN_005aa480(void)
+// callees: FUN_005aa560@0x005aa560, FUN_005ae650@0x005ae650, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005aa480(void)
+
+{
+  int iVar1;
+  
+  DAT_007dccf0 = &DAT_007dccf0;
+  _DAT_007dccf4 = &DAT_007dccf0;
+  _DAT_007dccc8 = 0;
+  iVar1 = FUN_005ae650(0x1c,0x10,4,0,&DAT_007dcccc,0x4080b);
+  if (iVar1 != 0) {
+    _DAT_007dcd24 = 1;
+    DAT_007dcd20 = FUN_005aa560(DAT_009146fc,0,0,0,&LAB_005aa510,0);
+    if (DAT_007dcd20 != 0) {
+      return 1;
+    }
+    FUN_005ae7e0(&DAT_007dcccc);
+  }
+  _DAT_007dcd24 = 0;
+  return 0;
+}
+
+
+
+// FUN_005aa520 @ 0x005aa520  size=59  (MASHED.exe)
+// NOTE: 0x005aa520 is not a function entry; showing containing function
+// undefined FUN_005aa520(void)
+// callees: FUN_005aaa00@0x005aaa00, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005aa520(void)
+
+{
+  _DAT_007dccc8 = 1;
+  FUN_005aaa00(DAT_007dcd20,0,0);
+  DAT_007dcd20 = 0;
+  FUN_005ae7e0(&DAT_007dcccc);
+  _DAT_007dcd24 = 0;
+  return;
+}
+
+
+
+// FUN_005acff0 @ 0x005acff0  size=59  (MASHED.exe)
+// NOTE: 0x005acff0 is not a function entry; showing containing function
+// undefined FUN_005acff0(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005acff0(void)
+
+{
+  int iVar1;
+  
+  DAT_007dd6a8 = &DAT_007dd6a8;
+  _DAT_007dd6ac = &DAT_007dd6a8;
+  iVar1 = FUN_005ae650(0x28,0x10,4,0,&DAT_007dd684,0x4080a);
+  if (iVar1 != 0) {
+    _DAT_007dd6b0 = 1;
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_005ad030 @ 0x005ad030  size=80  (MASHED.exe)
+// NOTE: 0x005ad030 is not a function entry; showing containing function
+// undefined FUN_005ad030(void)
+// callees: FUN_005ad5f0@0x005ad5f0, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005ad030(void)
+
+{
+  while ((undefined4 **)DAT_007dd6a8 != &DAT_007dd6a8) {
+    FUN_005ad5f0(DAT_007dd6a8 + -8);
+  }
+  DAT_007dd6a8 = &DAT_007dd6a8;
+  _DAT_007dd6ac = &DAT_007dd6a8;
+  FUN_005ae7e0(&DAT_007dd684);
+  _DAT_007dd6b0 = 0;
+  return;
+}
+
+
+
+// FUN_005ac550 @ 0x005ac550  size=59  (MASHED.exe)
+// NOTE: 0x005ac550 is not a function entry; showing containing function
+// undefined FUN_005ac550(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005ac550(void)
+
+{
+  int iVar1;
+  
+  _DAT_007dd680 = 1;
+  iVar1 = FUN_005ae650(0x5c,8,4,0,&DAT_007dd65c,0x40805);
+  if (iVar1 != 0) {
+    return 1;
+  }
+  _DAT_007dd680 = 0;
+  return 0;
+}
+
+
+
+// FUN_005ac590 @ 0x005ac590  size=42  (MASHED.exe)
+// NOTE: 0x005ac590 is not a function entry; showing containing function
+// undefined FUN_005ac590(void)
+// callees: FUN_005aa0c0@0x005aa0c0, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005ac590(void)
+
+{
+  FUN_005aa0c0(0,0,&LAB_005ac5c0,0,1);
+  FUN_005ae7e0(&DAT_007dd65c);
+  _DAT_007dd680 = 0;
+  return;
+}
+
+
+
+// FUN_005a7810 @ 0x005a7810  size=153  (MASHED.exe)
+// NOTE: 0x005a7810 is not a function entry; showing containing function
+// undefined FUN_005a7810(void)
+// callees: FUN_005a7920@0x005a7920, FUN_005ad540@0x005ad540, FUN_005ae650@0x005ae650, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005a7810(void)
+
+{
+  int iVar1;
+  
+  DAT_007dca7c = &DAT_007dca7c;
+  _DAT_007dca80 = &DAT_007dca7c;
+  _DAT_007dcab0 = 1;
+  iVar1 = FUN_005ae650(0x24,8,4,0,&DAT_007dca84,0x40808);
+  if (iVar1 != 0) {
+    DAT_007dcab8 = FUN_005a7920(&DAT_007dca58);
+    DAT_007dcabc = DAT_007dcab8;
+    if (DAT_007dcab8 != 0) {
+      FUN_005ad540(DAT_007dcab8,&DAT_005e615c,&DAT_007d3e6c);
+      return 1;
+    }
+    FUN_005ae7e0(&DAT_007dca84);
+  }
+  DAT_007dcab8 = 0;
+  DAT_007dcabc = 0;
+  _DAT_007dcab0 = 0;
+  return 0;
+}
+
+
+
+// FUN_005aba00 @ 0x005aba00  size=24  (MASHED.exe)
+// NOTE: 0x005aba00 is not a function entry; showing containing function
+// undefined FUN_005aba00(void)
+// callees: FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005aba00(void)
+
+{
+  FUN_005ae7e0(&DAT_007dd634);
+  _DAT_007dd658 = 0;
+  return;
+}
+
+
+
+// FUN_005ab9d0 @ 0x005ab9d0  size=44  (MASHED.exe)
+// NOTE: 0x005ab9d0 is not a function entry; showing containing function
+// undefined FUN_005ab9d0(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005ab9d0(void)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_005ae650(0x5c,0x10,4,0,&DAT_007dd634,0x40806);
+  if (iVar1 != 0) {
+    _DAT_007dd658 = 1;
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_005a78b0 @ 0x005a78b0  size=102  (MASHED.exe)
+// NOTE: 0x005a78b0 is not a function entry; showing containing function
+// undefined FUN_005a78b0(void)
+// callees: FUN_005a79a0@0x005a79a0, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005a78b0(void)
+
+{
+  _DAT_007dcab4 = 1;
+  while ((undefined4 **)DAT_007dca7c != &DAT_007dca7c) {
+    FUN_005a79a0(DAT_007dca7c + -7);
+  }
+  FUN_005ae7e0(&DAT_007dca84);
+  DAT_007dca7c = &DAT_007dca7c;
+  _DAT_007dca80 = &DAT_007dca7c;
+  DAT_007dcab8 = 0;
+  DAT_007dcabc = 0;
+  _DAT_007dcab0 = 0;
+  _DAT_007dcab4 = 0;
+  return;
+}
+
+
+
+// FUN_005a6e50 @ 0x005a6e50  size=51  (MASHED.exe)
+// NOTE: 0x005a6e50 is not a function entry; showing containing function
+// undefined FUN_005a6e50(void)
+// callees: FUN_005a62b0@0x005a62b0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005a6e50(void)
+
+{
+  _DAT_007dca2c = 1;
+  DAT_007dca24 = &DAT_007dca24;
+  _DAT_007dca28 = &DAT_007dca24;
+  DAT_007dca18 = &DAT_007dca18;
+  DAT_007dca1c = &DAT_007dca18;
+  FUN_005a62b0();
+  return 1;
+}
+
+
+
+// FUN_005a6e90 @ 0x005a6e90  size=16  (MASHED.exe)
+// NOTE: 0x005a6e90 is not a function entry; showing containing function
+// undefined FUN_005a6e90(void)
+// callees: FUN_005a65a0@0x005a65a0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005a6e90(void)
+
+{
+  FUN_005a65a0();
+  _DAT_007dca2c = 0;
+  return;
+}
+
+
+
+// FUN_005ab4a0 @ 0x005ab4a0  size=104  (MASHED.exe)
+// NOTE: 0x005ab4a0 is not a function entry; showing containing function
+// undefined FUN_005ab4a0(void)
+// callees: FUN_005aeea0@0x005aeea0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 FUN_005ab4a0(void)
+
+{
+  DAT_007dd608 = 0;
+  _DAT_007dd60c = 0;
+  DAT_007dd610 = 0xffffffff;
+  DAT_007dd614 = 0;
+  FUN_005aeea0(&DAT_007dd618,1,1);
+  DAT_007dd62c = 0;
+  DAT_007dd624 = &DAT_007dd624;
+  _DAT_007dd628 = &DAT_007dd624;
+  FUN_005aeea0(&DAT_007dd620,1,1);
+  FUN_005aeea0(&DAT_007dd61c,1,1);
+  return 1;
+}
+
+
+
+// FUN_005ab510 @ 0x005ab510  size=75  (MASHED.exe)
+// NOTE: 0x005ab510 is not a function entry; showing containing function
+// undefined FUN_005ab510(void)
+// callees: CloseHandle@0xEXTERNAL:00000018, WaitForSingleObject@0xEXTERNAL:0000001a
+// callers: (none)
+
+void FUN_005ab510(void)
+
+{
+  WaitForSingleObject(DAT_007dd618,0xffffffff);
+  CloseHandle(DAT_007dd618);
+  WaitForSingleObject(DAT_007dd620,0xffffffff);
+  WaitForSingleObject(DAT_007dd61c,0xffffffff);
+  CloseHandle(DAT_007dd620);
+  CloseHandle(DAT_007dd61c);
+  return;
+}
+
+
+
+// FUN_005a6af0 @ 0x005a6af0  size=57  (MASHED.exe)
+// NOTE: 0x005a6af0 is not a function entry; showing containing function
+// undefined FUN_005a6af0(void)
+// callees: FUN_005ae650@0x005ae650
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005a6af0(void)
+
+{
+  int iVar1;
+  
+  DAT_007dca0c = &DAT_007dca0c;
+  _DAT_007dca10 = &DAT_007dca0c;
+  iVar1 = FUN_005ae650(0x18,0x40,4,0,&DAT_007dc9e8,0x4080b);
+  if (iVar1 == 0) {
+    return;
+  }
+  _DAT_007dca14 = 1;
+  return;
+}
+
+
+
+// FUN_005a6b30 @ 0x005a6b30  size=62  (MASHED.exe)
+// NOTE: 0x005a6b30 is not a function entry; showing containing function
+// undefined FUN_005a6b30(void)
+// callees: FUN_005a6cb0@0x005a6cb0, FUN_005ae7e0@0x005ae7e0
+// callers: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_005a6b30(void)
+
+{
+  while ((undefined4 **)DAT_007dca0c != &DAT_007dca0c) {
+    FUN_005a6cb0(DAT_007dca0c + -2,0);
+  }
+  FUN_005ae7e0(&DAT_007dc9e8);
+  _DAT_007dca14 = 0;
+  return;
+}
+
+
+
+// FUN_005aafb0 @ 0x005aafb0  size=43  (MASHED.exe)
+// NOTE: 0x005aafb0 is not a function entry; showing containing function
+// undefined FUN_005aafb0(void)
+// callees: FUN_005aaff0@0x005aaff0, QueryPerformanceCounter@0xEXTERNAL:00000027, QueryPerformanceFrequency@0xEXTERNAL:00000002
+// callers: (none)
+
+undefined4 FUN_005aafb0(void)
+
+{
+  DAT_007dce00 = QueryPerformanceCounter((LARGE_INTEGER *)&DAT_007dcdf0);
+  if (DAT_007dce00 == 1) {
+    QueryPerformanceFrequency((LARGE_INTEGER *)&DAT_007dcdf8);
+  }
+  FUN_005aaff0();
+  return 1;
+}
+
+
+
+// thunk_FUN_005ab010 @ 0x005aafe0  size=5  (MASHED.exe)
+// NOTE: 0x005aafe0 is not a function entry; showing containing function
+// undefined thunk_FUN_005ab010(void)
+// callees: FUN_005ab010@0x005ab010
+// callers: (none)
+
+void thunk_FUN_005ab010(void)
+
+{
+  FUN_005ab010();
+  return;
+}
+
+
+
+// FUN_005a5fd0 @ 0x005a5fd0  size=53  (MASHED.exe)
+// undefined FUN_005a5fd0(void)
+// callees: FUN_004cd060@0x004cd060, FUN_005aea60@0x005aea60
+// callers: (none)
+
+bool FUN_005a5fd0(int *param_1)
+
+{
+  int iVar1;
+  
+  if ((code *)*param_1 == FUN_005a5e70) {
+    if (DAT_007dc954 == 0) {
+      DAT_007dc954 = FUN_004cd060();
+    }
+    iVar1 = FUN_005aea60(DAT_007dc954);
+    return iVar1 == 1;
+  }
+  return true;
+}
+
+
+
+// FUN_005a6010 @ 0x005a6010  size=19  (MASHED.exe)
+// undefined FUN_005a6010(void)
+// callees: FUN_0045b350@0x0045b350
+// callers: (none)
+
+void FUN_005a6010(int param_1)
+
+{
+  if (*(code **)(param_1 + 4) == FUN_005a5ee0) {
+    FUN_0045b350();
+    return;
+  }
+  return;
+}
+
+

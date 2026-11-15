@@ -281,8 +281,10 @@ def load_bindings():
 
 def load_provisional():
     """L-126 (6a): RVAs listed in re/match/PROVISIONAL.tsv (status provisional or refused). A provisional body is not
-    byte-matched, so its unit never joins the object build and never counts in the byte-check."""
-    out = set()
+    byte-matched, so it never joins the object build and never counts in the byte-check (a whole unit is skipped; in a
+    unit with a linked function the provisional function alone keeps its VS2022 body, DDKOBJ-PROV-MIXED-UNIT).
+    DDKOBJ_EXTRA_PROVISIONAL (comma-separated RVAs) adds rows, for the selftest fixtures only."""
+    out = {int(x, 16) for x in os.environ.get("DDKOBJ_EXTRA_PROVISIONAL", "").split(",") if x.strip()}
     try:
         with open(PROVISIONAL, newline="", encoding="utf-8") as fh:
             rows = [l for l in fh if not l.startswith("#")]
@@ -433,6 +435,9 @@ def main_build(a):
     objdir.mkdir(parents=True)
     B = load_bindings()
     PROV = load_provisional()
+
+    def is_prov(r):
+        return r in PROV or B.get(r, {}).get("kind") == "provisional"
     crt = vs_crt_symbols()
     # every external the default link can resolve: defined in a default object, or in a library on the link line
     defmap = default_link_symbols() | crt
@@ -527,7 +532,7 @@ def main_build(a):
     for u in units:
         for r, mname in u["info"]["matches"]:
             plain = CE.undecorate(mname)
-            if plain in u["info"]["ported"]:
+            if plain in u["info"]["ported"] and not is_prov(r):   # a provisional body stays the VS2022 copy
                 exe_names[u["defs"].get(plain, plain)] = u
     wrapper_edits = collections.defaultdict(list)   # wrapper obj path -> [(exe plain name, rva)]
     # PORT-TOP-08: `__ddkreg_<rva>` -> the source that took it. A second source that holds the same static
@@ -544,7 +549,12 @@ def main_build(a):
         rec["undef"], rec["defs"], rec["_edits"] = [], [], []
         rec["ext_statics"] = ext_statics
         match_plain = {CE.undecorate(n): r for r, n in info["matches"]}
-        ported = info["ported"]
+        # DDKOBJ-PROV-MIXED-UNIT (L-126 (6a) per function): a provisional MATCH function in a unit that also holds a
+        # linked function keeps its VS2022 body. Its DDK copy is treated like a port-excluded helper below: renamed to
+        # a dead local, and every in-object reference repointed to the exe name, so the DDK functions of the unit call
+        # the VS2022 body and the byte check never sees it.
+        prov_plain = {p for p, r in match_plain.items() if is_prov(r)}
+        ported = info["ported"] - prov_plain
         excluded = info["port_excluded"]
         regconv = u.get("regconv") or {}     # DDKOBJ-REGCONV: static MATCH name -> adapter cc (None: no VS2022 copy)
         mode = os.environ.get("DDKOBJ_REGCONV", "adapter")
@@ -567,7 +577,10 @@ def main_build(a):
                 continue
             is_port_match = plain in match_plain and plain in ported
             ext_ok = s.cls == CE.IMAGE_SYM_CLASS_EXTERNAL or (ext_statics and s.cls == CE.IMAGE_SYM_CLASS_STATIC)
-            if ext_ok and s.is_func and plain in excluded and not is_port_match:
+            # a provisional body is sent to the exe body whatever its storage class (a static DDK copy left in place
+            # would still run from the unit's linked functions)
+            prov_ext = plain in prov_plain and s.cls in (CE.IMAGE_SYM_CLASS_EXTERNAL, CE.IMAGE_SYM_CLASS_STATIC)
+            if s.is_func and not is_port_match and ((ext_ok and plain in excluded) or prov_ext):
                 # a helper copy the port leaves out (`#ifndef MATCH_PORT`): the port calls the one exe body by name,
                 # so the DDK object does too. The local copy goes dead; its callers get an external reference.
                 # RWC-FRAME-CLUMP: a static copy the DDK gave a private register convention keeps that convention at
@@ -579,6 +592,8 @@ def main_build(a):
                     if not ok:
                         rec.setdefault("externalized_regconv", []).append(f"{plain}: {why}")
                         continue
+                if prov_ext:
+                    rec.setdefault("provisional_externalized", []).append(f"0x{match_plain[plain]:08x}")
                 deco = s.name if s.cls == CE.IMAGE_SYM_CLASS_EXTERNAL else "_" + plain
                 s.name = s.name + f"__ddkx{u['rvas'][0]:08x}"
                 s.cls = CE.IMAGE_SYM_CLASS_STATIC
@@ -748,7 +763,7 @@ def main_build(a):
             rec["status"] = "skip:lang-" + info["lang"]
             report["units"].append(rec)
             continue
-        if all(r in PROV or B.get(r, {}).get("kind") == "provisional" for r in u["rvas"]):
+        if all(is_prov(r) for r in u["rvas"]):
             rec["status"] = "skip:provisional"      # L-126 (6a): VS2022 body on the knob path, no byte-check
             report["units"].append(rec)
             continue
@@ -826,6 +841,8 @@ def main_build(a):
                 {x.name for x in co.sections if x.name == ".sxdata"})) + "): @feat.00 would be a false SafeSEH claim"
         if rec["status"] == "ok" and rec.get("externalized_regconv"):
             # RWC-FRAME-CLUMP: a helper copy with a private register convention cannot be repointed (process_unit)
+            # L-156 (2026-11-14): 0x00427e00 0x00427f00 0x00427ff0 0x00428140 0x00458920 stay refused here by decision.
+            # Reasons and evidence per unit: re/match/REFUSED_UNITS.tsv (data only, not read by this tool).
             rec["status"] = "fail:externalized-static-register-convention"
             rec["evidence"] = "; ".join(rec["externalized_regconv"]) + (
                 f"; forwarder refused: {rec['forwarder_refused']}" if rec.get("forwarder_refused") else "")
@@ -1408,6 +1425,9 @@ def main_check(a):
     summ = {"identical": c.get("IDENTICAL", 0), "different": c.get("DIFFERENT", 0),
             "not_in_map": c.get("not-in-map", 0), "functions": len(rows),
             "provisional_units_skipped": st.get("skip:provisional", 0),
+            # DDKOBJ-PROV-MIXED-UNIT: provisional functions of linked units that keep their VS2022 body
+            "provisional_functions_vs2022_in_linked_units": sorted(
+                x for u in rep["units"] if u["status"] == "ok" for x in u.get("provisional_externalized", [])),
             "units": len(rep["units"]), "units_linked": st.get("ok", 0),
             "refusals": {k: v for k, v in sorted(st.items()) if k.startswith("fail:")},
             "skips": {k: v for k, v in sorted(st.items()) if k.startswith("skip:")},
@@ -1417,7 +1437,9 @@ def main_check(a):
     ref = ",".join(f"{k[5:]}={v}" for k, v in summ["refusals"].items()) or "none"
     print(f"[ddkobj summary] IDENTICAL {summ['identical']}/{summ['functions']}  DIFFERENT {summ['different']} "
           f"[{' '.join(summ['different_rvas'])}]  not-in-map {summ['not_in_map']}  units linked "
-          f"{summ['units_linked']}/{summ['units']}  refusals {sum(summ['refusals'].values())} ({ref})")
+          f"{summ['units_linked']}/{summ['units']}  refusals {sum(summ['refusals'].values())} ({ref})  "
+          f"provisional kept VS2022 {summ['provisional_units_skipped']} units + "
+          f"{len(summ['provisional_functions_vs2022_in_linked_units'])} fns in linked units")
     return 0
 
 
@@ -1462,6 +1484,12 @@ _ST_SRC = {
     # are renamed to the renamed DDK libc objects (_ddkcrt__CIsin ...), not left to the VS2022 CRT
     "math": ("0x004000a0", "double sin(double);\ndouble cos(double);\n#pragma function(sin, cos)\ndouble FUN_004000a0(double x)\n{\n    return sin(x) + cos(x);\n}\n",
              "#define FUN_004000a0 DdkSt_Math\n"),
+    # DDKOBJ-PROV-MIXED-UNIT: one unit, a linked function (0x004000b0) that calls a provisional one (0x004000c0, listed
+    # through DDKOBJ_EXTRA_PROVISIONAL by the selftest): only 0x004000b0 is defined by the DDK object, the provisional
+    # copy goes dead and the call binds to the exe name DdkSt_ProvB (the VS2022 body)
+    "provmix": ("0x004000b0", "// MATCH: 0x004000c0 FUN_004000c0\n#pragma auto_inline(off)\nint FUN_004000c0(int a)\n{\n    return a * 7 + 3;\n}\n"
+                              "int FUN_004000b0(int a)\n{\n    return FUN_004000c0(a + 1) ^ 5;\n}\n",
+                "#define FUN_004000b0 DdkSt_ProvA\n#define FUN_004000c0 DdkSt_ProvB\n"),
     # DDKOBJ-CELLS: a wrapper MGLOBAL through a cell indirection (the DDKOBJ-SPIKE refusal): still refused, not fatal
     "mgcell": ("0x00400090", _ST_MGPRE + "MGLOBAL(int, DAT_00400094, 0x00400094);\nint FUN_00400090(void)\n{\n"
                              "    return DAT_00400094 + 1;\n}\n",
@@ -1599,6 +1627,28 @@ def main_selftest(a):
             os.environ.pop("DDKOBJ_REGCONV", None)
         check(by.get("reg", {}).get("status") == "fail:static-register-convention",
               f"DDKOBJ_REGCONV=refuse -> the DDKOBJ-SPIKE refusal ({by.get('reg', {}).get('status')})")
+        # DDKOBJ-PROV-MIXED-UNIT
+        os.environ["DDKOBJ_EXTRA_PROVISIONAL"] = "0x004000c0"
+        try:
+            rc, rep, by = run(["provmix"], "provmix")
+        finally:
+            os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
+        p = by.get("provmix", {})
+        pdefs = sorted(d.get("rva") for d in p.get("defs", []))
+        pund = {x["orig"]: x for x in p.get("undef", [])}
+        check(p.get("status") != "skip:provisional" and pdefs == ["0x004000b0"],
+              f"mixed unit -> not skipped, only the matched function defined (fixture wrappers are not in the default link, so unbound is expected) ({p.get('status')}: {pdefs})")
+        check(p.get("provisional_externalized") == ["0x004000c0"] and
+              pund.get("FUN_004000c0", {}).get("name") == "_DdkSt_ProvB",
+              f"provisional function -> DDK copy dead, call bound to the exe name _DdkSt_ProvB "
+              f"({p.get('provisional_externalized')}: {pund.get('FUN_004000c0')})")
+        os.environ["DDKOBJ_EXTRA_PROVISIONAL"] = "0x004000b0,0x004000c0"
+        try:
+            rc, rep, by = run(["provmix"], "provall")
+        finally:
+            os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
+        check(by.get("provmix", {}).get("status") == "skip:provisional",
+              f"every function provisional -> skip:provisional ({by.get('provmix', {}).get('status')})")
     finally:
         os.environ.pop("DDKOBJ_EXTRA_WRAPPERS", None)
         if not a.keep:

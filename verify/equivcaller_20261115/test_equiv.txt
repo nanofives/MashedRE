@@ -1,0 +1,36 @@
+[test-slot] waiting for memory (0s so far): memory: 22.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (30s so far): memory: 22.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (60s so far): memory: 22.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (90s so far): memory: 22.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (120s so far): memory: 22.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (150s so far): memory: 20.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (180s so far): memory: 20.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (210s so far): memory: 20.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (240s so far): memory: 21.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (270s so far): memory: 20.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (300s so far): memory: 20.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (330s so far): memory: 20.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (360s so far): memory: 20.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (390s so far): memory: 20.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (420s so far): memory: 20.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (450s so far): memory: 20.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (480s so far): memory: 20.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (510s so far): memory: 20.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (540s so far): memory: 20.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (570s so far): memory: 20.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 1/8 after 600s
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\EQUIV-CALLER-0045AC2A
+plugins: anyio-4.15.1
+collecting ... collected 5 items
+
+re/tools/match/test_equiv.py::test_cases PASSED                          [ 20%]
+re/tools/match/test_equiv.py::test_references PASSED                     [ 40%]
+re/tools/match/test_equiv.py::test_indirect_callers PASSED               [ 60%]
+re/tools/match/test_equiv.py::test_summary_precision PASSED              [ 80%]
+re/tools/match/test_equiv.py::test_budgets PASSED                        [100%]
+
+============================= 5 passed in 20.81s ==============================

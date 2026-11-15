@@ -1,0 +1,20 @@
+pc	insn	function	outside_004b6xxx	op	count	windows	runs	addresses	top_stack3
+0x004b65e2	mov dword ptr [0x8eda28], eax	FUN_004b65e0	no	write	18	boot/load	g2_hdr/g2_hdr_t3/g2_slots	0x008eda28	0x004b69ee x16 ; 0x0049532b x2
+0x004b65f1	mov dword ptr [0x90daa0], eax	FUN_004b65e0	no	write	23	boot/load	g2_hdr/g2_hdr_t3/g2_slots	0x0090daa0	0x004b69ee x17 ; 0x0049532b x6
+0x004b66c3	mov dword ptr [0x8cd9f8], edx	FUN_004b6640	no	write	3	boot	g2_hdr/g2_hdr_t3/g2_slots	0x008cd9f8	0x004027c0|0x00499820|0x0049970f x3
+0x004b66d3	mov dword ptr [0x8eda70], edx	FUN_004b6640	no	write	3	boot	g2_hdr/g2_hdr_t3/g2_slots	0x008eda70	0x004027c0|0x00499820|0x0049970f x3
+0x004b6b40	mov edx, dword ptr [edi + 0x20064]	FUN_004b6b20	no	read	219	boot/load	g2_hdr/g2_hdr_t3/g2_slots	0x008eda24	0x004b6e3e|0x00550970|0x004cbd67 x204 ; 0x004b6e3e|0x00550970|0x0047b93c x6 ; 0x0041b000|0x004b6e3e|0x00550970 x3
+0x004b6b88	rep movsd dword ptr es:[edi], dword ptr [esi]	FUN_004b6b20	no	read/write (hw)	294	boot/load	g2_bufhw_t3	0x008cda24,0x008dda24,0x008eda9c,0x008fda9c	0x004b6e3e|0x00550970|0x004cbd67 x288 ; 0x004b6e3e|0x00550970|0x0047b93c x6
+0x004b6b88	rep movsd dword ptr es:[edi], dword ptr [esi]	FUN_004b6b20	no	read	769	boot	g2_slots	0x008cda24,0x008ce000,0x008cf000,0x008d0000,0x008d1000,0x008d2000,..(33)	0x004b6e3e|0x00550970|0x004cbd67 x769
+0x004b6c8f	mov dword ptr [edx + 0x20064], esi	outside-inventory	no	write	26	boot/load	g2_hdr/g2_hdr_t3/g2_slots	0x008eda24	0x00550637|0x005508fa|0x004ac660 x24 ; 0x00550637|0x005508fa|0x004b793d x2
+0x004b6c9a	lea edi, [edx + 0x64]	outside-inventory	no	read/write (hw)	272	boot/load	g2_bufhw_t3	0x008cda24,0x008dda24,0x008eda9c,0x008fda9c	0x00550637|0x005508fa|0x004ac660 x266 ; 0x00550637|0x005508fa|0x004b6531 x2 ; 0x00550637|0x005508fa|0x004b793d x2
+0x004b6c9d	rep stosd dword ptr es:[edi], eax	outside-inventory	no	write	62	boot	g2_slots	0x008ce000,0x008cf000,0x008d0000,0x008d1000,0x008d2000,0x008d3000,..(31)	0x00550637|0x005508fa|0x004ac660 x62
+0x004b6cf4	mov ecx, dword ptr [ebp + 0x20064]	outside-inventory	no	read	4	boot/load	g2_hdr/g2_hdr_t3	0x008eda24	0x00550970|0x004cbd67|0x00550970 x1 ; 0x00550970|0x004cbd67|0x00523208 x1 ; 0x00550970|0x004cbd67|0x004cc414 x1
+0x004b6d47	lea esi, [esi + ebp + 0x64]	outside-inventory	no	read/write (hw)	60	boot/load	g2_bufhw_t3	0x008cda24,0x008dda24,0x008eda9c,0x008fda9c	0x00550970|0x004cbd67|0x004cc7a8 x22 ; 0x00550970|0x004cbd67|0x004cef47 x18 ; 0x00550970|0x004cbd67|0x004e934a x11
+0x004b6d4b	rep movsd dword ptr es:[edi], dword ptr [esi]	outside-inventory	no	read	1	boot	g2_slots	0x008de000	0x00550970|0x004cbd67|0x004cefc3 x1
+0x004b6e64	mov edi, dword ptr [esp + 0x20]	outside-inventory	no	read/write (hw)	101	boot/load	g2_bufhw_t3	0x008cda24,0x008dda24,0x008eda9c,0x008fda9c	0x00550970|0x004cbd67|0x004a460a x50 ; 0x00550970|0x004cbd67|0x004cef47 x40 ; 0x00550970|0x0047b93c x3
+0x004b6e68	rep movsd dword ptr es:[edi], dword ptr [esi]	outside-inventory	no	read	16	boot	g2_slots	0x008ce000,0x008cf000,0x008d0000,0x008d1000,0x008d2000,0x008d3000,..(16)	0x00550970|0x004cbd67|0x004cef47 x16
+0x004b6e68	rep movsd dword ptr es:[edi], dword ptr [esi]	outside-inventory	no	read/write (hw)	4	boot/load	g2_bufhw_t3	0x008cda24,0x008dda24,0x008eda9c,0x008fda9c	0x00550970|0x004cbd67|0x0052cb39 x2 ; 0x00550970|0x004cbd67|0x004cc7a8 x2
+0x005505aa	mov ecx, dword ptr [eax + 0x20]	FUN_00550580	yes	read	26	boot/load	g2_hdr/g2_hdr_t3/g2_slots	0x008cd9e0	0x005508fa|0x004ac660|0x004a45c2 x24 ; 0x005508fa|0x004b793d|0x004b77ca x2
+0x00550960	mov eax, dword ptr [ecx + 0x38]	FUN_00550950	yes	read	4	boot/load	g2_hdr/g2_hdr_t3	0x008cd9f8	0x004cbd67|0x00550970|0x004cc414 x1 ; 0x004cbd67|0x00523208|0x00517d55 x1 ; 0x004cbd67|0x004cc414|0x004cc600 x1
+0x00550c07	cmp dword ptr [eax + 0x20], ebx	FUN_00550be0	yes	read	1802	boot/load/menu/race	g2_hdr/g2_hdr_t3	0x008cd9e0,0x008eda58	0x0045d40f|0x0049270a|0x004922c2 x1802

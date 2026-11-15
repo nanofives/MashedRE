@@ -83,7 +83,10 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   `hooks.csv` / `CHANGELOG.md`. It commits `re/promotions/<ID>.tsv` (tab-separated, header `rva`, `route`, `evidence`,
   `result`; `result` = your RESULT path) and checks it with `c4_reclass.py batch --tsv <file>` (dry run, no `--apply`).
   The merge train applies it with `--apply --strict` on the current head and moves it to `re/promotions/applied/`.
-  A refused row sets the branch aside. Other rows' `hooks.csv` and `dual_copy_allowlist.txt` edits are key-merged by the
+  A refused row sets the branch aside. `re/promotions/<ID>-refresh.tsv` (header `rva`, `src`, `result`) refreshes only the
+  stale `src sha256` in the note of a row already at C4 by match (the tool recompiles and refuses below 100% byte-identical
+  or relocheck not OK); check it with `c4_reclass.py refresh --tsv <file>` (dry run), the train applies it with `--apply --strict`.
+  Other rows' `hooks.csv` and `dual_copy_allowlist.txt` edits are key-merged by the
   train (`re/tools/tracker_merge3.py`), so they no longer conflict unless the same RVA/entry is edited on both sides.
 - Tracker edits go through the re-classify skill. A script is allowed only when it is the skill's
   own documented operation (e.g. re/tools/deferred_close.py). Ad-hoc scripts are not.

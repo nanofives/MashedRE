@@ -1,0 +1,2 @@
+0x005572c0	NOT-PROVEN	call-regargs: region ours +0x40 / orig 0x00557309 call 0x553590: (('ebp', ebp_in), ('edx', ld32(Mc0(call0(0x552e40,(),(('esi', esi_in),),M00(),X00())),(arg32(8)+0x70)))) | (('ebp', arg32(4)), ('edx', ld32(Mc0(call0(0x552e40,(),(('esi', esi_in),),M00(),X00())),(arg32(4)+0x10))))
+exit 0

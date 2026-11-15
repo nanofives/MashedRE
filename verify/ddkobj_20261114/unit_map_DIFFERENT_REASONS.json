@@ -1,0 +1,417 @@
+[
+ {
+  "rva": "0x00401690",
+  "admitted": false,
+  "provisional": false,
+  "binding": {
+   "rva": "0x00401690",
+   "name": "FUN_00401690",
+   "kind": "port",
+   "exe_symbol": "FUN_00401690 (static)",
+   "note": "PORT-TOP-04H: the static of re/match/s01/00401690.c in Match/PortTop_004025f0.cpp: the C2 reconstruction (match.py 60.2%, residual = the vertex-loop unroll factor x8 vs x4), not a matched body",
+   "level": "3",
+   "caller": "0x004025f0"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_004025f0.cpp",
+    "src": "re/match/s01/00401690.c",
+    "name": "FUN_00401690",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x004332a0",
+  "admitted": true,
+  "provisional": false,
+  "binding": {
+   "rva": "0x004332a0",
+   "name": "FUN_004332a0",
+   "kind": "under-stand-in",
+   "exe_symbol": "Orig_004332a0",
+   "note": "PORT-TOP-08: admitted (ADMITTED.tsv, EQUIV), re/match/s08/004332a0.c 97.3%, Match/PortTop_004332a0.cpp; local 0x00430760 as Orig08_00430760. verify/porttop08_20261112/RESULT_PORT-TOP-08.md",
+   "level": "4",
+   "caller": "0x0043c000"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_004332a0.cpp",
+    "src": "re/match/s08/004332a0.c",
+    "name": "FUN_004332a0",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x0043c5b0",
+  "admitted": false,
+  "provisional": true,
+  "binding": {
+   "rva": "0x0043c5b0",
+   "name": "MenuDrawLoop",
+   "kind": "under-stand-in",
+   "exe_symbol": "",
+   "note": "parent bound to a stand-in, not reached. exe port=none ; hooks C4",
+   "level": "2",
+   "caller": "0x00492e90"
+  },
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_0042aad0.cpp",
+    "src": "re/match/s08/0043c5b0.c",
+    "name": "FUN_0043c5b0",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x0045a3a0",
+  "admitted": false,
+  "provisional": false,
+  "binding": {
+   "rva": "0x0045a3a0",
+   "name": "FUN_0045a3a0",
+   "kind": "near-match",
+   "exe_symbol": "Orig_0045a3a0 (via PortTop_PWI_Call0045a3a0)",
+   "note": "NEARMATCH-45A3A0: Match/PortTop_0045a6b0.cpp runs the unedited re/match/s09/0045a3a0.c (81.0%, register-allocation residual), L-115/L-117, byte table RESULT_L115-REGCHOICE-45A3A0.md; clears 10 fields of the 0x0068bd00 table and sets record +0x0c = 1.0f (verify/portorigtop_20261109/RESULT_NEARMATCH-45A3A0.md)",
+   "level": "4",
+   "caller": "0x0045a6b0"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_0045a6b0.cpp",
+    "src": "re/match/s09/0045a3a0.c",
+    "name": "FUN_0045a3a0",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x00475a00",
+  "admitted": true,
+  "provisional": false,
+  "binding": {
+   "rva": "0x00475a00",
+   "name": "FUN_00475a00",
+   "kind": "near-match",
+   "exe_symbol": "Orig_00475a00",
+   "note": "PORT-OT-RENDER-2: L-115 near-match body, NOT matched (port axis only, hooks C2 unchanged): Match/PortTop_00475a00.cpp = re/match/s12/00475a00.c, 93.1% (regs 100, ops 100, 29/29 ins), match.py --bytes 2 differing bytes of 91, both SIB: 0x00475a41 orig 17 [edi+edx] / DDK 3a [edx+edi], 0x00475a49 orig 07 [edi+eax] / DDK 38 [eax+edi] (scale 1, no displacement, no EBP/ESP base: same address, segment and value). relocheck OK 9/9. Record DAT_00691608[n] by 0x004770c0(rec, 0x80c, cap, tex), DAT_00691604[n] = 0x00474db0(cap, 0x50), DAT_00691610[n] = cap, n + 1. Called twice by 0x0040bbb0 (\"scorch\" 0x18, \"wfall\" 0x10)",
+   "level": "3",
+   "caller": "0x0040bbb0"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_00475a00.cpp",
+    "src": "re/match/s12/00475a00.c",
+    "name": "FUN_00475a00",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x004929d0",
+  "admitted": false,
+  "provisional": false,
+  "binding": {
+   "rva": "0x004929d0",
+   "name": "FUN_004929d0",
+   "kind": "matched",
+   "exe_symbol": "Orig_004929d0",
+   "note": "PORT-TOP-05: re/match/s15/004929d0.c (100%), Match/PortTop_004929d0.cpp, callees bound by name; MASHED_TOP05_HANDFRAME=1 runs the old GameModeMachine_Tick. verify/porttop05_20261112/RESULT_PORT-TOP-05.md",
+   "level": "1",
+   "caller": "0x00492290"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_004929d0.cpp",
+    "src": "re/match/s15/004929d0.c",
+    "name": "FUN_004929d0",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   },
+   {
+    "wrapper": "Race\\GameModeMachine.cpp",
+    "src": "re/match/gffu/004929d0.c",
+    "name": "FUN_004929d0",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x00493710",
+  "admitted": false,
+  "provisional": false,
+  "binding": {
+   "rva": "0x00493710",
+   "name": "FUN_00493710",
+   "kind": "matched",
+   "exe_symbol": "Orig_00493710 (via PortTop_Bound_00493710)",
+   "note": "Match/PortTop_00493710.cpp compiles re/match/s15/00493710.c (h8 best 94.2%, the only source). RW engine bring-up. PORT-TOP-03",
+   "level": "2",
+   "caller": "0x00492270"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_00493710.cpp",
+    "src": "re/match/s15/00493710.c",
+    "name": "FUN_00493710",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x00493900",
+  "admitted": false,
+  "provisional": false,
+  "binding": {
+   "rva": "0x00493900",
+   "name": "sub_00493900",
+   "kind": "matched",
+   "exe_symbol": "Orig_00493900",
+   "note": "re/match/s15/00493900.c, best 66.9% (hooks C2), the only source. Match/PortTop_00493900.cpp. Parses -vs/-cs/-l switches",
+   "level": "1",
+   "caller": "0x00492370"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_00493900.cpp",
+    "src": "re/match/s15/00493900.c",
+    "name": "FUN_00493900",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x00498510",
+  "admitted": false,
+  "provisional": true,
+  "binding": {
+   "rva": "0x00498510",
+   "name": "FUN_00498510",
+   "kind": "missing",
+   "exe_symbol": "PortTop_Missing_00498510",
+   "note": "PORT-TOP-04A: Match/PortTop_InputPort.cpp: C2 source 95.3%; its file-static callees 0x00497190 / 0x004971b0 have an asi-only wrapper, so it needs one shared TU first. No exe reader of 0x007e95c0 / 0x00773118",
+   "level": "3",
+   "caller": "0x00495150"
+  },
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_00498510.cpp",
+    "src": "re/match/s16/00498510.c",
+    "name": "FUN_00498510",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x00498810",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "Match\\PortTop_00498860.cpp",
+    "src": "re/match/s16/00498810.c",
+    "name": "FUN_00498810",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1"
+   }
+  ]
+ },
+ {
+  "rva": "0x004c0c20",
+  "admitted": false,
+  "provisional": true,
+  "binding": {
+   "rva": "0x004c0c20",
+   "name": "RwFrameDestroy",
+   "kind": "bound",
+   "exe_symbol": "MashedRw_FrameDestroy_004c0c20",
+   "note": "PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Frame::destroy (only on 0x00467020, a failure path)",
+   "level": "6",
+   "caller": "0x00467020"
+  },
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_004c0c20.cpp",
+    "src": "re/match/s19/004c0c20.c",
+    "name": "FUN_004c0c20",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x004c0f00",
+  "admitted": false,
+  "provisional": true,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_004c0f00.cpp",
+    "src": "re/match/s19/004c0f00.c",
+    "name": "FUN_004c0f00",
+    "ported": true,
+    "flags": "/O2 /GS /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x00552890",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_00552890.cpp",
+    "src": "re/match/rwl04/00552890.c",
+    "name": "FUN_00552890",
+    "ported": true,
+    "flags": "/O2 /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x005530f0",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_005530f0.cpp",
+    "src": "re/match/rwl04/005530f0.c",
+    "name": "FUN_005530f0",
+    "ported": true,
+    "flags": "/O2 /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x005533d0",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_005533d0.cpp",
+    "src": "re/match/rwl04/005533d0.c",
+    "name": "FUN_005533d0",
+    "ported": true,
+    "flags": "/O2 /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x005538a0",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_005538a0.cpp",
+    "src": "re/match/rwl04/005538a0.c",
+    "name": "FUN_005538a0",
+    "ported": true,
+    "flags": "/O2 /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x00554200",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_00553e80.cpp",
+    "src": "re/match/s24/00554200.c",
+    "name": "FUN_00554200",
+    "ported": true,
+    "flags": "/O2 /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x00554940",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_00554940.cpp",
+    "src": "re/match/s24/00554940.c",
+    "name": "FUN_00554940",
+    "ported": true,
+    "flags": "/O2 /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x005572c0",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": [
+   {
+    "wrapper": "RwCore\\RwCore_005572c0.cpp",
+    "src": "re/match/s24/005572c0.c",
+    "name": "FUN_005572c0",
+    "ported": true,
+    "flags": "/O2 /Ob1 /G5"
+   }
+  ]
+ },
+ {
+  "rva": "0x0045cd30",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": []
+ },
+ {
+  "rva": "0x004647f0",
+  "admitted": false,
+  "provisional": false,
+  "binding": {
+   "rva": "0x004647f0",
+   "name": "FUN_004647f0",
+   "kind": "missing",
+   "exe_symbol": "PortTop_AStop_004647f0",
+   "note": "RO-AUDIOTICK-BODIES: named stop (log + exit code = rva). Reached only while DAT_006904e8 != 0, which the exe never sets",
+   "level": "3",
+   "caller": "0x00466b50"
+  },
+  "units": []
+ },
+ {
+  "rva": "0x005a6d60",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": []
+ },
+ {
+  "rva": "0x005aab70",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": []
+ },
+ {
+  "rva": "0x005acda0",
+  "admitted": false,
+  "provisional": false,
+  "binding": null,
+  "units": []
+ }
+]
