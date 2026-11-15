@@ -83,6 +83,10 @@ CASES = {
     "com_ambiguous": ("EQUIV", None),
     "neg_com_solution": ("NOT-PROVEN", None),
     "neg_mxcsr": ("NOT-PROVEN", None),
+    # TOOL-EQUIV-EBPDATA-REPSTOS: rep stos with a variable count
+    "stosv": ("EQUIV", None),
+    "neg_stosv_val": ("NOT-PROVEN", None),
+    "neg_stosv_stack": ("NOT-PROVEN", "unsupported"),
 }
 
 # A6 rules a case must (True) or must not (False) report
@@ -96,6 +100,7 @@ RULES = {
     "x87_move_rr": ("x87-motion", True),
     "x87_same": ("x87-motion", False),
     "x87_move_frame": ("x87-motion", True),
+    "stosv": ("rep-stos-var", True),
 }
 
 # rva -> (source, expected verdict, note)
@@ -191,6 +196,42 @@ def test_indirect_callers():
         equiv.INDIRECT_CALLERS[0x0045ac20]["routes"][0].update(saved)
 
 
+def test_route_audit():
+    """EQUIV-INDIRECT-SCAN-COMPLETENESS: the byte-anchored audit of 0x0045ac20's routes holds on the image, any change
+    to the registered reference lists is refused, and a disp8 cannot encode +0xa8."""
+    rep = equiv.route_audit(0x0045ac20)
+    assert rep == {"entry_dwords": [0x005f9abc], "table_refs": 28, "holder_refs": 15, "methods": 95}, rep
+    a = equiv.INDIRECT_CALLERS[0x0045ac20]["audit"]
+    cs = next(equiv._MD.disasm(bytes.fromhex("8b40a8"), 0x1000))           # mov eax, [eax-0x58]
+    assert cs.operands[1].mem.disp == -0x58
+    for key, drop in (("table_refs", 0x0045b9de), ("holder_refs", 0x0045bffc)):
+        saved = a[key]
+        try:
+            a[key] = (tuple(x for x in saved if x != drop) if isinstance(saved, tuple)
+                      else {k: v for k, v in saved.items() if k != drop})
+            equiv._AUDIT.clear()
+            try:
+                equiv.route_audit(0x0045ac20)
+                raise AssertionError(f"{key} without 0x{drop:08x} accepted")
+            except ValueError:
+                pass
+        finally:
+            a[key] = saved
+            equiv._AUDIT.clear()
+    saved = a["store_fn_branches"]
+    try:                                                # a second entry into the store function is refused
+        a["store_fn_branches"] = ()
+        try:
+            equiv.route_audit(0x0045ac20)
+            raise AssertionError("store fn branch list accepted")
+        except ValueError:
+            pass
+    finally:
+        a["store_fn_branches"] = saved
+        equiv._AUDIT.clear()
+    assert equiv.route_audit(0x0045ac20) == rep
+
+
 def test_summary_precision():
     """EQUIV-NORETURN-RECHECK: the no-return reason, r11 / r12, the constant idioms, frame alignment, A7."""
     s = equiv.summary(0x00408b00)                       # 6 rets; it calls CRT acos 0x004a3384 (r11, not no-return)
@@ -209,6 +250,59 @@ def test_summary_precision():
     assert equiv.disjoint(equiv.C(0x00773408), 4, stk, 4)            # A7: image constant vs frame slot
     assert not equiv.disjoint(equiv.C(0x10000000), 4, stk, 4)        # outside the image: no claim
     assert not equiv.disjoint(equiv.S("eax_in"), 4, stk, 4)           # unknown pointer: no claim
+    # TOOL-EQUIV-EBPDATA-REPSTOS: 0x005ae800 loads its first argument into EBP (`mov ebp, [esp+0x10]` at 0x005ae803)
+    # and reads through it (`mov edi, [ebp+0x10]` at 0x005ae80b): a data EBP, not a frame. Two stack arguments.
+    s = equiv.summary(0x005ae800)
+    assert s["N"] == 2 and not s["n_why"], s
+    md = equiv._MD
+    for code, ebp, want in (("8b6c2410", None, True),           # mov ebp, [esp+0x10]
+                            ("33ed", None, True),               # xor ebp, ebp
+                            ("8bec", None, False),              # mov ebp, esp (frame, handled apart)
+                            ("8be8", None, False),              # mov ebp, eax (may be a stack address)
+                            ("8d6c2408", None, False),          # lea ebp, [esp+8]
+                            ("83c504", equiv.EBP_DATA, True),   # add ebp, 4 on a data EBP
+                            ("03ec", equiv.EBP_DATA, False)):   # add ebp, esp
+        cs = next(md.disasm(bytes.fromhex(code), 0x1000))
+        assert equiv._ebp_data_write(cs, ebp) is want, (code, cs.op_str)
+
+
+def _summary_of(code, va):
+    """summary() of raw bytes placed at `va` (outside the image), with the image reader and the size lookup patched."""
+    img = equiv.image()
+    rd, gs = img.bytes, equiv.match.ghidra_size
+    def fake_bytes(v, n):
+        if va <= v < va + len(code):
+            return (code[v - va:] + b"\xcc" * 16)[:n]
+        return rd(v, n)
+    img.bytes = fake_bytes
+    equiv.match.ghidra_size = lambda v: len(code) if v == va else gs(v)
+    try:
+        return equiv.summary(va)
+    finally:
+        img.bytes = rd
+        equiv.match.ghidra_size = gs
+
+
+def test_push_slot():
+    """TOOL-EQUIV-PUSHECX-SLOT: a pushed slot whose address is taken and that is fully overwritten before any read does
+    not read the pushed register (0x005ad910: push ecx at 0x005ad910, lea ecx,[esp+8] at 0x005ad927, mov [esp+0x14],0
+    at 0x005ad932, call 0x005ad770 at 0x005ad93a). A read through the address first, or a partial overwrite, still
+    counts the register read."""
+    assert "ecx" not in equiv.summary(0x005ad910)["livein"], equiv.summary(0x005ad910)
+    base = 0x7ff00000
+    cases = (
+        # push ecx; lea eax,[esp]; mov dword ptr [esp],0; mov eax,[eax]; pop ecx; ret
+        ("51" "8d0424" "c7042400000000" "8b00" "59" "c3", False),
+        # push ecx; lea eax,[esp]; mov eax,[eax] (read through the address first); pop ecx; ret
+        ("51" "8d0424" "8b00" "59" "c3", True),
+        # push ecx; lea eax,[esp]; mov byte ptr [esp],0 (partial); pop ecx; ret
+        ("51" "8d0424" "c6042400" "59" "c3", True),
+        # push ecx; lea eax,[esp]; jmp +0 (a branch before the overwrite); mov dword ptr [esp],0; pop ecx; ret
+        ("51" "8d0424" "eb00" "c7042400000000" "59" "c3", True),
+    )
+    for i, (hx, live) in enumerate(cases):
+        s = _summary_of(bytes.fromhex(hx), base + 0x100 * i)
+        assert ("ecx" in s["livein"]) is live, (hx, s)
 
 
 def check_show_budget():

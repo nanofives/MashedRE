@@ -1,0 +1,1 @@
+0x005adc10	EQUIV-IF-CALLERS-IGNORE(EDX,ECX)	[REG,LAYOUT,VALUE-FLOW]	callers 1, scan says ignore: 0/1: 0x005add67:unknown/unknown
