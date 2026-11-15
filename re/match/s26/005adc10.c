@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 h1 0x005adc10 (321 B). Best 78.9% (regs 89.8%), residual class (b). ops 96.9%: Ghidra's FUN_005b3620/FUN_005ada40 arities were wrong (real: 005b3620(a,b) cdecl, 005ada40(x,1)); nested call gives push-1-first order; residual = hoisting of lea esi,[param+0x1c] into the guard and orig's separate rollback counter (mov edi,ebx) which cl folds. */
+/* MATCH-S26 h1 0x005adc10 (321 B). Best 92.2% (regs 99.2%, ops 99.2%, 128/128 ins), PORT-TOP-AUDIOSTOP-5ADC10 (was 78.9%). ops: Ghidra's FUN_005b3620/FUN_005ada40 arities were wrong (real: 005b3620(a,b) cdecl, 005ada40(x,1)); the ternary for the 0x1000 case gives the original's jmp + xor eax,eax; the index-form rollback loop gives the original's separate counter (mov edi,ebx). Residual: entry mov esi,[esp+0x14]; add esi,0x1c where the original has mov eax,[esp+0x14]; lea esi,[eax+0x1c], and scratch registers renamed in the 0x2000 / 0x4000 arms (one rotation phase). Provisional (L-126), PROVISIONAL.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -56,26 +56,15 @@ int FUN_005adc10(int param_1,unsigned int param_2)
       iVar2 = FUN_005ad9d0(puVar5[-4], iVar3 + puVar5[-4], iVar2, puVar5[-1], *puVar5);
     }
     else if (iVar2 == 0x1000) {
-      if (puVar5[-2] == 0) {
-        uVar1 = 0;
-      }
-      else {
-        uVar1 = FUN_005b3620((int)&DAT_009146f0, puVar5[-2]);
-      }
+      uVar1 = puVar5[-2] ? FUN_005b3620((int)&DAT_009146f0, puVar5[-2]) : 0;
       iVar2 = FUN_005ad980(uVar1, puVar5[-1], *puVar5);
     }
     else {
       iVar2 = FUN_005ad770(iVar2, puVar5[-4], puVar5[-5] + puVar5[-4], puVar5[-1], *puVar5);
     }
     if (iVar2 == 0) {
-      if (uVar4 > 0) {
-        unsigned int c = uVar4;
-        puVar5 = (int *)(uVar4 * 0x20 + -0x10 + param_1);
-        do {
-          FUN_005ada40(FUN_005b3620((int)&DAT_009146f0, *puVar5), 1);
-          puVar5 = puVar5 - 8;
-          c = c - 1;
-        } while (c != 0);
+      for (; uVar4 > 0; uVar4--) {
+        FUN_005ada40(FUN_005b3620((int)&DAT_009146f0, ((int *)param_1)[uVar4 * 8 - 4]), 1);
       }
       return 0;
     }
