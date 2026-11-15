@@ -1,0 +1,11 @@
+rva	route	evidence	verdict	detail
+0x00498910	match	re/match/s16/00498950.c	PASS	byte-identical 50 B, relocheck OK (9/0)
+0x00498950	match	re/match/s16/00498950.c	PASS	byte-identical 90 B, relocheck OK (10/0)
+0x004989b0	match	re/match/s16/00498950.c	PASS	byte-identical 77 B, relocheck OK (8/0)
+0x0042b8c0	match	re/match/s07/0042ed70.c	PASS	byte-identical 7 B, relocheck OK (1/0)
+0x00430a10	match	re/match/s08/00439210.c	PASS	byte-identical 80 B, relocheck OK (1/0)
+0x0042a920	match	re/match/s06/0042a920.c	PASS	byte-identical 20 B, relocheck OK (2/0)
+0x004cd060	match	re/match/s30/004cd060.c	PASS	byte-identical 11 B, relocheck OK (1/0)
+0x0046bce0	match	re/match/s11/0046bce0.c	PASS	byte-identical 54 B, relocheck OK (3/0)
+0x00423e60	match	re/match/s05/00423e60.c	PASS	byte-identical 127 B, relocheck OK (12/0)
+0x00432b30	match	re/match/s08/0043d2a0.c	REFUSED	not byte-identical: 955 differing unmasked bytes of 1580 (insn 74.2%)
