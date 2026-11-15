@@ -1,0 +1,43 @@
+[
+ {
+  "addr": 4563872,
+  "sym": "FUN_0045a3a0",
+  "bytes_bad": 32,
+  "classes": [
+   "ENC",
+   "FRAME",
+   "VALUE-FLOW"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A7-stack-image",
+   "jmp-threading"
+  ],
+  "retdiff": {
+   "eax": [
+    "ours +0x5e / orig 0x0045a3fe",
+    "arg32(4)",
+    "(phi32((48, 4563920),(('A', 'r', 'eax'), ('B', 'r', 'eax')))+-0x34)"
+   ]
+  },
+  "verdict": "EQUIV-IF-CALLERS-IGNORE",
+  "regs": [
+   "eax"
+  ],
+  "callers": [
+   {
+    "site": "0x0045a741",
+    "eax": "ignores"
+   },
+   {
+    "site": "0x0045a7d9",
+    "eax": "ignores"
+   },
+   {
+    "site": "0x0045ac2a",
+    "eax": "ignores"
+   }
+  ],
+  "callers_all_ignore": true
+ }
+]
