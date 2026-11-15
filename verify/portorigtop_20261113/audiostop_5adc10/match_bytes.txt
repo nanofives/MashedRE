@@ -1,0 +1,3 @@
+0x005adc10 _FUN_005adc10: 92.2% (regs 99.2%, ops 99.2%)  128/128 ins  flags=/O2 /Ob1 /G5 tc=ddk
+   ! mov esi, dword ptr [esp + 0x14]              | mov eax, dword ptr [esp + 0x14]
+   ! add esi, 0x1c                                | lea esi, [eax + 0x1c]

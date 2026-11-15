@@ -25,10 +25,11 @@ with open('re/match/PROVISIONAL.tsv', encoding='utf-8') as f:
 PROV_BIND = {'005a6ea0', '005a6f30', '004627f0', '005aa0c0'}   # 004627f0 + its reached callee 005aa0c0: PORT-TOP-AUDIO-HWINIT-4627F0
 PROV_BIND |= {'005a5e70'}   # PORT-TOP-RWAUDIO-TABLE-632BA8: table slot 0x00632ba8 (tail-merge layout, PROVISIONAL.tsv)
 PROV_BIND |= {'005ae650'}   # PORT-TOP-AUDIOPOOL-5AE650: AudioPoolConstruct, init side of the 13 pool pairs (prologue placement, PROVISIONAL.tsv)
+PROV_BIND |= {'005adc10'}   # PORT-TOP-AUDIOSTOP-5ADC10: 0x005add60's callee, register-only residual 92.2% (PROVISIONAL.tsv)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
 PEND = {}
-for _p in glob.glob('re/promotions/*.tsv'):
+for _p in glob.glob('re/promotions/*.tsv') + glob.glob('re/promotions/applied/*.tsv'):   # applied/: the train moves a TSV there after --apply (PORT-TOP-AUDIOSTOP-5ADC10)
     with open(_p, encoding='utf-8') as f:
         for r in csv.DictReader((l for l in f if not l.startswith('#')), delimiter='\t'):
             if r.get('route') == 'match' and r.get('rva', '').startswith('0x') and os.path.exists(r.get('evidence', '')):
