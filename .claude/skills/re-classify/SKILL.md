@@ -216,7 +216,12 @@ py -3.12 re\tools\c4_reclass.py batch --tsv <batch.tsv> --apply --result <RESULT
   `c4=match`, and carries a `src sha256` token. A token already equal to the current hash is `SKIP` (idempotent). Nothing
   else in the row changes; one CHANGELOG line per refreshed row. On a branch commit
   `re/promotions/<ID>-refresh.tsv` and dry-run it; the train applies it with `refresh --apply --strict` and moves it to
-  `re/promotions/applied/`. The hash is of the working-tree bytes (CRLF under autocrlf on Windows).
+  `re/promotions/applied/`. The hash (C4RECLASS-SHA-EOL, 2026-11-15) is SHA-256 of the source with CRLF -> LF, first
+  16 hex, so it is the same on a CRLF checkout, an LF checkout, a `git archive` and the notebook hub. A token equal to
+  the pre-2026-11-15 CRLF-raw hash of the same content is not stale: refresh rewrites it to the LF form as `eol-only`
+  (CHANGELOG `sha eol-normalise`). A full 64-hex token is compared on its first 16 hex and refreshed to 16 hex.
+  `c4_reclass.py refresh-tsv --out <file> --result <RESULT.md>` (read-only) lists every `c4=match` row whose token is
+  not the current LF hash.
 - `--jobs N` (default 4) compiles sources in parallel.
 - Self-test: `py -3.12 -m pytest re/tools/tests/test_c4_reclass.py` (fake repo root, no compiler, real trackers
   untouched).

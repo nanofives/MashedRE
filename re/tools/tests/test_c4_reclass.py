@@ -206,7 +206,7 @@ R1 = [("0x00426070", "src/00426070.c", "ev.md")]
 
 
 def _cursha(tmp_path):
-    return hashlib.sha256((tmp_path / "src" / "00426070.c").read_bytes()).hexdigest()[:16]
+    return hashlib.sha256((tmp_path / "src" / "00426070.c").read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:16]
 
 
 def test_refresh_changes_only_the_sha(mod, tmp_path, capsys):
@@ -280,6 +280,80 @@ def test_refresh_strict_writes_nothing_on_one_refusal(mod, tmp_path):
     rows = R1 + [("0x00499999", "src/00426070.c", "ev.md")]
     assert refresh(mod, tmp_path, rows, "--apply", "--strict") == 1
     assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+
+
+# ---------------------------------------------------------------- line endings (C4RECLASS-SHA-EOL)
+SRC_BYTES_LF = SRC_C.format(a="00426070").encode()
+SRC_BYTES_CRLF = SRC_BYTES_LF.replace(b"\n", b"\r\n")
+SHA_LF = hashlib.sha256(SRC_BYTES_LF).hexdigest()
+SHA_CRLF = hashlib.sha256(SRC_BYTES_CRLF).hexdigest()
+
+
+def _put_src(tmp_path, data):
+    (tmp_path / "src" / "00426070.c").write_bytes(data)
+
+
+@pytest.mark.parametrize("data", [SRC_BYTES_LF, SRC_BYTES_CRLF], ids=["lf", "crlf"])
+def test_src_sha_is_eol_independent(mod, tmp_path, data):
+    _put_src(tmp_path, data)
+    p = tmp_path / "src" / "00426070.c"
+    assert mod.src_sha(p) == SHA_LF[:16] and mod.src_sha_legacy(p) == SHA_CRLF[:16] and SHA_LF != SHA_CRLF
+    assert mod.token_state(SHA_LF[:16], p) == "lf" and mod.token_state(SHA_LF, p) == "lf"
+    assert mod.token_state(SHA_CRLF[:16], p) == "crlf" and mod.token_state(OLDSHA, p) is None
+
+
+def test_batch_note_hash_same_on_lf_and_crlf_checkout(mod, tmp_path):
+    notes = []
+    for data in (SRC_BYTES_LF, SRC_BYTES_CRLF):
+        _put_src(tmp_path, data)
+        ok, _, note = mod.gate_match("00426070", "src/00426070.c", mod._evals["src/00426070.c"])
+        assert ok
+        notes.append(note)
+    assert notes[0] == notes[1] and f"src sha256 {SHA_LF[:16]}" in notes[0]
+
+
+@pytest.mark.parametrize("data", [SRC_BYTES_LF, SRC_BYTES_CRLF], ids=["lf", "crlf"])
+def test_refresh_legacy_crlf_token_is_eol_only(mod, tmp_path, capsys, data):
+    _put_src(tmp_path, data)
+    raw = _refresh_setup(tmp_path, note=_c4_note(sha=SHA_CRLF[:16]))
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 0
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw.replace(SHA_CRLF[:16], SHA_LF[:16])
+    out = capsys.readouterr().out
+    assert "eol: legacy CRLF-raw" in out and "(1 eol-only, 0 content changed)" in out
+    cl = (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_bytes().decode()
+    assert "sha eol-normalise" in cl
+
+
+@pytest.mark.parametrize("data", [SRC_BYTES_LF, SRC_BYTES_CRLF], ids=["lf", "crlf"])
+@pytest.mark.parametrize("tok", [SHA_LF[:16], SHA_LF], ids=["16hex", "64hex"])
+def test_refresh_lf_token_is_current_on_either_checkout(mod, tmp_path, capsys, data, tok):
+    _put_src(tmp_path, data)
+    raw = _refresh_setup(tmp_path, note=_c4_note(sha=tok))
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 0
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+    assert "SKIP" in capsys.readouterr().out
+
+
+def test_refresh_stale_64hex_token_becomes_16hex(mod, tmp_path):
+    _put_src(tmp_path, SRC_BYTES_LF)
+    stale = "ab" * 32
+    raw = _refresh_setup(tmp_path, note=_c4_note(sha=stale))
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 0
+    after = (tmp_path / "hooks.csv").read_bytes().decode()
+    assert after == raw.replace(stale, SHA_LF[:16])
+
+
+def test_refresh_tsv_lists_only_non_current_rows(mod, tmp_path, capsys):
+    _put_src(tmp_path, SRC_BYTES_CRLF)
+    raw = _refresh_setup(tmp_path, note=_c4_note(sha=SHA_CRLF[:16]))
+    cur = raw.replace("00426090,FUN_00426090,frontend,C4,impl,b.cpp,,,old,",
+                      f"00426090,FUN_00426090,frontend,C4,impl,b.cpp,,,\"{_c4_note(sha=SHA_LF[:16])}\",")
+    (tmp_path / "hooks.csv").write_bytes(cur.encode())
+    out = tmp_path / "r.tsv"
+    assert mod.main(["refresh-tsv", "--out", str(out), "--result", "ev.md"]) == 0
+    assert out.read_text() == "rva\tsrc\tresult\n0x00426070\tsrc/00426070.c\tev.md\n"
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == cur
+    assert "lf 1, crlf 1, content 0" in capsys.readouterr().out
 
 
 # ---------------------------------------------------------------- demote (C4RECLASS-DEMOTE-OP, L-166)
