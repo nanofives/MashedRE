@@ -1,8 +1,11 @@
 // PORT-TOP-03 (L-96 top-down lane, L-98): the RW engine bring-up 0x00493710 for the MASHED_ORIG_TOP path. EXE ONLY
 // (exe_sources.rsp, not asi_sources.rsp).
 //
-// Compiles re/match/s15/00493710.c (MATCH-S15 h8, best 94.2%, the only source of this RVA; hooks.csv has no exe body
-// for it) as Orig_00493710. SubsystemInit 0x00492270 (Match/MatchS15_00492270.cpp) calls it through
+// Compiles re/match/pilot/a2_00493710.c (100%, --bytes BYTE-IDENTICAL, relocheck OK with StubA/StubB/StubC/printf
+// unchecked) as Orig_00493710. DDKOBJ-RETARGET-493710 (2026-11-15) moved it off the s15 draft re/match/s15/00493710.c
+// (94.2%, relocheck BAD), so the object build links the certified bytes
+// (verify/ddkobj_20261114/RESULT_DDKOBJ-RETARGET-493710.md). The pilot source has no port preamble: its two globals and
+// its StubA/StubB/StubC/printf/FUN_004951e0 names are bound below. SubsystemInit 0x00492270 (Match/MatchS15_00492270.cpp) calls it through
 // PortTop_Bound_00493710 under MASHED_STANDALONE. Its RenderWare core calls bind to the RW API binding layer
 // (LibRw/RwApiBind.cpp, librw); its game callees bind by name in the PLAN 7 order (matched exe body, port body,
 // stand-in, missing stub). The table is verify/porttop_20261108/BINDINGS.tsv.
@@ -14,6 +17,7 @@
 #ifdef MASHED_STANDALONE
 
 #include <cstdarg>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 
@@ -39,6 +43,22 @@ static void PortTop93_Log(const char* fmt, ...) {
 void PortTop_Missing_00495780(void) {
     PortTop93_Log("0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)");
 }
+// rva 0x004951e0: `jmp 0x00495780` (the pilot source's comment), the call 0x00493710 makes for HardwareInstallFileSystem.
+// The pilot source discards its return value. Forwards to the missing stub above.
+int PortTop_Thunk_004951e0(void) {
+    PortTop_Missing_00495780();
+    return 0;
+}
+// rva 0x005c9d00 (`xor eax,eax; ret`, identical-code folded): the pilot source calls it under three names, StubA(&buf)
+// and StubB(&buf) with one pointer argument and StubC() with none. Exe body GetRaceEndTrigger
+// (Match/PortBatch_GAMEPLAY_005c9d00.cpp, C linkage). StubA / StubB bind to it by name below; StubC has another
+// prototype in the source, so it goes through this forwarder (one C-linkage name cannot carry two prototypes in C++).
+int GetRaceEndTrigger(void* p);
+int PortTop93_StubC_005c9d00(void) { return GetRaceEndTrigger(0); }
+// rva 0x007719d8 / 0x007719dc: the two globals 0x00493710 stores (pilot source `extern int`, hidden from the port by
+// its #ifndef MATCH_PORT). Bound to their original addresses below.
+static const std::uintptr_t k_007719d8 = 0x007719d8u;
+static const std::uintptr_t k_007719dc = 0x007719dcu;
 // rva 0x004951f0 HardwareSetVideoMode (re/match/s16/004951f0.c): mode selection through 0x00499400 on DAT_006147bc,
 // then caps 0x004cbb60 into DAT_00771e58 and two shader-version log lines. The reference runs with the skip_selector
 // patch at 0x004951f0 (MOV EAX,[0x006147bc] -> XOR EAX,EAX). Stand-in: the exe's windowed 640x480 device is chosen by
@@ -57,7 +77,7 @@ void PortTop_Missing_004936f0(void) { PortTop93_Log("0x004936f0 called: missing 
 void PortTop_Missing_00493700(void) { PortTop93_Log("0x00493700 called: missing body"); }
 // rva 0x004a2cbd = printf (third-party-library[msvc-crt]). The original prints to the stdout of a GUI process (no
 // console). Exe: the formatted line goes to mashed_re.log.
-int PortTop_Crt_004a2cbd(char* fmt, ...) {
+int PortTop_Crt_004a2cbd(const char* fmt, ...) {
     char buf[0x200];
     va_list ap;
     va_start(ap, fmt);
@@ -135,11 +155,16 @@ void PortTop_Missing_00428450(int x, int y) {
 
 // ---- bindings of rva 0x00493710 ----
 #define FUN_00493710 Orig_00493710
-#define FUN_005c9d00 GetRaceEndTrigger                       // port, Util/GameStateGetters.cpp (xor eax,eax; ret)
+#define StubA GetRaceEndTrigger                              // rva 0x005c9d00, Match/PortBatch_GAMEPLAY_005c9d00.cpp
+#define StubB GetRaceEndTrigger                              // rva 0x005c9d00
+#define StubC PortTop93_StubC_005c9d00                       // rva 0x005c9d00 through the forwarder above
+#define DAT_007719d8 (*reinterpret_cast<int*>(k_007719d8))   // original address
+#define DAT_007719dc (*reinterpret_cast<int*>(k_007719dc))   // original address
+#define printf PortTop_Crt_004a2cbd                          // rva 0x004a2cbd CRT printf -> mashed_re.log
 #define FUN_004963e0 Orig_004963e0                           // matched, Match/PortTop_004963e0.cpp (BIND-CRT-STDIO-CALLERS)
-#define FUN_004c32b0 MashedRw_EngineInit_004c32b0            // RW: RwEngineInit -> rw::Engine::init
+#define FUN_004c32b0 MashedRw_EngineInit_004c32b0            // RW: RwEngineInit -> rw::Engine::init (source passes 3 args, cdecl)
 #define FUN_00550350 MashedRw_RtFSManagerOpen_00550350       // RW: RtFSManagerOpen -> shim
-#define thunk_FUN_00495780 PortTop_Missing_00495780          // missing
+#define FUN_004951e0 PortTop_Thunk_004951e0                  // jmp 0x00495780 -> missing stub
 #define FUN_00495270 HWNDGet                                 // matched, Match/MatchS16_00495270.cpp (exe since PORT-TOP-03)
 #define FUN_00493640 MashedRw_AttachPlugins_00493640         // stand-in: librw plugin registration
 #define FUN_004c30b0 MashedRw_EngineOpen_004c30b0            // RW: RwEngineOpen -> rw::Engine::open
@@ -154,7 +179,6 @@ void PortTop_Missing_00428450(int x, int y) {
 #define FUN_0045b350 RwInitNullStub                          // matched, Match/MatchS09_0045b350.cpp (exe since PORT-TOP-03)
 #define FUN_004c2f00 MashedRw_EngineGetCurrentMode_004c2f00  // RW: RwEngineGetCurrentMode -> rw::Engine::getCurrentVideoMode
 #define FUN_004c2ed0 MashedRw_EngineGetModeInfo_004c2ed0     // RW: RwEngineGetModeInfo -> rw::Engine::getVideoModeInfo
-#define FUN_004a2cbd PortTop_Crt_004a2cbd                    // CRT printf -> mashed_re.log
 #define FUN_00493600 PortTop_Bound_00493600                  // matched, Match/PortTop_00493600.cpp (deferred under RWMOD)
 #define FUN_005584c0 MashedRw_Alloc7dc8b8_005584c0           // RW core -> shim
 #define FUN_004c5c80 MashedRw_TexDictionarySetCurrent_004c5c80  // RW: RwTexDictionarySetCurrent -> rw::TexDictionary::setCurrent
@@ -166,7 +190,7 @@ void PortTop_Missing_00428450(int x, int y) {
 #define FUN_00493700 PortTop_Missing_00493700
 
 extern "C" {
-#include "../../../../re/match/s15/00493710.c"
+#include "../../../../re/match/pilot/a2_00493710.c"
 
 // SubsystemInit 0x00492270's call (it passes one argument, 0; 0x00493710 reads none).
 unsigned int PortTop_Bound_00493710(int p0) {

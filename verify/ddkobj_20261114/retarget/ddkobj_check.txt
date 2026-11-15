@@ -1,0 +1,2 @@
+[ddkobj check] {'IDENTICAL': 1243, 'DIFFERENT': 17, 'not-in-map': 15} -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\DDKOBJ-RETARGET-493710\mashedmod\build\ddkobj\BYTECHECK.tsv
+[ddkobj summary] IDENTICAL 1243/1275  DIFFERENT 17 [0x00401690 0x004332a0 0x0043c5b0 0x0045a3a0 0x00475a00 0x004929d0 0x00498510 0x00498810 0x004c0c20 0x004c0f00 0x00552890 0x005530f0 0x005533d0 0x005538a0 0x00554200 0x00554940 0x005572c0]  not-in-map 15  units linked 1222/1501  refusals 9 (externalized-static-register-convention=5,wrapper-redefines-globals=4)
