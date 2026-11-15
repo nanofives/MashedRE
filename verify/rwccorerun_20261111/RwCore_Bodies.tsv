@@ -530,7 +530,6 @@ rva	kind	source	best_pct	exe_symbol
 0x004dcb2f	missing			RwCoreMissing_004dcb2f
 0x004dcb80	match100	re/match/rwl01/004dcb80.c	100.0	RwCore_004dcb80
 0x004dcbb0	provisional	re/match/rwl01/004dcbb0.c	77.5	RwCore_004dcbb0
-0x004dcc4c	missing			RwCoreMissing_004dcc4c
 0x004dcd30	match100	re/match/rwl01/004dcd30.c	100.0	RwCore_004dcd30
 0x004dcd50	match100	re/match/rwl01/004dcd50.c	100.0	RwCore_004dcd50
 0x004dcdc0	provisional	re/match/rwl01/004dcdc0.c	35.7	RwCore_004dcdc0

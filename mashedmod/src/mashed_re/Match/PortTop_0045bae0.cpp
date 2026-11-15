@@ -188,6 +188,24 @@ static unsigned PortTop_PWI_Dw(unsigned a) { return *reinterpret_cast<const vola
 // entry's original target is rebound too. With the image off the slots are 0 and this changes nothing.
 static const unsigned s_pwiOrig[9] = {0x00456760u, 0x004548e0u, 0x00455400u, 0x004583a0u, 0x0045a6b0u,
                                       0x0045b830u, 0x00454e70u, 0x004576f0u, 0x00452f70u};
+// [RWC-FRAME-CLUMP] run 46: the original +0x18 value of each entry (read from MASHED.exe.unpatched at 0x005f99b0 + 0x40*i,
+// RESULT_RWC-FRAME-CLUMP.md section 11.3) and the matched teardown bodies (Match/PortTop_<rva>.cpp, IMG-5-TEARDOWN-BODIES).
+void Orig_004568a0(void);
+void Orig_004540c0(void);
+void Orig_004555d0(void);
+void Orig_00457b10(void);
+void Orig_0045a790(void);
+void Orig_0045b2d0(void);
+void Orig_00454af0(void);
+void Orig_00456ca0(void);
+void Orig_004530b0(void);
+bool RwCore_FrameRoute(void);
+static const unsigned s_pwiDestroyOrig[9] = {0x004568a0u, 0x004540c0u, 0x004555d0u, 0x00457b10u, 0x0045a790u,
+                                             0x0045b2d0u, 0x00454af0u, 0x00456ca0u, 0x004530b0u};
+static void (*const s_pwiDestroy[9])(void) = {
+    Orig_004568a0, Orig_004540c0, Orig_004555d0, Orig_00457b10, Orig_0045a790,
+    Orig_0045b2d0, Orig_00454af0, Orig_00456ca0, Orig_004530b0,
+};
 // Call site of rva 0x0045bae0 (from the matched 0x00402750): fill the type table's +0x14 slots, then the matched body.
 void PortTop_PWI_Call0045bae0(void) {
     const int n = static_cast<int>(PortTop_PWI_Dw(0x005f9bd8u));
@@ -206,6 +224,25 @@ void PortTop_PWI_Call0045bae0(void) {
         }
     }
     PortTop_PWI_Log("rva 0x0045bae0: type table +0x14 slots: %u init pointers stored (8 matched, 1 provisional), %u already non-zero, of 9", seeded, kept);
+    // [RWC-FRAME-CLUMP] run 46: on the RW core frame route (MASHED_RWC_FRAME) also store the nine +0x18 teardown slots,
+    // which 0x0045b930 calls at AppDestroy (re/match/s09/0045b930.c, PTR_FUN_005f99b0[i].m_fn). Without MASHED_OT_CODEPTR
+    // they are 0 (image pad) or the original rva (MASHED_PORTSTATE_IMAGE), so every teardown entry was skipped and the
+    // clumps the inits built stayed alive at RwEngineStop (run 45 vs_frameT, 103 clumps). Same rule as the +0x14 slots:
+    // a slot is stored only when it is 0 or equals its entry's original value, so a MASHED_OT_CODEPTR binding is kept.
+    if (RwCore_FrameRoute()) {
+        unsigned dseeded = 0, dkept = 0;
+        for (int i = 0; i < 9; ++i) {
+            unsigned* const slot = reinterpret_cast<unsigned*>(static_cast<unsigned long>(0x005f9998u + 0x40u * i + 0x18u));
+            if (*slot == 0 || *slot == s_pwiDestroyOrig[i]) {
+                *slot = static_cast<unsigned>(reinterpret_cast<unsigned long>(s_pwiDestroy[i]));
+                ++dseeded;
+            } else {
+                ++dkept;
+            }
+        }
+        PortTop_PWI_Log("rva 0x0045bae0: RW core frame route: type table +0x18 slots: %u teardown pointers stored (9 matched), "
+                        "%u already non-zero, of 9", dseeded, dkept);
+    }
     Orig_0045bae0();
     PortTop_PWI_Log("rva 0x0045bae0: matched body returned: DAT_0068d4e0 = %08X, DAT_0068bb58 = %08X, record 0x0068b9b8 +0x04 = %08X",
                     PortTop_PWI_Dw(0x0068d4e0u), PortTop_PWI_Dw(0x0068bb58u), PortTop_PWI_Dw(0x0068b9bcu));

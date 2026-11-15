@@ -20,12 +20,70 @@ extern "C" {
 void PortTop_HandFrameMenu(void);
 void PortTop_HandFrameInputGlobals(void);
 
+// [RWC-FRAME-CLUMP] run 46: the DAT_0067eca4 1 -> 2 -> 3 ladder of 0x0043dfd0, on the RW core frame route only
+// (MASHED_RWC_FRAME, RwCore_FrameRoute). The hand menu keeps its phase in its own model (Frontend/MenuNavSM.cpp
+// g_anim_phase) and writes 0x0067eca4 only for the length of one 0x004325c0 call (Anim_Tick restores it), so on the
+// core frame the word stays 1 and 0x0043c5b0 returns before any draw (RESULT_RWC-FRAME-CLUMP.md 11.2).
+// Transcribed from re/match/s08/0043dfd0.c lines 310..338 (17.7%, PROVISIONAL.tsv, no exe body):
+//   0x0067f19c == 2: the source sets it to 1 and returns before the ladder. Here the ladder is skipped and 0x0067f19c
+//                    is not written (the hand code owns it).
+//   phase 1: DAT_0067eca8 += (int)(DAT_007f1004 * _DAT_005cc9fc) (0x0043e0a7; 0x005cc9fc = 0x447a0000 = 1000.0); at
+//            >= 0xff: DAT_0067eca8 = 0xff, DAT_0067eca4 = 2, then FUN_0043d2a0(DAT_0067ecac, 0).
+//   phase 2: FUN_004325c0(), DAT_0067eca8 += (int)(DAT_007f1004 * _DAT_005cda88) (0x0043e101; 0x005cda88 = 0xc3fa0000
+//            = -500.0); below 0: DAT_0067eca8 = 0, DAT_0067eca4 = 3.
+// Two calls are not made here, both declared deviations of this stand-in: FUN_0043d2a0 (54.3%, no exe body; the hand
+// menu builds its screen stack itself) and FUN_004325c0 (the hand menu's Anim_Tick already calls the matched body once
+// per frame). Phases 3 and up (the 3 -> 4 write at 0x0067e914 != 0, the menu rows) are not ported here: that is the
+// frontend machine itself (PORT-TOP-08). The float -> int conversion is (int) truncation, as __ftol at 0x0043e0a7.
+bool RwCore_FrameRoute(void);
+static void PortTop_RwcPhaseLadder_0043dfd0(void) {
+    volatile int& phase = *reinterpret_cast<volatile int*>(static_cast<unsigned long>(0x0067eca4u));
+    volatile int& fade = *reinterpret_cast<volatile int*>(static_cast<unsigned long>(0x0067eca8u));
+    const float dt = *reinterpret_cast<const volatile float*>(static_cast<unsigned long>(0x007f1004u));
+    const float k1 = 1000.0f;   // _DAT_005cc9fc = 0x447a0000 (read from MASHED.exe.unpatched; the exe image may not hold .rdata)
+    const float k2 = -500.0f;   // _DAT_005cda88 = 0xc3fa0000 (same)
+    static unsigned s_logged;
+    const int p0 = phase;
+    static unsigned s_calls;
+    if (++s_calls == 1 || s_calls == 60) {
+        if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(f, "[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call %u: DAT_0067eca4 = %d, DAT_0067eca8 = %d, "
+                            "DAT_007f1004 = %.6f, DAT_0067f19c = %d, DAT_00771964 = %08X (0x00403050 gate), "
+                            "DAT_00771a04 = %08X (0x00493f70) (RWC-FRAME-CLUMP)\n", s_calls, p0, static_cast<int>(fade), dt,
+                         *reinterpret_cast<const volatile int*>(static_cast<unsigned long>(0x0067f19cu)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00771964u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00771a04u)));
+            std::fclose(f);
+        }
+    }
+    if (*reinterpret_cast<const volatile int*>(static_cast<unsigned long>(0x0067f19cu)) == 2) return;
+    if (p0 == 1) {
+        const int step = static_cast<int>(dt * k1);
+        if (fade + step < 0xff) fade = fade + step;
+        else { fade = 0xff; phase = 2; }
+    } else if (p0 == 2) {
+        fade = fade + static_cast<int>(dt * k2);
+        if (fade < 0) { fade = 0; phase = 3; }
+    }
+    if (phase != p0 && s_logged < 8) {
+        ++s_logged;
+        if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(f, "[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 %d -> %d, DAT_0067eca8 = %d, "
+                            "DAT_007f1004 = %.6f, DAT_0067e914 = %d, DAT_0067ecac = %d, k1 = %.1f, k2 = %.1f (RWC-FRAME-CLUMP)\n",
+                         p0, phase, fade, dt, *reinterpret_cast<const volatile int*>(static_cast<unsigned long>(0x0067e914u)),
+                         *reinterpret_cast<const volatile int*>(static_cast<unsigned long>(0x0067ecacu)), k1, k2);
+            std::fclose(f);
+        }
+    }
+}
+
 // rva 0043dfd0 (frontend machine): the hand menu navigation and the input-globals write, in the hand order.
 unsigned g_PortTop05_FrontendCalls = 0;
 void PortTop_StandIn05_0043dfd0(void) {
     static int once;
     StandInLog("0x0043dfd0", "hand menu navigation + input globals (HandTop_FrameMenu, HandTop_FrameInputGlobals)", &once);
     ++g_PortTop05_FrontendCalls;
+    if (RwCore_FrameRoute()) PortTop_RwcPhaseLadder_0043dfd0();
     PortTop_HandFrameMenu();
     PortTop_HandFrameInputGlobals();
 }

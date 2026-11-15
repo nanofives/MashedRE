@@ -1,0 +1,80 @@
+[RWC_CORE] 0x004d41e0 0x004d41e0(0) on the RW core: skipped, its creator did not run (stand-in); call 1
+[RWC_CORE] 0x004d41e0 0x004d41e0(0) on the RW core: skipped, its creator did not run (stand-in); call 2
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 1
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 2
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 3
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 4
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 5
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 6
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 7
+[RWC_CORE] RpClumpDestroy 0x004e6e00(0) on the RW core: skipped, its creator did not run (stand-in); call 8
+[RWC_CORE] RwTexDictionaryDestroy 0x004c5930(0) on the RW core: skipped, its creator did not run (stand-in); call 1
+[RWC_CORE] RwTextureDestroy 0x004c5a60(0) on the RW core: skipped, its creator did not run (stand-in); call 1
+[RWC_CORE] RwTextureDestroy 0x004c5a60(0) on the RW core: skipped, its creator did not run (stand-in); call 2
+[RWC_CORE] RwTextureDestroy 0x004c5a60(0) on the RW core: skipped, its creator did not run (stand-in); call 3
+[RWC_CORE] RwTextureDestroy 0x004c5a60(0) on the RW core: skipped, its creator did not run (stand-in); call 4
+[RWC_CORE] live clump 1 at RwEngineStop: 0F903DB0 frame +0x4 0F8FC644 atomics +0x8 0F8ECD18
+[RWC_CORE] live clump 2 at RwEngineStop: 0F903DE4 frame +0x4 0F8FC860 atomics +0x8 0F8ECE88
+[RWC_CORE] live clump 3 at RwEngineStop: 0F903E18 frame +0x4 0F8FCA7C atomics +0x8 0F8ECFF8
+[RWC_CORE] live clump 4 at RwEngineStop: 0F903E4C frame +0x4 0F8FCC98 atomics +0x8 0F8ED168
+[RWC_CORE] live clump 5 at RwEngineStop: 0F903E80 frame +0x4 0F8FCEB4 atomics +0x8 0F8ED2D8
+[RWC_CORE] live clump 6 at RwEngineStop: 0F903EB4 frame +0x4 0F8FD0D0 atomics +0x8 0F8ED448
+[RWC_CORE] live clump 7 at RwEngineStop: 0F904638 frame +0x4 0F90C284 atomics +0x8 0F8EF108
+[RWC_CORE] live clump 8 at RwEngineStop: 0F71694C frame +0x4 0F86C174 atomics +0x8 0F596230
+[RWC_CORE] live clump 9 at RwEngineStop: 0F716980 frame +0x4 0F739434 atomics +0x8 0F596A18
+[RWC_CORE] live clump 10 at RwEngineStop: 0F7169B4 frame +0x4 0F739BF0 atomics +0x8 0F596F20
+[RWC_CORE] live clump 11 at RwEngineStop: 0F7169E8 frame +0x4 0F73A3AC atomics +0x8 0F597428
+[RWC_CORE] live clump 12 at RwEngineStop: 0F716A1C frame +0x4 0F86B9B8 atomics +0x8 0F597930
+[RWC_CORE] live clump 13 at RwEngineStop: 0F716A50 frame +0x4 0F86C444 atomics +0x8 0F596458
+[RWC_CORE] live clump 14 at RwEngineStop: 0F716A84 frame +0x4 0F86C714 atomics +0x8 0F597AA0
+[RWC_CORE] live clump 15 at RwEngineStop: 0F716AB8 frame +0x4 0F86C9E4 atomics +0x8 0F597CC8
+[RWC_CORE] live clump 16 at RwEngineStop: 0F716AEC frame +0x4 0F86CCB4 atomics +0x8 0F597EF0
+[RWC_CORE] live clump 17 at RwEngineStop: 0F716B20 frame +0x4 0F86CF84 atomics +0x8 0F597FA8
+[RWC_CORE] live clump 18 at RwEngineStop: 0F716B54 frame +0x4 0F7390B0 atomics +0x8 0F7D4D28
+[RWC_CORE] live clump 19 at RwEngineStop: 0F716B88 frame +0x4 0F739218 atomics +0x8 0F7D4DE0
+[RWC_CORE] live clump 20 at RwEngineStop: 0F716BBC frame +0x4 0F739380 atomics +0x8 0F7D4E98
+[RWC_CORE] live clump 21 at RwEngineStop: 0F716BF0 frame +0x4 0F85EC24 atomics +0x8 0F7D4F50
+[RWC_CORE] live clump 22 at RwEngineStop: 0F716C24 frame +0x4 0F85ED8C atomics +0x8 0F7D5008
+[RWC_CORE] live clump 23 at RwEngineStop: 0F716C58 frame +0x4 0F85EEF4 atomics +0x8 0F7D5178
+[RWC_CORE] live clump 24 at RwEngineStop: 0F716C8C frame +0x4 0F85F110 atomics +0x8 0F7D52E8
+[RWC_CORE] live clump 25 at RwEngineStop: 0F716CC0 frame +0x4 0F85F32C atomics +0x8 0F7D5458
+[RWC_CORE] live clump 26 at RwEngineStop: 0F716CF4 frame +0x4 0F85F548 atomics +0x8 0F7D55C8
+[RWC_CORE] live clump 27 at RwEngineStop: 0F716D28 frame +0x4 0F85F764 atomics +0x8 0F7D5738
+[RWC_CORE] live clump 28 at RwEngineStop: 0F716D5C frame +0x4 0F85F980 atomics +0x8 0F7D58A8
+[RWC_CORE] live clump 29 at RwEngineStop: 0F716D90 frame +0x4 0F85FB9C atomics +0x8 0F7D5A18
+[RWC_CORE] live clump 30 at RwEngineStop: 0F716DC4 frame +0x4 0F85FDB8 atomics +0x8 0F7D5B88
+[RWC_CORE] live clump 31 at RwEngineStop: 0F716DF8 frame +0x4 0F85FFD4 atomics +0x8 0F7D5CF8
+[RWC_CORE] live clump 32 at RwEngineStop: 0F716E2C frame +0x4 0F8601F0 atomics +0x8 0F7D5E68
+[RWC_CORE] live clump 33 at RwEngineStop: 0F716E60 frame +0x4 0F86040C atomics +0x8 0F7D5FD8
+[RWC_CORE] live clump 34 at RwEngineStop: 0F716E94 frame +0x4 0F860628 atomics +0x8 0F7D6148
+[RWC_CORE] live clump 35 at RwEngineStop: 0F716EC8 frame +0x4 0F860844 atomics +0x8 0F7D62B8
+[RWC_CORE] live clump 36 at RwEngineStop: 0F716EFC frame +0x4 0F860A60 atomics +0x8 0F7D6428
+[RWC_CORE] live clump 37 at RwEngineStop: 0F716F30 frame +0x4 0F860C7C atomics +0x8 0F7D6598
+[RWC_CORE] live clump 38 at RwEngineStop: 0F716F64 frame +0x4 0F863418 atomics +0x8 0F7D6708
+[RWC_CORE] live clump 39 at RwEngineStop: 0F716F98 frame +0x4 0F863634 atomics +0x8 0F7D6878
+[RWC_CORE] live clump 40 at RwEngineStop: 0F716FCC frame +0x4 0F863850 atomics +0x8 0F7D69E8
+[RWC_CORE] live clump 41 at RwEngineStop: 0F717000 frame +0x4 0F863A6C atomics +0x8 0F7D6B58
+[RWC_CORE] live clump 42 at RwEngineStop: 0F717034 frame +0x4 0F863C88 atomics +0x8 0F7D6CC8
+[RWC_CORE] live clump 43 at RwEngineStop: 0F717068 frame +0x4 0F863EA4 atomics +0x8 0F7D6E38
+[RWC_CORE] live clump 44 at RwEngineStop: 0F71709C frame +0x4 0F8640C0 atomics +0x8 0F7D6FA8
+[RWC_CORE] live clump 45 at RwEngineStop: 0F7170D0 frame +0x4 0F8642DC atomics +0x8 0F7D7118
+[RWC_CORE] live clump 46 at RwEngineStop: 0F717104 frame +0x4 0F8644F8 atomics +0x8 0F7D7288
+[RWC_CORE] live clump 47 at RwEngineStop: 0F717138 frame +0x4 0F864714 atomics +0x8 0F7D73F8
+[RWC_CORE] live clump 48 at RwEngineStop: 0F71716C frame +0x4 0F864930 atomics +0x8 0F7D7568
+[RWC_CORE] live clump 49 at RwEngineStop: 0F7171A0 frame +0x4 0F864B4C atomics +0x8 0F7D76D8
+[RWC_CORE] live clump 50 at RwEngineStop: 0F7171D4 frame +0x4 0F864D68 atomics +0x8 0F7D7848
+[RWC_CORE] live clump 51 at RwEngineStop: 0F717208 frame +0x4 0F864F84 atomics +0x8 0F7D79B8
+[RWC_CORE] live clump 52 at RwEngineStop: 0F71723C frame +0x4 0F8651A0 atomics +0x8 0F7D7B28
+[RWC_CORE] live clump 53 at RwEngineStop: 0F717270 frame +0x4 0F8653BC atomics +0x8 0F7D7C98
+[RWC_CORE] live clump 54 at RwEngineStop: 0F7172A4 frame +0x4 0F8655D8 atomics +0x8 0F7D7E08
+[RWC_CORE] live clump 55 at RwEngineStop: 0F7172D8 frame +0x4 0F7DA9BC atomics +0x8 0F7D7F78
+[RWC_CORE] live clump 56 at RwEngineStop: 0F71730C frame +0x4 0F7DAC8C atomics +0x8 0F7D8AF8
+[RWC_CORE] live clump 57 at RwEngineStop: 0F717340 frame +0x4 0F7DAEA8 atomics +0x8 0F7D8310
+[RWC_CORE] live clump 58 at RwEngineStop: 0F717374 frame +0x4 0F7DB178 atomics +0x8 0F7D8538
+[RWC_CORE] live clump 59 at RwEngineStop: 0F7173A8 frame +0x4 0F7DB448 atomics +0x8 0F7D8760
+[RWC_CORE] live clump 60 at RwEngineStop: 0F7173DC frame +0x4 0F7DB718 atomics +0x8 0F7D8988
+[RWC_CORE] live clump 61 at RwEngineStop: 0F717410 frame +0x4 0F7DBA9C atomics +0x8 0F7D8D20
+[RWC_CORE] live clump 62 at RwEngineStop: 0F717444 frame +0x4 0F7DBD6C atomics +0x8 0F7D8F48
+[RWC_CORE] live clump 63 at RwEngineStop: 0F717478 frame +0x4 0F7DC03C atomics +0x8 0F7D9170
+[RWC_CORE] live clump 64 at RwEngineStop: 0F7174AC frame +0x4 0F7DC30C atomics +0x8 0F7D9398
+[RWC_CORE] live clumps at RwEngineStop: 103 (clump freelist 007D7208)

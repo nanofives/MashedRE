@@ -94,7 +94,7 @@ extern "C" {
 // bring-up on the matched RW core bodies instead of librw. These bindings stay as the fallback (L-124).
 bool RwCore_Enabled(void);
 bool RwCore_FrameRoute(void);   // [RWC-FRAME]
-extern "C" { void RwCoreLift_004b3eb0(void); void RwCoreLift_004c2b80(void); void RwCoreLift_004c2bb0(void); void RwCoreLift_004e5850(void); void RwCoreLift_004e89a0(void); void RwCoreLift_0054f8d0(void); void RwCoreMissing_00513f90(void); void RwCoreMissing_00514330(void); void RwCore_004b3f90(void); void RwCore_004b5190(void); void RwCore_004b52f0(void); void RwCore_004b5300(void); void RwCore_004c0740(void); void RwCore_004c0b30(void); void RwCore_004c0c20(void); void RwCore_004c0e50(void); void RwCore_004c0ed0(void); void RwCore_004c1040(void); void RwCore_004c1210(void); void RwCore_004c13e0(void); void RwCore_004c15c0(void); void RwCore_004c1a40(void); void RwCore_004c1b10(void); void RwCore_004c1bb0(void); void RwCore_004c1c80(void); void RwCore_004c1cf0(void); void RwCore_004c1d30(void); void RwCore_004c2bf0(void); void RwCore_004c2ed0(void); void RwCore_004c2f00(void); void RwCore_004c39b0(void); void RwCore_004c5930(void); void RwCore_004c5a60(void); void RwCore_004c5bc0(void); void RwCore_004c5c00(void); void RwCore_004c5c80(void); void RwCore_004c5cb0(void); void RwCore_004c7650(void); void RwCore_004c7760(void); void RwCore_004c77c0(void); void RwCore_004cbc60(void); void RwCore_004cbc70(void); void RwCore_004cbc80(void); void RwCore_004cbc90(void); void RwCore_004ce2d0(void); void RwCore_004d41e0(void); void RwCore_004d52d0(void); void RwCore_004de1b0(void); void RwCore_004e43b0(void); void RwCore_004e4440(void); void RwCore_004e4450(void); void RwCore_004e45b0(void); void RwCore_004e4800(void); void RwCore_004e4810(void); void RwCore_004e4860(void); void RwCore_004e4d90(void); void RwCore_004e4dd0(void); void RwCore_004e5700(void); void RwCore_004e66d0(void); void RwCore_004e6920(void); void RwCore_004e69a0(void); void RwCore_004e6ab0(void); void RwCore_004e6e00(void); void RwCore_004e7420(void); void RwCore_004e7e30(void); void RwCore_00534b60(void); void RwCore_0053fb70(void); void RwCore_0053fbb0(void); void RwCore_0053fd30(void); void RwCore_00550350(void); void RwCore_00550390(void); void RwCore_00558470(void); void RwCore_005584c0(void); void RwCore_FrameShowRaster(void); }   // [RWC-FRAME]
+extern "C" { void RwCoreLift_004b3eb0(void); void RwCoreLift_004c2b80(void); void RwCoreLift_004c2bb0(void); void RwCoreLift_004e5850(void); void RwCoreLift_004e89a0(void); void RwCoreLift_0054f8d0(void); void RwCoreMissing_00513f90(void); void RwCoreMissing_00514330(void); void RwCore_004b3f90(void); void RwCore_004b5190(void); void RwCore_004b52f0(void); void RwCore_004b5300(void); void RwCore_004c0740(void); void RwCore_004c0b30(void); void RwCore_004c0e50(void); void RwCore_004c0ed0(void); void RwCore_004c1040(void); void RwCore_004c1210(void); void RwCore_004c13e0(void); void RwCore_004c15c0(void); void RwCore_004c1a40(void); void RwCore_004c1b10(void); void RwCore_004c1bb0(void); void RwCore_004c1c80(void); void RwCore_004c1d30(void); void RwCore_004c2bf0(void); void RwCore_004c2ed0(void); void RwCore_004c2f00(void); void RwCore_004c39b0(void); void RwCore_004c5bc0(void); void RwCore_004c5c00(void); void RwCore_004c5c80(void); void RwCore_004c5cb0(void); void RwCore_004c7760(void); void RwCore_004c77c0(void); void RwCore_004cbc60(void); void RwCore_004cbc70(void); void RwCore_004cbc80(void); void RwCore_004cbc90(void); void RwCore_004ce2d0(void); void RwCore_004d52d0(void); void RwCore_004de1b0(void); void RwCore_004e43b0(void); void RwCore_004e4440(void); void RwCore_004e4450(void); void RwCore_004e45b0(void); void RwCore_004e4800(void); void RwCore_004e4810(void); void RwCore_004e4860(void); void RwCore_004e4dd0(void); void RwCore_004e66d0(void); void RwCore_004e69a0(void); void RwCore_004e6ab0(void); void RwCore_004e7420(void); void RwCore_004e7e30(void); void RwCore_00534b60(void); void RwCore_0053fb70(void); void RwCore_0053fbb0(void); void RwCore_0053fd30(void); void RwCore_00550350(void); void RwCore_00550390(void); void RwCore_00558470(void); void RwCore_005584c0(void); void RwCore_FrameDestroy0_004c0c20(void); void RwCore_FrameDestroy0_004c1cf0(void); void RwCore_FrameDestroy0_004c5930(void); void RwCore_FrameDestroy0_004c5a60(void); void RwCore_FrameDestroy0_004c7650(void); void RwCore_FrameDestroy0_004d41e0(void); void RwCore_FrameDestroy0_004e4d90(void); void RwCore_FrameDestroy0_004e5700(void); void RwCore_FrameDestroy0_004e6920(void); void RwCore_FrameDestroy0_004e6e00(void); void RwCore_FrameShowRaster(void); }   // [RWC-FRAME]
 void* RwCore_GlobalsAtInit(void);   // RWC-FRAME-492E90
 int  RwCore_EngineInit(int memFuncs, int initFlags);
 int  RwCore_EngineOpen(int* params);
@@ -256,7 +256,7 @@ int MashedRw_TexDictionarySetCurrent_004c5c80(int dict) {
 // unlinks it and frees it. librw: rw::TexDictionary::destroy does the same (texture.cpp: current reset, textures
 // destroyed, plugin destructors, unlink, free). WinMain 0x00492370 calls it on DAT_0077195c (set by 0x004921d0).
 int MashedRw_TexDictionaryDestroy_004c5930(int dict) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004c5930)(dict);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004c5930)(dict);   // [RWC-FRAME]
     rw::TexDictionary* const d = reinterpret_cast<rw::TexDictionary*>(static_cast<std::uintptr_t>(static_cast<unsigned>(dict)));
     if (d) {
         for (auto it = s_rwTexDicts.begin(); it != s_rwTexDicts.end(); ++it)
@@ -283,7 +283,7 @@ int MashedRw_TexDictionaryFindNamedTexture_004c5c00(int dict, const char* name) 
 // Its caller in the AppDestroy tree, rva 0x00428400, passes DAT_0067d964 / 70 / 68 / 6c; the matched body has no null check, the
 // binding skips a null pointer (the knob path value while the fonts family is a stand-in).
 int MashedRw_TextureDestroy_004c5a60(int tex) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004c5a60)(tex);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004c5a60)(tex);   // [RWC-FRAME]
     rw::Texture* const t = reinterpret_cast<rw::Texture*>(static_cast<std::uintptr_t>(static_cast<unsigned>(tex)));
     if (t) t->destroy();
     BindLog("RwTextureDestroy(0x%08X) -> %s", static_cast<unsigned>(tex), t ? "rw::Texture::destroy" : "null, nothing to destroy");
@@ -301,7 +301,7 @@ int MashedRw_ImageSetPath_004ce2d0(const char* path) {
 }
 // RpWorldDestroy 0x004e5700. librw: rw::World::destroy. 0x0042c2a0 calls it only when DAT_0067ea00 != 0.
 int MashedRw_WorldDestroy_004e5700(int world) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004e5700)(world);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004e5700)(world);   // [RWC-FRAME]
     rw::World* const w = reinterpret_cast<rw::World*>(static_cast<std::uintptr_t>(static_cast<unsigned>(world)));
     if (w) w->destroy();
     BindLog("RpWorldDestroy(0x%08X) -> %s", static_cast<unsigned>(world), w ? "rw::World::destroy" : "null, nothing to destroy");
@@ -313,7 +313,7 @@ int MashedRw_WorldDestroy_004e5700(int world) {
 // recorded, and librw has no counterpart for the record. On the knob path PCVS_Init is the hand piece 1, which
 // creates neither handle, so both are 0. Shim: a null record is skipped; a non-null one is logged and left alone.
 void MashedRw_Destroy4d41e0_004d41e0(int rec) {
-    if (RwCore_FrameRoute()) { reinterpret_cast<void (__cdecl*)(int)>(&RwCore_004d41e0)(rec); return; }   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) { reinterpret_cast<void (__cdecl*)(int)>(&RwCore_FrameDestroy0_004d41e0)(rec); return; }   // [RWC-FRAME]
     BindLog("0x004d41e0(0x%08X): shim, %s", static_cast<unsigned>(rec),
             rec ? "no librw counterpart, record left alone" : "null, nothing to destroy");
 }
@@ -510,7 +510,7 @@ int MashedRw_CameraClone_004c2bf0(int camera) {
 // RwBool RwCameraDestroy(RwCamera* camera): re/match/s19/004c1cf0.c runs the plugin destructors (0x004d8060), detaches
 // the frame (0x004c0790) and frees the camera. librw: rw::Camera::destroy (plugin destruct, setFrame(nil), free).
 int MashedRw_CameraDestroy_004c1cf0(int camera) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004c1cf0)(camera);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004c1cf0)(camera);   // [RWC-FRAME]
     MashedRwCamera* const c = AsCamera(FromInt<void>(camera));
     if (!c) return 0;
     // [PORT-TOP-04D] one line per destroyed camera (closes the PORT-TOP-04C trace gap).
@@ -614,7 +614,7 @@ int MashedRw_FrameCreate_004c0b30(void) {
 // RwBool RwFrameDestroy(RwFrame* frame): re/match/s19/004c0c20.c runs the plugin destructors, unlinks the frame from
 // its parent and re-roots its children. librw: rw::Frame::destroy.
 int MashedRw_FrameDestroy_004c0c20(int frame) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004c0c20)(frame);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004c0c20)(frame);   // [RWC-FRAME]
     rw::Frame* const f = FromInt<rw::Frame>(frame);
     if (f) f->destroy();
     return 1;
@@ -623,7 +623,7 @@ int MashedRw_FrameDestroy_004c0c20(int frame) {
 // [PORT-TOP-04C] RpClumpDestroy (hooks.csv name of rva 0x004e6e00, no matched source): rw::Clump::destroy. Reached from
 // the matched callees of AppDestroy 0x00402a40 (0x0041c0e0 / 0x0041c2c0 / 0x0041da80 ... each guards on a nonzero global).
 int MashedRw_ClumpDestroy_004e6e00(int clump) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004e6e00)(clump);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004e6e00)(clump);   // [RWC-FRAME]
     rw::Clump* const c = FromInt<rw::Clump>(clump);
     BindLog("RpClumpDestroy(0x%08X) -> rw::Clump::destroy", static_cast<unsigned>(clump));
     if (c) c->destroy();
@@ -659,7 +659,7 @@ int MashedRw_RasterCreate_004c77c0(int width, int height, int depth, int flags) 
 // RwBool RwRasterDestroy(RwRaster* raster): re/match/rwl01/004c7650.c plugin destructors, driver destroy (+0x5c), free.
 // librw: rw::Raster::destroy.
 int MashedRw_RasterDestroy_004c7650(int raster) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004c7650)(raster);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004c7650)(raster);   // [RWC-FRAME]
     rw::Raster* const r = FromInt<rw::Raster>(raster);
     if (r) r->destroy();
     return 1;
@@ -1371,7 +1371,7 @@ int MashedRw_PTankAtomicCreate_00534b60(int maxPCount, unsigned dataFlags, int p
 // returns 1. Binding: a PTank record drops its material's texture (RwTextureDestroy, the count 0x004e8090 raised) and is
 // freed; a librw atomic goes to rw::Atomic::destroy. 0x00489250 calls RwFrameDestroy on +0x04 first.
 int MashedRw_AtomicDestroy_004e6920(int atomic) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004e6920)(atomic);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004e6920)(atomic);   // [RWC-FRAME]
     if (MashedRwPTankAtomic* const a = AsPTank(atomic)) {
         rw::Texture* const tex = a->mat.texture;
         BindLog("RpAtomicDestroy(PTank record %p): material texture %p released, record freed", static_cast<void*>(a),
@@ -1501,7 +1501,7 @@ int MashedRw_LightCreate_004e4dd0(int type) {
 // (0x004d8060), frame unlink (0x004c0790), free through RwGlobals +0x11c, returns 1. Binding: rw::Light::destroy (which
 // unsets the frame) and the record is freed. Call site: 0x004014b0, after RpWorldRemoveLight.
 int MashedRw_LightDestroy_004e4d90(int light) {
-    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_004e4d90)(light);   // [RWC-FRAME]
+    if (RwCore_FrameRoute()) return reinterpret_cast<int (__cdecl*)(int)>(&RwCore_FrameDestroy0_004e4d90)(light);   // [RWC-FRAME]
     MashedRwLight* const l = AsLight(light);
     if (!l) {
         BindLog("RpLightDestroy(0x%08X): not a light record, ignored", static_cast<unsigned>(light));

@@ -303,8 +303,10 @@ int PortTop_Bound_00492d30(void) {
 // at MASHED_RWC_FRAME_N presents.
 bool RwCore_FrameRoute(void);
 int  RwCore_00492e90(void);
+extern "C" void RwCore_DrawDumpMark(unsigned rva);   // RWC-FRAME-CLUMP run 45: draw-dump frame delimiter (RwCore_Knob.cpp)
 int PortTop_StandIn_00492e90(void) {
     if (RwCore_FrameRoute()) {
+        RwCore_DrawDumpMark(0x00492e90u);
         const int rc = RwCore_00492e90();
         if (s_frame == 0 || (s_frame < 600 && (s_frame % 120) == 0))
             PortTop_Log("frame %u rendered by 0x00492e90 (matched, RW core) = %d, phase %d", s_frame, rc,

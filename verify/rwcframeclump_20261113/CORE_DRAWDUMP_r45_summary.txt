@@ -1,0 +1,1 @@
+    585 [RWC_CORE] drawdump core_fN: 0 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 1 DAT_0067ecb0 33 DAT_00771968 1

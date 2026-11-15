@@ -15,6 +15,8 @@
 #
 # Frame delimiting matches menu_draw_dump.py's armframe: one frontend frame =
 # the span between two consecutive entries to ShellA FUN_0042e3a0.
+# --delim <rva> moves the delimiter (RWC-FRAME-CLUMP run 45): 0x00492e90, the frame render, is the one the RW core
+# draw dump (MASHED_RWC_DRAWDUMP, mashedmod/src/mashed_re/RwCore/RwCore_Knob.cpp) uses.
 #
 # Hot-path note (CLAUDE.md): the device-draw Interceptor stays attached but
 # only does work while `collecting` — the same pattern menu_draw_dump.py uses
@@ -120,7 +122,7 @@ rpc.exports={
   },
   bias:function(){ return abs(RVA_MODAL_BIASON).readS32(); },
   ramp:function(){ return abs(RVA_MODAL_RAMP).readS32(); },
-  armburst:function(label,k){
+  armburst:function(label,k,delim){
     if(!drawHooked){
       const vt=abs(VTBL).readU32();
       const drawFn=ptr(vt).add(0x30).readU32();
@@ -145,7 +147,7 @@ rpc.exports={
       drawHooked=1;
     }
     let seen=0;
-    const h=Interceptor.attach(abs(RVA_SHELLA), { onEnter(args){
+    const h=Interceptor.attach(abs(delim||RVA_SHELLA), { onEnter(args){
       seen++;
       if(seen<=k){
         cur=label+'_f'+(seen-1);
@@ -208,6 +210,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--screen", type=int, default=None)
     ap.add_argument("--frames", type=int, default=4)
+    ap.add_argument("--delim", type=lambda s: int(s, 0), default=0x0042e3a0,
+                    help="frame delimiter RVA: one frame = the span between two entries to it (default 0x0042e3a0, "
+                         "ShellA; 0x00492e90 = the frame render, what the RW core dump MASHED_RWC_DRAWDUMP uses)")
     ap.add_argument("--label", default=None)
     ap.add_argument("--out", default=str(ROOT / "log" / "menu_draw_burst.json"))
     ap.add_argument("--settle", type=float, default=2.5,
@@ -317,7 +322,7 @@ def main():
     if args.text_trace:
         E.texttrace()
 
-    E.armburst(label, args.frames)
+    E.armburst(label, args.frames, args.delim)
     end = time.time() + 15
     while time.time() < end and E.done() == 0:
         time.sleep(0.2)
