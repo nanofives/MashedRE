@@ -14,9 +14,9 @@ Verdict: GREEN (tool + tests + train hook + TSV). Row kind: tool/text, no build,
   `refresh --apply --strict`, committed and moved to `re/promotions/applied/`, like `-tag.tsv`. Batch files exclude it.
 - Docs: `.claude/skills/re-classify/SKILL.md`, `re/orchestrator/WORKER_RULES.md`.
 - Tests: the repo's existing file is `re/tools/tests/test_c4_reclass.py` (there is no `re/tools/test_c4_reclass.py`;
-  a second file with that name would collide on import), so 9 refresh tests were appended there.
-  Run: `test-slot py -3.12 -m pytest re/tools/tests/test_c4_reclass.py -v` -> **21 passed in 2.35 s** (11 existing + 10
-  new: changes only the sha, idempotent, dry run writes nothing, refuses below 100% (bytes and insn), refuses relocheck
+  a second file with that name would collide on import), so 8 refresh test functions were appended there.
+  Run: `test-slot py -3.12 -m pytest re/tools/tests/test_c4_reclass.py -v` -> **21 passed in 2.35 s** (the rest existing; the new
+  ones: changes only the sha, idempotent, dry run writes nothing, refuses below 100% (bytes and insn), refuses relocheck
   not OK, refuses not C4, refuses other source / missing token, --strict writes nothing on one refusal).
   Log: `verify/c4reclass_20261115/pytest_c4_reclass.txt`. The train step itself (ps1) was not exercised end to end:
   no train self-test case was added for refresh (the existing train self-test covers `-tag.tsv`).
