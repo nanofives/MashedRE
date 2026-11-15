@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S25 0x005a6ea0 (h2): best 38.9% (regs 44.4%), class c. original truncates inline (fnstcw/or ah,0xc/fldcw/fistp) and uses fidiv dword on a zero-extended temp; DDK calls _ftol and fild qword. relocheck BAD only because the code differs from the original. */
+/* PORT-TOP-AUDIO-RWA 2026-11-13: divide rewritten to the original operand types (qword / signed dword); L-126 provisional body (re/match/PROVISIONAL.tsv), knob path only. Was: MATCH-S25 0x005a6ea0 (h2): best 38.9% (regs 44.4%), class c. original truncates inline (fnstcw/or ah,0xc/fldcw/fistp) and uses fidiv dword on a zero-extended temp; DDK calls _ftol and fild qword. relocheck BAD only because the code differs from the original. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -45,7 +45,11 @@ void FUN_005a6ea0(void)
   if (uVar1 < DAT_007dca54) {
     uVar3 = uVar3 - 1;
   }
-  fVar4 = ((float)uVar3 / (float)uVar2) * DAT_005cc9fc;
+  /* PORT-TOP-AUDIO-RWA: the original divides a zero-extended qword by a signed dword (fild qword / fidiv dword at
+     0x005a6ec7 / 0x005a6ed3), multiplies by DAT_005cc9fc and stores a float before the inline truncation. Under
+     SSE2 the float steps below round where the original rounds at PC_24. */
+  fVar4 = (float)((double)(longlong)(ulonglong)uVar3 / (double)(int)uVar2);
+  fVar4 = fVar4 * DAT_005cc9fc;
   DAT_007dca54 = uVar1;
   DAT_007dca50 = DAT_007dca50 + (int)fVar4;
 }

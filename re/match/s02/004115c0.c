@@ -35,7 +35,7 @@ undefined4 FUN_004115c0(int param_1,undefined4 param_2,undefined4 param_3,undefi
 
   if ((DAT_0063bb14 != 0) && (*(int *)(DAT_0063bb14 + 0x17c + param_1 * 4) != 0)) {
 
-    FUN_00411530(DAT_0063bb14,param_1,param_2,param_3,param_4);
+    FUN_00411530(DAT_0063bb14,param_1,(undefined4 *)param_2,(undefined4 *)param_3,param_4);
 
     return 1;
 

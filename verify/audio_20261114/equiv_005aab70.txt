@@ -1,0 +1,2 @@
+0x005aab70	NOT-PROVEN	branch-condition: region ours +0x55 / orig 0x005aab92: P1('eq',(arg32(4)+0xc),ld32(M00(),(arg32(4)+0xc))) | P1('ne',0x0,arg32(4))
+exit 0

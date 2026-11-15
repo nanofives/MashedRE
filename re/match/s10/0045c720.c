@@ -39,22 +39,22 @@ void FUN_0045c720(int param_1,int param_2)
 {
   switch((&DAT_007f1a1c)[param_1 * 4]) {
   case 0:
-    (&DAT_0088f680)[param_1] = &DAT_005fd190 + param_2 * 0x2c;
+    (&DAT_0088f680)[param_1] = (undefined4)(&DAT_005fd190 + param_2 * 0x2c);
     return;
   case 1:
-    (&DAT_0088f680)[param_1] = &DAT_005fe268 + param_2 * 0x2c;
+    (&DAT_0088f680)[param_1] = (undefined4)(&DAT_005fe268 + param_2 * 0x2c);
     return;
   case 2:
-    (&DAT_0088f680)[param_1] = &DAT_005ff340 + param_2 * 0x2c;
+    (&DAT_0088f680)[param_1] = (undefined4)(&DAT_005ff340 + param_2 * 0x2c);
     return;
   case 3:
-    (&DAT_0088f680)[param_1] = &DAT_00600418 + param_2 * 0x2c;
+    (&DAT_0088f680)[param_1] = (undefined4)(&DAT_00600418 + param_2 * 0x2c);
     return;
   case 4:
-    (&DAT_0088f680)[param_1] = &DAT_006014f0 + param_2 * 0x2c;
+    (&DAT_0088f680)[param_1] = (undefined4)(&DAT_006014f0 + param_2 * 0x2c);
     return;
   case 5:
-    (&DAT_0088f680)[param_1] = &DAT_006025c8 + param_2 * 0x2c;
+    (&DAT_0088f680)[param_1] = (undefined4)(&DAT_006025c8 + param_2 * 0x2c);
     return;
   default:
     (&DAT_0088f680)[param_1] = 0;

@@ -926,38 +926,38 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x00632b7c	0x005a5b30	undefined *	-	FUN_005a5b30	no		trap	ghidra-ref
 0x00632b80	0x005a5e50	undefined *	-	-	no		trap	ghidra-ref
 0x00632b84	0x005a5e60	undefined *	-	-	no		trap	ghidra-ref
-0x00632ba8	0x005a5e70	undefined *	PTR_LAB_00632ba8	-	no		trap	ghidra-ref
-0x00632bac	0x005a5ee0	undefined *	-	-	no		trap	ghidra-ref
-0x00632bb0	0x005ae5b0	undefined *	-	-	no		trap	ghidra-ref
-0x00632bb4	0x005ae610	undefined *	-	-	no		trap	ghidra-ref
-0x00632bb8	0x005ae1d0	undefined *	-	-	no		trap	ghidra-ref
-0x00632bbc	0x005ae210	undefined *	-	-	no		trap	ghidra-ref
-0x00632bc0	0x005adf90	undefined *	-	-	no		trap	ghidra-ref
-0x00632bc4	0x005adfc0	undefined *	-	-	no		trap	ghidra-ref
-0x00632bc8	0x005add80	undefined *	-	-	no		trap	ghidra-ref
-0x00632bcc	0x005addb0	undefined *	-	-	no		trap	ghidra-ref
-0x00632bd0	0x005ada90	undefined *	-	-	no		trap	ghidra-ref
-0x00632bd4	0x005adb70	undefined *	-	-	no		trap	ghidra-ref
-0x00632bd8	0x005a9970	undefined *	-	-	no		trap	ghidra-ref
-0x00632bdc	0x005a9a70	undefined *	-	-	no		trap	ghidra-ref
-0x00632be0	0x005aa480	undefined *	-	-	no		trap	ghidra-ref
-0x00632be4	0x005aa520	undefined *	-	-	no		trap	ghidra-ref
-0x00632be8	0x005acff0	undefined *	-	-	no		trap	ghidra-ref
-0x00632bec	0x005ad030	undefined *	-	-	no		trap	ghidra-ref
-0x00632bf0	0x005ac550	undefined *	-	-	no		trap	ghidra-ref
-0x00632bf4	0x005ac590	undefined *	-	-	no		trap	ghidra-ref
-0x00632bf8	0x005a7810	undefined *	-	-	no		trap	ghidra-ref
-0x00632bfc	0x005aba00	undefined *	-	-	no		trap	ghidra-ref
-0x00632c00	0x005ab9d0	undefined *	-	-	no		trap	ghidra-ref
-0x00632c04	0x005a78b0	undefined *	-	-	no		trap	ghidra-ref
-0x00632c08	0x005a6e50	undefined *	-	-	no		trap	ghidra-ref
-0x00632c0c	0x005a6e90	undefined *	-	-	no		trap	ghidra-ref
-0x00632c10	0x005ab4a0	undefined *	-	-	no		trap	ghidra-ref
-0x00632c14	0x005ab510	undefined *	-	-	no		trap	ghidra-ref
-0x00632c18	0x005a6af0	undefined *	-	-	no		trap	ghidra-ref
-0x00632c1c	0x005a6b30	undefined *	-	-	no		trap	ghidra-ref
-0x00632c20	0x005aafb0	undefined *	-	-	no		trap	ghidra-ref
-0x00632c24	0x005aafe0	undefined *	-	-	no		trap	ghidra-ref
+0x00632ba8	0x005a5e70	undefined *	PTR_LAB_00632ba8	-	no	PortTop_Bound_005a5e70	bound	ghidra-ref
+0x00632bac	0x005a5ee0	undefined *	-	-	no	PortTop_Bound_005a5ee0	bound	ghidra-ref
+0x00632bb0	0x005ae5b0	undefined *	-	-	no	PortTop_Bound_005ae5b0	bound	ghidra-ref
+0x00632bb4	0x005ae610	undefined *	-	-	no	PortTop_Bound_005ae610	bound	ghidra-ref
+0x00632bb8	0x005ae1d0	undefined *	-	-	no	PortTop_Bound_005ae1d0	bound	ghidra-ref
+0x00632bbc	0x005ae210	undefined *	-	-	no	PortTop_Bound_005ae210	bound	ghidra-ref
+0x00632bc0	0x005adf90	undefined *	-	-	no	PortTop_Bound_005adf90	bound	ghidra-ref
+0x00632bc4	0x005adfc0	undefined *	-	-	no	PortTop_Bound_005adfc0	bound	ghidra-ref
+0x00632bc8	0x005add80	undefined *	-	-	no	PortTop_Bound_005add80	bound	ghidra-ref
+0x00632bcc	0x005addb0	undefined *	-	-	no	PortTop_Bound_005addb0	bound	ghidra-ref
+0x00632bd0	0x005ada90	undefined *	-	-	no	PortTop_Bound_005ada90	bound	ghidra-ref
+0x00632bd4	0x005adb70	undefined *	-	-	no	PortTop_Bound_005adb70	bound	ghidra-ref
+0x00632bd8	0x005a9970	undefined *	-	-	no	PortTop_Bound_005a9970	bound	ghidra-ref
+0x00632bdc	0x005a9a70	undefined *	-	-	no	PortTop_Bound_005a9a70	bound	ghidra-ref
+0x00632be0	0x005aa480	undefined *	-	-	no	PortTop_Bound_005aa480	bound	ghidra-ref
+0x00632be4	0x005aa520	undefined *	-	-	no	PortTop_Bound_005aa520	bound	ghidra-ref
+0x00632be8	0x005acff0	undefined *	-	-	no	PortTop_Bound_005acff0	bound	ghidra-ref
+0x00632bec	0x005ad030	undefined *	-	-	no	PortTop_Bound_005ad030	bound	ghidra-ref
+0x00632bf0	0x005ac550	undefined *	-	-	no	PortTop_Bound_005ac550	bound	ghidra-ref
+0x00632bf4	0x005ac590	undefined *	-	-	no	PortTop_Bound_005ac590	bound	ghidra-ref
+0x00632bf8	0x005a7810	undefined *	-	-	no	PortTop_Bound_005a7810	bound	ghidra-ref
+0x00632bfc	0x005aba00	undefined *	-	-	no	PortTop_Bound_005aba00	bound	ghidra-ref
+0x00632c00	0x005ab9d0	undefined *	-	-	no	PortTop_Bound_005ab9d0	bound	ghidra-ref
+0x00632c04	0x005a78b0	undefined *	-	-	no	PortTop_Bound_005a78b0	bound	ghidra-ref
+0x00632c08	0x005a6e50	undefined *	-	-	no	PortTop_Bound_005a6e50	bound	ghidra-ref
+0x00632c0c	0x005a6e90	undefined *	-	-	no	PortTop_Bound_005a6e90	bound	ghidra-ref
+0x00632c10	0x005ab4a0	undefined *	-	-	no	PortTop_Bound_005ab4a0	bound	ghidra-ref
+0x00632c14	0x005ab510	undefined *	-	-	no	PortTop_Bound_005ab510	bound	ghidra-ref
+0x00632c18	0x005a6af0	undefined *	-	-	no	PortTop_Bound_005a6af0	bound	ghidra-ref
+0x00632c1c	0x005a6b30	undefined *	-	-	no	PortTop_Bound_005a6b30	bound	ghidra-ref
+0x00632c20	0x005aafb0	undefined *	-	-	no	PortTop_Bound_005aafb0	bound	ghidra-ref
+0x00632c24	0x005aafe0	undefined *	-	-	no	PortTop_Bound_005aafe0	bound	ghidra-ref
 0x00632c28	0x005a8ea0	pointer	PTR_LAB_00632c28	-	yes		cp-slots	ghidra-ref
 0x00632c2c	0x005aaf50	pointer	PTR_LAB_00632c2c	-	yes		cp-slots	ghidra-ref
 0x00632c30	0x005aaef0	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots

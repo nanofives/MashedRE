@@ -1,0 +1,2 @@
+0x0045a3a0	EQUIV-IF-CALLERS-IGNORE(EAX)	[ENC,FRAME,VALUE-FLOW]	callers 3, scan says ignore: 2/3: 0x0045a741:ignores 0x0045a7d9:ignores 0x0045ac2a:unknown
+exit 0

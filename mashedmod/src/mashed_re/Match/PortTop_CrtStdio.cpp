@@ -148,6 +148,21 @@ int __cdecl MashedCrt_vsnprintf_004a3b84(char* buf, unsigned int count, const ch
                                    buf, count, fmt, nullptr, reinterpret_cast<va_list>(args));
 }
 
+// sprintf rva 004a2b60 (PORT-TOP-AUDIO-HWINIT-4627F0): hooks.csv libid identical _sprintf (libcmt.lib sprintf.obj, L-67
+// waived CRT). The DDK sprintf is _output into a string stream with no count limit, then a terminator. Same formatting
+// options as _vsnprintf above, count (size_t)-1: no truncation, so LEGACY_VSPRINTF_NULL_TERMINATION terminates.
+// Caller on the knob path: 0x004627f0 (re/match/s10/004627f0.c, two "SOUND CARD" lines).
+int __cdecl MashedCrt_sprintf_004a2b60(char* buf, const char* fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    const int r = __stdio_common_vsprintf(_CRT_INTERNAL_PRINTF_LEGACY_VSPRINTF_NULL_TERMINATION |
+                                              _CRT_INTERNAL_PRINTF_LEGACY_MSVCRT_COMPATIBILITY |
+                                              _CRT_INTERNAL_PRINTF_LEGACY_THREE_DIGIT_EXPONENTS,
+                                          buf, static_cast<size_t>(-1), fmt, nullptr, ap);
+    va_end(ap);
+    return r;
+}
+
 // The DDK asctime writes the day of the month as two digits ("Nov 09"), the UCRT pads it with a space ("Nov  9").
 // Character 8 of "Www Mmm dd hh:mm:ss yyyy\n" is the tens digit. Same NULL for a negative time on both
 // (verify/bindcrtstdio_20261111/edge_probe).

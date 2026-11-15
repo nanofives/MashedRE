@@ -1,0 +1,19 @@
+0x005a5e70	EQUIV-IF-CALLERS-IGNORE(EAX)	[LAYOUT,VALUE-FLOW]	callers 0, scan says ignore: 0/0: 
+0x005a5fd0	NOT-PROVEN	branch-condition: region ours +0x0 / orig 0x005a5fd0: P1('ne',ld32(M00(),arg32(4)),0x51) | P1('ne',ld32(M00(),arg32(4)),0x5a5e70)
+0x005a6010	NOT-PROVEN	branch-condition: region ours +0x0 / orig 0x005a6010: P1('ne',ld32(M00(),(arg32(4)+0x4)),0xa1) | P1('ne',ld32(M00(),(arg32(4)+0x4)),0x5a5ee0)
+0x005a6af0	EQUIV-IF-CALLERS-IGNORE(EAX)	[LAYOUT,VALUE-FLOW]	callers 0, scan says ignore: 0/0: 
+0x005a6b30	NOT-PROVEN	call-args: region ours +0xc / orig 0x005a6b3c call 0x5a6cb0 arg 0: (ld32(M00(),0x7dca0c)+-0x2) | (ld32(M00(),0x7dca0c)+-0x8)
+0x005a6e50	EQUIV	[ORDER]
+0x005a7810	EQUIV	[ORDER]
+0x005a78b0	NOT-PROVEN	call-args: region ours +0x16 / orig 0x005a78c6 call 0x5a79a0 arg 0: (ld32(M00(),0x7dca7c)+-0x7) | (ld32(M00(),0x7dca7c)+-0x1c)
+0x005a9970	EQUIV	[ORDER]
+0x005aa480	NOT-PROVEN	call-args: region ours +0x37 / orig 0x005aa4b7 call 0x5aa560 arg 4: unres32('_LAB_005aa510') | 0x5aa510
+re/match/s30/005aafb0.c	ERROR	compile failed (ddk):
+0x005ad030	NOT-PROVEN	call-args: region ours +0xc / orig 0x005ad03c call 0x5ad5f0 arg 0: (ld32(M00(),0x7dd6a8)+-0x8) | (ld32(M00(),0x7dd6a8)+-0x20)
+0x005ada90	NOT-PROVEN	branch-condition: region ours +0x93 / orig 0x005adb21: P1('ne',ext8(ret32(call0(0x5add60,(),(),Mc0(call0(0x5ae650,(0x28, 0x10, 0x4, 0x0, 0x7dd6c4, 0x40803),(('ecx', phi32((88, 5954280),(('A', 'r', 'ecx'), ('B', 'r', 'ecx')))),),st0(...,...,...,4),phi0((88, 5954280),(('A', 'x'), ('B', 'x'))))),Xc0(call0(0x5ae650,(0x28, 0x10, 0x4, 0x0, 0x7dd6c4, 0x40803),(('ecx', phi32((88, 5954280),(('A', 'r', 'ecx'), ('B', 'r', 'ecx')))),),st0(...,...,...,4),phi0((88, 5954280),(('A', 'x'), ('B', 'x'))))))),0),0x1) | P1('ne',0x1,ret32(call0(0x5add60,(),(),Mc0(call0(0x5ae650,(0x28, 0x10, 0x4, 0x0, 0x7dd6c4, 0x40803),(('ecx', phi32((88, 5954280),(('A', 'r', 'ecx'), ('B', 'r', 'ecx')))),),st0(st0(...,...,...,4),0x7dda20,0x1,4),phi0((88, 5954280),(('A', 'x'), ('B', 'x'))))),Xc0(call0(0x5ae650,(0x28, 0x10, 0x4, 0x0, 0x7dd6c4, 0x40803),(('ecx', phi32((88, 5954280),(('A', 'r', 'ecx'), ('B', 'r', 'ecx')))),),st0(st0(...,...,...,4),0x7dda20,0x1,4),phi0((88, 5954280),(('A', 'x'), ('B', 'x'))))))))
+0x005adb70	NOT-PROVEN	cfg-mismatch: region ours +0x3b / orig 0x005adb9a: ret vs jcc
+0x005ae210	NOT-PROVEN	call-args: region ours +0xc / orig 0x005ae21c call 0x5ae330 arg 0: (ld32(M00(),0x7dda74)+-0x5) | (ld32(M00(),0x7dda74)+-0x14)
+0x005ae330	EQUIV	[ORDER,FRAME]
+0x005ae5b0	EQUIV	[ORDER]
+0x005ae610	NOT-PROVEN	call-args: region ours +0xc / orig 0x005ae61c call 0x5ae7e0 arg 0: (ld32(M00(),0x7dda80)+-0x7) | (ld32(M00(),0x7dda80)+-0x1c)
+0x005aea60	NOT-PROVEN	ret-memory: region ours +0x37 / orig 0x005aea90: st0(st0(st0(st0(M00(),(ld32(M00(),0x7d3ff8)+0x108),0x8b,4),(ld32(st0(M00(),(...+0x108),0x8b,4),0x7d3ff8)+0x10c),zx32(ld8(st0(M00(),(...+0x108),0x8b,4),unres32('__free'))),4),(ld32(st0(st0(M00(),(...+0x108),0x8b,4),(ld32(...,...)+0x10c),zx32(ld8(...,...)),4),0x7d3ff8)+0x110),0x8b,4),(ld32(st0(st0(st0(M00(),(...+0x108),0x8b,4),(ld32(...,...)+0x10c),zx32(ld8(...,...)),4),(ld32(st0(...,...,...,4),0x7d3ff8)+0x110),0x8b,4),0x7d3ff8)+0x114),0x56,4) | st0(st0(st0(st0(M00(),(ld32(M00(),0x7d3ff8)+0x108),0x4ccef0,4),(ld32(st0(M00(),(...+0x108),0x4ccef0,4),0x7d3ff8)+0x10c),0x4a460d,4),(ld32(st0(st0(M00(),(...+0x108),0x4ccef0,4),(ld32(...,...)+0x10c),0x4a460d,4),0x7d3ff8)+0x110),0x5aead0,4),(ld32(st0(st0(st0(M00(),(...+0x108),0x4ccef0,4),(ld32(...,...)+0x10c),0x4a460d,4),(ld32(st0(...,...,...,4),0x7d3ff8)+0x110),0x5aead0,4),0x7d3ff8)+0x114),0x5aeaf0,4)
