@@ -7,8 +7,10 @@
 // FLAGS: /O2 /GS /Ob1
 typedef struct { int width, height, depth, flags, refRate, format; } VideoMode;   /* frame +0x14, 0x18 B */
 typedef struct { int a[4]; } Buf16;                                               /* frame +0x04 */
+#ifndef MATCH_PORT   /* the port (Match/PortTop_00493710.cpp) binds both to their original addresses */
 extern int DAT_007719d8;
 extern int DAT_007719dc;
+#endif
 void FUN_004936f0(void);
 void FUN_00493700(void);
 int printf(const char *fmt, ...);                 /* 0x004a2cbd */

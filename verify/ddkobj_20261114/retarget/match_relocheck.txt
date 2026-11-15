@@ -1,0 +1,14 @@
+=== match --bytes re/match/pilot/a2_00493710.c
+0x00493710 _FUN_00493710: 100.0% (regs 100.0%, ops 100.0%)  120/120 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 430 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+=== relocheck re/match/pilot/a2_00493710.c
+0x00493710	OK	checked=47	unchecked=5	a2_00493710.c	  unchecked: _StubA,_StubB,_StubC,_printf
+=== match --bytes re/match/topm01/00493900.c
+0x00493900 _FUN_00493900: 100.0% (regs 100.0%, ops 100.0%)  122/122 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 448 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+=== relocheck re/match/topm01/00493900.c
+0x00493900	OK	checked=36	unchecked=2	00493900.c	  unchecked: @__security_check_cookie@4,___security_cookie
+=== after the #ifndef MATCH_PORT guard (2026-11-15)
+0x00493710 _FUN_00493710: 100.0% (regs 100.0%, ops 100.0%)  120/120 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 430 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00493710	OK	checked=47	unchecked=5	a2_00493710.c	  unchecked: _StubA,_StubB,_StubC,_printf
