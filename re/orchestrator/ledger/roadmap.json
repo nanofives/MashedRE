@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-11-15T04:18:04Z",
+  "updated": "2026-11-15T10:50:09Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -15760,27 +15760,29 @@
       "id": "HOOKS-SHA-RESYNC-AUDIOTICK",
       "section": "MATCH",
       "title": "Seven re/match sources edited cast-only/extern-guard on orch/PORT-TOP-AUDIOTICK-STOPS (still BYTE-IDENTICAL + relocheck OK): refresh their sha256 in hooks.csv via re-classify once that branch merges.",
-      "stage": "open",
-      "owner": "",
-      "parent": "cmwh28qsg1x7jmz1bl972d4dn",
+      "stage": "merged",
+      "owner": "cmwhjo20y01kfp015ukxrq0vf",
+      "parent": "cmwhjm616019np015n9mdzera",
       "branch": "orch/HOOKS-SHA-RESYNC-AUDIOTICK",
-      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\HOOKS-SHA-RESYNC-AUDIOTICK",
-      "evidence": "",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/HOOKS-SHA-RESYNC-AUDIOTICK",
+      "evidence": "verify/audio_20261114/RESULT_HOOKS-SHA-RESYNC-AUDIOTICK.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "L-162",
       "wave": 9,
       "next": "",
-      "note": "L-162 closed by standing rule (parent run 47): refresh via the new c4_reclass refresh mode (row C4RECLASS-SHA-REFRESH); this row's TSV waits for that tool to merge.",
-      "updated": "2026-11-15T02:20:50Z",
-      "run": 47,
+      "note": "merge train 20261115_063151: not run: text-only change (no build input touched)",
+      "updated": "2026-11-15T09:34:51Z",
+      "run": 48,
       "runs": [
         42,
         44,
         46,
-        47
-      ]
+        47,
+        48
+      ],
+      "sha": "19a9aed9193422e3178f359f0a9f34132bd1bde8"
     },
     {
       "id": "BIND-CRT-498510",
@@ -17016,7 +17018,7 @@
       "id": "RO-PIZFS-SLOT-TRACE",
       "section": "HB",
       "title": "L-157 follow-up: trace the source of the file pointer for the 11 [reg+0x38] readers at 0x0055091b..0x00551097 and check which tables the list at 0x7dc754 holds. Masking the slots 0x008cd9c0..0x0090daaf returns to Mariano after this row and RO-PIZFS-READERS-RUN.",
-      "stage": "handoff",
+      "stage": "merged",
       "owner": "cmwh2xk7825dpmz1bl683lwsb",
       "parent": "cmwh28u9v1x8dmz1b0cssoeav",
       "branch": "orch/RO-PIZFS-SLOT-TRACE",
@@ -17028,13 +17030,15 @@
       "decision": "",
       "wave": 3,
       "next": "",
-      "note": "static complete; run did not execute (slot queue 42 min, chain exited after slot); follow-up row RO-PIZFS-SLOT-LIST-RUN",
-      "updated": "2026-11-15T01:52:17Z",
-      "run": 47,
+      "note": "merge train 20261115_055219: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-15T09:16:42Z",
+      "run": 48,
       "runs": [
         46,
-        47
-      ]
+        47,
+        48
+      ],
+      "sha": "830f22e193b6305f234b510e95341086ffbac740"
     },
     {
       "id": "PORT-TOP-AUDIOSTOP-5ADC10",
@@ -17180,25 +17184,27 @@
       "id": "HB-MASHEDLOCK-STATUS-PIDREUSE",
       "section": "HB",
       "title": "mashed_lock.py status reports a reused PID as alive=True (pid 19856 after the 2026-11-14 reboot belonged to an unrelated pwsh), while acquire uses owner_start and treats the same lock as stale. Make status apply the same owner_start check. Harness row, small.",
-      "stage": "handoff",
-      "owner": "cmwh6oy9c08a7p01cfsk1xzhz",
-      "parent": "cmwh6m0sn07vjp01cb9v1pqxr",
+      "stage": "merged",
+      "owner": "cmwhjniha01fhp0152n5x8h1j",
+      "parent": "cmwhjm4df0195p015fquqou7v",
       "branch": "orch/HB-MASHEDLOCK-FIXES",
       "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\HB-MASHEDLOCK-FIXES",
-      "evidence": "",
+      "evidence": "verify/hb_20261115/RESULT_HB-MASHEDLOCK-FIXES.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 9,
       "next": "",
-      "note": "status uses owner_start via _status_alive; tempglob_test 3/3 status checks PASS; selftest re-run unfinished [UNCERTAIN]; independently green on its own tests",
-      "updated": "2026-11-15T02:50:05Z",
-      "run": 47,
+      "note": "merge train 20261115_051736: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-15T08:35:39Z",
+      "run": 48,
       "runs": [
         46,
-        47
-      ]
+        47,
+        48
+      ],
+      "sha": "1be60764ff1cc44706fcc9ff0d22af65aab36078"
     },
     {
       "id": "RO-ORACLE-CALLEES-STATIC",
@@ -17558,25 +17564,27 @@
       "id": "HB-MASHEDLOCK-TEMPGLOB",
       "section": "HB",
       "title": "mashed_lock.py status takes 38 s on LIVING-PC (first call over 120 s): prio_pending / prio_lingering glob.glob the whole %TEMP% (606,377 entries, 2026-11-14). Move the lock files to a dedicated MASHED_LOCK_DIR default (or scandir with prefix filter) so iter.sh / build waits do not stall. Seen in RWC-FRAME-CLUMP run 46.",
-      "stage": "handoff",
-      "owner": "cmwh6oy9c08a7p01cfsk1xzhz",
-      "parent": "cmwh6m0sn07vjp01cb9v1pqxr",
+      "stage": "merged",
+      "owner": "cmwhjniha01fhp0152n5x8h1j",
+      "parent": "cmwhjm4df0195p015fquqou7v",
       "branch": "orch/HB-MASHEDLOCK-FIXES",
       "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\HB-MASHEDLOCK-FIXES",
-      "evidence": "verify/rwcframeclump_20261113/RESULT_RWC-FRAME-CLUMP.md",
+      "evidence": "verify/hb_20261115/RESULT_HB-MASHEDLOCK-FIXES.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 9,
       "next": "",
-      "note": "scandir prefix scan + opt-in MASHED_LOCK_MARKER_DIR; default still scans %TEMP% (ps1 files share it, not editable here); real-TEMP scan ~5 s not 38 s fixed by default; selftest 2/14 failed on earlier rev, re-run unfinished",
-      "updated": "2026-11-15T02:50:08Z",
-      "run": 47,
+      "note": "merge train 20261115_051736: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-15T08:35:38Z",
+      "run": 48,
       "runs": [
         46,
-        47
-      ]
+        47,
+        48
+      ],
+      "sha": "1be60764ff1cc44706fcc9ff0d22af65aab36078"
     },
     {
       "id": "PORT-TOP-BODY-43DFD0",
@@ -17886,10 +17894,10 @@
       "id": "RO-PIZFS-SLOT-LIST-RUN",
       "section": "HB",
       "title": "RO-PIZFS-SLOT-TRACE follow-up run: read the live RtFS list [0x007dc754] and pizfs slot +0x18/+0x1c/+0x20/+0x28 with --peek fslist (scenario_launch, private root, menu + race, tracks 0 and 3) to close the [UNCERTAIN] list-contents and slot+0x20==1 claims (RESULT_RO-PIZFS-SLOT-TRACE section 5)",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
+      "stage": "merged",
+      "owner": "cmwhjokyb01nlp015c1ymua1n",
+      "parent": "cmwhjm7s5019tp015txdj5koh",
+      "branch": "orch/RO-PIZFS-SLOT-TRACE",
       "worktree": "",
       "evidence": "verify/pizfs_readers_20261114/RESULT_RO-PIZFS-SLOT-TRACE.md",
       "deps": [],
@@ -17898,12 +17906,14 @@
       "decision": "",
       "wave": 3,
       "next": "",
-      "note": "",
-      "updated": "2026-11-15T01:52:15Z",
-      "run": 47,
+      "note": "merge train 20261115_055219: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-15T09:16:41Z",
+      "run": 48,
       "runs": [
-        47
-      ]
+        47,
+        48
+      ],
+      "sha": "830f22e193b6305f234b510e95341086ffbac740"
     },
     {
       "id": "AUDIO-STACK-NEITHER-6",
@@ -18001,11 +18011,11 @@
       "id": "C4RECLASS-SHA-REFRESH",
       "section": "MATCH",
       "title": "Tool row (L-162 closed by standing rule, option (a)): add a documented refresh mode to re/tools/c4_reclass.py for rows already at C4 whose src sha256 is stale. The mode re-runs match.py --bytes and relocheck.py itself on the row's source at the commit and refuses unless 100% and OK; it changes only the src sha256 in the C4 note; it ships with tests in the c4_reclass test file. Then refresh the 7 rows of HOOKS-SHA-RESYNC-AUDIOTICK (0x00462dd0 0x00462ec0 0x0045cc50 0x004645c0 0x0045d250 0x00411530 0x004115c0) through a refresh TSV in re/promotions, applied by the train, never by hand. L0 runs the c4_reclass test file on the merged head before any refresh TSV is applied.",
-      "stage": "handoff",
+      "stage": "merged",
       "owner": "cmwh86kui0gbxp01cnp3hmrb6",
       "parent": "cmwh60qg2044fp01co2vf9cyx",
       "branch": "orch/C4RECLASS-SHA-REFRESH",
-      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\C4RECLASS-SHA-REFRESH",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/C4RECLASS-SHA-REFRESH",
       "evidence": "verify/c4reclass_20261115/RESULT_C4RECLASS-SHA-REFRESH.md",
       "deps": [],
       "needs": [],
@@ -18013,35 +18023,39 @@
       "decision": "",
       "wave": 8,
       "next": "",
-      "note": "held by L0 run 47 @ 82c0eb25f (pytest re/tools/tests/test_c4_reclass.py 21 passed on branch): not merged in the wind-down because (1) its refresh TSV sits on the same branch as the tool, so the train would apply it before L0 can run the test file on the merged head (parent condition); (2) the 7-row dry run is a no-op (all SKIP 'already current'), and the RESULT finds stored hashes match the CRLF checkout while the LF blob hashes differ (checked on 0x00462dd0.c only), so the stale-hash finding of L-162 may be LF-based and unresolved; (3) the merge_train.ps1 refresh step never ran end to end. Run 48: split TSV from tool, settle CRLF vs LF hashing first.",
-      "updated": "2026-11-15T03:30:25Z",
-      "run": 47,
+      "note": "merge train 20261115_053633: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-15T08:50:56Z",
+      "run": 48,
       "runs": [
-        47
-      ]
+        47,
+        48
+      ],
+      "sha": "3e9cba6600eeb6883701c05da8689bdbd076d753"
     },
     {
       "id": "RWC-FRAME-BOOT-AV",
       "section": "D4",
       "title": "Frame route (MASHED_ORIG_TOP + MASHED_RWC_FRAME) AVs after present 1 even with MASHED_PROV_43DFD0 off, before the run loop. Find the fault site (catch_av.py in verify/porttopbody43dfd0_20261114, from PORT-TOP-BODY-43DFD0 @ 6ffa69eae). Opus high.",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "",
+      "stage": "merged",
+      "owner": "cmwhjoibo01mtp015nkyp9w3q",
+      "parent": "cmwhjm7s5019tp015txdj5koh",
+      "branch": "orch/RWC-FRAME-BOOT-AV",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RWC-FRAME-BOOT-AV",
+      "evidence": "verify/rwcframebootav_20261115/RESULT_RWC-FRAME-BOOT-AV.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 7,
       "next": "",
-      "note": "Parent run 47: FIRST STEP is a control run: the vs_frameN arm (MASHED_ORIG_TOP=1 MASHED_RWC_CORE=1 MASHED_RWC_FRAME=1 MASHED_RWC_FRAME_N=120) on a build of the orch/integration head WITHOUT PORT-TOP-BODY-43DFD0, plus the object build. Where the AV reproduces is [UNCERTAIN]: RESULT_PORT-TOP-BODY-43DFD0 section on the frame route says 'not measured' on the head. RWC-FRAME-CLUMP's arms returned 0 after 600 frames on its branch (base d1e5ac586, run 46), but its fixes live on orch/RWC-FRAME-CLUMP 9f48df42f, not on the head. If it reproduces on the head, the run report names a knob-path regression between d1e5ac586 and the head (or the absence of the unmerged CLUMP branch); bisect against orch/RWC-FRAME-CLUMP first.",
-      "updated": "2026-11-15T02:52:15Z",
-      "run": 47,
+      "note": "merge train 20261115_072915: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-15T10:50:09Z",
+      "run": 48,
       "runs": [
-        47
-      ]
+        47,
+        48
+      ],
+      "sha": "4d7419f39afd4c124337ebca892d325cce7b98c7"
     },
     {
       "id": "MATCH-S08-00432B30",
@@ -18070,29 +18084,130 @@
       "id": "PORT-TOP-BODY-43DFD0-AV",
       "section": "D4",
       "title": "Resume PORT-TOP-BODY-43DFD0 from the handoff (RESULT in verify/porttopbody43dfd0_20261114): find the knob-ON fault 0xC0000005 in the first provisional 0x0043dfd0 body call (both builds), fix the binding, then run the RO_ROIMG-b43off/RO_B43IMG-b43on pair vs og1 and the menu walk. Continue on orch/PORT-TOP-BODY-43DFD0 (row itself is handoff). Opus high.",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "",
+      "stage": "decision",
+      "owner": "cmwhjoibo01mtp015nkyp9w3q",
+      "parent": "cmwhjm7s5019tp015txdj5koh",
+      "branch": "orch/PORT-TOP-BODY-43DFD0",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/PORT-TOP-BODY-43DFD0",
+      "evidence": "verify/porttopbody43dfd0_20261114/RESULT_PORT-TOP-BODY-43DFD0.md",
       "deps": [],
       "needs": [],
       "solo": false,
-      "decision": "",
+      "decision": "L-165",
       "wave": 7,
       "next": "",
-      "note": "",
-      "updated": "2026-11-15T02:49:09Z",
-      "run": 47,
+      "note": "RED: knob-ON fault fixed (GetDeviceCaps slot +0x1c of stand-in 0x004caea0 empty) and replay pair/ddkobj/match checks done on 830f22e19, but PREREG self-test (SEH call at WinMain before RW engine opens) FAULTs on both builds (execute at 0 in rw::Raster::create via FUN_00494a80); frame-route leg waits for RWC-FRAME-BOOT-AV merge. Branch orch/PORT-TOP-BODY-43DFD0 @ dd24f7174, RESULT verify/porttopbody43dfd0_20261114/RESULT_PORT-TOP-BODY-43DFD0.md",
+      "updated": "2026-11-15T10:29:05Z",
+      "run": 48,
       "runs": [
-        47
+        47,
+        48
       ]
     },
     {
       "id": "HB-TRAIN-MATCHTABLES-BUILD",
       "section": "HB",
       "title": "Merge train: a change to re/match/ADMITTED.tsv, PROVISIONAL.tsv, PROVISIONAL_RWC.tsv or REFUSED_UNITS.tsv is not text-only (they decide which units ddkobj.py links). Such a pass runs at least the object build and ddkobj.py check and logs the object-build line. Run 47: pass 3 merged DDKOBJ-UNLISTED-10 text-only with no object-build line on the merged head (parent). Harness row; edits merge_train.ps1, so claude3.",
+      "stage": "merged",
+      "owner": "cmwhjnghm01fbp015zlxcgyjc",
+      "parent": "cmwhjm4df0195p015fquqou7v",
+      "branch": "orch/HB-TRAIN-MATCHTABLES-BUILD",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/HB-TRAIN-MATCHTABLES-BUILD",
+      "evidence": "verify/hb_20261115/RESULT_HB-TRAIN-MATCHTABLES-BUILD.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 9,
+      "next": "",
+      "note": "merge train 20261115_053633: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-15T08:50:52Z",
+      "run": 48,
+      "runs": [
+        47,
+        48
+      ],
+      "sha": "3e9cba6600eeb6883701c05da8689bdbd076d753"
+    },
+    {
+      "id": "TRK-0043C5B0-DEMOTE",
+      "section": "HB",
+      "title": "L-163 (a): demote 0x0043c5b0 MenuDrawLoop C4 -> C3 through a re-classify transaction, citing verify/trk_20261114/RESULT_TRK-0043C5B0-ROUTE.md (cherry-pick only the RESULT from orch/TRK-0043C5B0-ROUTE @ 17d6f823a, or cite it from the branch). The hand edit on that branch never merges. Tracker row.",
+      "stage": "merged",
+      "owner": "cmwhjvtf802wzp0153ubbhnhg",
+      "parent": "cmwhjm4df0195p015fquqou7v",
+      "branch": "orch/TRK-0043C5B0-DEMOTE",
+      "worktree": "C:UsersmariaDesktopProyectosMashed.worktreesTRK-0043C5B0-DEMOTE",
+      "evidence": "verify/hb_20261115/RESULT_TRK-0043C5B0-DEMOTE.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 8,
+      "next": "",
+      "note": "merge train 20261115_053633: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-15T08:50:47Z",
+      "run": 48,
+      "runs": [
+        47,
+        48
+      ],
+      "sha": "3e9cba6600eeb6883701c05da8689bdbd076d753"
+    },
+    {
+      "id": "C4-NOTAG-AUDIT",
+      "section": "HB",
+      "title": "L-163 (a) audit, text only, demotes nothing: for each of the 183 C4 rows in hooks.csv with no c4= route tag, state from the cited frida_diff path and the promotion commit whether the evidence is an original-vs-modded diff on a canonical scenario with the hook installed, or something weaker (name it: install manifest + survival, diff with hook bypassed, no file). Start with the two other functions promoted in db06f5319. Output: one TSV (one line per row) + counts by class. Failing rows go back to Mariano as one batch decision.",
+      "stage": "merged",
+      "owner": "cmwhjo00401jlp015qdeu3cgi",
+      "parent": "cmwhjm616019np015n9mdzera",
+      "branch": "orch/C4-NOTAG-AUDIT",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/C4-NOTAG-AUDIT",
+      "evidence": "verify/c4audit_20261115/RESULT_C4-NOTAG-AUDIT.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 8,
+      "next": "",
+      "note": "merge train 20261115_051736: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-15T08:35:41Z",
+      "run": 48,
+      "runs": [
+        47,
+        48
+      ],
+      "sha": "1be60764ff1cc44706fcc9ff0d22af65aab36078"
+    },
+    {
+      "id": "EQUIV-CALLER-0045AC2A",
+      "section": "MATCH",
+      "title": "L-161 answered (b): 0x0045a3a0 stays in PROVISIONAL.tsv, no manual admission. Make the caller at 0x0045ac2a known to equiv.py's caller scan (it passes EAX to the ret of 0x0045ac20, referenced only from the .data table at 0x005f9abc; trace that table's readers and their call sites), then re-run equiv.py on the merged tool and let its verdict decide. If 0x0045ac20 must be created in Ghidra first, that part is claude3 work.",
+      "stage": "merged",
+      "owner": "cmwhk7s0t03pxp015iyh3e79i",
+      "parent": "cmwhjm616019np015n9mdzera",
+      "branch": "orch/EQUIV-CALLER-0045AC2A",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/EQUIV-CALLER-0045AC2A",
+      "evidence": "verify/equivcaller_20261115/RESULT_EQUIV-CALLER-0045AC2A.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 8,
+      "next": "",
+      "note": "merge train 20261115_055219: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-15T09:16:39Z",
+      "run": 48,
+      "runs": [
+        47,
+        48
+      ],
+      "sha": "830f22e193b6305f234b510e95341086ffbac740"
+    },
+    {
+      "id": "HB-MASHEDLOCK-DEFAULT-MARKERDIR",
+      "section": "HB",
+      "title": "Move mashed_lock default marker dir out of %TEMP% (status takes 42.75 s with 645k TEMP entries, 0.84 s with MASHED_LOCK_MARKER_DIR on an empty dir; RESULT_HB-MASHEDLOCK-FIXES). Needs claude3 and BOTH MachineLock.ps1 and merge_train.ps1 edits (they share the TEMP markers). Follow-up of HB-MASHEDLOCK-TEMPGLOB.",
       "stage": "open",
       "owner": "",
       "parent": "",
@@ -18106,16 +18221,16 @@
       "wave": 9,
       "next": "",
       "note": "",
-      "updated": "2026-11-15T03:10:19Z",
-      "run": 47,
+      "updated": "2026-11-15T08:06:13Z",
+      "run": 48,
       "runs": [
-        47
+        48
       ]
     },
     {
-      "id": "TRK-0043C5B0-DEMOTE",
+      "id": "HB-MASHEDLOCK-STATUS-PIDREUSE-RUN",
       "section": "HB",
-      "title": "L-163 (a): demote 0x0043c5b0 MenuDrawLoop C4 -> C3 through a re-classify transaction, citing verify/trk_20261114/RESULT_TRK-0043C5B0-ROUTE.md (cherry-pick only the RESULT from orch/TRK-0043C5B0-ROUTE @ 17d6f823a, or cite it from the branch). The hand edit on that branch never merges. Tracker row.",
+      "title": "[UNCERTAIN] HB-MASHEDLOCK-STATUS-PIDREUSE rests on selftest case 9 only: stage a lock file with a reused PID and a mismatching owner_start and run mashed_lock.py status, expect alive=False. Python only, claude2.",
       "stage": "open",
       "owner": "",
       "parent": "",
@@ -18126,19 +18241,19 @@
       "needs": [],
       "solo": false,
       "decision": "",
-      "wave": 8,
+      "wave": 9,
       "next": "",
       "note": "",
-      "updated": "2026-11-15T03:41:58Z",
-      "run": 47,
+      "updated": "2026-11-15T08:06:15Z",
+      "run": 48,
       "runs": [
-        47
+        48
       ]
     },
     {
-      "id": "C4-NOTAG-AUDIT",
+      "id": "HB-TRAIN-MATCHTABLES-BUILD-RUN",
       "section": "HB",
-      "title": "L-163 (a) audit, text only, demotes nothing: for each of the 183 C4 rows in hooks.csv with no c4= route tag, state from the cited frida_diff path and the promotion commit whether the evidence is an original-vs-modded diff on a canonical scenario with the hook installed, or something weaker (name it: install manifest + survival, diff with hook bypassed, no file). Start with the two other functions promoted in db06f5319. Output: one TSV (one line per row) + counts by class. Failing rows go back to Mariano as one batch decision.",
+      "title": "[UNCERTAIN] HB-TRAIN-MATCHTABLES-BUILD rests on a fake-repo self-test and code reading: confirm on the first real train pass whose batch changes a re/match table that the pass log carries the object-build line and a ddkobj.py check result. Read the pass log, no new code.",
       "stage": "open",
       "owner": "",
       "parent": "",
@@ -18149,19 +18264,19 @@
       "needs": [],
       "solo": false,
       "decision": "",
-      "wave": 8,
+      "wave": 9,
       "next": "",
       "note": "",
-      "updated": "2026-11-15T03:42:00Z",
-      "run": 47,
+      "updated": "2026-11-15T08:16:09Z",
+      "run": 48,
       "runs": [
-        47
+        48
       ]
     },
     {
-      "id": "EQUIV-CALLER-0045AC2A",
+      "id": "C4RECLASS-SHA-EOL",
       "section": "MATCH",
-      "title": "L-161 answered (b): 0x0045a3a0 stays in PROVISIONAL.tsv, no manual admission. Make the caller at 0x0045ac2a known to equiv.py's caller scan (it passes EAX to the ret of 0x0045ac20, referenced only from the .data table at 0x005f9abc; trace that table's readers and their call sites), then re-run equiv.py on the merged tool and let its verdict decide. If 0x0045ac20 must be created in Ghidra first, that part is claude3 work.",
+      "title": "Make the src sha256 token in hooks.csv C4 notes independent of line endings (parent run 48). Today re/tools/c4_reclass.py:352/406 hashes path.read_bytes() = the CRLF working tree under core.autocrlf=true; 6 older notes carry a 64-hex git-blob (LF) hash instead, and the refresh mode (SHA_TOKEN regex at c4_reclass.py:618 on ffbf0ff61) compares the first 16 hex, so an LF checkout, a git archive or the notebook hub would see every row stale. Options: hash LF-normalised bytes (like gen_portstate_seed.py:199 sha256_text) with a one-time refresh of all tokens, or write the CRLF convention into re/CONFIDENCE.md and the re-classify skill. Tool row, Opus medium, test_c4_reclass.py on the merged head. Do not change the hashing before this row.",
       "stage": "open",
       "owner": "",
       "parent": "",
@@ -18172,15 +18287,84 @@
       "needs": [],
       "solo": false,
       "decision": "",
-      "wave": 8,
+      "wave": 9,
       "next": "",
       "note": "",
-      "updated": "2026-11-15T03:42:03Z",
-      "run": 47,
+      "updated": "2026-11-15T08:19:50Z",
+      "run": 48,
       "runs": [
-        47
+        48
+      ]
+    },
+    {
+      "id": "EQUIV-CALLER-0045AC20-FRIDA-RETS",
+      "section": "MATCH",
+      "title": "[UNCERTAIN] from EQUIV-CALLER-0045AC2A: the claim that 0x0045ac20's only caller is the table call at 0x0045b9e2 rests on static scans (no +0xa8 SIB/disp8 loads, no record pointer copied before the call). Test: a short Frida sample of return addresses on 0x0045ac20 during a race boot, all must land at 0x0045b9e4. Evidence: verify/equivcaller_20261115/RESULT_EQUIV-CALLER-0045AC2A.md. Not started, run 49 backlog.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 9,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-15T08:39:57Z",
+      "run": 48,
+      "runs": [
+        48
+      ]
+    },
+    {
+      "id": "EQUIV-INDIRECT-SCAN-COMPLETENESS",
+      "section": "MATCH",
+      "title": "Test the completeness of equiv.py's indirect-caller route scan (EQUIV-CALLER-0045AC2A, run 48): RESULT verify/equivcaller_20261115/RESULT_EQUIV-CALLER-0045AC2A.md marks it [UNCERTAIN] because +0xa8 loads in SIB and other addressing forms are not covered. The 0x0045a3a0 admission (ADMITTED.tsv row 58) rests on it. Extend the scan or prove no such form exists in the image, with a test in re/tools/match/test_equiv.py. With the next ADMITTED.tsv change, put that [UNCERTAIN] in row 58's note column (inside a row, not a hand edit). Pairs with EQUIV-CALLER-0045AC20-FRIDA-RETS. Opus medium.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 9,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-15T09:31:19Z",
+      "run": 48,
+      "runs": [
+        48
+      ]
+    },
+    {
+      "id": "MATCH-CALLEE-ARITY-LINT",
+      "section": "MATCH",
+      "title": "Lint over re/match sources for callee prototypes (parent run 48, from RWC-FRAME-BOOT-AV): re/match/s28/005c47e0.c (generated provisional, RWC-CORE-RUN) declared FUN_004c1040(void) while the original pushes edi/edx at 0x005c49f5/0x005c49fd before the call at 0x005c4a00, and the knob path AV'd. Report every callee RVA declared with different parameter counts in different sources, starting with callees that have a c4=match source of their own (their prototype is the reference). Report only, no source edits; each mismatch becomes its own row. Sonnet medium, text only.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 9,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-15T09:31:20Z",
+      "run": 48,
+      "runs": [
+        48
       ]
     }
   ],
-  "run": 47
+  "run": 48
 }
