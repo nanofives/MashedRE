@@ -436,6 +436,26 @@
 ],
 []
 ],
+"0045d460": [
+"bind",
+"re/match/s10/0045d460.c",
+"provisional",
+[
+"004a2cbd",
+"004cc160",
+"004cc230",
+"004cc5e0",
+"005a6280",
+"005a6710",
+"005a6dc0",
+"005a71f0",
+"005a7aa0",
+"005a7af0",
+"005a7b60",
+"005b8570"
+],
+[]
+],
 "0040e340": [
 "reuse",
 "GetLiveCarCount",
@@ -1334,6 +1354,86 @@
 ],
 []
 ],
+"004a2cbd": [
+"reuse",
+"PortTop_Crt_004a2cbd",
+"Match/PortTop_00493710.cpp"
+],
+"004cc160": [
+"reuse",
+"RwCore_004cc160",
+"RwCore/RwCore_004cc160.cpp"
+],
+"004cc230": [
+"reuse",
+"RwCore_004cc230",
+"RwCore/RwCore_004cc230.cpp"
+],
+"004cc5e0": [
+"reuse",
+"RwCore_004cc5e0",
+"RwCore/RwCore_004cc5e0.cpp"
+],
+"005a6280": [
+"bind",
+"re/match/s25/005a6280.c",
+"match",
+[
+"005aa560"
+],
+[]
+],
+"005a6710": [
+"bind",
+"re/match/s25/005a6710.c",
+"match",
+[
+"005a6df0"
+],
+[]
+],
+"005a6dc0": [
+"bind",
+"re/match/s25/005a6dc0.c",
+"match",
+[
+"005a6d60"
+],
+[]
+],
+"005a71f0": [
+"stop"
+],
+"005a7aa0": [
+"bind",
+"re/match/s25/005a7aa0.c",
+"match",
+[
+"005adf60"
+],
+[]
+],
+"005a7af0": [
+"bind",
+"re/match/s25/005a7af0.c",
+"match",
+[
+"005aded0"
+],
+[]
+],
+"005a7b60": [
+"stop"
+],
+"005b8570": [
+"bind",
+"re/match/s27/005b8570.c",
+"match",
+[
+"005aa560"
+],
+[]
+],
 "0040e350": [
 "reuse",
 "GetRenderSubMode",
@@ -1457,15 +1557,6 @@
 "re/match/s25/005a6d60.c",
 "replay",
 [],
-[]
-],
-"005a6dc0": [
-"bind",
-"re/match/s25/005a6dc0.c",
-"match",
-[
-"005a6d60"
-],
 []
 ],
 "004b44f0": [
@@ -2097,6 +2188,27 @@
 ],
 []
 ],
+"005a6df0": [
+"bind",
+"re/match/s25/005a6df0.c",
+"match",
+[
+"005a6d60"
+],
+[]
+],
+"005adf60": [
+"bind",
+"re/match/s26/005adf60.c",
+"match",
+[],
+[]
+],
+"005aded0": [
+"reuse",
+"AudioListNodeCount",
+"Audio/AudioLeaves_ab1.cpp"
+],
 "0045c880": [
 "bind",
 "re/match/s10/0045c880.c",
@@ -2314,15 +2426,6 @@
 "re/match/s25/005ab070.c",
 "match",
 [],
-[]
-],
-"005a6df0": [
-"bind",
-"re/match/s25/005a6df0.c",
-"match",
-[
-"005a6d60"
-],
 []
 ],
 "005a6e10": [

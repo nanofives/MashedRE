@@ -26,6 +26,7 @@ PROV_BIND = {'005a6ea0', '005a6f30', '004627f0', '005aa0c0'}   # 004627f0 + its 
 PROV_BIND |= {'005a5e70'}   # PORT-TOP-RWAUDIO-TABLE-632BA8: table slot 0x00632ba8 (tail-merge layout, PROVISIONAL.tsv)
 PROV_BIND |= {'005ae650'}   # PORT-TOP-AUDIOPOOL-5AE650: AudioPoolConstruct, init side of the 13 pool pairs (prologue placement, PROVISIONAL.tsv)
 PROV_BIND |= {'005adc10'}   # PORT-TOP-AUDIOSTOP-5ADC10: 0x005add60's callee, register-only residual 92.2% (PROVISIONAL.tsv)
+PROV_BIND |= {'0045d460'}   # PORT-TOP-AUDIO-BODY-45D460: 0x004669b0's permdict loader, register-only residual 94.2% (PROVISIONAL.tsv)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
 PEND = {}
@@ -124,6 +125,8 @@ LOCAL_SHARED = {("0045cbe0", "0045c4e0"): "PortTop_Local_0045cb20_0045c4e0"}
 EXTRA_PRE["0045cbe0"] = ["#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp"]
 # re/match/s10/0045c6b0.c carries 0x0045c640 (cast-only text difference from re/match/s10/0045c640.c): that copy is the exe body.
 ALIAS = {"0045c640": ("PortTop_Bound_0045c640", "Match/PortTop_0045c6b0.cpp"), "004671a0": ("RwCore_004671a0", "RwCore/RwCore_004671a0.cpp")}
+# PORT-TOP-AUDIO-BODY-45D460: 0x0045d460 calls printf 0x004a2cbd (CRT, waived L-67); the exe body that logs it is in PortTop_00493710.cpp.
+ALIAS["004a2cbd"] = ("PortTop_Crt_004a2cbd", "Match/PortTop_00493710.cpp")
 FORCE -= set(ALIAS)
 # PORT-TOP-AUDIO-RWA: 0x004671a0 reuses the RW core body (RWC-FRAME-492E90, same source re/match/s11/004671a0.c): two
 # ORIGTOP-only exe copies of one rva are not a class the lint takes.

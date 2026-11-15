@@ -13,7 +13,8 @@
 //  - 0x004625b0 -> AudioCharacterBankPathsBuild (Audio/AudioCharacterBankPaths.cpp, exe body, writes 0x00690158..).
 //  - 0x004627f0 (sound engine HW init) -> its exe body PortTop_Bound_004627f0 (L-126 provisional, re/match/s10/004627f0.c;
 //    PORT-TOP-AUDIO-HWINIT-4627F0). Before that row: hand piece 3 (HandTop_InitAudio: exe audio, permdict.rws, menu music).
-//  - 0x0045d460 (permdict.rws loader, no exe body) -> stand-in, logs its first call. With the knob on, no permdict bank.
+//  - 0x0045d460 (PERMDICT.RWS loader) -> its exe body PortTop_Bound_0045d460 (L-126 provisional, re/match/s10/0045d460.c;
+//    PORT-TOP-AUDIO-BODY-45D460). Before that row: a stand-in that logged its first call and did not run.
 //  - 0x00429290 (called 3 times with the 0x006036e8 / 0x00603768 / 0x006037e8 strings) -> stand-in, logs its first
 //    call. Same choice as 0x00402750's binding of 0x00429290 (PortTop_StandIn04E_00429290).
 // RVA-LINT: ORIGTOP-ONLY
@@ -71,10 +72,14 @@ void PortTop_AInit_004627f0(void) {
           "DAT_007dcd20=0x%08X", MemU(0x00632ba0u), MemU(0x0069049cu), MemU(0x0068f61cu), MemI(0x006904a0u), MemI(0x0068f4c8u),
           MemU(0x007dcd20u));
 }
-// rva 0x0045d460 permdict.rws loader (no exe body) -> stand-in
+// rva 0x0045d460 PERMDICT.RWS loader -> its exe body PortTop_Bound_0045d460 (Match/PortTop_0045d460.cpp, L-126
+// provisional body re/match/s10/0045d460.c, PORT-TOP-AUDIO-BODY-45D460). Before that row: a stand-in that did not run.
+void PortTop_Bound_0045d460(void);
 void PortTop_AInit_0045d460(void) {
-    static int once;
-    if (!once) { once = 1; LogAI("rva 0x0045d460: stand-in, not run (permdict.rws not loaded on this path)"); }
+    LogAI("0x0045d460 PERMDICT.RWS loader: provisional exe body (re/match/s10/0045d460.c)");
+    PortTop_Bound_0045d460();
+    LogAI("0x0045d460 returned: DAT_0068fc88=%d DAT_0068fc84=%d DAT_0088e674=%d DAT_0069047c=0x%08X DAT_00604604=0x%08X",
+          MemI(0x0068fc88u), MemI(0x0068fc84u), MemI(0x0088e674u), MemU(0x0069047cu), MemU(0x00604604u));
 }
 // rva 0x00429290 (string arg calls inside 0x004669b0) -> stand-in
 void PortTop_AInit_00429290(char* a, char* b, int c) {
