@@ -2,7 +2,7 @@
 
 **Verdict: GREEN for both rows.** In the object build, 0x00493710 and 0x00493900 now link the DDK compile of their
 100% sources, and `ddkobj.py check` reports both **IDENTICAL** (0 differing bytes). Both builds compile. Knob boots pass
-on both builds. **Self-test result: `ddkobj.py selftest` = OK, 0 failures, 31 PASS** (`retarget/selftest.log`).
+on both builds. **Self-test result: `ddkobj.py selftest` = OK, 0 failures, 31 PASS** (`retarget/selftest.txt`).
 
 Row kind: top-down (PortTop wrappers, one `re/match` source, a BINDINGS note). Default gates (G-CTRL, B, 12 captures
 x 4) not run, per WORKER_RULES "Row kinds": the knob is off on those hashes. No menu code changed, so no menu walk.
@@ -96,7 +96,7 @@ this row does not change it.
 ## Files
 
 Committed (`verify/ddkobj_20261114/retarget/`): `match_relocheck.txt`, `ddkobj_check.txt`,
-`BYTECHECK_493710_493900.tsv`, `units_493710_493900.txt`, `selftest.log`, `RAW_SHA256.txt`.
+`BYTECHECK_493710_493900.tsv`, `units_493710_493900.txt`, `selftest.txt`, `RAW_SHA256.txt`.
 
 Raw (not committed), `D:/MashedWT/DDKOBJ-RETARGET-493710_data/`, SHA-256 in `retarget/RAW_SHA256.txt`:
 `build_vs.log`, `build_ddk.log`, `vs_off.log`, `vs_on.log`, `ddk_off.log`, `ddk_on.log`, `knob_boots.txt`,
