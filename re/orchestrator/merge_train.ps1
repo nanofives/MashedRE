@@ -329,8 +329,10 @@ function Apply-Promotions([string]$wt, $item) {
   # HB-TRAIN-TAG-TSV: re/promotions/<ID>-tag.tsv (header rva, tag; optional result) is a notes-only tag file for
   # `c4_reclass.py tag --apply --strict`, not a batch file. Same failure handling: a refused row sets the branch aside.
   $tags = @($added | Where-Object { $_ -match '-tag\.tsv$' })
-  $new = @($added | Where-Object { $_ -notmatch '-tag\.tsv$' })
-  if (-not $new.Count -and -not $tags.Count) { return @{ ok = $true; n = 0 } }
+  # C4RECLASS-SHA-REFRESH: re/promotions/<ID>-refresh.tsv (header rva, src, result) is applied with `c4_reclass.py refresh --apply --strict`.
+  $refresh = @($added | Where-Object { $_ -match '-refresh\.tsv$' })
+  $new = @($added | Where-Object { $_ -notmatch '-tag\.tsv$' -and $_ -notmatch '-refresh\.tsv$' })
+  if (-not $new.Count -and -not $tags.Count -and -not $refresh.Count) { return @{ ok = $true; n = 0 } }
   $py = Join-Path $wt 're/tools/c4_reclass.py'
   if (-not (Test-Path -LiteralPath $py)) { return @{ ok = $false; why = "promotions: no re/tools/c4_reclass.py in the merged tree" } }
   foreach ($t in $new) {
@@ -367,7 +369,24 @@ function Apply-Promotions([string]$wt, $item) {
     if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
     Say "  tags applied: $t ($(($po | Select-Object -Last 1)))"
   }
-  return @{ ok = $true; n = ($new.Count + $tags.Count) }
+  foreach ($t in $refresh) {
+    $rows = @(Import-Csv -LiteralPath (Join-Path $wt $t) -Delimiter "`t")
+    $res = if ($rows.Count -and $rows[0].PSObject.Properties['result']) { ([string]$rows[0].result).Trim() } else { '' }
+    if (-not $res) { return @{ ok = $false; why = "promotions: $t has no `result` column (the RESULT path the CHANGELOG cites)" } }
+    $plog = Join-Path $DATA ("promo_" + ($t -replace '[\\/]', '_') + '.log')
+    Push-Location $wt
+    try { $po = & py.exe -3.12 $py refresh --tsv $t --result $res --apply --strict 2>&1; $prc = $LASTEXITCODE } finally { Pop-Location }
+    $po | Set-Content $plog
+    if ($prc -ne 0) { return @{ ok = $false; why = "promotions: c4_reclass refresh refused $t ($(($po | Where-Object { $_ -match 'REFUSED|refused' } | Select-Object -First 2) -join ' | ')) ($plog)" } }
+    $dest = $t -replace '^re/promotions/', 're/promotions/applied/'
+    New-Item -ItemType Directory -Force -Path (Join-Path $wt 're/promotions/applied') | Out-Null
+    Git -C $wt mv $t $dest | Out-Null
+    Git -C $wt add -- hooks.csv re/analysis/CHANGELOG.md | Out-Null
+    Git -C $wt commit -q -m "Apply sha refresh $($item.id) ($t) via merge train (c4_reclass refresh on the current head)" | Out-Null
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
+    Say "  sha refresh applied: $t ($(($po | Select-Object -Last 1)))"
+  }
+  return @{ ok = $true; n = ($new.Count + $tags.Count + $refresh.Count) }
 }
 function Ensure-Root([string]$root) {
   if (Test-Path (Join-Path $root 'original\MASHED.exe')) { return }
