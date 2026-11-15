@@ -120,3 +120,4 @@ rank	rva	size	executed	race_path	stage	best_pct	class	source	band	equiv_kind	hoo
 119	0x004dabd0	1045	y	n	menu	13.4	prov-NOT-PROVEN	re/match/s21/004dabd0.c	B<50	call-sequence	C2
 120	0x004e3160	598	y	n	menu	9.9	prov-NOT-PROVEN	re/match/rwl02/004e3160.c	B<50	branch-condition	C2
 121	0x004e5850	923	y	n	menu	compile-fail	g2s-compile-fail	-	B-cf	lift	C2
+122	0x00556e90	631	y	y	race_run	97.5	prov-NOT-PROVEN	re/match/s24/00556e90.c	A95	x87-region	C2
