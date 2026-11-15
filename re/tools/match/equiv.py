@@ -3135,11 +3135,72 @@ def callers(va):
     return out
 
 
-def caller_reads(site, reg, depth=0, seen=None):
+# Functions the original reaches only through a function-pointer table in .data, so callers() (direct E8 calls)
+# finds none of their call sites. When the caller scan reaches a `ret` of one of these functions, the register flows
+# out to that function's own callers, so the scan continues after each listed indirect call site (and after any direct
+# call site of the function). Entry -> end (first byte past the ret), and the table route: the dword at `slot` holds
+# the entry, the reader loads `slot_base` with the `mov` at `load`, steps it by `stride` per record, and calls through
+# it at `site`. indirect_sites() checks every one of these facts against the image before the scan uses the route.
+# The route list is complete only as far as its own evidence goes (the note says how it was found).
+INDIRECT_CALLERS = {
+    0x0045ac20: dict(
+        end=0x0045ac3c,
+        routes=[dict(slot=0x005f9abc, slot_base=0x005f99bc, stride=0x40, count=0x005f9bd8, load=0x0045b9dd,
+                     site=0x0045b9e2)],
+        note="record table 0x005f9998 (9 records of 0x40, count dword 0x005f9bd8), slot +0x24 of the record with id "
+             "0x10 at 0x005f9a98; the only .text reference to the +0x24 slot column is `mov edi, 0x5f99bc` at "
+             "0x0045b9dd in FUN_0045b9d0, which calls [edi] at 0x0045b9e2 for every record; the other route into the "
+             "table, the id lookup 0x0045baa0 (only caller 0x0045bfa5, stores the record at obj+0xa8), is followed by "
+             "calls through +0x4 (0x0045bfb5) and +0x10 (0x0045bac7) only (EQUIV-CALLER-0045AC2A, 2026-11-15)"),
+}
+
+
+def indirect_sites(entry):
+    """[(site, length)] for a function in INDIRECT_CALLERS, each route checked against the image; raises on a mismatch."""
+    img = image()
+    spec = INDIRECT_CALLERS[entry]
+    out = []
+    for r in spec["routes"]:
+        d = img.bytes(r["slot"], 4)
+        if d is None or struct.unpack("<I", d)[0] != entry:
+            raise ValueError(f"INDIRECT_CALLERS 0x{entry:08x}: dword at 0x{r['slot']:08x} is not the entry")
+        n = struct.unpack("<I", img.bytes(r["count"], 4))[0]
+        k, rem = divmod(r["slot"] - r["slot_base"], r["stride"])
+        if rem or not 0 <= k < n:
+            raise ValueError(f"INDIRECT_CALLERS 0x{entry:08x}: slot 0x{r['slot']:08x} is not record {k} of {n} "
+                             f"from 0x{r['slot_base']:08x}")
+        ld = next(_MD.disasm(img.bytes(r["load"], 16), r["load"]))
+        if not (ld.mnemonic == "mov" and len(ld.operands) == 2 and ld.operands[0].type == X.X86_OP_REG and
+                ld.operands[1].type == X.X86_OP_IMM and ld.operands[1].imm == r["slot_base"]):
+            raise ValueError(f"INDIRECT_CALLERS 0x{entry:08x}: 0x{r['load']:08x} does not load 0x{r['slot_base']:08x}")
+        base_reg = ld.operands[0].reg
+        cs = next(_MD.disasm(img.bytes(r["site"], 16), r["site"]))
+        if not (cs.mnemonic == "call" and cs.operands[0].type == X.X86_OP_MEM and cs.operands[0].mem.base == base_reg
+                and cs.operands[0].mem.disp == 0 and cs.operands[0].mem.index == 0):
+            raise ValueError(f"INDIRECT_CALLERS 0x{entry:08x}: 0x{r['site']:08x} is not call [{ld.reg_name(base_reg)}]")
+        out.append((r["site"], cs.size))
+    return out
+
+
+def _ret_flows_to_callers(pc, reg, depth, seen):
+    """At a `ret` at `pc`: the verdict over the enclosing function's own callers, when it is in INDIRECT_CALLERS."""
+    for entry, spec in INDIRECT_CALLERS.items():
+        if entry <= pc < spec["end"]:
+            if depth > 4:
+                return "unknown"
+            sites = [(s, 5) for s in callers(entry)] + indirect_sites(entry)
+            if not sites:
+                return "unknown"
+            vs = [caller_reads(s, reg, depth + 1, set(), ilen=n) for s, n in sites]
+            return "reads" if "reads" in vs else "unknown" if "unknown" in vs else "ignores"
+    return "unknown"
+
+
+def caller_reads(site, reg, depth=0, seen=None, ilen=5):
     """'ignores' | 'reads' | 'unknown': does the caller read `reg` after the call at `site` before writing it?"""
     img = image()
     seen = seen if seen is not None else set()
-    pc = site + 5
+    pc = site + ilen
     for _ in range(40):
         if pc in seen:
             return "ignores"
@@ -3172,7 +3233,7 @@ def caller_reads(site, reg, depth=0, seen=None):
         if reg in wrfull:
             return "ignores"
         if mn in ("ret", "retn"):
-            return "unknown"
+            return _ret_flows_to_callers(pc, reg, depth, seen)
         if cs.group(capstone.CS_GRP_JUMP):
             op = cs.operands[0]
             if op.type != X.X86_OP_IMM or depth > 4:
