@@ -26,26 +26,30 @@ Row kind: tool row on `re/tools/c4_reclass.py`. No build, no gates (not run: too
 `py -3.12 re/tools/c4_reclass.py refresh-tsv --out re/promotions/C4RECLASS-SHA-EOL-refresh.tsv --result verify/c4audit_20261115/RESULT_C4RECLASS-SHA-EOL.md`:
 
 ```
-refresh-tsv: c4=match rows with token: lf 96, crlf 3072, content 76, no-source 0, no-token 5; 3148 rows -> re/promotions/C4RECLASS-SHA-EOL-refresh.tsv
+refresh-tsv: c4=match rows with token: lf 96, crlf 3145, content 76, no-source 0, no-token 5; 3221 rows -> re/promotions/C4RECLASS-SHA-EOL-refresh.tsv
 ```
 
 Dry run `py -3.12 re/tools/c4_reclass.py refresh --tsv re/promotions/C4RECLASS-SHA-EOL-refresh.tsv --jobs 4`:
 
 ```
-refresh: 3148 would-refresh (3072 eol-only, 76 content changed), 0 refused, 0 skipped (already current), 3148 rows
+refresh: 3221 would-refresh (3145 eol-only, 76 content changed), 0 refused, 0 skipped (already current), 3221 rows
 ```
 
-All 3148 recompiled byte-identical with relocheck OK. 3072 are the old convention only. 76 carry a token that matches
+All 3221 recompiled byte-identical with relocheck OK. 3145 are the old convention only. 76 carry a token that matches
 neither form: those sources changed after their token was written and were already stale before this row. 96 rows are
 already LF-current (left out of the TSV). 5 C4 `c4=match` rows have no token (left out, unchanged).
 The merge train applies the TSV with `refresh --apply --strict` on its head.
 
-Raw log (not committed): `D:/MashedWT/C4RECLASS-SHA-EOL_data/refresh_dryrun.log`
-sha256 `10b692838c6e249909dc2c00bc0ff994cc2d98ac1e67320698d70c667f30e3c6`.
+Regenerated on the merge of orch/integration 4bf0f04a5 (no conflicts): the 73 rows re-earned by C4-NOTAG-87-REEARN
+carry CRLF-raw tokens and are now in the TSV (3148 -> 3221 rows, crlf 3072 -> 3145). lf, content and no-token counts
+are unchanged.
+
+Raw log (not committed): `D:/MashedWT/C4RECLASS-SHA-EOL_data/refresh_dryrun2.log`
+sha256 `a231fad16d13624b70d84e827851a453333dec1b1fd6f211610dce91bd630a0d`.
 
 ## Tests
 
-`py -3.12 -m pytest re/tools/tests/test_c4_reclass.py -v`: **40 passed in 1.70s** (21 before, 19 new or parametrised
+`py -3.12 -m pytest re/tools/tests/test_c4_reclass.py -v`: **40 passed in 1.89s** (re-run on the 4bf0f04a5 merge) (21 before, 19 new or parametrised
 cases). New: `test_src_sha_is_eol_independent[lf|crlf]`, `test_batch_note_hash_same_on_lf_and_crlf_checkout`,
 `test_refresh_legacy_crlf_token_is_eol_only[lf|crlf]`, `test_refresh_lf_token_is_current_on_either_checkout[16hex|64hex x lf|crlf]`,
 `test_refresh_stale_64hex_token_becomes_16hex`, `test_refresh_tsv_lists_only_non_current_rows`. `_cursha` in the old
