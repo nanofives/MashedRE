@@ -19,3 +19,5 @@ Row kind: tracker, no build, no gates. Verdict: GREEN. 0x0043c5b0 MenuDrawLoop d
 - `py -3.12 scripts/lint_rva_bodies.py`: `[rva-lint] 313 finding(s): CROSS-TARGET=188, DUP-IN-TARGET=125 | allowlisted=313 NEW=0` / `[rva-lint] OK -- no NEW duplicate bodies`.
 - No other tracker lint script exists under re/tools.
 - [UNCERTAIN] whether tracker_merge3.py key-merges a lone C4->C3 edit cleanly; not exercised here.
+
+Commit: c709d691d (hooks.csv, CHANGELOG, both RESULT files)
