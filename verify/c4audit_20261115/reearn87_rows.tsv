@@ -1,0 +1,88 @@
+rva	class	in_admitted	in_provisional	sources	frida_diff	confidence	name
+0x004938c0	install manifest plus survival	0	0	re/match/s15/004938c0.c	log/diff_engine_stop_helper.csv	C4	SoftwareTidyUpBeforeExiting
+0x004c2f00	install manifest plus survival	0	0	re/match/s19/004c2f00.c	log/c4_verify_result.json	C4	RwEngineGetCurrentMode
+0x00498bf0	install manifest plus survival	0	0	re/match/s16/00498bf0.c	log/c4_verify_result.json	C4	DisplayActiveFlagGet
+0x004b3b70	install manifest plus survival	0	0	re/match/s18/004b3b70.c	re/analysis/negctl/reearn_20261011/evidence/diff_file_read_wrapper_i3.csv	C4	FileReadWrapper_i3
+0x004099e0	install manifest plus survival	0	0	re/match/s02/004099e0.c	log/diff_save_status_clear.csv	C4	SaveStatusClear
+0x00407a40	diff with the hook bypassed	0	0	re/match/s01/raw/00407a40.c	log/diff_table_8a9640_get.csv	C4	Table8a9640Get
+0x0043c5b0	install manifest plus survival	0	1	re/match/s08/0043c5b0.c	re/analysis/standalone_menu_sm/diff_menu_drawloop_navdriven.json	C3	MenuDrawLoop
+0x0042b930	install manifest plus survival	0	0	re/match/s07/0042b930.c	log/c4_verify_result.json	C4	MenuAlphaGet
+0x005aee20	install manifest plus survival	0	0	re/match/s26/005aee20.c	log/diff_audio_bit_scan_forward.csv;log/verify_hook_install_AudioBitScanForward.	C4	AudioBitScanForward
+0x0042b8d0	install manifest plus survival	0	0	re/match/s07/0042b8d0.c	log/c4_verify_result.json	C4	StatePhaseIsIdle
+0x00493f70	install manifest plus survival	0	0	re/match/s15/00493f70.c	log/c4_verify_result.json	C4	VideoStateFlagGet
+0x004963e0	install manifest plus survival	0	0	re/match/s16/004963e0.c	log/diff_config_log_error.csv	C4	ConfigLogError
+0x00496400	install manifest plus survival	0	0	re/match/s16/00496400.c	log/diff_config_log_debug.csv	C4	ConfigLogDebug
+0x00498910	install manifest plus survival	0	0	re/match/s16/00498910.c,re/match/s16/00498950.c,re/match/s16/004989b0.c	log/diff_config_filename_get.csv	C4	ConfigFilenameGet
+0x00498950	install manifest plus survival	0	0	re/match/s16/00498910.c,re/match/s16/00498950.c,re/match/s16/004989b0.c	re/analysis/negctl/reearn_20261011/evidence/diff_config_load.csv	C4	ConfigLoad
+0x004989b0	install manifest plus survival	0	0	re/match/s16/00498910.c,re/match/s16/00498950.c,re/match/s16/004989b0.c	re/analysis/negctl/reearn_20261011/evidence/diff_config_save.csv	C4	ConfigSave
+0x0042c2f0	install manifest plus survival	0	0	re/match/s07/0042c2f0.c	log/diff_set_dat_0067ecb8.csv;log/observe_c4_sweep_20260517_B1.txt	C4	SetDat0067ecb8
+0x0042b8c0	other	0	0	re/match/s07/0042b8c0.c,re/match/s07/0042ed70.c,re/match/s07/0042f0c0.c,re/match/s08/00434720.c,re/match/s08/004368e0.c,re/match/s08/00439210.c	log/c4_autodiff_result.json	C4	ScreenHeightGet
+0x00427780	install manifest plus survival	0	0	re/match/s06/00427780.c	log/diff_font_text_string_table_lookup.csv;log/observe_c4_sweep_20260517_B3.txt	C4	FontText_StringTableLookup
+0x00430a10	install manifest plus survival	0	0	re/match/s07/00430a10.c,re/match/s08/00439210.c	log/verify_hook_install_hud_slot_type_player0.txt;main_menu_post_loaderfix_20260	C4	HudSlotTypePlayer0
+0x004c3ac0	install manifest plus survival	0	0	re/match/s19/004c3ac0.c	log/diff_vec3_magnitude.csv;log/verify_hook_install_vec3.txt;log/observe_hooks_a	C4	Vec3Magnitude
+0x004099a0	install manifest plus survival	0	0	re/match/s02/004099a0.c	re/analysis/negctl/reearn_20261011/evidence/diff_autosave_trigger.csv	C4	Save::AutosaveTrigger
+0x0042a920	install manifest plus survival	0	0	re/match/pilot/a3_00430290.c,re/match/s06/0042a920.c	log/diff_post_trophy_event.csv	C4	Frontend::PostTrophyEvent
+0x0046d700	install manifest plus survival	0	0	re/match/s11/0046d700.c	log/diff_vehicle_vec3_at_9c8_get.csv	C4	VehicleVec3At9C8Get
+0x00409930	install manifest plus survival	0	0	re/match/s01/raw/00409930.c	log/diff_loading_state3_enter.csv;log/observe_c4_sweep_20260517_B1.txt	C4	LoadingState3Enter
+0x00409900	install manifest plus survival	0	0	re/match/s01/raw/00409900.c	re/analysis/negctl/reearn_20261011/evidence/diff_loading_state2_enter.csv	C4	LoadingState2Enter
+0x004098b0	install manifest plus survival	0	0	re/match/s01/raw/004098b0.c	log/diff_loading_state1_enter.csv;log/observe_c4_sweep_20260517_B1.txt	C4	LoadingState1Enter
+0x0042b900	file missing	0	0	re/match/s07/0042b900.c	log/c4_stalkerdiff_result.json	C4	Global67eca4Get
+0x004c2d70	install manifest plus survival	0	0	re/match/s19/004c2d70.c	log/c4_verify_result.json	C4	RwPluginRegistryFrozen
+0x0040dd60	install manifest plus survival	0	0	re/match/s02/0040dd60.c	re/analysis/negctl/reearn_20261011/evidence/diff_guard_concluded_and_p1_won.csv	C4	Race::GuardConcludedAndP1Won
+0x00552df0	install manifest plus survival	0	0	re/match/s24/00552df0.c	log/verify_hook_install_FontCtx_SetTranslation.txt;log/observe_cold_boot_to_menu	C4	FontCtx_SetTranslation
+0x004c5010	install manifest plus survival	0	1	re/match/s19/004c5010.c	log/c4_hotpath_result.json;log/diff_rw_matrix_scale.csv	C4	RwMatrixScale
+0x0040dc90	diff with the hook bypassed	0	0	re/match/s02/0040dc90.c	log/diff_util_slot_index_cond_get.csv	C4	UtilSlotIndexCondGet
+0x004cbe80	install manifest plus survival	0	1	re/match/s20/004cbe80.c	re/analysis/negctl/reearn_20261011/evidence/diff_rw_stream_write_s2.csv	C4	RwStreamWrite
+0x00550b00	install manifest plus survival	0	0	re/match/s24/00550b00.c	re/analysis/negctl/reearn_20261011/evidence/diff_vfs_file_exists.csv	C4	VfsFileExists
+0x0042e590	install manifest plus survival	0	0	re/match/s07/0042e590.c	log/verify_hook_install_sprite_anim_frame_thunk.txt;main_menu_post_loaderfix_202	C4	SpriteAnimFrameThunk
+0x004c3b90	install manifest plus survival	0	0	re/match/s19/004c3b90.c	log/diff_fast_invsqrt.csv;log/verify_hook_install_invsqrt.txt;log/observe_hooks_	C4	FastInvSqrt
+0x0046ddb0	file missing	0	0	re/match/s11/0046ddb0.c	green	C4	VehicleWheelForceIntegrator
+0x00467650	file missing	0	0	re/match/s11/00467650.c	green	C4	VehicleWheelDrivetrainUpdate
+0x00468980	file missing	0	0	re/match/s11/00468980.c	green	C4	VehicleAeroStabilizer
+0x004cd060	install manifest plus survival	0	0	re/match/s20/004cd060.c,re/match/s30/004cd060.c	log/c4_verify_result.json	C4	AllocatorSlotGet
+0x00470670	file missing	0	0	re/match/s11/00470670.c	green	C4	VehicleControlUpdate
+0x004c3b30	install manifest plus survival	0	0	re/match/s19/004c3b30.c	log/diff_fast_sqrt.csv;log/verify_hook_install_sqrt.txt;log/observe_hooks_at_men	C4	FastSqrt
+0x00494ef0	install manifest plus survival	0	0	re/match/s16/00494ef0.c	log/c4_verify_result.json	C4	ThunkVideoStateGet
+0x0042fe50	install manifest plus survival	0	0	re/match/s07/0042fe50.c	re/analysis/negctl/reearn_20261011/evidence/diff_race_end_alt_flag_if_end_mode.c	C4	RaceEndAltFlagIfEndMode
+0x00550bc0	install manifest plus survival	0	0	re/match/s24/00550bc0.c	re/analysis/negctl/reearn_20261011/evidence/diff_vfs_stream_get_type.csv	C4	VfsStreamGetType
+0x00442c80	install manifest plus survival	0	0	re/match/s08/00442c80.c	re/analysis/negctl/reearn_20261011/evidence/diff_mode_gated_player_check.csv	C4	ModeGatedPlayerCheck
+0x00426c10	install manifest plus survival	0	0	re/match/s06/00426c10.c	re/analysis/negctl/reearn_20261011/evidence/diff_timer_dispatch_10.csv	C4	TimerDispatch10
+0x00426c30	install manifest plus survival	0	0	re/match/s06/00426c30.c	re/analysis/negctl/reearn_20261011/evidence/diff_timer_dispatch_30.csv	C4	TimerDispatch30
+0x00426c70	install manifest plus survival	0	0	re/match/s06/00426c70.c	re/analysis/negctl/reearn_20261011/evidence/diff_timer_dispatch_70.csv	C4	TimerDispatch70
+0x0040de00	install manifest plus survival	0	0	re/match/s02/0040de00.c	re/analysis/negctl/reearn_20261011/evidence/diff_thunk_replay_save.csv	C4	thunk_FUN_004117b0
+0x004c5820	install manifest plus survival	0	0	re/match/s19/004c5820.c	re/analysis/negctl/reearn_20261011/evidence/diff_rw_tex_dictionary_get_current.c	C4	FUN_004c5820
+0x0046b540	file missing	0	0	re/match/s11/0046b540.c	green	C4	VehicleSpawnInit
+0x00475a60	install manifest plus survival	0	0	re/match/s12/00475a60.c	re/analysis/negctl/reearn_20261011/evidence/diff_pending_op_queue_flush.csv	C4	PendingOpQueueFlush
+0x004c3bf0	install manifest plus survival	0	0	re/match/s19/004c3bf0.c	log/diff_vec2_length.csv;log/verify_hook_install_Vec2Length.txt;log/observe_main	C4	Vec2Length
+0x004c3c60	install manifest plus survival	0	0	re/match/s19/004c3c60.c	log/diff_vec2_normalize.csv;log/verify_hook_install_Vec2Normalize.txt;log/observ	C4	Vec2Normalize
+0x004cc6e0	install manifest plus survival	0	1	re/match/s20/004cc6e0.c	re/analysis/negctl/reearn_20261011/evidence/diff_rw_stream_write_chunked.csv	C4	FUN_004cc6e0
+0x00498bc0	install manifest plus survival	0	0	re/match/s16/00498bc0.c	log/c4_verify_result.json	C4	VideoGetRenderWidth
+0x00498bd0	install manifest plus survival	0	0	re/match/s16/00498bd0.c	log/c4_verify_result.json	C4	VideoGetRenderHeight
+0x00482900	install manifest plus survival	0	0	re/match/s13/00482900.c	re/analysis/negctl/reearn_20261011/evidence/diff_replay_get_size.csv	C4	ReplayGetSize
+0x00407db0	diff with the hook bypassed	0	0	re/match/s01/00407db0.c	log/diff_scenario_range_table_group_offset_PROVEN.csv	C4	RangeTableGroupOffset
+0x004098a0	diff with the hook bypassed	0	0	re/match/s01/raw/004098a0.c	log/diff_ret_63a5f0.csv	C4	Ret63a5f0
+0x0040b420	diff with the hook bypassed	0	0	re/match/s02/0040b420.c	log/diff_scenario_indexed_table_lookup_PROVEN.csv	C4	IndexedTableLookup
+0x0040dc70	diff with the hook bypassed	0	0	re/match/s02/0040dc70.c	log/diff_get_animation_state.csv	C4	FUN_0040dc70
+0x0041e9f0	diff with the hook bypassed	0	0	re/match/s04/0041e9f0.c	log/diff_global_field_63d7e4_1c.csv	C4	GlobalField63d7e4_1c
+0x0041ea00	diff with the hook bypassed	0	0	re/match/s04/0041ea00.c	log/diff_global_field_63d7e4_20.csv	C4	GlobalField63d7e4_20
+0x0041ea70	diff with the hook bypassed	0	0	re/match/s04/0041ea70.c	log/diff_global_field_63d7e4_3c.csv	C4	GlobalField63d7e4_3c
+0x0041efe0	diff with the hook bypassed	0	0	re/match/s04/0041efe0.c	log/diff_bit_extract_63dc74.csv	C4	BitExtract63dc74
+0x00420da0	diff with the hook bypassed	0	0	re/match/s05/00420da0.c	log/diff_tbl_ret_ptrout_63e4b8_0.csv	C4	TblRetPtrout63e4b8_0
+0x00420dc0	diff with the hook bypassed	0	0	re/match/s05/00420dc0.c	log/diff_tbl_ret_ptrout_63e4b8_4.csv	C4	TblRetPtrout63e4b8_4
+0x00454a30	diff with the hook bypassed	0	0	re/match/s09/00454a30.c	log/diff_table_688304_get.csv	C4	Table688304Get
+0x004cc770	install manifest plus survival	0	0	re/match/s20/004cc770.c	re/analysis/negctl/reearn_20261011/evidence/diff_rw_stream_write_bytes.csv	C4	FUN_004cc770
+0x0045caf0	diff with the hook bypassed	0	0	re/match/s10/0045caf0.c	log/diff_eq_predicate_7f1a18.csv	C4	EqPredicate7f1a18
+0x0045dd50	diff with the hook bypassed	0	0	re/match/s10/0045dd50.c	log/diff_table_8aa300_get.csv	C4	Table8aa300Get
+0x0046bce0	install manifest plus survival	0	0	re/match/pilot/a1_0046bce0.c,re/match/s11/0046bce0.c	log/diff_vehicle_vec3_at_94_get.csv	C4	FUN_0046bce0
+0x0046bd20	diff with the hook bypassed	0	0	re/match/s11/0046bd20.c	log/diff_veh_tbl_8820a0_get3.csv	C4	VehTbl8820a0Get3
+0x0046bda0	diff with the hook bypassed	0	0	re/match/s11/0046bda0.c	log/diff_indexed_float_accum16_46bda0.csv	C4	FUN_0046bda0
+0x0046dd80	diff with the hook bypassed	0	0	re/match/s11/0046dd80.c	log/diff_float_61313c_get.csv	C4	Float61313cGet
+0x00473ee0	install manifest plus survival	0	1	re/match/s11/00473ee0.c	re/analysis/standalone_menu_sm/diff_logo_overlay_navdriven.json	C4	LogoOverlayDraw
+0x00423cc0	install manifest plus survival	0	0	re/match/s05/00423cc0.c	re/analysis/negctl/reearn_20261011/evidence/diff_player_score_team_acc_gated_b.c	C4	PlayerScoreTeamAccGatedB
+0x00423d50	install manifest plus survival	0	0	re/match/s05/00423d50.c	re/analysis/negctl/reearn_20261011/evidence/diff_player_score_team_acc_base_b.cs	C4	PlayerScoreTeamAccBaseB
+0x00423dd0	install manifest plus survival	0	0	re/match/s05/00423dd0.c	re/analysis/negctl/reearn_20261011/evidence/diff_player_score_team_acc_gated_c.c	C4	PlayerScoreTeamAccGatedC
+0x00423e60	install manifest plus survival	0	0	re/match/pilot/f_00423e60.c,re/match/s05/00423e60.c	re/analysis/negctl/reearn_20261011/evidence/diff_player_score_team_acc_cum_b.csv	C4	PlayerScoreTeamAccCumB
+0x00424100	install manifest plus survival	0	0	re/match/s05/00424100.c	re/analysis/negctl/reearn_20261011/evidence/diff_team_block_zero_get.csv	C4	TeamBlockZeroGet
+0x004241c0	install manifest plus survival	0	0	re/match/s05/004241c0.c	re/analysis/negctl/reearn_20261011/evidence/diff_team_block_one_get.csv	C4	FUN_004241c0
+0x00432b30	install manifest plus survival	0	0	re/match/s08/00432b30.c,re/match/s08/0043d2a0.c	log/diff_menu_prompt_navdriven.json;D:/MashedWT/D4-WSH-EXEFILE_data/run11/P1.jso	C4	MenuPromptStrip
+0x004894f0	diff with the hook bypassed	0	0	re/match/s14/004894f0.c	log/diff_clear_894f0.csv	C4	Clear894f0
