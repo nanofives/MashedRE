@@ -113,6 +113,10 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   may run on the knob path only as a provisional body listed in `PROVISIONAL.tsv`. Neither is C4. A conditional
   verdict with a caller that reads or is unknown, and any proof that needs `--relax-icall`, is a decision row.
   x87 instruction order is never admitted.
+  **Drop rule (MATCH-PROV-DROP-RULE, 2026-11-15).** A match row that makes a provisional source byte-identical
+  (match.py `--bytes` with the source's own `// TOOLCHAIN` / `// FLAGS`, relocheck OK) while an exe TU includes it
+  removes that row from `PROVISIONAL.tsv` in the same commit: `py.exe -3.12 re/tools/match/prov_drop.py` lists them
+  (dry run), `--apply` drops them. A stale row keeps the unit out of the object build (`ddkobj.py load_provisional`).
   Admitted or provisional is not C4 by that status alone (L-128): a body takes C4 only through the replay form of
   the frida route (`re/CONFIDENCE.md`, "C4 routes"): replay reference race with the inline JMP live, per-tick compare
   IDENTICAL-FOR-N, plus install check, body executed, no STUB and the Write-set leg (L-38 / L-40 / L-54). Tag
