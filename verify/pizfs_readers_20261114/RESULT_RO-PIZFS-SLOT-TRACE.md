@@ -5,7 +5,9 @@ L-157 follow-up to RO-PIZFS-UNMASKED-READERS (R4, the 11 [UNCERTAIN] `[reg+0x38]
 holds, and what each reader implies for masking the slots `0x008cd9c0..0x0090daaf`. **No mask applied, no mask
 table edited.** Masking returns to Mariano. No build, no gates.
 
-**Verdict: HANDOFF (static chain complete, confirming run not executed, section 5; open row RO-PIZFS-SLOT-LIST-RUN).** Every file pointer the 11 readers
+**Verdict: GREEN for the list and slot-state claims (static chain complete; confirming run executed 2026-11-15 under
+RO-PIZFS-SLOT-LIST-RUN, section 5). The audio-callback and `[s+0x0c]` claims of section 4 stay [UNCERTAIN] (the run
+does not observe them).** Every file pointer the 11 readers
 receive is a file object returned by FUN_00550580, the only producer in the RtFS code. FUN_00550580 gets it from
 `call [table+0x14]` (`0x005505a7`) on the table that the open path picked from the `0x007dc754` list. For the pizfs
 table that is a slot (`0x004b6630`), for the Win32 tables it is a 0x60-byte object in `[table+0x58]`. The list
@@ -128,36 +130,70 @@ listed. Chains for the callers:
 list, `call [t+0x14]` for every file, and for each file with `[file+0x20]` != 1 calls `[[file+0x38]+0x3c]`. For a pizfs
 slot `[t+0x3c]` = 0. So the original only runs without a crash if every pizfs slot has `[slot+0x20]` == 1 whenever
 FUN_00550be0 runs: no piz file is open across a FUN_00550be0 call. READERS-RUN saw 1802 `0x00550c07` reads in all
-windows and no crash. Section 5 reads the value.
+windows and no crash. Section 5.1: both slots read 1 at all 30 sampled instants.
 
 ## 5. Run (confirmation)
 
-**Not executed. The live list contents, and the value of `[slot+0x20]` when FUN_00550be0 runs, are [UNCERTAIN]
-(static only). Open row: RO-PIZFS-SLOT-LIST-RUN.**
+**Executed by RO-PIZFS-SLOT-LIST-RUN, 2026-11-15, original-side (`MASHED.exe` from the private root), three boots: menu
+(`--no-warp`), race track 0, race track 3. Each boot printed 10 `[peek]` rows (1 pre-setup menu row + 9 hold rows at
+about 3.6 s, hold 30 s), 30 rows in all. The two race boots printed `RACE RUNNING (phase 3)` and
+`VERDICT: launcher reached a running race and spawned a car. [OK]`. No `0x1509b4` / `0x0e66db` crash, no exception line.**
 
-- Prepared: private root `D:\MashedWT\RO-PIZFS-SLOT-TRACE_root` (robocopy of `original\`, `MASHED.exe` SHA-256
-  `b9977dab...fe87`, the same patched recipe as READERS-RUN). New read-only probe `--peek fslist` in
-  `re/frida/scenario_launch.py`: walks `[0x007dc754]` (max 16 tables) and prints for each table its address, `+0x04`,
-  `+0x10`, device `[+0x0c]`, name `+0x50`, the getter `+0x14` and the method words `+0x18..+0x4c`, and for each file
-  object (getter `0x004b6630` or `0x00550c30` only) `+0x18/+0x1c/+0x20/+0x28/+0x38`, plus the head, max, count and
-  default. Plain reads, no call, no hook, no write.
-- Command (from this worktree):
-  `MASHED_ROOT=D:/MashedWT/RO-PIZFS-SLOT-TRACE_root test-slot py -3.12 ../orch-integration/re/orchestrator/mashed_lock.py run --label RO-PIZFS-SLOT-TRACE -- py -3.12 re/frida/scenario_launch.py --track 0 --hold 10 --peek "fslist,007d3e54:u,007d3e58:u,0068f4cc:u"`
-- What happened: `test-slot` waited 10 min for memory (24 GB budget full), then queued for a slot while all 8 slots
-  were held by SimGolf and Simcity runs. The calling shell hit its 30-min background limit at about 22:07. The queued
-  test-slot process kept waiting and printed `acquired slot 1/8 after 2542s` (42 min) at about 22:20, then exited with
-  no further output: `mashed_lock.py run` and `scenario_launch.py` never printed, and no MASHED.exe was started.
-  [UNCERTAIN] why the chain exited after the slot: its parent shell was already gone. Not a game finding.
-  The log `fs_t0.log` holds only queue lines.
-- The probe was never exercised, so it is untested code. RO-PIZFS-SLOT-LIST-RUN runs the command above, when the
-  machine has a free slot, at the menu and in the race on tracks 0 and 3.
+The first attempt of the row's runner (same three boots) printed no peek data: the probe's JSON held a U+FFFD and the
+Python console (cp1252) failed on the print, and track 3 failed `could not attach`. Its logs are kept under
+`attempt1_encoding_fail/` (hashes below). The second attempt, `PYTHONIOENCODING=utf-8` added to `run_slotlist.sh`, is the
+evidence. Nothing in the probe or the game side changed between the attempts.
 
-What the run must show to close the [UNCERTAIN] claims:
-1. The tables on the list at menu and race time: which of the section 3 registrations ran (FUN_004624c0 with 5 files,
-   FUN_004955d0's cwd table and per-drive tables, the pizfs table), their order, and `[0x007dc76c]`.
-2. `[slot+0x20]` for both pizfs slots at each peek (section 4 requires 1 at every FUN_00550be0 call).
-3. `[slot+0x18]`, `+0x1c`, `+0x28` for both slots (static: `+0x18` = 0, `+0x1c` = 2 after the first successful open,
-   `+0x28` written only by an open with flag bit 0x10).
+### 5.1 Observed (all 30 rows; `slotlist_summary.txt` = `aggregate_slotlist.py` output)
+
+| item | observed | static claim it closes |
+|---|---|---|
+| list head `[0x007dc754]`, count `[0x007dc75c]`, max `[0x007dc758]` | 5 tables, count 5, max -1 (`0xffffffff`), the same in every row of every boot. Heap addresses differ per boot (head `0x0d7c1b70` menu and t3, `0x0d7d1b70` t0) | section 2 list head and count |
+| list order (head first) | (1) 5-file table, getter `0x00550c30`; (2) pizfs table, n 2, getter `0x004b6630`, device prefix `piz:`; (3) n 20 Win32 table, device prefix `D:`; (4) n 20, prefix `C:`; (5) n 20, prefix `D:\Mas`. Head insertion (`0x005504a9..0x005504c1`) makes the last registered the head, so registration order is (5), (4), (3), pizfs, (1). That is the section 3 order of sites: `0x00495663` cwd table, `0x00495700` per-drive tables, `0x004b66e9` pizfs, `0x004624d7` 5-file | section 3 (4 call sites, 5 tables on this machine: 2 logical drives) |
+| pizfs table method words `+0x18..+0x4c` | `0x45b350, 0, 0, 0, 0x4b6c00, 0x4b6f60, 0x4b6cd0, 0, 0x4b6ed0, 0, 0, 0x4b6f90, 0, 0x4b6ba0`: the section 2 table row for pizfs (`+0x34`, `+0x3c`, `+0x40`, `+0x48` = 0) | section 2 table, the "slot would call address 0" statements for `0x00550990` and `0x00550bd8` |
+| Win32 tables `+0x18` onward | `0x551290, [+0x1c varies], 0, 0, 0x550c50, 0x550d80, 0x550da0, 0x550f20, 0x551050, 0x551090, 0x551180, 0x5514e0, 0x5512b0, 0x5512d0` | section 2 Win32 column |
+| default `[0x007dc76c]` | the `D:` Win32 table (menu run `0x02df1b10`, equal to list entry 3), never the pizfs table, at menu and in both races | default-device paragraph of section 2 |
+| `[0x007d3e54]` | equals the pizfs table address in every boot (menu `0x02dfeda0`, t0 `0x02a2eda0`, t3 `0x02b1eda0`); constant over the hold | section 2, FUN_004b6940 / FUN_004b67a0 |
+| `[0x007d3e58]` | 0 in all 30 rows | none (raw value) |
+| `[0x0068f4cc]` | equals the 5-file table address (list head) in all rows | section 3 site `0x004624d2` |
+| pizfs slot 0 (`0x008cd9c0`): `+0x18` / `+0x1c` / `+0x20` / `+0x28` / `+0x38` | 0 / 2 / **1** / 0 / pizfs table, in all 30 rows | `+0x18` = 0, `+0x1c` = 2 after a successful open, `+0x28` untouched (no flag 0x10 open) |
+| pizfs slot 1 (`0x008eda38`) | 0 / 0 / **1** / 0 / pizfs table, in all 30 rows (never opened) | same |
+| Win32 files in the `D:` table (n 20, the default table) | 19 slots read 0 / 0 / 1 / 0 in every row. One slot (the second in the table, `0x02df8a50`-class address in the menu boot) reads 0 / 2 / 1 / 0 in the 10 menu-boot rows and in the pre-setup row of t0 and t3, and 1 / 2 / 2 / 1 in all 9 hold rows of t0 and of t3 (race) | not a pizfs claim. A Win32 file is open during the race with `+0x18` = 1 and `+0x20` = 2, values that no line of section 2 explains (`+0x18` = `[t+0x10]` = 0 at `0x00551397`): [UNCERTAIN], not followed up here |
+
+`[slot+0x20]` of both pizfs slots was 1 at every one of the 30 peeks, menu and both races. Section 4 requires 1 at every
+FUN_00550be0 call (`0x00550c07` / `0x00550c0c`). **Limit of the observation:** peeks are 3.6 s apart and
+FUN_00550be0 runs per frame, so a state of 5 or 2 shorter than 3.6 s would not show. Together with READERS-RUN (1802
+`0x00550c07` reads, no crash) the claim is: sampled at 30 instants it is 1, and the original does not crash.
+The device and name strings (`[t+0x0c]`, `+0x50`) read as the printable prefix followed by non-text bytes (the 32-byte
+`readCString` does not stop at a NUL where the prefix ends), so only the prefixes above are used.
+
+### 5.2 What this closes
+
+- Closed by the run: section 3 (the list holds exactly the pizfs table, one 5-file Win32 table, the cwd table and one
+  Win32 table per logical drive, in the order head-insertion gives); the two pizfs slots are idle (`+0x20` = 1) at every
+  sample at the menu and in the race on tracks 0 and 3; `+0x18` = 0 and `+0x28` = 0 on both slots (no flag-0x10 pizfs
+  open reached a slot); slot 0 has been opened once (`+0x1c` = 2), slot 1 never; the pizfs table is not the default device
+  while the menu and race run.
+- Not closed (stay [UNCERTAIN]): the audio async-open claim at `0x005ab0b6..0x005ab13e` (section 4, run-level), another
+  writer of `[s+0x0c]` outside FUN_004cc230 (section 4), what a pizfs slot's `+0x20` does between peeks, and the
+  Win32-file `+0x18` / `+0x20` values noted in 5.1.
+- New open row proposal: **RO-PIZFS-SLOT-WATCH**: a hardware or guard-page write watch on `0x008cd9c0 + 0x20` and
+  `0x008eda38 + 0x20` (access-watch tooling from READERS-RUN) during menu and a track-0 race, to read every `+0x20` write
+  and its PC. It would turn the sampled claim into a complete one.
+
+### 5.3 Setup and command
+
+- Private root `D:\MashedWT\RO-PIZFS-SLOT-TRACE_root` (robocopy of `original\`, `MASHED.exe` SHA-256 `b9977dab...fe87`,
+  the same patched recipe as READERS-RUN). Probe `--peek fslist` in `re/frida/scenario_launch.py` (committed in
+  `6f8a7ddad`): plain reads, no call, no hook, no write. The earlier queue-only attempt of run 47 produced only queue lines.
+- Run: `test-slot bash verify/pizfs_readers_20261114/run_slotlist_all.sh` (background, timeout 7200000 ms). It runs
+  `run_slotlist.sh` three times, each `test-slot` outside and `mashed_lock.py run --label RO-PIZFS-SLOT-LIST-RUN` inside,
+  with `MASHED_ROOT=D:/MashedWT/RO-PIZFS-SLOT-TRACE_root`, `--hold 30`,
+  `--peek "fslist,007d3e54:u,007d3e58:u,0068f4cc:u"` and `--no-warp` / `--track 0` / `--track 3`. test-slot waited 600 s
+  for memory (budget) and then logged `acquired slot 1/8 after 600s` in `all.log`; the boots ran on this PC (the
+  `[test-hub]` line does not appear in `all.log`).
+- Summary: `py -3.12 verify/pizfs_readers_20261114/aggregate_slotlist.py <fs_menu.log> <fs_t0.log> <fs_t3.log>`.
+
 
 ## 6. What each reader implies for masking the slots (stated, not decided)
 
@@ -180,7 +216,7 @@ Slot fields written by code outside `0x004b6xxx` (all in RtFS, all through a slo
 | `0x00550af8` | Reads `+0x38`, jumps to pizfs `0x004b6f90`. Its return goes to the RwStream caller (`0x004cbd79`, `0x004cc099`). Reads only. |
 | `0x00550bd8` | Reads `+0x38`, jumps to `[t+0x40]` = 0 for a slot. Its file comes from the audio async-open callback, which only Win32 code invokes. No slot implication. |
 | `0x00550dab`, `0x00550f28`, `0x00551097` | Win32-table methods only. Never see a slot. No slot implication. |
-| (not one of the 11) `0x00550c07` / `0x00550c0c`, FUN_00550be0 | Per-frame reads of slot `+0x20` and `+0x38`. A call into the slot's table happens only if `+0x20` != 1, and that call is to address 0. So on the original these reads have no effect beyond the compare while `+0x20` == 1 [UNCERTAIN until RO-PIZFS-SLOT-LIST-RUN reads the value]. The exe's list does not hold the pizfs table, so the exe does not do these reads. |
+| (not one of the 11) `0x00550c07` / `0x00550c0c`, FUN_00550be0 | Per-frame reads of slot `+0x20` and `+0x38`. A call into the slot's table happens only if `+0x20` != 1, and that call is to address 0. So on the original these reads have no effect beyond the compare while `+0x20` == 1 (section 5.1: `+0x20` = 1 on both slots at all 30 sampled peeks, not a complete record). The exe's list does not hold the pizfs table, so the exe does not do these reads. |
 
 Summary statements for the decision (not a decision):
 - No reader outside `0x004b6xxx` takes a value out of a slot except `+0x18`, `+0x20`, `+0x38` (compare or dispatch),
@@ -210,4 +246,14 @@ Raw data, `D:/MashedWT/RO-PIZFS-SLOT-TRACE_data` (SHA-256):
 
 | file | SHA-256 |
 |---|---|
-| fs_t0.log (queue lines only, no game output) | f18c2c5c66c514acce14bc3bc5442d9c53a211538d42ee28f13e2e6c69d2a24e |
+| fs_menu.log (evidence, 10 peek rows) | bfa90cb428b4ffe13c9346bf31dc2ef6c97e70cee6bd62779581ba8307616170 |
+| fs_t0.log (evidence, race track 0) | a3b5b2821aef1066d150f39297ffc364653aa9df4d169c77bc33f84a16934298 |
+| fs_t3.log (evidence, race track 3) | 5f31ccda7f3b69190ccdca9e59cc8ad6d72ddd8f1e3d3795d48fe5fe45e1cc59 |
+| all.log (queue + lock lines) | b866ea6e04f7130a44cc11f20367be042afde719cbb9c48bc0c44bb021eb53e3 |
+| attempt1_encoding_fail/fs_menu.log | 7dc60bb364b4f287ccce8a565e9ea89d1ab04c97292a60c10c1b7013ba1ddd02 |
+| attempt1_encoding_fail/fs_t0.log | e1a7c8d73ae145f907e52728f687a2411887773da3b3337bc4d63390658f11a2 |
+| attempt1_encoding_fail/fs_t3.log (could not attach) | d5d5ffe374538a0cafffd6029473ea85775a7b1a5a1fcf2cffba358a6680e4b1 |
+| attempt1_encoding_fail/all.log | bb7d3e4f6a35c72d6f4339364dc241a00b13893faa2dea8bd250188be0689a74 |
+
+Committed in this folder by RO-PIZFS-SLOT-LIST-RUN: `run_slotlist.sh`, `run_slotlist_all.sh`, `aggregate_slotlist.py`,
+`slotlist_summary.txt` (aggregator output over the three evidence logs).
