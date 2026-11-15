@@ -1,0 +1,63 @@
+{
+ "identical": 1547,
+ "different": 28,
+ "not_in_map": 15,
+ "functions": 1590,
+ "provisional_units_skipped": 199,
+ "units": 1741,
+ "units_linked": 1533,
+ "refusals": {
+  "fail:externalized-static-register-convention": 5,
+  "fail:wrapper-redefines-globals": 4
+ },
+ "skips": {
+  "skip:provisional": 199
+ },
+ "different_rvas": [
+  "0x00401690",
+  "0x004332a0",
+  "0x0043c5b0",
+  "0x0045c480",
+  "0x0045cd30",
+  "0x00475a00",
+  "0x004929d0",
+  "0x00498510",
+  "0x00498810",
+  "0x004c0c20",
+  "0x004c0f00",
+  "0x00554200",
+  "0x005a6b30",
+  "0x005a6e50",
+  "0x005a7810",
+  "0x005a78b0",
+  "0x005a8890",
+  "0x005a9970",
+  "0x005aa480",
+  "0x005aab00",
+  "0x005ad030",
+  "0x005ad320",
+  "0x005adb70",
+  "0x005ae210",
+  "0x005ae5b0",
+  "0x005ae610",
+  "0x005ae920",
+  "0x005aea60"
+ ],
+ "not_in_map_rvas": [
+  "0x004053d0",
+  "0x00405420",
+  "0x00405430",
+  "0x0041cb10",
+  "0x0041d6e0",
+  "0x00427680",
+  "0x004277a0",
+  "0x00458080",
+  "0x0045bac0",
+  "0x0045bba0",
+  "0x0045bf30",
+  "0x0048cee0",
+  "0x004cbad0",
+  "0x0052ddc0",
+  "0x005555b0"
+ ]
+}
