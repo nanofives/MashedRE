@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S28 0x005c47e0: 80.0% (regs 80.3%). Compile-fail raw rewritten: float10 returns as double (x87 st0), FUN_004d7ff0 is variadic (1 and 2 arg calls), err_t {code,val} frame struct, 14-dword read buffer, node copy via puVar1[0,1,2,4,5,6,8,9,10,12,13,14]; error branch moved to else; permuter reordered independent stores and used for-loops (+17.6). Residual: x87 compare shapes and schedule. Class: b. */
+/* MATCH-S28 0x005c47e0: 80.8% (regs 82.0%) since RWC-FRAME-BOOT-AV (the 0x004c1040 call takes its two arguments), was 80.0% (regs 80.3%). Compile-fail raw rewritten: float10 returns as double (x87 st0), FUN_004d7ff0 is variadic (1 and 2 arg calls), err_t {code,val} frame struct, 14-dword read buffer, node copy via puVar1[0,1,2,4,5,6,8,9,10,12,13,14]; error branch moved to else; permuter reordered independent stores and used for-loops (+17.6). Residual: x87 compare shapes and schedule. Class: b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -35,7 +35,7 @@ unsigned int FUN_004c0de0(int p0);
 void FUN_004c0e50(int p0);
 unsigned int FUN_004c0ef0(int p0);
 int FUN_004c0f00(int p0, int p1);
-int FUN_004c1040(void);
+int FUN_004c1040(int p0, int p1);   /* RWC-FRAME-BOOT-AV: two arguments as 0x004c0f00, pushed at 0x005c49f5 (edi) and 0x005c49fd (edx) before the call at 0x005c4a00 */
 double FUN_004c4220(float *p0);
 double FUN_004c4270(float *p0);
 double FUN_004c42d0(float *p0);
@@ -117,7 +117,7 @@ int *FUN_005c47e0(int param_1, int *param_2)
               FUN_004c0f00(*(int *)(*param_2 + 4 * buf[12]), iVar4);
             }
             else {
-              FUN_004c1040();
+              FUN_004c1040(*(int *)(*param_2 + 4 * buf[12]), iVar4);
             }
           }
         }

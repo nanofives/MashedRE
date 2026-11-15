@@ -887,7 +887,7 @@ rva	source	best_pct	exe_symbol	path	note
 0x0057c2e0	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_0057c2e0	MASHED_ORIG_TOP + MASHED_RWC_CORE	lifted naked-asm transcription (lift_rwcore.py), knob path only, never C4 by this status
 0x0057c5a0	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_0057c5a0	MASHED_ORIG_TOP + MASHED_RWC_CORE	lifted naked-asm transcription (lift_rwcore.py), knob path only, never C4 by this status
 0x005c4670	re/match/s28/005c4670.c	68.2	RwCore_005c4670	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
-0x005c47e0	re/match/s28/005c47e0.c	80.0	RwCore_005c47e0	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
+0x005c47e0	re/match/s28/005c47e0.c	80.8	RwCore_005c47e0	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x005c4c60	re/match/s28/005c4c60.c	93.0	RwCore_005c4c60	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x005cb000	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005cb000	MASHED_ORIG_TOP + MASHED_RWC_CORE	lifted naked-asm transcription (lift_rwcore.py), knob path only, never C4 by this status
 0x005cb07f	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_005cb07f	MASHED_ORIG_TOP + MASHED_RWC_CORE	lifted naked-asm transcription (lift_rwcore.py), knob path only, never C4 by this status
