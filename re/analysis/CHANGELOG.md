@@ -26,6 +26,28 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-15  0x005a5ee0  FUN_005a5ee0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a5ee0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005a5fd0  FUN_005a5fd0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a5fd0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005a6010  FUN_005a6010  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a6010.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005a6af0  FUN_005a6af0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a6af0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005a6e90  FUN_005a6e90  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a6e90.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005a9a70  FUN_005a9a70  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a9a70.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005aa520  FUN_005aa520  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005aa520.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005aafb0  FUN_005aafb0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005aafb0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005aafe0  FUN_005aafe0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005aafe0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005ab4a0  FUN_005ab4a0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005ab4a0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005ab510  FUN_005ab510  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005ab510.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005ab9d0  FUN_005ab9d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005ab9d0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005aba00  FUN_005aba00  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005aba00.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005ac550  FUN_005ac550  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005ac550.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005ac590  FUN_005ac590  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005ac590.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005acff0  FUN_005acff0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005acff0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005ada90  FUN_005ada90  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005ada90.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005add80  FUN_005add80  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005add80.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005addb0  FUN_005addb0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005addb0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005adf90  FUN_005adf90  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005adf90.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005adfc0  FUN_005adfc0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005adfc0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
+2026-11-15  0x005ae1d0  FUN_005ae1d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005ae1d0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
 2026-11-14  tag  7 hooks.csv rows  notes-only tag lever=volatile (c4_reclass tag): 0x004111c0 0x004dcbb0 0x00538310 0x0054d4d0 0x0054dbd0 0x005b1500 0x005baf60; verify/match_20261114/RESULT_MATCH-VOLATILE-TAG.md
 2026-11-14  0x004555d0  FUN_004555d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004555d0.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
 2026-11-14  0x00457b10  FUN_00457b10  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00457b10.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
