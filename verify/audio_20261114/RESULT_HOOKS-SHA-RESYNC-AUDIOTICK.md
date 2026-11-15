@@ -48,3 +48,34 @@ Evidence, all on the stack tip:
 Finding: static scope fully covered (the bind of 0x004540c0 and the 7 later entries exist on the tip). Candidate void.
 Remaining, only if the lead wants the arm proof: one image-arm run on the stack tip showing the control arms (vs_audio, ddk_audio) pass 0x004540c0 without a stop.
 The row is not set done here.
+
+## Run 48 (2026-11-15): refresh TSV, waits for the tool (C4RECLASS-SHA-REFRESH)
+Verdict: HANDOFF-pending-merge. `re/promotions/HOOKS-SHA-RESYNC-AUDIOTICK-refresh.tsv` (8 rows: the 7 above plus
+0x004624c0 / `re/match/s10/004624c0.c`, added to this row by the run 44 ledger note). Not enqueued: it needs the
+`refresh` subcommand of `re/tools/c4_reclass.py`, which is on orch/C4RECLASS-SHA-REFRESH and not yet merged.
+
+Which bytes the stored hash is: `re/tools/c4_reclass.py:352` (gate_match) `hashlib.sha256(path.read_bytes())`, the
+working-tree bytes, CRLF on these Windows checkouts (`core.autocrlf=true`). Recomputed both ways at the C4 tool
+branch base 37d117ca5: all 8 stored tokens equal the CRLF working-tree hash and none equals the LF blob hash
+(e.g. 0x00462dd0 stored ea5082998cc2a73b = CRLF, LF blob 58b4c3e5e9bfc2b2).
+
+The hashes are stale for a real reason: 7e5466a15 (PORT-TOP-AUDIO-HWINIT-4627F0) and 4c86fecfe
+(PORT-TOP-AUDIOTICK-STOPS) edited all 8 sources (12 insertions, 8 deletions). On orch/integration 790e30336 and on this
+branch every stored token matches NEITHER the CRLF nor the LF hash:
+
+| rva | stored | CRLF now | LF blob now |
+|---|---|---|---|
+| 0x00462dd0 | ea5082998cc2a73b | f60e8f24192c3ede | 24b9b73951b52081 |
+| 0x00462ec0 | aff0cadf0330f224 | 1438b096d167d07a | a508a23c5079b86d |
+| 0x0045cc50 | 07f440b85d1a5fb7 | cf6cfdbc4de09518 | 4a247b6a1faa4c84 |
+| 0x004645c0 | bb2e111af766ce04 | a1e7ac5ec33da862 | abbcdfbafb01ee7c |
+| 0x0045d250 | b636755ba58c30c7 | f029b17e7e9f13b4 | 31d635032db5ac29 |
+| 0x00411530 | 0f47729eea7fbbd5 | 314881c70136ec2b | 63e51c4432404225 |
+| 0x004115c0 | 30da0a03283117cd | 1d79ce9b946e624f | 54c0fdb23291ae03 |
+| 0x004624c0 | 15e45a1120a8730e | 28161552e4517d24 | bdb0408a4dee0804 |
+
+Dry run on this branch with the branch tool (temporary copy, not committed), `verify/audio_20261114/dryrun_refresh_20261115.txt`:
+8 would-refresh, 0 refused, 0 skipped, each still byte-identical + relocheck OK. A rehearsal `--apply --strict` on
+copies of hooks.csv / CHANGELOG.md (scratchpad, not the repo) wrote 8 rows and 8 CHANGELOG lines. The refresh writes
+the CRLF hash, the same convention as every existing `src sha256` token. Enqueue only after the tool merges and
+`re/tools/tests/test_c4_reclass.py` passes on the merged head.
