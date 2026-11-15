@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-15  0x0043c5b0  MenuDrawLoop  C4->C3  DEMOTED (L-163 a): no c4= route tag; June 2026 C4 evidence is an install and survival manifest with no orig-vs-modded diff; match 40.5% NOT-PROVEN (provisional, relocheck not run); no frida-replay RESULT; C3 kept (nav-driven draw-sequence diff GREEN 20/20); evidence: verify/trk_20261114/RESULT_TRK-0043C5B0-ROUTE.md
 2026-11-15  0x005a5ee0  FUN_005a5ee0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a5ee0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
 2026-11-15  0x005a5fd0  FUN_005a5fd0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a5fd0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
 2026-11-15  0x005a6010  FUN_005a6010  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s30/005a6010.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-RWAUDIO-TABLE-632BA8.md
