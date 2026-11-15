@@ -4202,6 +4202,37 @@ rpc.exports = {
     const out = {};
     for (const part of spec.split(',')) {
       if (!part) continue;
+      // [RO-PIZFS-SLOT-TRACE 2026-11-15] 'fslist': walk the RtFS table list at
+      // [0x007dc754] (next = [t+0], insert FUN_00550430 0x005504b2) and read each
+      // table's fields and its file objects. Plain reads, no call, no hook, no write.
+      // File object i = the value [t+0x14](t,i) returns for the two getters in the image:
+      // 0x004b6630 -> 0x008cd9c0 + i*0x20078 (0x004b663a), 0x00550c30 -> [t+0x58] + i*0x60
+      // (0x00550c40..0x00550c46). Other getters: files not read.
+      if (part === 'fslist') {
+        const tabs = [];
+        try {
+          const rs = (a) => { try { return a.isNull() ? null : a.readCString(32); } catch(e){ return 'ERR'; } };
+          let t = ga(0x7dc754).readPointer(); let guard = 0;
+          while (!t.isNull() && guard++ < 16) {
+            const g = t.add(0x14).readU32(), n = t.add(4).readS32();
+            const row = { t: t.toString(), n: n, f10: t.add(0x10).readU32(),
+              dev: rs(t.add(0xc).readPointer()), name: rs(t.add(0x50)), get: '0x' + g.toString(16), fn: [] , files: [] };
+            for (let o = 0x18; o <= 0x4c; o += 4) row.fn.push('0x' + t.add(o).readU32().toString(16));
+            for (let i = 0; i < Math.min(n, 32); i++) {
+              let f = null;
+              if (g === 0x4b6630) f = ptr(0x8cd9c0 + i * 0x20078);
+              else if (g === 0x550c30) f = t.add(0x58).readPointer().add(i * 0x60);
+              if (!f) break;
+              row.files.push([f.toString(), f.add(0x18).readU32(), f.add(0x1c).readU32(), f.add(0x20).readU32(),
+                              f.add(0x28).readU32(), '0x' + f.add(0x38).readU32().toString(16)].join('/'));
+            }
+            tabs.push(row); t = t.readPointer();
+          }
+          out.fslist = { head: ga(0x7dc754).readU32().toString(16), max: ga(0x7dc758).readS32(),
+                         count: ga(0x7dc75c).readS32(), deflt: ga(0x7dc76c).readU32().toString(16), tabs: tabs };
+        } catch(e){ out.fslist = 'ERR ' + e; }
+        continue;
+      }
       const bits = part.split(':');
       // a leading '@' means the hex is an ABSOLUTE address (a heap pointer read out
       // of an earlier peek), not an image RVA. Needed for the RenderWare device

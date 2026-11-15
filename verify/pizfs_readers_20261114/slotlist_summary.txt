@@ -1,0 +1,201 @@
+== D:/MashedWT/RO-PIZFS-SLOT-TRACE_data/fs_menu.log: 10 peek rows
+  menu (before setup): head=d7c1b70 max=-1 count=5 deflt=2df1b10
+    table ('0xd7c1b70', 5, '0x550c30', 'y;')
+    table ('0x2dfeda0', 2, '0x4b6630', 'piz:;')
+    table ('0x2df1b10', 20, '0x550c30', 'D:;NVI')
+    table ('0x2df1a98', 20, '0x550c30', 'C:;x')
+    table ('0x2df19f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2dfeda0', '0x8eda38/0/0/1/0/0x2dfeda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2df1b10': ['0/0/1/0/0x2df1b10', '0/2/1/0/0x2df1b10'], '0x2df1a98': ['0/0/1/0/0x2df1a98'], '0x2df19f8': ['0/0/1/0/0x2df19f8']}
+    globals: {'007d3e54': 48229792, '007d3e58': 0, '0068f4cc': 226237296}
+  +0.0s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +3.6s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +7.2s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +10.8s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +14.5s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +18.1s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +21.7s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +25.3s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+  +28.9s: head=d7c1b70 max=-1 count=5 deflt=2df1b10 SAME-AS-FIRST
+== D:/MashedWT/RO-PIZFS-SLOT-TRACE_data/fs_t0.log: 10 peek rows
+  menu (before setup): head=d7d1b70 max=-1 count=5 deflt=2a21b10
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '0/2/1/0/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +0.0s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +3.6s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +7.2s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +10.8s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +14.5s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +18.1s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +21.7s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +25.3s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+  +28.9s: head=d7d1b70 max=-1 count=5 deflt=2a21b10 DIFFERS-FROM-FIRST
+    table ('0xd7d1b70', 5, '0x550c30', 'zy3`p')
+    table ('0x2a2eda0', 2, '0x4b6630', 'piz:y3')
+    table ('0x2a21b10', 20, '0x550c30', 'D:y3cN')
+    table ('0x2a21a98', 20, '0x550c30', 'C:y3ex')
+    table ('0x2a219f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2a2eda0', '0x8eda38/0/0/1/0/0x2a2eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7d1b70': ['0/0/1/0/0xd7d1b70'], '0x2a21b10': ['0/0/1/0/0x2a21b10', '1/2/2/1/0x2a21b10'], '0x2a21a98': ['0/0/1/0/0x2a21a98'], '0x2a219f8': ['0/0/1/0/0x2a219f8']}
+    globals: {'007d3e54': 44232096, '007d3e58': 0, '0068f4cc': 226302832}
+== D:/MashedWT/RO-PIZFS-SLOT-TRACE_data/fs_t3.log: 10 peek rows
+  menu (before setup): head=d7c1b70 max=-1 count=5 deflt=2b11b10
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '0/2/1/0/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +0.0s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +3.6s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +7.2s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +10.8s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +14.5s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +18.1s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +21.7s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +25.3s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
+  +28.9s: head=d7c1b70 max=-1 count=5 deflt=2b11b10 DIFFERS-FROM-FIRST
+    table ('0xd7c1b70', 5, '0x550c30', 'y=h;P')
+    table ('0x2b1eda0', 2, '0x4b6630', 'piz:=d')
+    table ('0x2b11b10', 20, '0x550c30', 'D:=k;N')
+    table ('0x2b11a98', 20, '0x550c30', 'C:=m;x')
+    table ('0x2b119f8', 20, '0x550c30', 'D:\\Mas')
+    pizfs slots addr/+18/+1c/+20/+28/+38: ['0x8cd9c0/0/2/1/0/0x2b1eda0', '0x8eda38/0/0/1/0/0x2b1eda0']
+    win32 slot (+18/+1c/+20/+28/+38) sets per table: {'0xd7c1b70': ['0/0/1/0/0xd7c1b70'], '0x2b11b10': ['0/0/1/0/0x2b11b10', '1/2/2/1/0x2b11b10'], '0x2b11a98': ['0/0/1/0/0x2b11a98'], '0x2b119f8': ['0/0/1/0/0x2b119f8']}
+    globals: {'007d3e54': 45215136, '007d3e58': 0, '0068f4cc': 226237296}
