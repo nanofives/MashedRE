@@ -1,0 +1,21 @@
+[
+ {
+  "addr": 5587456,
+  "sym": "FUN_00554200",
+  "bytes_bad": 6,
+  "local_callees": [
+   "_FUN_00553e80"
+  ],
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "strict",
+  "rules": [
+   "A6-paired-pop",
+   "A6-pinned-pop",
+   "A7-stack-image",
+   "jmp-threading"
+  ],
+  "verdict": "EQUIV"
+ }
+]

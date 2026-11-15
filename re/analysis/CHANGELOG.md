@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-14  tag  7 hooks.csv rows  notes-only tag lever=volatile (c4_reclass tag): 0x004111c0 0x004dcbb0 0x00538310 0x0054d4d0 0x0054dbd0 0x005b1500 0x005baf60; verify/match_20261114/RESULT_MATCH-VOLATILE-TAG.md
 2026-11-14  0x004555d0  FUN_004555d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004555d0.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
 2026-11-14  0x00457b10  FUN_00457b10  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00457b10.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md
 2026-11-14  0x0045a790  FUN_0045a790  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a790.c; evidence: verify/portstate_20261114/RESULT_IMG-5-TEARDOWN-BODIES.md

@@ -38,7 +38,8 @@ int FUN_004cc5e0(int p0, int p1, int *p2, uint *p3);
 undefined4 FUN_004d7ff0(undefined4 p0);
 undefined4 *FUN_004d8480(Err *p0);
 int FUN_004e1b60(undefined4 *p0, int p1, int p2);
-int FUN_004e4dd0(int p0);// MATCH: 0x004e4c30 RpLightStreamRead
+int FUN_004e4dd0(int p0);
+// MATCH: 0x004e4c30 RpLightStreamRead
 int RpLightStreamRead(int stream)
 {
   int size;

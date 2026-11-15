@@ -1,0 +1,15 @@
+[portstate-image] range .rdata   va 0x005CC000 len 0x01D044 fnv1a32 0xEE647E46 copied
+[portstate-image] range .data    va 0x005EA000 len 0x04D000 fnv1a32 0x935B1E30 copied
+[portstate-image] range _rwdseg  va 0x00915000 len 0x000008 fnv1a32 0x9BE17165 copied
+[portstate-image] loaded D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS
+[portstate-image] witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 335 checks failed)
+[OT_CODEPTR] image slots (IMG-4, CODEPTR_IMAGE.tsv): image loaded; 75 written (75 bound to an exe body, 0 to a stop thunk), 0 refused (image dword != list), table 75
+[ORIG_TOP] MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over
+[ORIG_TOP] rdata seed: skipped, MASHED_PORTSTATE_IMAGE loaded the image
+[ORIG_TOP] cfglog: Calling AppDestroy
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=090A1168 0x006905b4=090A1528 0x0067f18c=090A0BC8 0x0067f190=090A1988, DAT_005f9bd8=9, DAT_00771a04=0, DAT_007f0a30=00000000, DAT_008a94a8=00000000
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) returned; then HandTop_AppDestroy for the exe audio / DirectInput / small.mpg
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames

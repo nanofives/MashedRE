@@ -123,7 +123,7 @@ def test_match_refusals(mod, tmp_path, capsys, ev, needle):
 def test_toolchain_must_be_ddk(mod, tmp_path, capsys):
     mod._evals["src/00426070.c"]["_toolchain"] = "vc19"
     batch(mod, tmp_path, [("0x00426070", "match", "src/00426070.c")])
-    assert "is not the recorded compiler" in capsys.readouterr().out
+    assert "is not a recorded compiler" in capsys.readouterr().out
 
 
 def test_second_apply_is_a_noop(mod, tmp_path, capsys):
@@ -132,3 +132,47 @@ def test_second_apply_is_a_noop(mod, tmp_path, capsys):
     batch(mod, tmp_path, ROWS, "--apply", "--result", "ev.md")
     assert (tmp_path / "hooks.csv").read_bytes() == h
     assert "batch: 0 pass" in capsys.readouterr().out.splitlines()[-2]
+
+
+def tag(m, tmp_path, rows, *extra):
+    t = tmp_path / "tag.tsv"
+    t.write_text("rva\ttag\n" + "".join("\t".join(r) + "\n" for r in rows))
+    return m.main(["tag", "--tsv", str(t), "--date", "2026-11-14", *extra])
+
+
+def test_tag_dry_run_writes_nothing(mod, tmp_path, capsys):
+    before = (tmp_path / "hooks.csv").read_bytes()
+    assert tag(mod, tmp_path, [("0x00426090", "lever=volatile")]) == 0
+    assert "would-tag" in capsys.readouterr().out
+    assert (tmp_path / "hooks.csv").read_bytes() == before
+
+
+def test_tag_apply_is_notes_only_and_idempotent(mod, tmp_path, capsys):
+    rows = [("0x00426090", "lever=volatile"), ("00426070", "lever=volatile")]
+    assert tag(mod, tmp_path, rows, "--apply", "--result", "ev.md") == 0
+    after = (tmp_path / "hooks.csv").read_bytes().decode()
+    assert "old | lever=volatile" in after and "\"over, quoted | lever=volatile\"" in after
+    assert "00426090,FUN_00426090,frontend,C4,impl" in after and "00426070,TrackPhysWorld2Get,render,C3,impl" in after
+    assert after.count("lever=volatile") == 2 and "00426080,FUN_00426080,frontend,C2,mapped,,,,,\r\n" in after
+    cl = (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_text()
+    assert cl.count("notes-only tag lever=volatile") == 1 and cl.index("<!-- ENTRIES -->") < cl.index("notes-only tag")
+    hooks_1, cl_1 = after, cl
+    assert tag(mod, tmp_path, rows, "--apply") == 0
+    assert "nothing to write" in capsys.readouterr().out
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == hooks_1
+    assert (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_text() == cl_1
+
+
+def test_tag_refuses_missing_row_and_strict(mod, tmp_path, capsys):
+    before = (tmp_path / "hooks.csv").read_bytes()
+    assert tag(mod, tmp_path, [("00426090", "lever=volatile"), ("0x0000dead", "lever=volatile")], "--apply", "--strict") == 1
+    assert "no hooks.csv row" in capsys.readouterr().out
+    assert (tmp_path / "hooks.csv").read_bytes() == before
+
+
+def test_batch_lever_column_tags_promoted_row(mod, tmp_path):
+    t = tmp_path / "batch.tsv"
+    t.write_text("rva\troute\tevidence\tlever\n0x00426070\tmatch\tsrc/00426070.c\tlever=volatile\n")
+    assert mod.main(["batch", "--tsv", str(t), "--date", "2026-11-14", "--apply", "--result", "ev.md"]) == 0
+    row = [l for l in (tmp_path / "hooks.csv").read_bytes().decode().split("\r\n") if l.startswith("00426070")][0]
+    assert ",C4," in row and "ev.md | lever=volatile\"," in row

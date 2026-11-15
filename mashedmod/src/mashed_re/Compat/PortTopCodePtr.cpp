@@ -95,8 +95,10 @@ unsigned PortTopCodePtr_Apply(const char* logPath) {
     // no body for (the first stop is 0x004568a0 through slot 0x005f99b0, RESULT_PORT-OT-SEED-CODEPTR.md), where
     // without it the same boot runs its 600 frames. Off: no write, one log line.
     char on[8] = {};
-    if (!(GetEnvironmentVariableA("MASHED_OT_CODEPTR", on, sizeof(on)) > 0 && on[0] && on[0] != '0')) {
-        CodePtrLog("off (MASHED_OT_CODEPTR unset): no slot written");
+    // IMG-5-ORIGTOP-DEFAULT: default ON on the ORIG_TOP path (image-ON boots need the bound slots); MASHED_OT_CODEPTR=0 opts out.
+    const bool cpOn = !(GetEnvironmentVariableA("MASHED_OT_CODEPTR", on, sizeof(on)) > 0 && on[0]) || on[0] != '0';
+    if (!cpOn) {
+        CodePtrLog("off (MASHED_OT_CODEPTR=0): no slot written");
         return 0;
     }
     const std::uintptr_t lo = reinterpret_cast<std::uintptr_t>(&g_b17_low_arena_pad[0]);

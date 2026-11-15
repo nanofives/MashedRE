@@ -1,0 +1,139 @@
+# RESULT IMG-5-ORIGTOP-DEFAULT: image default ON on the MASHED_ORIG_TOP path (L-149 (a) step 5, L-151 (a))
+
+Row `IMG-5-ORIGTOP-DEFAULT` (D4, run 46). Branch `orch/IMG-5-ORIGTOP-DEFAULT` from `orch/integration` @ `d1e5ac586`.
+
+## Verdict: GREEN (decided flip, L-159 (a))
+
+Mariano answered L-159 (a): ON (`MASHED_PORTSTATE_IMAGE` + `MASHED_OT_CODEPTR`) is the `MASHED_ORIG_TOP` default. The ON logs differ from the OFF logs
+by 451 masked lines (section "Compare"), which is the intended behaviour of the image (the real teardown bodies run), so the flip is a decided change and not an auto P1.
+No new game runs were needed. Gates not run here (top-down row, merge train runs them). IMG-5-TEARDOWN-NULLS and RWC-NULL-DESTROY-GUARD stay open, the guard is untouched.
+
+Statement (verbatim): no AV rests on the run-45 null guard, 130 of 286 teardown destroys receive 0, cause open in IMG-5-TEARDOWN-NULLS.
+
+## ON reference (knob path, committed)
+
+`verify/portstate_20261114/img5_origtop_on_ref/` holds the masked ON logs (default build on1, on2, object build on1; same filter as `img5_origtop_cmp2.py`, script `mask.py`),
+the loader/self-test lines the mask drops (`*.selftest_lines.txt`), the compare outputs (`cmp2.txt`, `cmp2_full.txt`, `cmp2_obj_full.txt`) and `SHA256SUMS.txt`.
+The three masked ON logs are byte-identical (sha256 55cf8b24f92be764e9f2925bc0343fb2379d7fe163c97c7e9c960554684fb87c, 1749 lines), so default and object build agree.
+Raw logs stay in `D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/` (sha256 below).
+
+## Caveat (verbatim from the lead)
+
+IMG-5's image-ON boots reach AppDestroy with no AV only under the run-45 null guard, with 130 of 286 teardown destroys called with 0
+([UNCERTAIN], cause open in IMG-5-TEARDOWN-NULLS). Do not read "no AV" as "no init or load stand-in left". The null guard is untouched
+(separate row RWC-NULL-DESTROY-GUARD).
+
+## What changed (2 files, knob path only)
+
+- `Compat/PortStateImage.cpp` `PortStateImage_On()`: unset now means ON, `MASHED_PORTSTATE_IMAGE=0` opts out. Its only caller is WinMain's
+  `origTop` branch (`exe_main.cpp:10649`), so the default (hand) path never consults it.
+- `Compat/PortTopCodePtr.cpp` `PortTopCodePtr_Apply()`: `MASHED_OT_CODEPTR` unset now means ON, `=0` opts out. Also called only under `origTop`
+  (`exe_main.cpp:10657`). It moves with the image because image-ON boots need the bound slots (RESULT_IMG-5-TEARDOWN-BODIES: without them slot
+  0x005f99b0 keeps its original `.text` address).
+- Scope: the code-pointer binding now also runs on the image-OFF seed path unless `=0`. The OFF arms set both opt-outs, which equals the previous default.
+- Not changed: `MASHED_CODE_TRAP` (stays default OFF, its default is a separate decision), the null guard, the hand path, the gates.
+
+## Boot arms (one default-build exe, 3000 frames, `MASHED_ORIG_TOP=1`, test-slot outside, `mashed_lock.py run` inside, private root)
+
+OFF = `MASHED_PORTSTATE_IMAGE=0 MASHED_OT_CODEPTR=0`. ON = neither set. `hand` = no `MASHED_ORIG_TOP`, 600 frames.
+
+| arm | rc | time | log sha256 |
+|---|---|---|---|
+| off1 | 0 | 32.5 s | 9778b93a625c854c... |
+| on1 | 0 | 148.5 s (includes lock queue time inside the run) | 950e62dcb2a1136c... |
+| off2 | 0 | 37.6 s | 830946b18a9eed5f... |
+| on2 | 0 | 30.9 s | 8f024c57225d7b84... |
+| hand (default path) | 0 | 20.0 s | dab220241e1a9e92... |
+
+Every ON arm ends `[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames`.
+
+ON self-tests (on1 and on2, same lines): `[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS`,
+`witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188`,
+`[portstate-image] ... self-test PASS (0 of 8 checks failed)`, `[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk) ... self-test PASS (0 of 335 checks failed)`.
+
+## Compare (method: `verify/portstate_20261114/img5_origtop_cmp2.py`, raw output `cmp2_full.txt`)
+
+Each log is read line by line. Dropped before comparing: the region-map lines (`COMMIT`, `--- totals`), `cfglog:` timestamps, the `PC_24 after device`
+thread id, the `INTRO movie` and `det freeze` timing lines, and the loader/seed self-report lines (`[portstate-*]`, `[OT_CODEPTR]`, `rdata seed`), which
+differ by design. 8-digit hex values, `tid=`, and durations are masked. Remaining lines are diffed with `difflib`.
+
+| pair | lines | differing |
+|---|---|---|
+| off1 vs off2 | 1302 / 1302 | 0 |
+| on1 vs on2 | 1749 / 1749 | 0 |
+| off1 vs on1 | 1302 / 1749 | 451 |
+| off2 vs on2 | 1302 / 1749 | 451 |
+
+So each side is repeatable on its own, and OFF against ON differs the same way both times. The 451 lines are:
+- 448 `[RW_BIND]` lines (RpClumpDestroy, RpAtomicDestroy, RwTextureDestroy, RwGlobals +0x10c free) that appear only in ON, in the AppDestroy teardown;
+- `type table +0x14 slots: 9 init pointers stored ... 0 already non-zero` (OFF) against `8 ... 1 already non-zero` (ON);
+- `type table entry 0: ... matched body returned, first clone` present only in OFF.
+
+Everything before the teardown, and the exit code, is the same. No pixel captures (nav-demo walk or draw-list) were taken: the knob boots here are
+log-only, and the row changed no menu code.
+
+## Object build (`MASHED_DDKOBJ=1`, NO_DEPLOY)
+
+- `=== Build OK ===`, log `build_ddkobj.log`. `ddkobj.py check`: IDENTICAL 1241 of 1275, DIFFERENT 19, not-in-map 15, units linked 1222/1501,
+  refusals 9 (externalized-static-register-convention 5, wrapper-redefines-globals 4).
+- DIFFERENT list: `0x00401690 0x004332a0 0x0043c5b0 0x0045a3a0 0x00475a00 0x004929d0 0x00493710 0x00493900 0x00498510 0x00498810 0x004c0c20 0x004c0f00`
+  (the 12 of the previous rows) plus `0x00552890 0x005530f0 0x005533d0 0x005538a0 0x00554200 0x00554940 0x005572c0`. This row edits only the two Compat files
+  above, so it did not touch those units. [UNCERTAIN] The baseline of `orch/integration` @ d1e5ac586 was not measured here. Test: run `ddkobj.py check`
+  on that head. Missing: that baseline.
+- Object-build knob boot (added 2026-11-14, lead follow-up): see "Object-build boot arms" below.
+
+## Object-build boot arms (exe = `mashedmod/build/mashed_re.exe` from the `MASHED_DDKOBJ=1` + `MASHED_NO_DEPLOY=1` build, copied to `mashed_re_ddkobj.exe`, sha256 a646c527e0b9b4e2665b73be264dde8c4694daf922e8cbd02e3c012ba7fd5ec3)
+
+Same method as the default-build arms (`boots_obj.sh`: test-slot outside, `mashed_lock.py run` inside, private root `D:\MashedWT\IMG-5-ORIGTOP-DEFAULT_root`, 3000 frames, `MASHED_ORIG_TOP=1`, `PROYECTOS_TEST_HUB` untouched). One pass only (off1, on1), not OFF/ON/OFF/ON. Slot wait 600 s (memory gate), lock queue behind a merge-train SOLO.
+OFF = `MASHED_PORTSTATE_IMAGE=0 MASHED_OT_CODEPTR=0`. ON = neither set.
+
+| arm | rc | time | AppDestroy reached | WinMain line | log sha256 |
+|---|---|---|---|---|---|
+| off1 | 0 | 36.7 s | yes (`AppDestroy (matched) enter` and `returned`) | `[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames` | 5b8758c23fb35790adb23b3b0e1b79f49b19249fd2680e02b66b77b2bef99e30 |
+| on1 | 0 | 44.3 s | yes (`AppDestroy (matched) enter` and `returned`) | `[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames` | 896327d7cfccde4555f7109741031b9ffaadbb72490f3bbffb9bebddccbf7e36 |
+
+Self-test lines. OFF: `[portstate-seed] on entries=272/272 ...`, `[OT_CODEPTR] off (MASHED_OT_CODEPTR=0): no slot written`. ON: `witness PortStateSeed: 272/272 entries equal ... PASS`,
+`witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188`, `[portstate-image] ... self-test PASS (0 of 8 checks failed)`,
+`[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk) ... self-test PASS (0 of 335 checks failed)`, and `[OT_CODEPTR] image slots (IMG-4): 75 written (75 bound to an exe body), 0 refused`.
+
+OFF-vs-ON compare (`img5_origtop_cmp2_obj.py`, same filters as cmp2, raw output `cmp2_obj_full.txt` sha256 7029f7293f20d54e917e2ce81f91edbc6042d595d04397f6419a787f7c4ad89b):
+1302 / 1749 lines, 451 differing. Identical in shape to the default build: 448 `[RW_BIND]` teardown lines plus the 3 POWERUPINIT-A init/entry lines. Verdict stays DECISION.
+The object build changes nothing about the L-159 question: it boots and exits the same way as the default build.
+
+Caveat (verbatim, applies to these ON arms too): IMG-5's image-ON boots reach AppDestroy with no AV only under the run-45 null guard, with 130 of 286 teardown destroys called with 0
+([UNCERTAIN], cause open in IMG-5-TEARDOWN-NULLS). Do not read "no AV" as "no init or load stand-in left". The null guard is untouched (separate row RWC-NULL-DESTROY-GUARD).
+
+Raw files (not committed): `D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots_obj/{off1,on1}.log`, `boots_obj.sh`, `boots_obj.out`, `mashed_re_ddkobj.exe`.
+
+## Not run
+
+G-CTRL / B / 12x4 captures (top-down row, merge train runs the default gates); menu walk (no menu code changed);
+`MASHED_CODE_TRAP` arms (knob untouched).
+
+## Decision for Mariano (answered: L-159 (a), 2026-11-14)
+
+- (a) **CHOSEN.** Accept ON as the ORIG_TOP default. The log difference is the teardown now running the real matched bodies, plus the loader lines. Recommended, but it
+  rests on the caveat above: the ON teardown reaches AppDestroy only under the null guard, so its "no AV" is not evidence of a complete init.
+- (b) Hold the default OFF until IMG-5-TEARDOWN-NULLS explains the 130 null destroys, then re-run these arms.
+- (c) Make only the image default and leave `MASHED_OT_CODEPTR` opt-in. Not recommended: image-ON without the bound slots leaves slot 0x005f99b0 at its original `.text` address.
+
+## Raw files (not committed), sha256
+
+```
+9778b93a625c854cce77ac356d75f3ee393af50866653050d9daf7285da187de  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots/off1.log
+950e62dcb2a1136c1cab1e43befb7fd701b20ee8f70841ae4ad0a00768a5729d  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots/on1.log
+830946b18a9eed5f80f8faf61fa86ef29607ee20e079faa49101e1a8c968142f  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots/off2.log
+8f024c57225d7b84d8a0a27f5b50ea75352b0892e8bcc28f3901bed801619817  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots/on2.log
+dab220241e1a9e92ef70190555ca59bbfb8118261b63b91bc5428d033f19e173  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots/hand.log
+dbfd845ba9948b01df86443157baa97aa75884cf53027bfeaa6fd1aa35ca7023  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots.sh
+ca43f2824a98e9104e1725017354cb2d535a35867190cabf2226a592395a3696  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots.out
+2954d327c7daa1fc70106c5ad6c9b71dba10c206f4e9b6a5df28e997473e6120  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/build_default.log
+52587045def77b8b4ee219a3264f2dfdf1dd59b868727fa99ca598f4fb2a17df  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/build_ddkobj.log
+e4c2205d5625bfe94c7a6c5926d9eeb65790a9cd8b997e41a511a42d00fa124c  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/ddkobj_check.txt
+c7f59dc04bdf88ab645f8de8b0b54946c0c84a9d9ed88f52171e8e32db9e2200  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/cmp2.txt
+23747aa719f240a34cc9571a5fedc964628793d0f543728ed5f104e150727f93  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/cmp2_full.txt
+fbaaea5e454f3aaf4cc268ba7e24bb2f2d6f302eafaf064b1e1e6622417ef4a8  D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/mashed_re_default.exe
+```
+
+Raw object-build logs (sha256): 5b8758c23fb35790adb23b3b0e1b79f49b19249fd2680e02b66b77b2bef99e30 `D:/MashedWT/IMG-5-ORIGTOP-DEFAULT_data/boots_obj/off1.log`,
+896327d7cfccde4555f7109741031b9ffaadbb72490f3bbffb9bebddccbf7e36 `.../boots_obj/on1.log`, a646c527e0b9b4e2665b73be264dde8c4694daf922e8cbd02e3c012ba7fd5ec3 `.../mashed_re_ddkobj.exe`.

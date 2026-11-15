@@ -172,7 +172,9 @@ namespace Compat {
 bool PortStateImage_On() {
     static const bool s_on = [] {
         char v[8] = {};
-        return GetEnvironmentVariableA("MASHED_PORTSTATE_IMAGE", v, sizeof(v)) > 0 && v[0] && v[0] != '0';
+        // IMG-5-ORIGTOP-DEFAULT: default ON on the MASHED_ORIG_TOP path (the only caller); MASHED_PORTSTATE_IMAGE=0 opts out.
+        if (GetEnvironmentVariableA("MASHED_PORTSTATE_IMAGE", v, sizeof(v)) > 0 && v[0]) return v[0] != '0';
+        return true;
     }();
     return s_on;
 }
