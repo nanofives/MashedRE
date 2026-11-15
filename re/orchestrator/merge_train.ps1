@@ -266,7 +266,11 @@ function Get-BuildMatchRefs([string]$wt) {
   return @($set)
 }
 # One changed path: text-only by the globs, or under a text_only_unless_built root and not read by the build.
+# HB-TRAIN-MATCHTABLES-BUILD: the match tables decide which units ddkobj.py links, so a change to one is never text-only
+# (it needs at least the object build and ddkobj.py check), whatever folder holds it and whatever the text-only globs say.
+function Test-MatchTablePath([string]$f) { return ([IO.Path]::GetFileName($f) -match '^(ADMITTED|PROVISIONAL|PROVISIONAL_RWC|REFUSED_UNITS)\.tsv$') }
 function Test-TextOnlyPath([string]$f, $matchRefs) {
+  if (Test-MatchTablePath $f) { return $false }
   if (Like-Any $f $CFG.text_only_globs) { return $true }
   $roots = @($CFG.text_only_unless_built); if (-not $roots.Count -or -not $roots[0]) { $roots = @('re/match/') }
   foreach ($r in $roots) {
@@ -1164,7 +1168,9 @@ if ($SelfTest) {
   Put 're\match\rsp1\a.c' "int a;`n"
   Put 're\match\s99\00499999.c' "int g(void){return 2;}`n"
   Put 're\match\s99\RESULT.json' "{}`n"
-  Git -C $fake add mashedmod re | Out-Null; Git -C $fake commit -q -m 'match base' | Out-Null
+  New-Item -ItemType Directory -Force -Path (Join-Path $fake 'verify\rwc') | Out-Null
+  Put 're\match\ADMITTED.tsv' "rva`tstatus`n"; Put 're\match\PROVISIONAL.tsv' "rva`tstatus`n"; Put 're\match\REFUSED_UNITS.tsv' "unit`treason`n"; Put 'verify\rwc\PROVISIONAL_RWC.tsv' "rva`tstatus`n"
+  Git -C $fake add mashedmod re verify | Out-Null; Git -C $fake commit -q -m 'match base' | Out-Null
   $mrefs = @(Get-BuildMatchRefs $fake)
   Check ((($mrefs | Sort-Object) -join ',') -eq 're/match/rsp1/a.c,re/match/t01g/004111c0.c,re/match/t01g/common.h') "match-textonly: build refs = rsp entry + #include from a mashedmod TU + the include inside it ($(($mrefs | Sort-Object) -join ','))"
   $mcases = [ordered]@{
@@ -1173,11 +1179,15 @@ if ($SelfTest) {
     'm-trans'  = @{ files = @('re\match\t01g\common.h'); text = $false }
     'm-rsp'    = @{ files = @('re\match\rsp1\a.c'); text = $false }
     'm-mix'    = @{ files = @('re\match\s99\00499999.c', 'mashedmod\src\mashed_re\Match\MatchT01g.cpp'); text = $false }
+    'm-tbl-adm' = @{ files = @('re\match\ADMITTED.tsv'); text = $false; tbl = $true }
+    'm-tbl-prov' = @{ files = @('re\match\PROVISIONAL.tsv'); text = $false; tbl = $true }
+    'm-tbl-ref' = @{ files = @('re\match\REFUSED_UNITS.tsv'); text = $false; tbl = $true }
+    'm-tbl-rwc' = @{ files = @('verify\rwc\PROVISIONAL_RWC.tsv'); text = $false; tbl = $true }
   }
   foreach ($k in $mcases.Keys) {
     Git -C $fake checkout -q -b "step-$k" integration | Out-Null
     foreach ($fl in $mcases[$k].files) { Put $fl "// changed by $k`n$((Get-Content (Join-Path $fake $fl) -Raw))" }
-    Git -C $fake add mashedmod re | Out-Null; Git -C $fake commit -q -m "step $k" | Out-Null
+    Git -C $fake add mashedmod re verify | Out-Null; Git -C $fake commit -q -m "step $k" | Out-Null
     Git -C $fake checkout -q integration | Out-Null
   }
   $base = (Git -C $fake rev-parse integration) | Select-Object -First 1
@@ -1185,6 +1195,7 @@ if ($SelfTest) {
     $res = Try-Batch @(@{ id = "T-$k"; branch = "step-$k" })
     if ($mcases[$k].text) { Check ($res.ok -and $res.textOnly -and $res.gates -match '^not run: text-only') "match-textonly: $k (re/match files no build reads) = text-only, no build, no gates (gates '$($res.gates)')" }
     else { Check (-not $res.textOnly -and $res.why -match '^build failed') "match-textonly: $k = not text-only, the train goes on to the build (fake repo has no build.bat: '$($res.why)')" }
+    if ($mcases[$k].tbl) { Check (-not $res.textOnly -and $res.gates -notmatch '^not run: text-only' -and $res.why -match '^build failed') "matchtables-build: $k (a match table decides which units ddkobj links) is not text-only, the pass goes on to the build with the object build (gates '$($res.gates)', '$($res.why)')" }
     Remove-Temp $res.wt
   }
   $FullEff = $true
@@ -1195,6 +1206,7 @@ if ($SelfTest) {
   Check ((@(Get-BuildMatchRefs $fake) -join ',') -eq '*') 'match-textonly: a build script naming re/match makes every re/match file a build input'
   Remove-Item -LiteralPath (Join-Path $fake 'mashedmod\build_objs.ps1') -Force
   Check (-not (Test-TextOnlyPath 're/match/s99/x.c' @('*')) -and (Test-TextOnlyPath 're/match/s99/x.c' @('re/match/t01g/a.c')) -and -not (Test-TextOnlyPath 're/matchx/a.c' @()) -and -not (Test-TextOnlyPath 're/tools/match/match.py' @())) 'match-textonly: Test-TextOnlyPath only frees re/match/ (not re/matchx/, not re/tools/match/)'
+  Check ((Test-MatchTablePath 're/match/ADMITTED.tsv') -and (Test-MatchTablePath 're/match/PROVISIONAL.tsv') -and (Test-MatchTablePath 're/match/REFUSED_UNITS.tsv') -and (Test-MatchTablePath 'verify/x/PROVISIONAL_RWC.tsv') -and -not (Test-MatchTablePath 're/match/s99/NOTES.tsv') -and -not (Test-MatchTablePath 're/match/ADMITTED.tsv.bak') -and -not (Test-TextOnlyPath 're/match/ADMITTED.tsv' @()) -and -not (Test-TextOnlyPath 'verify/x/PROVISIONAL_RWC.tsv' @()) -and (Test-TextOnlyPath 'verify/x/other.tsv' @())) 'matchtables-build: Test-TextOnlyPath is false for the four match tables (any folder, even under verify/*), other tsv files stay text-only'
   # -Full only with a decided flip
   Check (-not (Resolve-FullFlag $true $false @()) -and (Resolve-FullFlag $true $false @('X-FLIP')) -and (Resolve-FullFlag $false $true @()) -and -not (Resolve-FullFlag $false $false @('X-FLIP'))) 'match-textonly: -Full counts only with a decided flip in the batch, -ForceFull always, no flag never'
   # live tree: the spec's example is a build input, and most of re/match is not
