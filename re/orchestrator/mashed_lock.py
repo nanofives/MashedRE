@@ -108,6 +108,16 @@ import uuid
 # MASHED_LOCK_DIR redirects every lock/solo/priority file (HB-MASHEDLOCK-RACE: the
 # concurrency self-test must not touch the live files other sessions hold).
 LOCK_DIR = os.environ.get('MASHED_LOCK_DIR') or tempfile.gettempdir()
+# HB-MASHEDLOCK-TEMPGLOB: priority/linger markers stay in LOCK_DIR by default, because
+# MachineLock.ps1 and merge_train.ps1 read and write them in $env:TEMP (a move would split the
+# two languages' view; .ps1 edits are outside this row). They are enumerated with os.scandir
+# and a prefix filter, not glob. MASHED_LOCK_MARKER_DIR opts into a small dedicated directory
+# (python side only; legacy %TEMP% markers are then read only with MASHED_LOCK_LEGACY_SCAN=1).
+
+
+def _marker_dir_cfg():
+    # resolved per call: self-tests reassign ml.LOCK_DIR after import
+    return os.environ.get('MASHED_LOCK_MARKER_DIR') or LOCK_DIR
 DEFAULT_NAME = 'mashed_machine'
 EMPTY_GRACE_SEC = 10     # an empty/unparsable lock file younger than this is a writer mid-create
 SOLO_ENV = 'MASHED_LOCK_SOLO_TOKEN'
@@ -115,6 +125,26 @@ SOLO_TTL_SEC = 3600      # default solo window expiry, run --solo and solo-begin
 REMOVE_TRIES = 8         # HB-MASHEDLOCK-RACE: Windows sharing violations on remove clear in ms
 PRIO_GRACE_SEC = 300     # a priority marker outlives its requester's wait by this much
 PRIO_SOLO_LINGER_SEC = 120   # new solo opens keep yielding this long after a priority release
+
+
+def _scan_locks(prefix, suffix='.lock'):
+    """HB-MASHEDLOCK-TEMPGLOB: paths in LOCK_DIR named `prefix*suffix`. os.scandir with a
+    plain startswith filter instead of glob.glob, over the marker dir (see the cut note there)."""
+    out = []
+    md = _marker_dir_cfg()
+    dirs = [md]
+    if md != LOCK_DIR and os.environ.get('MASHED_LOCK_LEGACY_SCAN') == '1':
+        dirs.append(LOCK_DIR)
+    for d in dirs:
+        try:
+            with os.scandir(d) as it:
+                for e in it:
+                    n = e.name
+                    if n.startswith(prefix) and n.endswith(suffix):
+                        out.append(e.path)
+        except OSError:
+            pass
+    return out
 
 
 def _lock_path(name):
@@ -189,6 +219,13 @@ def _owner_dead(o):
     return bool(rec) and now is not None and abs(now - rec) > 2.0
 
 
+def _status_alive(o):
+    """HB-MASHEDLOCK-STATUS-PIDREUSE: `status` liveness with the same owner_start check
+    acquire uses (_holder_stale), so a reused PID is not reported alive."""
+    pid = o.get('pid')
+    return bool(pid) and _pid_alive(pid) and not _owner_dead(o)
+
+
 def _holder_stale(path, o):
     """HB-LOCKBREAK: True when the game-lock record at `path` (parsed as `o`) has no live
     holder. Liveness alone decides, never age. PID reuse is caught by `owner_start`
@@ -249,16 +286,23 @@ def _solo_path(name):
     return os.path.join(LOCK_DIR, name + '_solo.lock')
 
 
+def _marker_dir():
+    try:
+        os.makedirs(_marker_dir_cfg(), exist_ok=True)
+    except OSError:
+        pass
+    return _marker_dir_cfg()
+
+
 def _prio_path(name, pid=None):
-    return os.path.join(LOCK_DIR, f"{name}_prio_{pid or os.getpid()}.lock")
+    return os.path.join(_marker_dir(), f"{name}_prio_{pid or os.getpid()}.lock")
 
 
 def prio_pending(name=DEFAULT_NAME, ignore_pid=None):
     """Live priority markers for `name`, as dicts. Stale ones (dead PID or past
     expiry) are removed. `ignore_pid` skips the caller's own marker."""
     out = []
-    pat = os.path.join(glob.escape(LOCK_DIR), glob.escape(name) + '_prio_*.lock')
-    for path in glob.glob(pat):
+    for path in _scan_locks(name + '_prio_'):
         o = _read_owner(path)
         if not o and _young(path):
             continue   # marker being written (prio_mark opens with 'w'), not stale
@@ -283,7 +327,7 @@ def prio_clear(name):
 
 
 def _linger_path(name, pid=None):
-    return os.path.join(LOCK_DIR, f"{name}_priolinger_{pid or os.getpid()}.lock")
+    return os.path.join(_marker_dir(), f"{name}_priolinger_{pid or os.getpid()}.lock")
 
 
 def prio_linger_mark(name, label, secs=None, held=False, pid=None):
@@ -335,8 +379,7 @@ def prio_lingering(name=DEFAULT_NAME, ignore_pid=None):
     """Priority holds (held=true, live PID) and unexpired lingers for `name`, as dicts.
     Expired lingers and holds of a dead PID are removed."""
     out = []
-    pat = os.path.join(glob.escape(LOCK_DIR), glob.escape(name) + '_priolinger_*.lock')
-    for path in glob.glob(pat):
+    for path in _scan_locks(name + '_priolinger_'):
         o = _read_owner(path)
         if not o and _young(path):
             continue
@@ -601,7 +644,7 @@ def _cli():
     if cmd == 'status':
         if os.path.exists(path):
             o = _read_owner(path)
-            alive = _pid_alive(o.get('pid'))
+            alive = _status_alive(o)
             print(f"HELD '{name}' pid={o.get('pid')} alive={alive} label={o.get('label')} "
                   f"since={o.get('at')}  ({path})")
         else:
