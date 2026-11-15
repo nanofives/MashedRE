@@ -34,6 +34,22 @@ batch     Reads a TSV with columns `rva`, `route`, `evidence` (header required; 
           default path unchanged.
           Optional 5th column `lever`: when --apply promotes the row, that tag (e.g. `lever=volatile`) is appended to
           the notes in the same write (skipped when the notes already carry it). No other behaviour changes.
+            route demote  (C4RECLASS-DEMOTE-OP, L-166) C4 -> C3. evidence = a committed file (repo-relative) that names
+                          the RVA (an audit table, a RESULT); column `reason` (required, one line) says why. Refused: row
+                          not in hooks.csv, evidence missing or not naming the RVA, empty reason, and a row whose notes
+                          carry a `c4=` route tag (c4=match / c4=libid / c4=frida-replay: certified by a route, not this
+                          op's business). SKIP: row not at C4 (no write). --apply sets confidence C3 (status and every
+                          other column untouched), appends `<date> C4->C3 demoted (L-166): <reason>; evidence <evidence>;
+                          <RESULT>` to the notes and writes one CHANGELOG line `C4->C3  demoted (L-166): ...`. Counted
+                          apart in the summary (`by route: demote=N`). `c4_reclass.py demote --tsv <file>` is the same run with
+                          header `rva`, `evidence`, `reason` and the route implied; the merge train applies a
+                          `re/promotions/<ID>.tsv` whose rows say route `demote` through its usual `batch --apply --strict`.
+          Optional column `reearn` (`1`): a route match / libid / frida-replay row already at C4 whose notes carry no
+          `c4=` tag is gated like a new promotion instead of skipped; PASS keeps C4 and appends the route note
+          (CHANGELOG `C4->C4  re-earned route <route>`). A row already tagged still SKIPs. Without the column nothing
+          changes.
+          Optional column `frida_diff`: when the row is written (promoted, re-earned or demoted), its `frida_diff` cell
+          is replaced by this value in the same write (e.g. a bare `green` corrected to the RESULT it rests on).
 tag       c4_reclass.py tag --tsv <file> [--apply] [--strict] [--result <RESULT.md>] [--hooks <copy>] [--changelog <copy>]
           Notes-only tag for an EXISTING row (any confidence, e.g. lever=volatile on a row already C4). TSV header
           `rva`, `tag` required. Dry run by default (`TAG` / `SKIP` / `REFUSED` per row). A row with no hooks.csv row is
@@ -465,6 +481,22 @@ def gate_libid(rva, tsv_rel, cache):
     return True, f"{r['status']} {r.get('lib_function', '')}", note
 
 
+def gate_demote(rva, evid, reason, notes):
+    """C4RECLASS-DEMOTE-OP: (ok, detail, note) for route demote. The caller has checked the row is at C4."""
+    if not reason or re.search(r"[\r\n\t]", reason):
+        return False, "empty reason or reason with a control character", None
+    tags = re.findall(r"(?:^|[\s|;,])(c4=[A-Za-z-]+)", notes or "")
+    if tags:
+        return False, f"row carries {', '.join(sorted(set(tags)))} (C4 by a route; demote only untagged C4 rows)", None
+    path = ROOT / evid
+    if not evid or not path.is_file():
+        return False, f"evidence {evid or '<empty>'} not found", None
+    txt = path.read_text(encoding="utf-8", errors="replace")
+    if not re.search(r"(?i)\b(?:0x)?0*" + rva.lstrip("0") + r"\b", txt):
+        return False, f"0x{rva} not named in {evid}", None
+    return True, f"C4->C3: {reason}", f"{reason}; evidence {evid}"
+
+
 # ---------------------------------------------------------------- batch
 def cmd_batch(a):
     if a.apply and not a.result:
@@ -472,6 +504,11 @@ def cmd_batch(a):
     if a.result and not (ROOT / a.result).is_file():
         sys.exit(f"REFUSED: --result {a.result} does not exist")
     batch = load_tsv(pathlib.Path(a.tsv))
+    if a.cmd == "demote":       # same run, route implied (C4RECLASS-DEMOTE-OP)
+        if not batch or not {"rva", "evidence", "reason"} <= set(batch[0]):
+            sys.exit("REFUSED: demote TSV needs a header with columns rva, evidence, reason")
+        for b in batch:
+            b["route"] = "demote"
     if not batch or not {"rva", "route", "evidence"} <= set(batch[0]):
         sys.exit("REFUSED: batch TSV needs a header with columns rva, route, evidence")
     raw = read_raw(HOOKS)
@@ -495,7 +532,15 @@ def cmd_batch(a):
                 ok, detail, note = False, "duplicate rva in the batch", None
             elif ri is None:
                 ok, detail, note = False, "no hooks.csv row (add it first: C1 by the identity)", None
-            elif parse_line(lines[ri], col)[col["confidence"]] == "C4":
+            elif route == "demote":
+                cur = parse_line(lines[ri], col)
+                if cur[col["confidence"]] != "C4":
+                    ok, detail, note = None, f"row is {cur[col['confidence']] or 'C0'}, not C4 (no write)", None
+                else:
+                    ok, detail, note = gate_demote(rva, evid, (b.get("reason") or "").strip(), cur[col["notes"]])
+            elif parse_line(lines[ri], col)[col["confidence"]] == "C4" and not (
+                    (b.get("reearn") or "").strip() == "1"
+                    and not re.search(r"(?:^|[\s|;,])c4=", parse_line(lines[ri], col)[col["notes"]])):
                 ok, detail, note = None, "already C4 (no write)", None
             elif route == "match":
                 ok, detail, note = gate_match(rva, evid, evals.get(evid, {}))
@@ -504,7 +549,7 @@ def cmd_batch(a):
             elif route == "frida-replay":
                 ok, detail, note = gate_replay(rva, evid, parse_line(lines[ri], col)[col["notes"]])
             else:
-                ok, detail, note = False, f"unknown route {route!r} (match | libid | frida-replay)", None
+                ok, detail, note = False, f"unknown route {route!r} (match | libid | frida-replay | demote)", None
         seen.add(rva)
         verdict = "PASS" if ok else ("SKIP" if ok is None else "REFUSED")
         print(f"[{k}/{total}] 0x{rva} {route} {verdict} {detail}", flush=True)
@@ -520,6 +565,15 @@ def cmd_batch(a):
         r = parse_line(lines[index[rva]], col)
         old = r[col["confidence"]] or "C0"
         res = a.result or "<RESULT>"
+        fd = (b.get("frida_diff") or "").strip()    # optional column: corrected frida_diff cell, same write
+        if fd:
+            r[col["frida_diff"]] = fd
+        if route == "demote":
+            r[col["confidence"]] = "C3"
+            r[col["notes"]] = (r[col["notes"]] + " | " if r[col["notes"]] else "") + f"{date} C4->C3 demoted (L-166): {note}; {res}"
+            lines[index[rva]] = dump_line(r)
+            log.append(f"{date}  0x{rva}  {r[col['name']]}  C4->C3  demoted (L-166): {note}; evidence: {res}")
+            continue
         frag = f"{date} C4 by route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): c4={route}; {note}; {res}"
         r[col["confidence"]] = "C4"
         r[col["notes"]] = (r[col["notes"]] + " | " if r[col["notes"]] else "") + frag
@@ -528,7 +582,8 @@ def cmd_batch(a):
             r[col["notes"]] = add_tag(r[col["notes"]], lever)
         lines[index[rva]] = dump_line(r)
         why = {"match": "byte-identical + relocheck OK", "libid": "library identity"}.get(route, "replay IDENTICAL-FOR-N, JMP live") + f", {evid}"
-        log.append(f"{date}  0x{rva}  {r[col['name']]}  {old}->C4  route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): {why}; evidence: {res}")
+        how = "re-earned route" if old == "C4" else "route"
+        log.append(f"{date}  0x{rva}  {r[col['name']]}  {old}->C4  {how} {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): {why}; evidence: {res}")
     print(f"batch: {npass} pass, {nref} refused, {nskip} skipped (already C4), {total} rows"
           + ("  [by route: " + ", ".join(f"{k}={v}" for k, v in sorted(by_route.items())) + "]" if by_route else ""))
     if a.report:
@@ -730,6 +785,14 @@ def main(argv=None):
     b.add_argument("--jobs", type=int, default=4)
     b.add_argument("--report")
     b.add_argument("--date")
+    d = sub.add_parser("demote")
+    d.add_argument("--tsv", required=True)
+    d.add_argument("--result")
+    d.add_argument("--apply", action="store_true")
+    d.add_argument("--strict", action="store_true")
+    d.add_argument("--jobs", type=int, default=4)
+    d.add_argument("--report")
+    d.add_argument("--date")
     m = sub.add_parser("make-tsv")
     m.add_argument("--results", nargs="+", required=True)
     m.add_argument("--out", required=True)
@@ -751,7 +814,7 @@ def main(argv=None):
     f.add_argument("--hooks", help="hooks.csv to edit instead of the repo's (rehearsal on a copy)")
     f.add_argument("--changelog", help="CHANGELOG.md to edit instead of the repo's (rehearsal on a copy)")
     a = ap.parse_args(argv)
-    return {"batch": cmd_batch, "tag": cmd_tag, "refresh": cmd_refresh}.get(a.cmd, cmd_make_tsv)(a)
+    return {"batch": cmd_batch, "demote": cmd_batch, "tag": cmd_tag, "refresh": cmd_refresh}.get(a.cmd, cmd_make_tsv)(a)
 
 
 if __name__ == "__main__":
