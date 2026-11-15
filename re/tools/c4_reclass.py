@@ -67,9 +67,16 @@ refresh   c4_reclass.py refresh --tsv <file> [--apply] [--strict] [--result <RES
           insn 100% (or the same shorter-Ghidra-body case the match gate accepts) and relocheck OK, with the recorded
           compiler. Other REFUSED cases: row not in hooks.csv, row not at C4, row not C4 by `c4=match`, source differs
           from the note's source, no `src sha256` token in the notes. SKIP: the token already equals the current hash
-          (idempotent, no write). Only that 16-hex token changes (the last one in the notes); confidence, status, every
-          other column and the rest of the notes stay byte-identical. --apply prepends ONE CHANGELOG line per refreshed
-          row (`C4->C4 sha refresh old->new`). Dry run by default. --strict writes nothing if any row is refused.
+          (idempotent, no write). Only that token changes (the last one in the notes; a 64-hex token becomes the 16-hex
+          form); confidence, status, every other column and the rest of the notes stay byte-identical. --apply prepends
+          ONE CHANGELOG line per refreshed row (`C4->C4 sha refresh old->new`, or `sha eol-normalise` when the old token
+          is the legacy CRLF-raw hash of unchanged content). Dry run by default. --strict writes nothing if any row is refused.
+          Hash (C4RECLASS-SHA-EOL): SHA-256 of the source with CRLF -> LF, first 16 hex, the same on every checkout.
+          A token equal to the legacy CRLF-raw hash (the convention before C4RECLASS-SHA-EOL) is the same content, not
+          stale: token_state() reports it as `crlf`, and refresh rewrites it to the LF form, labelled eol-only.
+refresh-tsv  c4_reclass.py refresh-tsv --out <file> --result <RESULT.md> [--hooks <copy>]
+          Read-only: writes a refresh TSV of every C4 `c4=match` row whose token is not the current LF hash, and prints
+          the counts by token state (lf / crlf / content / no-source / no-token).
           The merge train applies `<ID>-refresh.tsv` with `refresh --apply --strict` on the current head and moves it to
           re/promotions/applied/, like a promotions TSV.
 make-tsv  Turns MATCH slice results.tsv files into a batch TSV: every row whose recorded score is 100 becomes
@@ -115,6 +122,34 @@ def read_raw(path):
 def write_raw(path, text):
     with open(path, "w", encoding="utf-8", newline="") as f:
         f.write(text)
+
+
+# ---------------------------------------------------------------- src sha256 token (C4RECLASS-SHA-EOL)
+# The `src sha256 <16 hex>` token in a C4 note is the first 16 hex of SHA-256 over the source with every CRLF turned
+# into LF, so it is the same on a CRLF checkout (core.autocrlf=true), an LF checkout, a `git archive` and the notebook
+# hub. Before C4RECLASS-SHA-EOL the tool hashed the raw working-tree bytes (CRLF on Windows): src_sha_legacy() is that
+# value computed from the content (LF form -> CRLF), so it does not depend on how the file is checked out either.
+def _lf_bytes(path):
+    return pathlib.Path(path).read_bytes().replace(b"\r\n", b"\n")
+
+
+def src_sha(path):
+    return hashlib.sha256(_lf_bytes(path)).hexdigest()[:16]
+
+
+def src_sha_legacy(path):
+    return hashlib.sha256(_lf_bytes(path).replace(b"\n", b"\r\n")).hexdigest()[:16]
+
+
+def token_state(token, path):
+    """'lf' = the token is the current LF-normalised hash, 'crlf' = the pre-C4RECLASS-SHA-EOL CRLF-raw hash of the same
+    content (not stale, only the old convention), None = the source content changed since the token was written."""
+    token = token[:16]
+    if token == src_sha(path):
+        return "lf"
+    if token == src_sha_legacy(path):
+        return "crlf"
+    return None
 
 
 def load_hooks(raw):
@@ -365,8 +400,8 @@ def gate_match(rva, src, ev):
     st, rbad, unch, n = rc
     if st != "OK":
         return False, f"relocheck {st}" + (f": {'; '.join(rbad)[:200]}" if rbad else ""), None
-    sha = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
-    how = "insn 100.0%" if r["acc"] == 1 else f"insn {100 * r['acc']:.1f}% (Ghidra body short, {r['n_mine']}/{r['n_orig']})"
+    sha = src_sha(path)
+    how ="insn 100.0%" if r["acc"] == 1 else f"insn {100 * r['acc']:.1f}% (Ghidra body short, {r['n_mine']}/{r['n_orig']})"
     note = (f"match.py {src} --bytes BYTE-IDENTICAL {r['bytes_n']} B, {how} ({RECORDED[ev['_toolchain']]}, {r['flags']}, "
             f"{ev.get('_lang', 'c')}); relocheck OK checked={n} unchecked={len(unch)}"
             + (f" [{','.join(unch)}]" if unch else "") + f"; src sha256 {sha}")
@@ -419,7 +454,7 @@ def gate_extent(rva, src, ev, ext, path, text):
         nrel += n
         unch_all += unch
         parts.append(f"0x{d['rva']} {d['size']}/{d['bytes_n']} B")
-    sha = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+    sha = src_sha(path)
     r = ev.get(rva, {})
     note = (f"match.py {src} --bytes, extent override {tsv} ({len(mem)} members = pc_funcs body {body} B: "
             f"{', '.join(parts)} [ghidra/obj B]; each BYTE-IDENTICAL, insn 100.0%) ({RECORDED[ev['_toolchain']]}, "
@@ -670,7 +705,9 @@ def cmd_tag(a):
     return 0
 
 
-SHA_TOKEN = re.compile(r"src sha256 ([0-9a-f]{16})")
+# 16 hex (the tool's form) or a full 64-hex digest (older hand-written notes); only the first 16 are compared, and a
+# refresh replaces the whole token with the tool's 16-hex form.
+SHA_TOKEN = re.compile(r"src sha256 ([0-9a-f]{64}|[0-9a-f]{16})(?![0-9a-f])")
 
 
 def cmd_refresh(a):
@@ -691,6 +728,7 @@ def cmd_refresh(a):
     evals = evaluate(sources, a.jobs) if sources else {}
     date = a.date or datetime.date.today().isoformat()
     seen, log, total, nref, nskip = set(), [], len(rows), 0, 0
+    nkind = {"crlf": 0, "content": 0}
     for k, b in enumerate(rows, 1):
         src = b["src"].strip().replace("\\", "/")
         try:
@@ -718,25 +756,31 @@ def cmd_refresh(a):
                 elif not old:
                     detail = "no `src sha256 <16 hex>` token in the notes"
                 else:
+                    state = token_state(old[-1], ROOT / src) if (ROOT / src).is_file() else None
                     ok, detail, note = gate_match(rva, src, evals.get(src, {}))
                     if ok:
                         new = SHA_TOKEN.findall(note)[-1]
-                        if new == old[-1]:
-                            verdict, detail = "SKIP", f"src sha256 {new} already current (no write)"
+                        if state == "lf":
+                            verdict, detail = "SKIP", f"src sha256 {old[-1][:16]} already current (no write)"
                         else:
+                            kind = ("eol: legacy CRLF-raw hash of unchanged content, now LF-normalised"
+                                    if state == "crlf" else "source content changed")
                             verdict = "REFRESH"
-                            detail = f"src sha256 {old[-1]} -> {new} ({detail})"
+                            nkind[state or "content"] += 1
+                            detail = f"src sha256 {old[-1]} -> {new} [{kind}] ({detail})"
                             m = list(SHA_TOKEN.finditer(notes))[-1]
                             r[col["notes"]] = notes[:m.start(1)] + new + notes[m.end(1):]
                             lines[ri] = dump_line(r)
-                            log.append(f"{date}  0x{rva}  {r[col['name']]}  C4->C4  sha refresh (c4_reclass refresh): "
+                            what = "sha eol-normalise" if state == "crlf" else "sha refresh"
+                            log.append(f"{date}  0x{rva}  {r[col['name']]}  C4->C4  {what} (c4_reclass refresh): "
                                        f"src sha256 {old[-1]} -> {new}, {src} still byte-identical + relocheck OK; "
                                        f"evidence: {res or '<RESULT>'}")
         seen.add(rva)
         nref += verdict == "REFUSED"
         nskip += verdict == "SKIP"
         print(f"[{k}/{total}] 0x{rva} refresh {verdict} {detail}", flush=True)
-    print(f"refresh: {len(log)} {'refreshed' if a.apply else 'would-refresh'}, {nref} refused, {nskip} skipped (already current), {total} rows")
+    print(f"refresh: {len(log)} {'refreshed' if a.apply else 'would-refresh'} ({nkind['crlf']} eol-only, "
+          f"{nkind['content']} content changed), {nref} refused, {nskip} skipped (already current), {total} rows")
     if not a.apply:
         print("dry run: nothing written. CHANGELOG lines that --apply would prepend:")
         for l in log:
@@ -751,6 +795,42 @@ def cmd_refresh(a):
     write_raw(HOOKS, eol.join(lines))
     write_raw(CHANGELOG, prepend_changelog(read_raw(CHANGELOG), log))
     print(f"wrote hooks.csv ({len(log)} rows refreshed) and {len(log)} CHANGELOG lines")
+    return 0
+
+
+def cmd_refresh_tsv(a):
+    """Read-only: list every C4 `c4=match` row whose src sha256 token is not the current LF-normalised hash, as a
+    refresh TSV (rva, src, result). Writes only --out; hooks.csv is never touched."""
+    global HOOKS
+    if a.hooks:
+        HOOKS = pathlib.Path(a.hooks)
+    lines, col, index, _ = load_hooks(read_raw(HOOKS))
+    out, cnt = [], {"lf": 0, "crlf": 0, "content": 0, "no-source": 0, "no-token": 0}
+    for rva, ri in sorted(index.items()):
+        r = parse_line(lines[ri], col)
+        notes = r[col["notes"]]
+        nm = re.search(r"c4=match; match\.py (\S+)", notes)
+        if r[col["confidence"]] != "C4" or not nm:
+            continue
+        old = SHA_TOKEN.findall(notes)
+        src = nm.group(1)
+        if not old:
+            cnt["no-token"] += 1
+            continue
+        if not (ROOT / src).is_file():
+            cnt["no-source"] += 1
+            print(f"0x{rva} source {src} not found (left out)")
+            continue
+        state = token_state(old[-1], ROOT / src)
+        cnt[state or "content"] += 1
+        if state != "lf":
+            out.append((f"0x{rva}", src, a.result))
+    with open(a.out, "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f, delimiter="\t", lineterminator="\n")
+        w.writerow(["rva", "src", "result"])
+        w.writerows(out)
+    print("refresh-tsv: c4=match rows with token: " + ", ".join(f"{k} {v}" for k, v in cnt.items())
+          + f"; {len(out)} rows -> {a.out}")
     return 0
 
 
@@ -813,8 +893,13 @@ def main(argv=None):
     f.add_argument("--date")
     f.add_argument("--hooks", help="hooks.csv to edit instead of the repo's (rehearsal on a copy)")
     f.add_argument("--changelog", help="CHANGELOG.md to edit instead of the repo's (rehearsal on a copy)")
+    g = sub.add_parser("refresh-tsv")
+    g.add_argument("--out", required=True)
+    g.add_argument("--result", required=True)
+    g.add_argument("--hooks", help="hooks.csv to read instead of the repo's")
     a = ap.parse_args(argv)
-    return {"batch": cmd_batch, "demote": cmd_batch, "tag": cmd_tag, "refresh": cmd_refresh}.get(a.cmd, cmd_make_tsv)(a)
+    return {"batch": cmd_batch, "demote": cmd_batch, "tag": cmd_tag, "refresh": cmd_refresh,
+            "refresh-tsv": cmd_refresh_tsv}.get(a.cmd, cmd_make_tsv)(a)
 
 
 if __name__ == "__main__":
