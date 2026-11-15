@@ -1,0 +1,17 @@
+target 0x0045ac20
+  abs dword at 0x005f9abc (.data)
+after 0x0045ac10:
+    0x0045ac10  add byte ptr [ebp - 0x1e], dh
+    0x0045ac13  pop esi
+    0x0045ac14  ret 
+    0x0045ac15  nop 
+    0x0045ac16  nop 
+    0x0045ac17  nop 
+    0x0045ac18  nop 
+    0x0045ac19  nop 
+    0x0045ac1a  nop 
+    0x0045ac1b  nop 
+    0x0045ac1c  nop 
+    0x0045ac1d  nop 
+    0x0045ac1e  nop 
+    0x0045ac1f  nop 

@@ -1,0 +1,49 @@
+target 0x0045a3a0
+  rel32 call at 0x0045a741 (.text)
+  rel32 call at 0x0045a7d9 (.text)
+  rel32 call at 0x0045ac2a (.text)
+after 0x0045a741:
+    0x0045a741  call 0x45a3a0
+    0x0045a746  mov ecx, dword ptr [0x68d150]
+    0x0045a74c  push 0x37
+    0x0045a74e  push 6
+    0x0045a750  push 0x1e
+    0x0045a752  push ecx
+    0x0045a753  call 0x4892c0
+    0x0045a758  push 2
+    0x0045a75a  push 5
+    0x0045a75c  push eax
+    0x0045a75d  mov dword ptr [ebx + 0x10], eax
+    0x0045a760  call 0x4893a0
+    0x0045a765  add esp, 0x20
+    0x0045a768  cmp ebx, 0x68bb60
+after 0x0045a7d9:
+    0x0045a7d9  call 0x45a3a0
+    0x0045a7de  mov eax, dword ptr [esi + 0x20]
+    0x0045a7e1  add esp, 4
+    0x0045a7e4  push eax
+    0x0045a7e5  mov dword ptr [esi], 1
+    0x0045a7eb  mov dword ptr [esi + 4], edi
+    0x0045a7ee  call 0x45bfd0
+    0x0045a7f3  push eax
+    0x0045a7f4  call 0x4e4450
+    0x0045a7f9  mov ecx, dword ptr [esi + 0x20]
+    0x0045a7fc  push 1
+    0x0045a7fe  push ecx
+    0x0045a7ff  call 0x474d60
+    0x0045a804  mov edx, dword ptr [esi + 0x24]
+after 0x0045ac2a:
+    0x0045ac2a  call 0x45a3a0
+    0x0045ac2f  add esp, 4
+    0x0045ac32  cmp esi, 0x68bb60
+    0x0045ac38  jne 0x45ac26
+    0x0045ac3a  pop esi
+    0x0045ac3b  ret 
+    0x0045ac3c  nop 
+    0x0045ac3d  nop 
+    0x0045ac3e  nop 
+    0x0045ac3f  nop 
+    0x0045ac40  sub esp, 0x40
+    0x0045ac43  lea edx, [ecx + eax*4]
+    0x0045ac46  add eax, edx
+    0x0045ac48  imul eax, eax, 0x104
