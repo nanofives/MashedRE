@@ -191,6 +191,42 @@ def test_indirect_callers():
         equiv.INDIRECT_CALLERS[0x0045ac20]["routes"][0].update(saved)
 
 
+def test_route_audit():
+    """EQUIV-INDIRECT-SCAN-COMPLETENESS: the byte-anchored audit of 0x0045ac20's routes holds on the image, any change
+    to the registered reference lists is refused, and a disp8 cannot encode +0xa8."""
+    rep = equiv.route_audit(0x0045ac20)
+    assert rep == {"entry_dwords": [0x005f9abc], "table_refs": 28, "holder_refs": 15, "methods": 95}, rep
+    a = equiv.INDIRECT_CALLERS[0x0045ac20]["audit"]
+    cs = next(equiv._MD.disasm(bytes.fromhex("8b40a8"), 0x1000))           # mov eax, [eax-0x58]
+    assert cs.operands[1].mem.disp == -0x58
+    for key, drop in (("table_refs", 0x0045b9de), ("holder_refs", 0x0045bffc)):
+        saved = a[key]
+        try:
+            a[key] = (tuple(x for x in saved if x != drop) if isinstance(saved, tuple)
+                      else {k: v for k, v in saved.items() if k != drop})
+            equiv._AUDIT.clear()
+            try:
+                equiv.route_audit(0x0045ac20)
+                raise AssertionError(f"{key} without 0x{drop:08x} accepted")
+            except ValueError:
+                pass
+        finally:
+            a[key] = saved
+            equiv._AUDIT.clear()
+    saved = a["store_fn_branches"]
+    try:                                                # a second entry into the store function is refused
+        a["store_fn_branches"] = ()
+        try:
+            equiv.route_audit(0x0045ac20)
+            raise AssertionError("store fn branch list accepted")
+        except ValueError:
+            pass
+    finally:
+        a["store_fn_branches"] = saved
+        equiv._AUDIT.clear()
+    assert equiv.route_audit(0x0045ac20) == rep
+
+
 def test_summary_precision():
     """EQUIV-NORETURN-RECHECK: the no-return reason, r11 / r12, the constant idioms, frame alignment, A7."""
     s = equiv.summary(0x00408b00)                       # 6 rets; it calls CRT acos 0x004a3384 (r11, not no-return)
