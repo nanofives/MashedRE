@@ -1030,4 +1030,70 @@ neg_mxcsr_b PROC
     ldmxcsr dword ptr ds:[G3]
     ret
 neg_mxcsr_b ENDP
+
+; TOOL-EQUIV-EBPDATA-REPSTOS: rep stosd with a count from an argument (heap memset), same fill, different set-up order
+stosv_a PROC
+    push edi
+    mov edi, [esp+8]
+    mov ecx, [esp+12]
+    xor eax, eax
+    rep stosd
+    mov eax, edi
+    pop edi
+    ret
+stosv_a ENDP
+stosv_b PROC
+    push edi
+    xor eax, eax
+    mov ecx, [esp+12]
+    mov edi, [esp+8]
+    rep stosd
+    mov eax, edi
+    pop edi
+    ret
+stosv_b ENDP
+
+; a different fill value is not equal
+neg_stosv_val_a PROC
+    push edi
+    mov edi, [esp+8]
+    mov ecx, [esp+12]
+    xor eax, eax
+    rep stosd
+    pop edi
+    ret
+neg_stosv_val_a ENDP
+neg_stosv_val_b PROC
+    push edi
+    mov edi, [esp+8]
+    mov ecx, [esp+12]
+    or eax, -1
+    rep stosd
+    pop edi
+    ret
+neg_stosv_val_b ENDP
+
+; a variable-count fill of the own frame is refused (no symbolic-size private-slot write)
+neg_stosv_stack_a PROC
+    push edi
+    sub esp, 64
+    mov edi, esp
+    mov ecx, [esp+72]
+    xor eax, eax
+    rep stosd
+    add esp, 64
+    pop edi
+    ret
+neg_stosv_stack_a ENDP
+neg_stosv_stack_b PROC
+    push edi
+    sub esp, 64
+    mov edi, esp
+    mov ecx, [esp+72]
+    xor eax, eax
+    rep stosd
+    add esp, 64
+    pop edi
+    ret
+neg_stosv_stack_b ENDP
 END

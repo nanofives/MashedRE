@@ -1,0 +1,2 @@
+tag_lint: scanned 4273 .c files under C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-TAG-LINT\re\match; no tag at all: 0; tag not at line start: 1 files, 1 tags
+  re/match/s28/005bf690.c:29: 0x005bf690 after `__declspec(dllimport) LONG __stdcall InterlockedDecrement(LONG * p0);`

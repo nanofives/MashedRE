@@ -879,6 +879,31 @@ def summary(va, depth=0):
     return res
 
 
+EBP_DATA = "data"   # summary EBP state: EBP holds a value loaded from memory / a constant, not a stack address
+
+
+def _ebp_data_write(cs, ebp):
+    """TOOL-EQUIV-EBPDATA-REPSTOS: True when this write leaves EBP holding a non-stack value, so [ebp+k] is an ordinary
+    memory access and not a stack-argument read: a load from memory (`mov / movzx / movsx ebp, m`), a constant, the
+    zero idiom, or arithmetic on an EBP that already holds data with no ESP / frame-EBP operand. A copy from another
+    register, `lea` and `pop ebp` do not qualify (the value may be a stack address: those stay unknown)."""
+    ops = cs.operands
+    mn = cs.mnemonic
+    if not ops or ops[0].type != X.X86_OP_REG or cs.reg_name(ops[0].reg) != "ebp":
+        return False
+    if mn in ("mov", "movzx", "movsx") and len(ops) == 2 and ops[1].type in (X.X86_OP_MEM, X.X86_OP_IMM):
+        return True
+    if mn in ("xor", "sub") and len(ops) == 2 and ops[1].type == X.X86_OP_REG and ops[1].reg == ops[0].reg:
+        return True
+    if const_idiom(cs):
+        return True
+    if ebp == EBP_DATA and mn in ("add", "sub", "inc", "dec", "and", "or", "xor", "shl", "shr", "sar", "imul", "neg",
+                                  "not"):
+        rd, _ = cs.regs_access()
+        return "esp" not in {cs.reg_name(r) for r in rd}
+    return False
+
+
 def _summary_body(va, depth):
     size = match.ghidra_size(va)
     if size is None:
@@ -891,6 +916,13 @@ def _summary_body(va, depth):
     work = [va]
     livein, N, pops, eax_def = set(), 0, set(), True
     pushed = {}            # entry-relative slot -> register pushed while undefined (a save or an allocation)
+    # TOOL-EQUIV-PUSHECX-SLOT: pushed slots whose address was taken (`lea r, [esp+k]`). The register counts as read
+    # only if the slot can be read before a full ESP-relative overwrite: a read of the slot itself, a pop of it into
+    # another register, any memory read not ESP-relative (it may go through the copied address), or any call, jump,
+    # jcc, ret or leave (the address may be used there). A full overwrite first (0x005ad910: `lea ecx, [esp+8]` at
+    # 0x005ad927, `mov dword ptr [esp+0x14], 0` at 0x005ad932, then the call at 0x005ad93a) makes the slot a plain
+    # local, and the pushed register is not read.
+    escaped = {}
     unknown_n = False
     ind_assumed = esp_reset = False
     visited = 0
@@ -949,13 +981,24 @@ def _summary_body(va, depth):
                         if rn == "esp" and not (mn == "mov" and cs.reg_name(ops[0].reg) == "ebp" and
                                                 ops[0].type == X.X86_OP_REG):
                             unknown_n = unknown_n or (pc if "pc" in dir() else -1)
-                        if rn == "ebp" and ebp is not None and not (mn == "mov" and ops[0].type == X.X86_OP_REG and
+                        if rn == "ebp" and isinstance(ebp, int) and not (mn == "mov" and ops[0].type == X.X86_OP_REG and
                                                                      cs.reg_name(ops[0].reg) in ("esp", "ebp")):
                             unknown_n = unknown_n or (pc if "pc" in dir() else -1)
+            if escaped:
+                flush = mn in ("call", "ret", "retn", "jmp", "leave", "enter") or cs.group(capstone.CS_GRP_JUMP)
+                for op in ops:
+                    if op.type == X.X86_OP_MEM and mn != "lea" and op.access & capstone.CS_AC_READ and not (
+                            op.mem.base and cs.reg_name(op.mem.base) == "esp" and not op.mem.index and esp is not None):
+                        flush = True
+                if flush:
+                    livein.update(escaped.values())
+                    escaped.clear()
             # stack argument reads
             for op in ops:
                 if op.type == X.X86_OP_MEM and op.mem.base:
                     bn = cs.reg_name(op.mem.base)
+                    if bn == "ebp" and ebp == EBP_DATA:
+                        continue                   # EBP holds data (_ebp_data_write): ordinary memory
                     base_off = esp if bn == "esp" else (ebp if bn == "ebp" else None)
                     if bn in ("esp", "ebp"):
                         if base_off is None or op.mem.index:
@@ -967,7 +1010,8 @@ def _summary_body(va, depth):
                             if off >= 4:
                                 unknown_n = unknown_n or (pc if "pc" in dir() else -1)
                             elif any(off <= k < off + 64 for k in pushed):
-                                livein.update(pushed.values())     # its address escapes: count it read
+                                escaped.update(pushed)             # its address escapes: read unless overwritten
+                                pushed.clear()
                         elif off >= 4:
                             N = max(N, (off - 4 + max(op.size, 4) + 3) // 4)
                         else:
@@ -976,6 +1020,13 @@ def _summary_body(va, depth):
                                     if op.access & capstone.CS_AC_READ and not (mn == "mov" and op is ops[0]):
                                         livein.add(pushed[k])
                                     del pushed[k]
+                            for k in list(escaped):
+                                if off < k + 4 and k < off + op.size:
+                                    full = off <= k and k + 4 <= off + op.size
+                                    if not full or (op.access & capstone.CS_AC_READ and
+                                                    not (mn == "mov" and op is ops[0])):
+                                        livein.add(escaped[k])
+                                    del escaped[k]
             for r in wrn:
                 p_, m_ = _reg_parts(r)
                 if p_ in ALLREGS:
@@ -987,6 +1038,10 @@ def _summary_body(va, depth):
             elif mn == "pop":
                 if esp is not None and esp in pushed:
                     r0 = pushed.pop(esp)
+                    if not (ops[0].type == X.X86_OP_REG and _reg_parts(cs.reg_name(ops[0].reg))[0] == r0):
+                        livein.add(r0)
+                if esp is not None and esp in escaped:
+                    r0 = escaped.pop(esp)
                     if not (ops[0].type == X.X86_OP_REG and _reg_parts(cs.reg_name(ops[0].reg))[0] == r0):
                         livein.add(r0)
                 if ops[0].type == X.X86_OP_REG and cs.reg_name(ops[0].reg) == "ebp":
@@ -1002,14 +1057,14 @@ def _summary_body(va, depth):
                 ebp = esp
             elif mn == "mov" and ops[0].type == X.X86_OP_REG and ops[1].type == X.X86_OP_REG and \
                     cs.reg_name(ops[0].reg) == "esp" and cs.reg_name(ops[1].reg) == "ebp":
-                esp = ebp
+                esp = ebp if isinstance(ebp, int) else None
                 esp_reset = True
             elif mn == "leave":
-                esp = ebp + 4 if ebp is not None else None
+                esp = ebp + 4 if isinstance(ebp, int) else None
                 ebp = None
                 esp_reset = True
             elif mn == "and" and ops[0].type == X.X86_OP_REG and cs.reg_name(ops[0].reg) == "esp" and \
-                    ops[1].type == X.X86_OP_IMM and esp is not None and ebp is not None:
+                    ops[1].type == X.X86_OP_IMM and esp is not None and isinstance(ebp, int):
                 # frame alignment under a frame pointer (`push ebp; mov ebp, esp; and esp, -8`): the distance to
                 # the entry ESP becomes unknown, so ESP moves to a virtual base far below every real offset. Saves
                 # pushed after it stay tracked (0x00498a00's push esi / push edi were counted as reads: false
@@ -1022,7 +1077,7 @@ def _summary_body(va, depth):
                 esp = None
                 esp_reset = True
             elif "ebp" in wrn:
-                ebp = None
+                ebp = EBP_DATA if _ebp_data_write(cs, ebp) else None
             if mn == "call":
                 tgt = ops[0].imm if ops[0].type == X.X86_OP_IMM else None
                 if tgt is not None:
@@ -1293,7 +1348,7 @@ class Ctx:
                     raise Fallback("stack address in a non-linear term")
                 out.append(k - (1 << 32) if k >= 0x80000000 else k)
                 return out
-        if t.op in ("ld", "st", "M0", "Mc", "call", "X", "Xc", "ret", "reta", "retc", "retd", "argc", "x87o",
+        if t.op in ("ld", "st", "M0", "Mc", "Mfill", "call", "X", "Xc", "ret", "reta", "retc", "retd", "argc", "x87o",
                     "x87sw", "x87"):
             # a value loaded from memory or produced by a callee: any stack address inside it was exposed when
             # it was stored or passed
@@ -1875,6 +1930,9 @@ class Ctx:
         if base not in ("movsd", "movsb", "movsw", "stosd", "stosb", "stosw") or mn.startswith("repne"):
             raise NotProven("unsupported", f"string op {mn}")
         sz = {"d": 4, "b": 1, "w": 2}[base[-1]]
+        if rep and st.r["ecx"].op != "c" and base.startswith("stos"):
+            self.stos_var(side, st, cs, sz)
+            return
         if rep:
             n = st.r["ecx"]
             if n.op != "c":
@@ -1895,6 +1953,22 @@ class Ctx:
             st.r["edi"] = add(st.r["edi"], C(sz))
         if rep:
             st.r["ecx"] = C(0)
+
+    def stos_var(self, side, st, cs, sz):
+        """TOOL-EQUIV-EBPDATA-REPSTOS: `rep stos` with a symbolic count (DF clear, as for the constant count). Memory
+        becomes the uninterpreted term Mfill(previous memory, destination, count, value, size): equal on both sides
+        only when all five are equal terms, and every later load from it is a load from that term (no value is
+        forwarded through it and no disjointness is claimed across it). EDI moves by count * size, ECX becomes 0.
+        A destination in this side's own frame or argument area, or a value that holds a stack address, is refused:
+        the private-slot model has no symbolic-size write."""
+        dst, n = st.r["edi"], st.r["ecx"]
+        v = self.rget(st, {4: "eax", 2: "ax", 1: "al"}[sz])
+        if has_sym(dst, "esp0") or has_sym(n, "esp0") or has_sym(v, "esp0"):
+            raise NotProven("unsupported", f"{cs.mnemonic} with a variable count on a stack address")
+        st.m = mk("Mfill", 0, st.m, dst, n, v, C(sz))
+        st.r["edi"] = add(dst, mulc(n, sz))
+        st.r["ecx"] = C(0)
+        self.used.add("rep-stos-var")
 
     def effects(self, side, st, cs):
         """What one instruction touches, taken on the state before it runs (EQUIV-X87-INTEGER-MOTION, L-147 (a)):
@@ -3151,14 +3225,242 @@ INDIRECT_CALLERS = {
              "0x10 at 0x005f9a98; the only .text reference to the +0x24 slot column is `mov edi, 0x5f99bc` at "
              "0x0045b9dd in FUN_0045b9d0, which calls [edi] at 0x0045b9e2 for every record; the other route into the "
              "table, the id lookup 0x0045baa0 (only caller 0x0045bfa5, stores the record at obj+0xa8), is followed by "
-             "calls through +0x4 (0x0045bfb5) and +0x10 (0x0045bac7) only (EQUIV-CALLER-0045AC2A, 2026-11-15)"),
+             "calls through +0x4 (0x0045bfb5) and +0x10 (0x0045bac7) only (EQUIV-CALLER-0045AC2A, 2026-11-15)",
+        # EQUIV-INDIRECT-SCAN-COMPLETENESS (2026-11-15): byte-anchored audit of every way the entry can be reached,
+        # re-run by route_audit() against the image (any addressing form: a disp32 / imm32 / moffs32 field holds the
+        # full constant, and a disp8 cannot encode +0xa8 because 0xa8 sign-extends to -0x58).
+        audit=dict(
+            table=(0x005f9990, 0x005fa400), base=0x005f9998, nrec_max=9, columns=range(4, 0x40, 4),
+            # .text locations of every dword in the table window (count reads, column loads, id-lookup base)
+            table_refs=(0x0045b94b, 0x0045b957, 0x0045b969, 0x0045b99c, 0x0045b9a8, 0x0045b9b3, 0x0045b9d1,
+                        0x0045b9de, 0x0045b9e5, 0x0045baa2, 0x0045baad, 0x0045bb37, 0x0045bb45, 0x0045bb53,
+                        0x0045bde8, 0x0045bdf3, 0x0045bdfa, 0x0045be0d, 0x0045be60, 0x0045be91, 0x0045be9e,
+                        0x0045bea5, 0x0045bef9, 0x0045bf05, 0x0045bf13, 0x0045bf6c, 0x0045bf77, 0x0045bf83),
+            lookup=0x0045baa0, lookup_callers=(0x0045bfa5,),
+            # the id lookup's record goes to [elem+0xa8] in FUN_0045bfa0, entered only by the jmp at 0x0045c024
+            # (FUN_0045c010: elem = arg0 * 0xb4 + 0x0088fbe0)
+            store_fn=0x0045bfa0, store_fn_branches=(0x0045c024,),
+            holder=(0x0088fbe0, 0x0088feb1), holder_stride=0xb4, holder_field=0xa8,
+            # .text locations of every dword in the holder array [0x0088fbe0, 0x0088feb0] (end bound included)
+            holder_refs={
+                0x004144b5: "mov edx,[ecx+0x88fc88] (+0xa8 of elem k), test only",
+                0x004152b0: "mov eax,[eax+0x88fc88], reads [eax] (record id) only",
+                0x00416519: "mov eax,[edx+0x88fc88], cmp 0; eax overwritten by call 0x004a2c48",
+                0x00416c69: "mov eax,[edx+0x88fc88], cmp 0; eax overwritten by call 0x004a2c48",
+                0x00418069: "mov eax,[edx+0x88fc88], cmp 0; eax overwritten by call 0x004a2c48",
+                0x0045baf2: "lea esi,[ebx+0x88fbe0] -> FUN_0045ba10 (clears 0xb4 bytes via 0x004b6520)",
+                0x0045bbc1: "mov edi,0x88fc70 (elem+0x90) in FUN_0045bba0: record calls +0x8 0x0045bdbb, "
+                            "+0xc 0x0045bd58, +0x10 via 0x0045bac0, +0x4 via 0x0045c010",
+                0x0045beb3: "mov esi,0x88fbe0 loop -> FUN_0045ba10",
+                0x0045bec4: "cmp esi,0x88feb0 (loop bound)",
+                0x0045bed2: "mov esi,0x88fbe0 loop: [esi+0xa8] -> 0x0045bac0 (+0x10)",
+                0x0045bef2: "cmp esi,0x88feb0 (loop bound)",
+                0x0045bf38: "mov esi,0x88fbe0 loop: [esi+0xa8] -> 0x0045bac0 (+0x10)",
+                0x0045bf65: "cmp esi,0x88feb0 (loop bound)",
+                0x0045bffc: "mov edx,[eax+0x88fc88], sete only",
+                0x0045c01c: "add ecx,0x88fbe0 -> jmp 0x0045bfa0 (store, call +0x4)",
+            }),
+        residue="[UNCERTAIN] not followed: callees handed an element pointer (the record methods called through "
+                "+0x4/+0x8/+0xc/+0x10 with elem, and 0x0041f060 / 0x004b4b60 / 0x0045c350 / 0x00476880 with elem+0x40 "
+                "or elem+0x80) beyond their own bodies; route_audit() checks that no record method body accesses "
+                "[r+0xa8] or calls [r+0x24], but not their callees. Closing test: Frida return-address sample on "
+                "0x0045ac20 (EQUIV-CALLER-0045AC20-FRIDA-RETS)"),
 }
+
+
+_FN_ENTRIES = None
+
+
+def _fn_entries():
+    """Function entries known to the project (re/console/pc_funcs.csv): a jmp to one of them is a tail call."""
+    global _FN_ENTRIES
+    if _FN_ENTRIES is None:
+        p = pathlib.Path(__file__).resolve().parents[3] / "re" / "console" / "pc_funcs.csv"
+        _FN_ENTRIES = {int(l.split(",", 1)[0], 16) for l in p.read_text().splitlines()[1:] if l.startswith("0x")}
+    return _FN_ENTRIES
+
+
+def _text_dword_refs(lo, hi, sections=(".text",)):
+    """Every location (any alignment) in the named sections whose little-endian dword is in [lo, hi)."""
+    img = image()
+    out = []
+    for slo, shi, _, name in img.secs:
+        if sections and name not in sections:
+            continue
+        d = img.bytes(slo, shi - slo) or b""
+        if hi == lo + 1:
+            pat = struct.pack("<I", lo)
+            i = d.find(pat)
+            while i >= 0:
+                out.append(slo + i)
+                i = d.find(pat, i + 1)
+            continue
+        for a in range(4):
+            n = (len(d) - a) // 4
+            words = struct.unpack_from(f"<{n}I", d, a)
+            out += [slo + a + 4 * i for i, v in enumerate(words) if lo <= v < hi]
+    return sorted(out)
+
+
+def _branch_refs(target):
+    """Every byte-anchored rel32 call/jmp/jcc and rel8 jmp/jcc in .text that lands on `target`."""
+    img = image()
+    out = []
+    for slo, shi, _, name in img.secs:
+        if name != ".text":
+            continue
+        d = img.bytes(slo, shi - slo) or b""
+        for m in re.finditer(rb"[\xE8\xE9]", d):
+            i = m.start()
+            if i + 5 <= len(d) and (slo + i + 5 + struct.unpack_from("<i", d, i + 1)[0]) & M32 == target:
+                out.append(slo + i)
+        for m in re.finditer(rb"\x0F[\x80-\x8F]", d):
+            i = m.start()
+            if i + 6 <= len(d) and (slo + i + 6 + struct.unpack_from("<i", d, i + 2)[0]) & M32 == target:
+                out.append(slo + i)
+        lo8 = max(0, target - slo - 0x81)
+        for i in range(lo8, min(len(d) - 1, target - slo + 0x7f)):
+            if (d[i] == 0xEB or 0x70 <= d[i] <= 0x7F) and slo + i + 2 + struct.unpack_from("<b", d, i + 1)[0] == target:
+                out.append(slo + i)
+    return sorted(out)
+
+
+def _body(entry, stops):
+    """Instructions of the function at `entry`: CFG walk over jcc / in-function jmp edges, a jmp to another known
+    entry (or past 0x2000 bytes) is a tail call. Returns (instructions, status) with status 'ok' or the reason."""
+    img = image()
+    seen, todo, ins = set(), [entry], []
+    while todo:
+        pc = todo.pop()
+        while pc not in seen:
+            if len(ins) > 5000:
+                return ins, "cap"
+            seen.add(pc)
+            b = img.bytes(pc, 16)
+            try:
+                cs = next(_MD.disasm(b, pc))
+            except StopIteration:
+                return ins, f"undecodable 0x{pc:08x}"
+            ins.append(cs)
+            if cs.mnemonic in ("ret", "retn", "int3"):
+                break
+            if cs.group(capstone.CS_GRP_JUMP):
+                op = cs.operands[0]
+                if op.type != X.X86_OP_IMM:
+                    # `jmp [idx*4 + table]`: follow the table entries that land inside the body (as _table_targets)
+                    if not (op.type == X.X86_OP_MEM and not op.mem.base and op.mem.index and op.mem.scale == 4):
+                        return ins, f"indirect jump 0x{pc:08x}"
+                    k, n = op.mem.disp & M32, 0
+                    while True:
+                        raw = img.bytes(k, 4)
+                        e = struct.unpack("<I", raw)[0] if raw else 0
+                        if not (entry <= e < entry + 0x2000) or e in stops:
+                            break
+                        todo.append(e)
+                        k, n = k + 4, n + 1
+                    if not n:
+                        return ins, f"empty jump table 0x{pc:08x}"
+                    break
+                t = op.imm
+                inside = t not in stops and entry <= t < entry + 0x2000
+                if cs.mnemonic == "jmp":
+                    if not inside:
+                        break
+                    pc = t
+                    continue
+                if inside:
+                    todo.append(t)
+            pc += cs.size
+    return ins, "ok"
+
+
+_AUDIT = {}
+
+
+def route_audit(entry):
+    """Re-check the byte-anchored completeness audit of INDIRECT_CALLERS[entry]; raises ValueError on any mismatch."""
+    if entry in _AUDIT:
+        return _AUDIT[entry]
+    img = image()
+    spec = INDIRECT_CALLERS[entry]
+    a = spec["audit"]
+    rep = {}
+    # 1. the entry as data: only the registered slots, in every section
+    locs = _text_dword_refs(entry, entry + 1, sections=())
+    want = sorted(r["slot"] for r in spec["routes"])
+    if locs != want:
+        raise ValueError(f"route_audit 0x{entry:08x}: dword of the entry at {[hex(x) for x in locs]}, registered {want}")
+    rep["entry_dwords"] = locs
+    # 2. the entry as a branch target: no direct call or jump
+    br = _branch_refs(entry)
+    if br:
+        raise ValueError(f"route_audit 0x{entry:08x}: branch to the entry at {[hex(x) for x in br]}")
+    # 3. every .text dword in the table window is registered; the slot column of the entry is loaded only by the route
+    tlo, thi = a["table"]
+    locs = _text_dword_refs(tlo, thi)
+    if locs != sorted(a["table_refs"]):
+        extra = sorted(set(locs) - set(a["table_refs"]))
+        gone = sorted(set(a["table_refs"]) - set(locs))
+        raise ValueError(f"route_audit 0x{entry:08x}: table refs differ, new {[hex(x) for x in extra]}, "
+                         f"missing {[hex(x) for x in gone]}")
+    col = {}
+    for r in spec["routes"]:
+        col[(r["slot"] - a["base"]) % r["stride"]] = r
+    for loc in locs:
+        v = struct.unpack("<I", img.bytes(loc, 4))[0]
+        for c, r in col.items():
+            if v == a["base"] + c and loc - 1 != r["load"]:
+                raise ValueError(f"route_audit 0x{entry:08x}: column +0x{c:x} referenced at 0x{loc:08x}, not by the route")
+    rep["table_refs"] = len(locs)
+    # 4. the id-lookup record: one caller, stored by a function entered by one jump only
+    cl = callers(a["lookup"])
+    if sorted(cl) != sorted(a["lookup_callers"]) or _text_dword_refs(a["lookup"], a["lookup"] + 1, sections=()):
+        raise ValueError(f"route_audit 0x{entry:08x}: lookup 0x{a['lookup']:08x} callers {[hex(x) for x in cl]}")
+    sb = _branch_refs(a["store_fn"])
+    if sb != sorted(a["store_fn_branches"]) or _text_dword_refs(a["store_fn"], a["store_fn"] + 1, sections=()):
+        raise ValueError(f"route_audit 0x{entry:08x}: store fn 0x{a['store_fn']:08x} reached from {[hex(x) for x in sb]}")
+    # 5. every .text dword in the holder array is registered
+    hlo, hhi = a["holder"]
+    locs = _text_dword_refs(hlo, hhi)
+    if locs != sorted(a["holder_refs"]):
+        extra = sorted(set(locs) - set(a["holder_refs"]))
+        gone = sorted(set(a["holder_refs"]) - set(locs))
+        raise ValueError(f"route_audit 0x{entry:08x}: holder refs differ, new {[hex(x) for x in extra]}, "
+                         f"missing {[hex(x) for x in gone]}")
+    rep["holder_refs"] = len(locs)
+    # 6. no record method body accesses [r+0xa8] or calls through [r+0x24]
+    meths = set()
+    nrec = struct.unpack("<I", img.bytes(spec["routes"][0]["count"], 4))[0]
+    if nrec > a["nrec_max"]:
+        raise ValueError(f"route_audit 0x{entry:08x}: {nrec} records, audit covers {a['nrec_max']}")
+    for k in range(nrec):
+        for c in a["columns"]:
+            v = struct.unpack("<I", img.bytes(a["base"] + 0x40 * k + c, 4))[0]
+            if v:
+                meths.add(v)
+    stops = _fn_entries() | meths
+    for f in sorted(meths):
+        ins, st = _body(f, stops - {f})
+        if st != "ok":
+            raise ValueError(f"route_audit 0x{entry:08x}: record method 0x{f:08x} body {st}")
+        for cs in ins:
+            for op in cs.operands:
+                if op.type != X.X86_OP_MEM or op.mem.base == X.X86_REG_ESP:
+                    continue
+                if (op.mem.disp & M32) == a["holder_field"] or (cs.mnemonic == "call" and op.mem.disp == 0x24):
+                    raise ValueError(f"route_audit 0x{entry:08x}: record method 0x{f:08x} at 0x{cs.address:08x}: "
+                                     f"{cs.mnemonic} {cs.op_str}")
+    rep["methods"] = len(meths)
+    _AUDIT[entry] = rep
+    return rep
 
 
 def indirect_sites(entry):
     """[(site, length)] for a function in INDIRECT_CALLERS, each route checked against the image; raises on a mismatch."""
     img = image()
     spec = INDIRECT_CALLERS[entry]
+    if "audit" in spec:
+        route_audit(entry)
     out = []
     for r in spec["routes"]:
         d = img.bytes(r["slot"], 4)
