@@ -18,7 +18,7 @@ has at least one `re/match` source carrying `// MATCH: 0x<rva>` (some carry seve
    rva). Each is run as `c4_reclass.py batch --tsv <probe> --report <out>` with `reearn=1`, as a dry run. The gate
    recompiles the source now (`match.compare --bytes`, recorded compiler: XP DDK cl 13.00.9176 / c2 13.00.9178 or
    rw9044, the source's `// FLAGS:`), runs `relocheck.check`, and refuses a naked or asm-only body (SimGolf G26) and a
-   STUB in the body. Log: `reearn87_probe.log`, reports `reearn87_probe<k>_report.tsv`.
+   STUB in the body. Log: `reearn87_probe.txt`, reports `reearn87_probe<k>_report.tsv`.
    A row is re-earned when some candidate source PASSes. The chosen source is the passing one whose file stem is the
    rva, otherwise the first passing round.
 2. **frida_diff cells.** The 5 rows whose cell is the bare word `green` take the RESULT named by their promotion commit:
@@ -83,7 +83,7 @@ py -3.12 re/tools/c4_reclass.py batch --tsv re/promotions/C4-NOTAG-87-REEARN-mat
 py -3.12 re/tools/c4_reclass.py batch --tsv re/promotions/C4-NOTAG-87-REEARN.tsv --result verify/c4audit_20261115/RESULT_C4-NOTAG-87-REEARN.md
 ```
 
-Full output, including the CHANGELOG lines `--apply` would write: `reearn87_dryrun.log`. Per-row reports:
+Full output, including the CHANGELOG lines `--apply` would write: `reearn87_dryrun.txt`. Per-row reports:
 `reearn87_match_dryrun.tsv`, `reearn87_demote_dryrun.tsv`. Verdict lines:
 
 ```
@@ -221,5 +221,5 @@ re/tools/tests/test_c4_reclass.py::test_frida_diff_column_replaces_the_cell_on_w
 
 `re/promotions/C4-NOTAG-87-REEARN-match.tsv`, `re/promotions/C4-NOTAG-87-REEARN.tsv`, and under
 `verify/c4audit_20261115/`: `reearn87_select.py`, `reearn87_rows.tsv`, `reearn87_probe.py`, `reearn87_probe<0..5>.tsv`,
-`reearn87_probe<0..5>_report.tsv`, `reearn87_probe.log`, `reearn87_tsvs.py`, `reearn87_dryrun.log`,
-`reearn87_match_dryrun.tsv`, `reearn87_demote_dryrun.tsv`, `reearn87_pytest.log`, this RESULT. No raw off-git data.
+`reearn87_probe<0..5>_report.tsv`, `reearn87_probe.txt`, `reearn87_tsvs.py`, `reearn87_dryrun.txt`,
+`reearn87_match_dryrun.tsv`, `reearn87_demote_dryrun.tsv`, `reearn87_pytest.txt`, this RESULT. No raw off-git data.
