@@ -205,6 +205,18 @@ py -3.12 re\tools\c4_reclass.py batch --tsv <batch.tsv> --apply --result <RESULT
   CHANGELOG line per run goes below `<!-- ENTRIES -->`. `--hooks <file>` / `--changelog <file>` redirect the run to
   copies for a rehearsal. On a branch, commit the TSV (like `re/promotions/<ID>.tsv`) and dry-run it; the train applies
   with `--apply --strict`.
+- **Refresh a stale `src sha256` (C4RECLASS-SHA-REFRESH)**: a row ALREADY at C4 by `c4=match` whose source file changed
+  after the promotion keeps its C4 and gets only the 16-hex `src sha256` token in its notes replaced:
+  ```
+  py -3.12 re\tools\c4_reclass.py refresh --tsv re\promotions\<ID>-refresh.tsv [--apply --strict --result <RESULT.md>]
+  ```
+  TSV header `rva  src  result` (tab-separated, `src` = the repo-relative matched source, which must be the one the
+  row's note names after `match.py`; `result` = the RESULT the CHANGELOG cites). The tool recompiles and runs
+  relocheck itself and REFUSES unless the function is byte-identical (insn 100%) and relocheck is OK, the row is C4, is
+  `c4=match`, and carries a `src sha256` token. A token already equal to the current hash is `SKIP` (idempotent). Nothing
+  else in the row changes; one CHANGELOG line per refreshed row. On a branch commit
+  `re/promotions/<ID>-refresh.tsv` and dry-run it; the train applies it with `refresh --apply --strict` and moves it to
+  `re/promotions/applied/`. The hash is of the working-tree bytes (CRLF under autocrlf on Windows).
 - `--jobs N` (default 4) compiles sources in parallel.
 - Self-test: `py -3.12 -m pytest re/tools/tests/test_c4_reclass.py` (fake repo root, no compiler, real trackers
   untouched).

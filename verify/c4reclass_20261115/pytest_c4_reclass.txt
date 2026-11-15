@@ -1,0 +1,52 @@
+[test-slot] waiting for memory (0s so far): memory: 22.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (30s so far): memory: 22.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (60s so far): memory: 22.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (90s so far): memory: 22.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (120s so far): memory: 22.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (150s so far): memory: 22.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (180s so far): memory: 22.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (210s so far): memory: 22.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (240s so far): memory: 22.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (270s so far): memory: 21.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (300s so far): memory: 20.1 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (330s so far): memory: 20.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (360s so far): memory: 20.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (390s so far): memory: 20.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (420s so far): memory: 20.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (450s so far): memory: 20.0 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (480s so far): memory: 20.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (510s so far): memory: 20.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (540s so far): memory: 21.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (570s so far): memory: 21.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 5/8 after 600s
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\C4RECLASS-SHA-REFRESH
+plugins: anyio-4.15.1
+collecting ... collected 21 items
+
+re/tools/tests/test_c4_reclass.py::test_dry_run_writes_nothing PASSED    [  4%]
+re/tools/tests/test_c4_reclass.py::test_apply_touches_only_promoted_lines PASSED [  9%]
+re/tools/tests/test_c4_reclass.py::test_apply_needs_result PASSED        [ 14%]
+re/tools/tests/test_c4_reclass.py::test_strict_writes_nothing_on_refusal PASSED [ 19%]
+re/tools/tests/test_c4_reclass.py::test_match_refusals[ev0-not byte-identical] PASSED [ 23%]
+re/tools/tests/test_c4_reclass.py::test_match_refusals[ev1-relocheck BAD] PASSED [ 28%]
+re/tools/tests/test_c4_reclass.py::test_match_refusals[ev2-shorter than the original body] PASSED [ 33%]
+re/tools/tests/test_c4_reclass.py::test_toolchain_must_be_ddk PASSED     [ 38%]
+re/tools/tests/test_c4_reclass.py::test_second_apply_is_a_noop PASSED    [ 42%]
+re/tools/tests/test_c4_reclass.py::test_tag_dry_run_writes_nothing PASSED [ 47%]
+re/tools/tests/test_c4_reclass.py::test_tag_apply_is_notes_only_and_idempotent PASSED [ 52%]
+re/tools/tests/test_c4_reclass.py::test_tag_refuses_missing_row_and_strict PASSED [ 57%]
+re/tools/tests/test_c4_reclass.py::test_batch_lever_column_tags_promoted_row PASSED [ 61%]
+re/tools/tests/test_c4_reclass.py::test_refresh_changes_only_the_sha PASSED [ 66%]
+re/tools/tests/test_c4_reclass.py::test_refresh_idempotent_when_current PASSED [ 71%]
+re/tools/tests/test_c4_reclass.py::test_refresh_dry_run_writes_nothing PASSED [ 76%]
+re/tools/tests/test_c4_reclass.py::test_refresh_refuses_below_100 PASSED [ 80%]
+re/tools/tests/test_c4_reclass.py::test_refresh_refuses_relocheck_not_ok PASSED [ 85%]
+re/tools/tests/test_c4_reclass.py::test_refresh_refuses_row_not_at_c4 PASSED [ 90%]
+re/tools/tests/test_c4_reclass.py::test_refresh_refuses_other_source_and_missing_token PASSED [ 95%]
+re/tools/tests/test_c4_reclass.py::test_refresh_strict_writes_nothing_on_one_refusal PASSED [100%]
+
+============================= 21 passed in 2.35s ==============================

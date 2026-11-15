@@ -176,3 +176,107 @@ def test_batch_lever_column_tags_promoted_row(mod, tmp_path):
     assert mod.main(["batch", "--tsv", str(t), "--date", "2026-11-14", "--apply", "--result", "ev.md"]) == 0
     row = [l for l in (tmp_path / "hooks.csv").read_bytes().decode().split("\r\n") if l.startswith("00426070")][0]
     assert ",C4," in row and "ev.md | lever=volatile\"," in row
+
+
+# ---------------------------------------------------------------- refresh (C4RECLASS-SHA-REFRESH)
+import hashlib, re as _re
+
+OLDSHA = "0123456789abcdef"
+
+
+def _c4_note(src="src/00426070.c", sha=OLDSHA):
+    return (f"x | 2026-11-01 C4 by route match (L-93): c4=match; match.py {src} --bytes BYTE-IDENTICAL 12 B, insn 100.0% "
+            f"(XP DDK cl 13.00.9176 / c2 13.00.9178, /O2, c); relocheck OK checked=2 unchecked=1 [__ftol]; src sha256 {sha}; ev.md | tail")
+
+
+def _refresh_setup(tmp_path, conf="C4", note=None, rva="00426070"):
+    row = f"{rva},FUN_{rva},render,{conf},impl,a.cpp,,,\"{note if note is not None else _c4_note()}\",\r\n"
+    raw = HOOKS.replace("00426070,TrackPhysWorld2Get,render,C3,impl,a.cpp,,,\"over, quoted\",\r\n", row)
+    (tmp_path / "hooks.csv").write_bytes(raw.encode())
+    return raw
+
+
+def refresh(m, tmp_path, rows, *extra):
+    t = tmp_path / "refresh.tsv"
+    t.write_text("rva\tsrc\tresult\n" + "".join("\t".join(r) + "\n" for r in rows))
+    return m.main(["refresh", "--tsv", str(t), "--date", "2026-11-15", *extra])
+
+
+R1 = [("0x00426070", "src/00426070.c", "ev.md")]
+
+
+def _cursha(tmp_path):
+    return hashlib.sha256((tmp_path / "src" / "00426070.c").read_bytes()).hexdigest()[:16]
+
+
+def test_refresh_changes_only_the_sha(mod, tmp_path, capsys):
+    raw = _refresh_setup(tmp_path)
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 0
+    new = _cursha(tmp_path)
+    after = (tmp_path / "hooks.csv").read_bytes().decode()
+    assert after == raw.replace(OLDSHA, new) and raw.count(OLDSHA) == 1 and new != OLDSHA
+    entry = (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_bytes().decode().split("<!-- ENTRIES -->\r\n")[1].split("\r\n")[0]
+    assert f"{OLDSHA} -> {new}" in entry and "C4->C4" in entry and "ev.md" in entry
+    assert "REFRESH" in capsys.readouterr().out
+
+
+def test_refresh_idempotent_when_current(mod, tmp_path, capsys):
+    raw = _refresh_setup(tmp_path, note=_c4_note(sha=_cursha(tmp_path)))
+    cl = (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_bytes()
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 0
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+    assert (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_bytes() == cl
+    assert "SKIP" in capsys.readouterr().out
+
+
+def test_refresh_dry_run_writes_nothing(mod, tmp_path, capsys):
+    raw = _refresh_setup(tmp_path)
+    cl = (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_bytes()
+    assert refresh(mod, tmp_path, R1) == 0
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+    assert (tmp_path / "re" / "analysis" / "CHANGELOG.md").read_bytes() == cl
+    out = capsys.readouterr().out
+    assert "REFRESH" in out and "dry run: nothing written" in out
+
+
+def test_refresh_refuses_below_100(mod, tmp_path, capsys):
+    raw = _refresh_setup(tmp_path)
+    mod._evals["src/00426070.c"] = ok_eval("00426070", bad=3)
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 1
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+    assert "not byte-identical" in capsys.readouterr().out
+    mod._evals["src/00426070.c"] = ok_eval("00426070", acc=0.9)
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 1
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+
+
+def test_refresh_refuses_relocheck_not_ok(mod, tmp_path, capsys):
+    raw = _refresh_setup(tmp_path)
+    mod._evals["src/00426070.c"] = ok_eval("00426070", reloc="BAD")
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 1
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+    assert "relocheck BAD" in capsys.readouterr().out
+
+
+def test_refresh_refuses_row_not_at_c4(mod, tmp_path, capsys):
+    raw = _refresh_setup(tmp_path, conf="C3")
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 1
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+    assert "not C4" in capsys.readouterr().out
+
+
+def test_refresh_refuses_other_source_and_missing_token(mod, tmp_path, capsys):
+    raw = _refresh_setup(tmp_path, note=_c4_note(src="src/other.c"))
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 1
+    assert "recorded source" in capsys.readouterr().out
+    raw = _refresh_setup(tmp_path, note=_re.sub(r"src sha256 \w+", "no hash", _c4_note()))
+    assert refresh(mod, tmp_path, R1, "--apply", "--strict") == 1
+    assert "no `src sha256" in capsys.readouterr().out
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw
+
+
+def test_refresh_strict_writes_nothing_on_one_refusal(mod, tmp_path):
+    raw = _refresh_setup(tmp_path)
+    rows = R1 + [("0x00499999", "src/00426070.c", "ev.md")]
+    assert refresh(mod, tmp_path, rows, "--apply", "--strict") == 1
+    assert (tmp_path / "hooks.csv").read_bytes().decode() == raw

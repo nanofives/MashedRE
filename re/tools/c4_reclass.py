@@ -40,6 +40,22 @@ tag       c4_reclass.py tag --tsv <file> [--apply] [--strict] [--result <RESULT.
           REFUSED; a tag already present as a whole token in the notes is SKIP (idempotent). --apply rewrites only the
           tagged lines (confidence and status untouched) and prepends ONE CHANGELOG line for the run. --strict writes
           nothing if any row is refused. --hooks / --changelog point at copies for a rehearsal.
+refresh   c4_reclass.py refresh --tsv <file> [--apply] [--strict] [--result <RESULT.md>] [--jobs N] [--hooks <copy>] [--changelog <copy>]
+          (C4RECLASS-SHA-REFRESH) Refreshes the `src sha256 <16 hex>` token in the C4 note of a row that is ALREADY C4
+          by route match, when the source file changed after the promotion (formatting, comments, unrelated edits) and
+          the recorded hash went stale. TSV `re/promotions/<ID>-refresh.tsv`, header (tab separated, required):
+          `rva`, `src`, `result`. `src` = the matched source, repo-relative (.c / .cpp), and it must be the same file the
+          row's C4 note names after `match.py`. `result` = the RESULT file the CHANGELOG cites (first row's value is used
+          for --result when the flag is absent). Each row is gated on its own, like the match route: the tool recompiles
+          the source now (match.compare --bytes) and runs relocheck, and REFUSES unless the function is byte-identical,
+          insn 100% (or the same shorter-Ghidra-body case the match gate accepts) and relocheck OK, with the recorded
+          compiler. Other REFUSED cases: row not in hooks.csv, row not at C4, row not C4 by `c4=match`, source differs
+          from the note's source, no `src sha256` token in the notes. SKIP: the token already equals the current hash
+          (idempotent, no write). Only that 16-hex token changes (the last one in the notes); confidence, status, every
+          other column and the rest of the notes stay byte-identical. --apply prepends ONE CHANGELOG line per refreshed
+          row (`C4->C4 sha refresh old->new`). Dry run by default. --strict writes nothing if any row is refused.
+          The merge train applies `<ID>-refresh.tsv` with `refresh --apply --strict` on the current head and moves it to
+          re/promotions/applied/, like a promotions TSV.
 make-tsv  Turns MATCH slice results.tsv files into a batch TSV: every row whose recorded score is 100 becomes
           `rva  match  <source>`. The batch gate still recompiles each one.
 
@@ -599,6 +615,90 @@ def cmd_tag(a):
     return 0
 
 
+SHA_TOKEN = re.compile(r"src sha256 ([0-9a-f]{16})")
+
+
+def cmd_refresh(a):
+    """Refresh only the src sha256 token of a C4 note (see the module docstring, `refresh`)."""
+    global HOOKS, CHANGELOG
+    if a.hooks:
+        HOOKS = pathlib.Path(a.hooks)
+    if a.changelog:
+        CHANGELOG = pathlib.Path(a.changelog)
+    rows = load_tsv(pathlib.Path(a.tsv))
+    if not rows or not {"rva", "src", "result"} <= set(rows[0]):
+        sys.exit("REFUSED: refresh TSV needs a header with columns rva, src, result")
+    res = (a.result or rows[0]["result"] or "").strip()
+    if a.apply and not res:
+        sys.exit("REFUSED: --apply needs a result (the `result` column or --result)")
+    lines, col, index, eol = load_hooks(read_raw(HOOKS))
+    sources = sorted({r["src"].strip().replace("\\", "/") for r in rows})
+    evals = evaluate(sources, a.jobs) if sources else {}
+    date = a.date or datetime.date.today().isoformat()
+    seen, log, total, nref, nskip = set(), [], len(rows), 0, 0
+    for k, b in enumerate(rows, 1):
+        src = b["src"].strip().replace("\\", "/")
+        try:
+            rva = norm_rva(b["rva"])
+        except ValueError as e:
+            verdict, detail, rva = "REFUSED", str(e), b["rva"]
+        else:
+            ri = index.get(rva)
+            verdict = "REFUSED"
+            if rva in seen:
+                detail = "duplicate rva in the TSV"
+            elif ri is None:
+                detail = "no hooks.csv row"
+            else:
+                r = parse_line(lines[ri], col)
+                notes = r[col["notes"]]
+                nm = re.search(r"c4=match; match\.py (\S+)", notes)
+                old = SHA_TOKEN.findall(notes)
+                if r[col["confidence"]] != "C4":
+                    detail = f"row is {r[col['confidence']] or 'C0'}, not C4 (refresh only touches rows already at C4)"
+                elif not nm:
+                    detail = "row is not C4 by route match (no `c4=match; match.py <src>` in the notes)"
+                elif nm.group(1) != src:
+                    detail = f"source {src} is not the row's recorded source {nm.group(1)}"
+                elif not old:
+                    detail = "no `src sha256 <16 hex>` token in the notes"
+                else:
+                    ok, detail, note = gate_match(rva, src, evals.get(src, {}))
+                    if ok:
+                        new = SHA_TOKEN.findall(note)[-1]
+                        if new == old[-1]:
+                            verdict, detail = "SKIP", f"src sha256 {new} already current (no write)"
+                        else:
+                            verdict = "REFRESH"
+                            detail = f"src sha256 {old[-1]} -> {new} ({detail})"
+                            m = list(SHA_TOKEN.finditer(notes))[-1]
+                            r[col["notes"]] = notes[:m.start(1)] + new + notes[m.end(1):]
+                            lines[ri] = dump_line(r)
+                            log.append(f"{date}  0x{rva}  {r[col['name']]}  C4->C4  sha refresh (c4_reclass refresh): "
+                                       f"src sha256 {old[-1]} -> {new}, {src} still byte-identical + relocheck OK; "
+                                       f"evidence: {res or '<RESULT>'}")
+        seen.add(rva)
+        nref += verdict == "REFUSED"
+        nskip += verdict == "SKIP"
+        print(f"[{k}/{total}] 0x{rva} refresh {verdict} {detail}", flush=True)
+    print(f"refresh: {len(log)} {'refreshed' if a.apply else 'would-refresh'}, {nref} refused, {nskip} skipped (already current), {total} rows")
+    if not a.apply:
+        print("dry run: nothing written. CHANGELOG lines that --apply would prepend:")
+        for l in log:
+            print("  " + l)
+        return 0
+    if a.strict and nref:
+        print(f"--strict: {nref} refused rows, nothing written")
+        return 1
+    if not log:
+        print("nothing to write")
+        return 0
+    write_raw(HOOKS, eol.join(lines))
+    write_raw(CHANGELOG, prepend_changelog(read_raw(CHANGELOG), log))
+    print(f"wrote hooks.csv ({len(log)} rows refreshed) and {len(log)} CHANGELOG lines")
+    return 0
+
+
 def cmd_make_tsv(a):
     out = []
     for res in a.results:
@@ -641,8 +741,17 @@ def main(argv=None):
     t.add_argument("--date")
     t.add_argument("--hooks", help="hooks.csv to edit instead of the repo's (rehearsal on a copy)")
     t.add_argument("--changelog", help="CHANGELOG.md to edit instead of the repo's (rehearsal on a copy)")
+    f = sub.add_parser("refresh")
+    f.add_argument("--tsv", required=True)
+    f.add_argument("--apply", action="store_true")
+    f.add_argument("--strict", action="store_true")
+    f.add_argument("--result")
+    f.add_argument("--jobs", type=int, default=4)
+    f.add_argument("--date")
+    f.add_argument("--hooks", help="hooks.csv to edit instead of the repo's (rehearsal on a copy)")
+    f.add_argument("--changelog", help="CHANGELOG.md to edit instead of the repo's (rehearsal on a copy)")
     a = ap.parse_args(argv)
-    return {"batch": cmd_batch, "tag": cmd_tag}.get(a.cmd, cmd_make_tsv)(a)
+    return {"batch": cmd_batch, "tag": cmd_tag, "refresh": cmd_refresh}.get(a.cmd, cmd_make_tsv)(a)
 
 
 if __name__ == "__main__":
