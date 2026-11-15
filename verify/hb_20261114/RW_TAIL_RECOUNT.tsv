@@ -1,0 +1,177 @@
+rva	hooks_conf	state	route	provisional	port
+0x004c0910	C4	resolved	match	provisional	none
+0x004c1a70	C4	resolved	frida-replay	provisional	body
+0x004c1de0	C1	open		provisional	none
+0x004c1f80	C2	open		provisional	none
+0x004c2620	C2	open		provisional	none
+0x004c2a30	C2	open		provisional	none
+0x004c2b80	C4	resolved	match	provisional	none
+0x004c2bb0	C4	resolved	match	provisional	none
+0x004c30b0	C2	open		provisional	body
+0x004c32b0	C2	open		provisional	body
+0x004c39b0	C2	open		provisional	body
+0x004c3e90	C2	open		provisional	body
+0x004c4220	C2	open		provisional	none
+0x004c4360	C3	open		provisional	body
+0x004c4680	C2	open		provisional	called
+0x004c4a50	C3	resolved	admitted	provisional	called
+0x004c4d20	C4	resolved	frida-replay	provisional	called
+0x004c4eb0	C3	open		provisional	called
+0x004c5010	C4	resolved	c4-other	provisional	body
+0x004c51a0	C3	open		refused	called
+0x004c5a00	C4	resolved	match	provisional	none
+0x004c5f60	C4	resolved	match	provisional	body
+0x004c6750	C4	resolved	match		none
+0x004c7a70	C2	open		provisional	body
+0x004c90a0	C4	resolved	match	provisional	called
+0x004c9290	C1	open		provisional	none
+0x004ca160	C1	open		provisional	none
+0x004cab30	C1	open		provisional	none
+0x004cac10	C4	resolved	match	provisional	none
+0x004cb330	C4	resolved	match	provisional	none
+0x004cb4c0	C4	resolved	match	provisional	none
+0x004cb8a0	C4	resolved	match	provisional	body
+0x004cbbd0	C4	resolved	match	provisional	none
+0x004cc050	C3	open		provisional	called
+0x004cc5e0	C2	open		provisional	called
+0x004cc820	C4	resolved	match	provisional	body
+0x004cca80	C1	open		provisional	none
+0x004ccef0	C1	open		provisional	none
+0x004ccf00	C1	open		provisional	none
+0x004cd550	C4	resolved	match	provisional	body
+0x004cdd60	C4	resolved	match		called
+0x004cdf20	C2	open		provisional	none
+0x004ce480	C4	resolved	match	provisional	none
+0x004ce5d0	C4	resolved	match	provisional	none
+0x004ce6f0	C4	resolved	match	provisional	none
+0x004ce970	C4	resolved	match	provisional	none
+0x004cee90	C4	resolved	match	provisional	none
+0x004cf160	C2	open		provisional	body
+0x004cf5a0	C2	open		provisional	none
+0x004cfdd0	C1	open		provisional	none
+0x004cfdf0	C1	open		provisional	none
+0x004cff20	C2	open		provisional	body
+0x004d0290	C4	resolved	match	provisional	body
+0x004d1d70	C4	resolved	match	provisional	none
+0x004d1e30	C4	resolved	match	provisional	none
+0x004d2340	C2	open		provisional	body
+0x004d3090	C2	open		provisional	body
+0x004d3450	C4	resolved	match	provisional	none
+0x004d40d0	C4	resolved	match	provisional	none
+0x004d4380	C2	open		provisional	body
+0x004d4f90	C2	open		provisional	body
+0x004d5190	C2	open		provisional	body
+0x004d5bc0	C4	resolved	match	provisional	body
+0x004d6200	C4	resolved	match	provisional	none
+0x004d6910	C4	resolved	match	provisional	called
+0x004d7480	C4	resolved	match	provisional	body
+0x004d7de0	C2	open		provisional	body
+0x004d8300	C2	open		provisional	none
+0x004d8810	C2	open		provisional	none
+0x004dabd0	C2	open		provisional	body
+0x004daff0	C2	open		provisional	body
+0x004db3e0	C2	open		provisional	body
+0x004dba60	C4	resolved	match	provisional	body
+0x004dc370	C2	open		provisional	called
+0x004dc410	C2	open		provisional	called
+0x004dc4a0	C2	open		provisional	body
+0x004dc8a0	C2	open		provisional	none
+0x004dcbb0	C4	resolved	match	provisional	body
+0x004dcdc0	C2	open		provisional	body
+0x004dcf90	C3	open		provisional	none
+0x004dcff0	C3	open		provisional	none
+0x004dd050	C3	open		provisional	none
+0x004dd0b0	C2	open		provisional	none
+0x004dd140	C4	resolved	match	provisional	none
+0x004ddcb0	C2	open		provisional	body
+0x004de1b0	C2	open		provisional	body
+0x004de390	C2	open		provisional	body
+0x004dee40	C2	open		provisional	body
+0x004df030	C1	open		provisional	none
+0x004df120	C2	open		provisional	body
+0x004e0920	C2	open		provisional	body
+0x004e13f0	C2	open		provisional	body
+0x004e1b60	C4	resolved	match	provisional	none
+0x004e1e70	C2	open		provisional	body
+0x004e2090	C2	open		provisional	body
+0x004e2650	C2	open		provisional	body
+0x004e2930	C2	open		provisional	body
+0x004e2bf0	C2	open		provisional	body
+0x004e3160	C2	open		provisional	body
+0x004e3800	C1	open		provisional	none
+0x004e3dc0	C1	open		provisional	none
+0x004e4650	C1	open		provisional	none
+0x004e4c30	C4	resolved	match	provisional	none
+0x004e5300	C2	open		provisional	none
+0x004e5850	C2	open		provisional	none
+0x004e5d30	C4	resolved	match	provisional	none
+0x004e5fc0	C4	resolved	match	provisional	none
+0x004e6100	C2	open		provisional	none
+0x004e66d0	C4	resolved	match	provisional	none
+0x004e6ab0	C2	open		provisional	none
+0x004e6e00	C4	resolved	match	provisional	none
+0x004e7060	C2	open		provisional	none
+0x004e7420	C2	open		provisional	none
+0x004e8120	C2	open		provisional	none
+0x004e89a0	C4	resolved	match	provisional	none
+0x004e8a10	C2	open		provisional	none
+0x004e8c70	C2	open		provisional	none
+0x004e9330	C2	open		provisional	none
+0x004ea9a0	C2	open		provisional	none
+0x004f0f10	C2	open		provisional	none
+0x004f1fb0	C4	resolved	match	provisional	none
+0x004f2570	C2	open		provisional	none
+0x004f3150	C2	open		provisional	none
+0x004f3440	C2	open		provisional	none
+0x004f36c0	C2	open		provisional	none
+0x004f3e90	C2	open		provisional	none
+0x004f57e0	C2	open		provisional	none
+0x004f6870	C2	open		provisional	none
+0x004f71f0	C2	open		provisional	none
+0x004fa5f0	C2	open		provisional	none
+0x0052daf0	C2	open		provisional	none
+0x0052e3d0	C4	resolved	match		none
+0x00533740	C4	resolved	match	provisional	none
+0x00534b60	C4	resolved	match	provisional	called
+0x00534d00	C2	open		provisional	none
+0x00535330	C2	open		provisional	none
+0x00536630	C1	open		provisional	none
+0x00536780	C1	open		provisional	called
+0x00536e90	C1	resolved	admitted	provisional	none
+0x00536fe0	C1	open		provisional	none
+0x005386b0	C4	resolved	match	provisional	none
+0x00538c30	C4	resolved	match	provisional	none
+0x0053d0b0	C2	open		provisional	none
+0x0053d2b0	C1	open		provisional	called
+0x0053d5a0	C4	resolved	match	provisional	none
+0x0053d820	C2	open		provisional	none
+0x0053e830	C2	open		provisional	none
+0x0053f3c0	C1	open		provisional	none
+0x0053fa20	C4	resolved	match	provisional	none
+0x0053fb00	C4	resolved	match	provisional	none
+0x0053fbb0	C2	open		provisional	none
+0x0053fec0	C2	open		provisional	none
+0x005405c0	C2	open		provisional	none
+0x005412d0	C2	open		provisional	none
+0x00543500	C4	resolved	match	provisional	none
+0x00543b30	C2	open		provisional	none
+0x005441f0	C1	open		provisional	none
+0x005444a0	C4	resolved	match	provisional	none
+0x00544e00	C4	resolved	match	provisional	none
+0x00545080	C1	open		provisional	none
+0x005451f0	C1	open		provisional	none
+0x005465c0	C1	open		provisional	none
+0x00546890	C2	open		provisional	none
+0x005492b0	C1	open		provisional	none
+0x005493e0	C4	resolved	match	provisional	none
+0x00549710	C4	resolved	match	provisional	none
+0x00549970	C2	open		provisional	none
+0x0054b740	C4	resolved	match	provisional	none
+0x0054f8d0	C2	open		provisional	none
+0x00550130	C2	open		provisional	none
+0x005518f0	C4	resolved	match		none
+0x00557cb0	C1	open		provisional	none
+0x00557d90	C4	resolved	match	provisional	none
+0x00557e50	C4	resolved	match	provisional	none
+0x005cb2a0	C3	open		provisional	called
+0x005cb404	C2	open		provisional	none
