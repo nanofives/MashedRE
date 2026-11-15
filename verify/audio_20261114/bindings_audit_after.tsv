@@ -1,0 +1,51 @@
+matched rows 551 without c4=match/libid 49
+rva	level	hooks_tags	note_tag	bytecheck	promotion	admitted	provisional	exe_symbol	note
+0x00492270	C4	-	other	IDENTICAL	-	-	-	SubsystemInit (via PortTop_Bound_00492270)	Match/MatchS15_00492270.cpp; its MASHED_STANDALONE branch binds 0x00493710 to the matched bring-up (RW on libr
+0x00498bc0	C4	-	other	IDENTICAL	-	-	-	VideoGetRenderWidth	PORT-TOP-04E: matched, Match/MatchS16_00498bc0.cpp
+0x00498bd0	C4	-	other	IDENTICAL	-	-	-	VideoGetRenderHeight	PORT-TOP-04E: matched, Match/MatchS16_00498bd0.cpp
+0x004938c0	C4	-	other	IDENTICAL	-	-	-	SoftwareTidyUpBeforeExiting	Match/MatchS15_004938c0.cpp; MASHED_STANDALONE binds its 5 RW calls to LibRw/RwApiBind.cpp. PORT-TOP-03
+0x0040d440	C4	-	other	IDENTICAL	-	-	-	Orig_0040d440	PORT-TOP-05: re/match/s02/0040d440.c, Match/PortTop_0040d440.cpp; callee 0x0040d270 = stand-in PortTop_StandIn
+0x00498bf0	C4	-	other	IDENTICAL	-	-	-	DisplayActiveFlagGet	PORT-TOP-04A: Match/MatchS16_00498bf0.cpp
+0x0042b8c0	C4	-	other	IDENTICAL	-	-	-	ScreenHeightGet	PORT-TOP-04B: Match/MatchS07_0042b8c0.cpp (exe body already)
+0x004b3b70	C4	-	other	IDENTICAL	-	-	-	Orig_004b3b70	POWERUPINIT-A: Match/PortTop_004b3b70.cpp = re/match/s18/004b3b70.c: stream open (2, 1, path), read, close; OR
+0x0045c480	C3	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_0045c480	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045c480.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_0045c
+0x00493f70	C4	-	other	IDENTICAL	-	-	-	RwCore_00493f70	PORT-TOP-AUDIOTICK-STOPS: existing exe body RwCore/RwCore_00493f70.cpp
+0x005a8890	C2	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005a8890	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005a8890.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005a8
+0x005aab00	C4	frida-replay	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005aab00	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005aab00.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005aa
+0x005a5fd0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005a5fd0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a5fd0.c (c4=match), Match/PortTop_005a5fd0.cpp
+0x005a6010	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005a6010	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a6010.c (c4=match), Match/PortTop_005a6010.cpp
+0x004cd060	C4	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_004cd060	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/004cd060.c (c4=match), Match/PortTop_004cd060.cpp
+0x005a5ee0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005a5ee0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a5ee0.c (c4=match), Match/PortTop_005a5ee0.cpp
+0x005a6af0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005a6af0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a6af0.c (c4=match), Match/PortTop_005a6af0.cpp
+0x005a6b30	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005a6b30	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a6b30.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005a6
+0x005a6e50	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005a6e50	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a6e50.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005a6
+0x005a6e90	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005a6e90	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a6e90.c (c4=match), Match/PortTop_005a6e90.cpp
+0x005a7810	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005a7810	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a7810.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005a7
+0x005a78b0	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005a78b0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a78b0.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005a7
+0x005a9970	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005a9970	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a9970.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005a9
+0x005a9a70	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005a9a70	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005a9a70.c (c4=match), Match/PortTop_005a9a70.cpp
+0x005aa480	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005aa480	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aa480.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005aa
+0x005aa520	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005aa520	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aa520.c (c4=match), Match/PortTop_005aa520.cpp
+0x005aafb0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005aafb0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aafb0.c (c4=match), Match/PortTop_005aafb0.cpp
+0x005aafe0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005aafe0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aafe0.c (c4=match), Match/PortTop_005aafe0.cpp
+0x005ab4a0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005ab4a0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ab4a0.c (c4=match), Match/PortTop_005ab4a0.cpp
+0x005ab510	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005ab510	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ab510.c (c4=match), Match/PortTop_005ab510.cpp
+0x005ab9d0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005ab9d0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ab9d0.c (c4=match), Match/PortTop_005ab9d0.cpp
+0x005aba00	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005aba00	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aba00.c (c4=match), Match/PortTop_005aba00.cpp
+0x005ac550	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005ac550	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ac550.c (c4=match), Match/PortTop_005ac550.cpp
+0x005ac590	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005ac590	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ac590.c (c4=match), Match/PortTop_005ac590.cpp
+0x005acff0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005acff0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005acff0.c (c4=match), Match/PortTop_005acff0.cpp
+0x005ad030	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005ad030	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ad030.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ad
+0x005ad320	C4	frida-replay	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005ad320	AUDIO-STACK-5-UNMATCHED-BOUND: L-126 admitted, re/match/ADMITTED.tsv (EQUIV), not a byte match (match.py not 1
+0x005ada90	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005ada90	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ada90.c (c4=match), Match/PortTop_005ada90.cpp
+0x005adb70	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005adb70	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005adb70.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ad
+0x005add80	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005add80	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005add80.c (c4=match), Match/PortTop_005add80.cpp
+0x005addb0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005addb0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005addb0.c (c4=match), Match/PortTop_005addb0.cpp
+0x005adf90	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005adf90	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005adf90.c (c4=match), Match/PortTop_005adf90.cpp
+0x005adfc0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005adfc0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005adfc0.c (c4=match), Match/PortTop_005adfc0.cpp
+0x005ae1d0	C1	-	c4=match	IDENTICAL	PORT-TOP-RWAUDIO-TABLE-632BA8.tsv:match	-	-	PortTop_Bound_005ae1d0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ae1d0.c (c4=match), Match/PortTop_005ae1d0.cpp
+0x005ae210	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005ae210	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ae210.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ae
+0x005ae5b0	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005ae5b0	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ae5b0.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ae
+0x005ae610	C1	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005ae610	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005ae610.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ae
+0x005ae920	C3	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005ae920	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ae920.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ae
+0x005aea60	C2	-	L-126 admitted	DIFFERENT	-	ADMITTED	-	PortTop_Bound_005aea60	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aea60.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005ae

@@ -1,0 +1,2 @@
+0x005a6d60	NOT-PROVEN	call-regargs: region ours +0x0 / orig 0x005a6d60 call ld32(M00(),(ld32(M00(),(ld32(M00(),(arg32(4)+0x4))+0x4))+arg32(8)*8)): (('ecx', ld32(M00(),arg32(4))), ('edx', zx32(ld16(M00(),(ld32(M00(),(ld32(M00(),(...+0x4))+0x4))+arg32(8)*8+0x4)))), ('pop', 0)) | (('ecx', (ld32(M00(),(ld32(M00(),(arg32(4)+0x4))+0x4))+arg32(8)*8)), ('edx', ld32(M00(),arg32(4))), ('pop', 0))
+exit 0
