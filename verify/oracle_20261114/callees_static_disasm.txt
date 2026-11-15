@@ -1,0 +1,109 @@
+exe ../../original/MASHED.exe.unpatched
+--- 0x004952f0 +0x54
+0x004952f0  b8b0200000           mov eax, 0x20b0
+0x004952f5  e846e10000           call 0x4a3440
+0x004952fa  a138606100           mov eax, dword ptr [0x616038]
+0x004952ff  338424b0200000       xor eax, dword ptr [esp + 0x20b0]
+0x00495306  898424ac200000       mov dword ptr [esp + 0x20ac], eax
+0x0049530d  8d442400             lea eax, [esp]
+0x00495311  50                   push eax
+0x00495312  e8a9120200           call 0x4b65c0
+0x00495317  8d4c2404             lea ecx, [esp + 4]
+0x0049531b  51                   push ecx
+0x0049531c  6894fe5c00           push 0x5cfe94
+0x00495321  e8da100000           call 0x496400
+0x00495326  e865120200           call 0x4b6590
+0x0049532b  8b8c24b8200000       mov ecx, dword ptr [esp + 0x20b8]
+0x00495332  338c24bc200000       xor ecx, dword ptr [esp + 0x20bc]
+0x00495339  81c4bc200000         add esp, 0x20bc
+0x0049533f  e9a5d80000           jmp 0x4a2be9
+--- 0x004a3440 +0x3d
+0x004a3440  3d00100000           cmp eax, 0x1000
+0x004a3445  730e                 jae 0x4a3455
+0x004a3447  f7d8                 neg eax
+0x004a3449  03c4                 add eax, esp
+0x004a344b  83c004               add eax, 4
+0x004a344e  8500                 test dword ptr [eax], eax
+0x004a3450  94                   xchg esp, eax
+0x004a3451  8b00                 mov eax, dword ptr [eax]
+0x004a3453  50                   push eax
+0x004a3454  c3                   ret 
+0x004a3455  51                   push ecx
+0x004a3456  8d4c2408             lea ecx, [esp + 8]
+0x004a345a  81e900100000         sub ecx, 0x1000
+0x004a3460  2d00100000           sub eax, 0x1000
+0x004a3465  8501                 test dword ptr [ecx], eax
+0x004a3467  3d00100000           cmp eax, 0x1000
+0x004a346c  73ec                 jae 0x4a345a
+0x004a346e  2bc8                 sub ecx, eax
+0x004a3470  8bc4                 mov eax, esp
+0x004a3472  8501                 test dword ptr [ecx], eax
+0x004a3474  8be1                 mov esp, ecx
+0x004a3476  8b08                 mov ecx, dword ptr [eax]
+0x004a3478  8b4004               mov eax, dword ptr [eax + 4]
+0x004a347b  50                   push eax
+0x004a347c  c3                   ret 
+--- 0x004b65c0 +0x19
+0x004b65c0  57                   push edi
+0x004b65c1  8b7c2408             mov edi, dword ptr [esp + 8]
+0x004b65c5  85ff                 test edi, edi
+0x004b65c7  740e                 je 0x4b65d7
+0x004b65c9  56                   push esi
+0x004b65ca  b92b080000           mov ecx, 0x82b
+0x004b65cf  bee0b78a00           mov esi, 0x8ab7e0
+0x004b65d4  f3a5                 rep movsd dword ptr es:[edi], dword ptr [esi]
+0x004b65d6  5e                   pop esi
+0x004b65d7  5f                   pop edi
+0x004b65d8  c3                   ret 
+--- 0x004b6590 +0x5
+0x004b6590  e90b020000           jmp 0x4b67a0
+--- 0x004b6770 +0x30
+0x004b6770  f605503e7d0001       test byte ptr [0x7d3e50], 1
+0x004b6777  7419                 je 0x4b6792
+0x004b6779  a1483e7d00           mov eax, dword ptr [0x7d3e48]
+0x004b677e  50                   push eax
+0x004b677f  e8e4dbfeff           call 0x4a4368
+0x004b6784  83c404               add esp, 4
+0x004b6787  c705483e7d0000000000 mov dword ptr [0x7d3e48], 0
+0x004b6791  c3                   ret 
+0x004b6792  8b0d483e7d00         mov ecx, dword ptr [0x7d3e48]
+0x004b6798  51                   push ecx
+0x004b6799  ff1588c05c00         call dword ptr [0x5cc088]
+0x004b679f  c3                   ret 
+--- 0x004b67a0 +0x34
+0x004b67a0  e8cbffffff           call 0x4b6770
+0x004b67a5  a1583e7d00           mov eax, dword ptr [0x7d3e58]
+0x004b67aa  50                   push eax
+0x004b67ab  c7054c3e7d0000000000 mov dword ptr [0x7d3e4c], 0
+0x004b67b5  e8d69f0900           call 0x550790
+0x004b67ba  83c404               add esp, 4
+0x004b67bd  c705583e7d0000000000 mov dword ptr [0x7d3e58], 0
+0x004b67c7  c705483e7d0000000000 mov dword ptr [0x7d3e48], 0
+--- 0x004a4368 +0x51
+0x004a4368  6a0c                 push 0xc
+0x004a436a  6810125d00           push 0x5d1210
+0x004a436f  e810160000           call 0x4a5984
+0x004a4374  834de4ff             or dword ptr [ebp - 0x1c], 0xffffffff
+0x004a4378  8b7508               mov esi, dword ptr [ebp + 8]
+0x004a437b  f6460c40             test byte ptr [esi + 0xc], 0x40
+0x004a437f  740d                 je 0x4a438e
+0x004a4381  83660c00             and dword ptr [esi + 0xc], 0
+0x004a4385  8b45e4               mov eax, dword ptr [ebp - 0x1c]
+0x004a4388  e832160000           call 0x4a59bf
+0x004a438d  c3                   ret 
+0x004a438e  56                   push esi
+0x004a438f  e8871b0000           call 0x4a5f1b
+0x004a4394  59                   pop ecx
+0x004a4395  8365fc00             and dword ptr [ebp - 4], 0
+0x004a4399  56                   push esi
+0x004a439a  e87dffffff           call 0x4a431c
+0x004a439f  59                   pop ecx
+0x004a43a0  8945e4               mov dword ptr [ebp - 0x1c], eax
+0x004a43a3  834dfcff             or dword ptr [ebp - 4], 0xffffffff
+0x004a43a7  e805000000           call 0x4a43b1
+0x004a43ac  ebd7                 jmp 0x4a4385
+0x004a43ae  8b7508               mov esi, dword ptr [ebp + 8]
+0x004a43b1  56                   push esi
+0x004a43b2  e8b61b0000           call 0x4a5f6d
+0x004a43b7  59                   pop ecx
+0x004a43b8  c3                   ret 
