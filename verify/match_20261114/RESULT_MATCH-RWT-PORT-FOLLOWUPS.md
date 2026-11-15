@@ -84,8 +84,41 @@ RpLightStreamRead` comment onto the preceding declaration (`int FUN_004e4dd0(int
 line (as in 1a67669e4). Comment only: re-checked `match.py --bytes` 100.0% BYTE-IDENTICAL, relocheck OK 10/0.
 
 Default exe: built OK each time (`=== Build OK ===`). It cannot see these changes (the list is not a VS2022 input, the
-source edit is a comment). Knob boot and self-test not run: `verify/porttop_20261108/knob_boot.py` drives the default exe,
-which is unchanged. The object exe's runtime is the replay oracle's job (L-125), not this row's.
+source edit is a comment). The object exe can: it links 89 more DDK objects. Section 2b covers it.
+
+## 2b. Self-test and object-build knob boots (added after lead review)
+
+**`py -3.12 re/tools/ddkobj/ddkobj.py selftest`** on the branch head: **OK, 0 failures** (every case PASS: SEH marking,
+CRT math rename, register-convention static, DDKOBJ_REGCONV=refuse refusal).
+
+**Exes.** Base = `ddkobj.py build --link` on this worktree with `re/match/PROVISIONAL.tsv` and `re/match/rwl02/004e4c30.c`
+checked out from 198109d50 (1501 units, 1222 DDK objects, the same counts as the base build), out dir
+`mashedmod/build/ddkobj_base`, sha256 `d9fcf37919a86560...`. Branch = the final object build of section 2, sha256
+`145f4914db2a1e8b...`. Both copied to the data folder before the arms ran.
+
+**Arms.** Same env as `verify/rwccorerun_20261111/run_arms_attach.sh` (`MASHED_ORIG_TOP=1 MASHED_WIN_POS=primary-bl
+MASHED_DET_FRAMES=600`, core arm `+ MASHED_RWC_CORE=1`, frame arm `+ MASHED_RWC_FRAME=1`), `knob_boot.py` with
+`KNOB_EXE`, private root `D:/MashedWT/MATCH-RWT-PORT-FOLLOWUPS_root` (robocopy of `original\`), all six in one
+`test-slot` -> `mashed_lock.py run --label MATCH-RWT-PORT-FOLLOWUPS` (no PRIORITY-HOLD, lock free; the slot waited 10 min
+for memory, then started under the cap). knob_boot kills only its own PID on timeout. No timeout happened.
+
+| arm | base object exe | branch object exe | base vs branch log (`verify/rwcdevice_20261111/logcmp.py`) |
+|---|---|---|---|
+| ddk_off | rc 0 after 24.6 s, "WinMain 0x00492370 returned 0 after 600 frames" | rc 0 after 23.0 s, the same line | 1195 / 1195 lines, 1 differs: the cfglog timestamp |
+| ddk_core | 0xFFFFFFFF after 3.5 s (by design, as in earlier RESULTs) | 0xFFFFFFFF after 1.3 s | 33 / 33, 1 differs: the timestamp |
+| ddk_frame | 0x5257F001 after 3.7 s (first frame presented on the core) | 0x5257F001 after 3.0 s | 49 / 49, 1 differs: the timestamp |
+
+**Self-test lines** (both exes, same counts): `RwTexDictionaryCreate` binding "self-test PASS (0 of 11 checks failed, 0
+failing calls so far)" in core and frame arms, "self-test PASS (0 of 260 checks failed)" in core and frame arms, RWC-DEVICE
+"selftest PASS (0 fail)" in the frame arm.
+
+**First-frame Im2D compare** (`verify/rwcim2d_20261113/compare_im2d.py` against the original capture
+`D:/MashedWT/RWC-FIRST-FRAME-IM2D_data/orig_im2d_1.log`): **IDENTICAL, 18 of 18 fields** on base and on branch
+(`IM2D_COMPARE_base_ddk_frame.tsv` and `IM2D_COMPARE_final_ddk_frame.tsv` in this folder, byte-identical files).
+
+**Verdict: no regression.** The 89 extra DDK objects change no line of the knob-path logs in these three arms. No commit
+needs dropping on this evidence. The ddk_off arm runs the main loop 600 frames on librw bindings, so it does not reach
+every substituted RW core body. The replay oracle on the object build (L-125) is the deeper check, and it is not this row's.
 
 ## (3) RWT ranking
 
@@ -118,6 +151,16 @@ No promotion file: every dropped row is already C4 by match in hooks.csv.
 | BYTECHECK_after.tsv | ae1078d695d08f6d4c5fd4f2e36d9798e7c7e95d796656384bf564feb06b3d10 |
 | BYTECHECK_final.tsv | 5677189faa4e33fda505fb385a696734b73b15010e41eba8873d1301a7d55c60 |
 | cands_check.tsv (= committed provdrop_check.tsv) | 7c246f3d2e31aed8543363f3153764e9e415f1bd739226377692bdabd9e6526d |
+| build_ddkobj_base_relink.log | 8d1192106d5b544d5cd88504034bd79bf48211404cf954558d17a403cee1d8f3 |
+| mashed_re_ddk_base.exe | d9fcf37919a86560adf4b7dbdf44d2e5dce8078b64f877be24b4f99c3a88ef83 |
+| mashed_re_ddk_final.exe | 145f4914db2a1e8b2a978d1d8357cc130c630a169459c7b1ddf328340e6d7104 |
+| arms.out | ef97a30fd933f6f2c43d2622970005496e2be18a81f6a16968029db7f7ba68de |
+| arms/base_ddk_off.log | d4d38e1d3da1c1fc657cc6d0148bbe03ddc3f1d9bb29a08ab4f56ea97ddd6653 |
+| arms/base_ddk_core.log | afdb2b71a924e7404939455172df8d065807af0ce21b852e8803285be1ccf4a7 |
+| arms/base_ddk_frame.log | bcfb55c4ae91e4314e0b6671538c93d439a1e17ba6b8fa7ada04c4e02e969275 |
+| arms/final_ddk_off.log | 431ae87952f5eba8d25c004560b27ae298268463a457d3f2fb08cf12e38ba583 |
+| arms/final_ddk_core.log | f0fe083ae6b9f7cb96dd9c1068b1a20be7ef8d66709bfd6329892447e8f80c7f |
+| arms/final_ddk_frame.log | d306f5cc774062bd10fdcbc8af139c656ae8b8ff5e3545b3509add17320bd332 |
 
 ## Gates
 
