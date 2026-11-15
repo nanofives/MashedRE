@@ -1,0 +1,2 @@
+0x00554200	EQUIV	[ORDER]
+exit 0
