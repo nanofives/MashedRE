@@ -266,6 +266,45 @@ def test_summary_precision():
         assert equiv._ebp_data_write(cs, ebp) is want, (code, cs.op_str)
 
 
+def _summary_of(code, va):
+    """summary() of raw bytes placed at `va` (outside the image), with the image reader and the size lookup patched."""
+    img = equiv.image()
+    rd, gs = img.bytes, equiv.match.ghidra_size
+    def fake_bytes(v, n):
+        if va <= v < va + len(code):
+            return (code[v - va:] + b"\xcc" * 16)[:n]
+        return rd(v, n)
+    img.bytes = fake_bytes
+    equiv.match.ghidra_size = lambda v: len(code) if v == va else gs(v)
+    try:
+        return equiv.summary(va)
+    finally:
+        img.bytes = rd
+        equiv.match.ghidra_size = gs
+
+
+def test_push_slot():
+    """TOOL-EQUIV-PUSHECX-SLOT: a pushed slot whose address is taken and that is fully overwritten before any read does
+    not read the pushed register (0x005ad910: push ecx at 0x005ad910, lea ecx,[esp+8] at 0x005ad927, mov [esp+0x14],0
+    at 0x005ad932, call 0x005ad770 at 0x005ad93a). A read through the address first, or a partial overwrite, still
+    counts the register read."""
+    assert "ecx" not in equiv.summary(0x005ad910)["livein"], equiv.summary(0x005ad910)
+    base = 0x7ff00000
+    cases = (
+        # push ecx; lea eax,[esp]; mov dword ptr [esp],0; mov eax,[eax]; pop ecx; ret
+        ("51" "8d0424" "c7042400000000" "8b00" "59" "c3", False),
+        # push ecx; lea eax,[esp]; mov eax,[eax] (read through the address first); pop ecx; ret
+        ("51" "8d0424" "8b00" "59" "c3", True),
+        # push ecx; lea eax,[esp]; mov byte ptr [esp],0 (partial); pop ecx; ret
+        ("51" "8d0424" "c6042400" "59" "c3", True),
+        # push ecx; lea eax,[esp]; jmp +0 (a branch before the overwrite); mov dword ptr [esp],0; pop ecx; ret
+        ("51" "8d0424" "eb00" "c7042400000000" "59" "c3", True),
+    )
+    for i, (hx, live) in enumerate(cases):
+        s = _summary_of(bytes.fromhex(hx), base + 0x100 * i)
+        assert ("ecx" in s["livein"]) is live, (hx, s)
+
+
 def check_show_budget():
     """EQUIV-5441F0-TIMEOUT: a term whose arguments hold terms inside a tuple used to render from depth 0 again at
     every tuple (repr -> T.__repr__), exponential on a DAG. 64 levels of a doubled tuple must render under the budget."""

@@ -156,4 +156,76 @@ test_equiv.py::test_budgets PASSED                                       [100%]
 ============================= 6 passed in 40.05s ==============================
 ```
 
-ROW3
+## Row 3 (section 3): TOOL-EQUIV-PUSHECX-SLOT
+
+### Verdict
+
+Gap fixed and tested. 0x005adc10 is still **NOT-PROVEN**, now on a different call (EDX at orig 0x005adcea, below),
+so it is not admitted and stays provisional (`re/match/PROVISIONAL.tsv`, unchanged). No ADMITTED.tsv change. No
+`--relax-icall` admission (that is a decision row).
+
+### The change
+
+In `_summary_body`, `lea r, [esp+k]` over a pushed save slot used to add every pushed register to the live-ins at
+once ("its address escapes: count it read"). Now those slots move to a pending set `escaped`. A pending register is
+counted read when, before a full 4-byte ESP-relative overwrite of its slot, one of these comes first: an ESP-relative
+read of the slot, a partial write of it, a `pop` of it into another register, any memory read whose base is not ESP
+(it may go through the copied address), or any call, jmp, jcc, ret, leave or enter. A full overwrite first makes the
+slot a plain local and drops it from the set.
+
+0x005ad910 (disassembly of the anchored image): `push ecx` at 0x005ad910 (ECX undefined: a save), three pushes, then
+`lea ecx, [esp+8]` at 0x005ad927 (the slot's address), `push eax`, `push ecx`, `push 0x2000` (no memory read), and
+`mov dword ptr [esp+0x14], 0` at 0x005ad932 (full overwrite of the slot) before `call 0x5ad770` at 0x005ad93a.
+Summary before: `livein {ecx}`, after: `livein {}`. N stays None (`n_why` 0x005ad922: `lea eax, [esp+0x14]` takes the
+address of an argument slot, a separate and unchanged rule). The [UNCERTAIN] of RESULT_PORT-TOP-AUDIOSTOP-5ADC10.md
+section 1 (ECX not read, from the disassembly) now has a tool result and a test.
+
+### 0x005adc10 re-run
+
+Source: the 92.2% `re/match/s26/005adc10.c` from orch/PORT-TOP-AUDIOSTOP-5ADC10 @ ed9591c42 (not on this branch; copy
+in `verify/equiv_20261115/pushecx_5adc10/005adc10_ed9591c42.c`, flags `/O2 /Ob1 /G5` from its first line). Output
+`pushecx_5adc10/equiv_005adc10.txt`:
+
+```
+0x005adc10	NOT-PROVEN	call-regargs: region ours +0xda / orig 0x005adcea call 0x5adfe0: (('edx', retd32(call0(0x5ae010, ...
+```
+
+The proof passes the call at 0x005adc33 (the row's gap) and stops at the next call, 0x005adfe0 at orig 0x005adcea, on
+EDX (the high half left by the earlier call to 0x005ae010, different on the two sides). Why 0x005adfe0 counts EDX as
+live-in: 0x005adfe0 calls 0x005ae050 (0x005adfe6), which calls 0x004522d0 (0x005ae063), and 0x004522d0 is
+`mov ecx, [0x7d3ff8]` then `jmp dword ptr [ecx+0x10c]`, an indirect tail jump. Rule A4 counts ECX and EDX as read
+by an unknown pointer target unless `--relax-icall`; ECX is written there, EDX is not. Summaries:
+0x004522d0 `livein {edx}`, 0x005ae050 `livein {edx}`, 0x005adfe0 `livein {edx}`.
+
+For information only (not an admission, `pushecx_5adc10/equiv_005adc10_relax_icall.txt`): with `--relax-icall`
+the verdict is `EQUIV-IF-CALLERS-IGNORE(EDX,ECX) [REG,LAYOUT,VALUE-FLOW] callers 1, scan says ignore: 0/1:
+0x005add67:unknown/unknown`, so it would also need the caller 0x005add67 resolved. Both are decision-row matters.
+
+### Regression sample
+
+`pushecx_5adc10/sweep_livein.py` compares `summary()` of the row-2 commit against this change. A full pc_funcs.csv
+sweep ran over 30 min with no output and was stopped (its own PIDs only). The bounded rerun is a **sample**: the
+direct-call trees of 0x005adc10 and 0x005ae650 to depth 3 (28 functions) plus 298 pc_funcs.csv entries drawn with
+seed 49 (326 total). It hit its 900 s cap at 99/326: all 28 call-tree functions and the first 71 random entries.
+Result (`pushecx_5adc10/sweep_livein_sample.txt`): one change, `0x005ad910 livein ['ecx'] -> []`, 98 unchanged.
+The other 227 sampled entries were not compared.
+
+### Test
+
+`test_push_slot` in `re/tools/match/test_equiv.py`: the 0x005ad910 summary has no ECX live-in, and four synthetic
+byte sequences run through `summary()` at an address outside the image (image reader and size lookup patched): a
+full overwrite before a read through the address (ECX not read), a read through the address first, a partial
+(byte) overwrite, and a branch before the overwrite (each: ECX read).
+
+`py -3.12 -m pytest re/tools/match/test_equiv.py -v` on the row-3 commit (test-slot slot 2/8, local):
+
+```
+test_equiv.py::test_cases PASSED                                         [ 14%]
+test_equiv.py::test_references PASSED                                    [ 28%]
+test_equiv.py::test_indirect_callers PASSED                              [ 42%]
+test_equiv.py::test_route_audit PASSED                                   [ 57%]
+test_equiv.py::test_summary_precision PASSED                             [ 71%]
+test_equiv.py::test_push_slot PASSED                                     [ 85%]
+test_equiv.py::test_budgets PASSED                                       [100%]
+============================= 7 passed in 20.80s ==============================
+```

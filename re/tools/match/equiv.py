@@ -916,6 +916,13 @@ def _summary_body(va, depth):
     work = [va]
     livein, N, pops, eax_def = set(), 0, set(), True
     pushed = {}            # entry-relative slot -> register pushed while undefined (a save or an allocation)
+    # TOOL-EQUIV-PUSHECX-SLOT: pushed slots whose address was taken (`lea r, [esp+k]`). The register counts as read
+    # only if the slot can be read before a full ESP-relative overwrite: a read of the slot itself, a pop of it into
+    # another register, any memory read not ESP-relative (it may go through the copied address), or any call, jump,
+    # jcc, ret or leave (the address may be used there). A full overwrite first (0x005ad910: `lea ecx, [esp+8]` at
+    # 0x005ad927, `mov dword ptr [esp+0x14], 0` at 0x005ad932, then the call at 0x005ad93a) makes the slot a plain
+    # local, and the pushed register is not read.
+    escaped = {}
     unknown_n = False
     ind_assumed = esp_reset = False
     visited = 0
@@ -977,6 +984,15 @@ def _summary_body(va, depth):
                         if rn == "ebp" and isinstance(ebp, int) and not (mn == "mov" and ops[0].type == X.X86_OP_REG and
                                                                      cs.reg_name(ops[0].reg) in ("esp", "ebp")):
                             unknown_n = unknown_n or (pc if "pc" in dir() else -1)
+            if escaped:
+                flush = mn in ("call", "ret", "retn", "jmp", "leave", "enter") or cs.group(capstone.CS_GRP_JUMP)
+                for op in ops:
+                    if op.type == X.X86_OP_MEM and mn != "lea" and op.access & capstone.CS_AC_READ and not (
+                            op.mem.base and cs.reg_name(op.mem.base) == "esp" and not op.mem.index and esp is not None):
+                        flush = True
+                if flush:
+                    livein.update(escaped.values())
+                    escaped.clear()
             # stack argument reads
             for op in ops:
                 if op.type == X.X86_OP_MEM and op.mem.base:
@@ -994,7 +1010,8 @@ def _summary_body(va, depth):
                             if off >= 4:
                                 unknown_n = unknown_n or (pc if "pc" in dir() else -1)
                             elif any(off <= k < off + 64 for k in pushed):
-                                livein.update(pushed.values())     # its address escapes: count it read
+                                escaped.update(pushed)             # its address escapes: read unless overwritten
+                                pushed.clear()
                         elif off >= 4:
                             N = max(N, (off - 4 + max(op.size, 4) + 3) // 4)
                         else:
@@ -1003,6 +1020,13 @@ def _summary_body(va, depth):
                                     if op.access & capstone.CS_AC_READ and not (mn == "mov" and op is ops[0]):
                                         livein.add(pushed[k])
                                     del pushed[k]
+                            for k in list(escaped):
+                                if off < k + 4 and k < off + op.size:
+                                    full = off <= k and k + 4 <= off + op.size
+                                    if not full or (op.access & capstone.CS_AC_READ and
+                                                    not (mn == "mov" and op is ops[0])):
+                                        livein.add(escaped[k])
+                                    del escaped[k]
             for r in wrn:
                 p_, m_ = _reg_parts(r)
                 if p_ in ALLREGS:
@@ -1014,6 +1038,10 @@ def _summary_body(va, depth):
             elif mn == "pop":
                 if esp is not None and esp in pushed:
                     r0 = pushed.pop(esp)
+                    if not (ops[0].type == X.X86_OP_REG and _reg_parts(cs.reg_name(ops[0].reg))[0] == r0):
+                        livein.add(r0)
+                if esp is not None and esp in escaped:
+                    r0 = escaped.pop(esp)
                     if not (ops[0].type == X.X86_OP_REG and _reg_parts(cs.reg_name(ops[0].reg))[0] == r0):
                         livein.add(r0)
                 if ops[0].type == X.X86_OP_REG and cs.reg_name(ops[0].reg) == "ebp":
