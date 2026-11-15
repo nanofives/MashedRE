@@ -87,4 +87,73 @@ now running the audit first.
 
 ## Row 2: TOOL-EQUIV-EBPDATA-REPSTOS
 
-ROW2
+### Verdict
+
+Both gaps fixed and tested. 0x005ae650 is still **NOT-PROVEN**, now on a third, different point (below), so it is not
+admitted and stays provisional (`re/match/PROVISIONAL.tsv`, unchanged). No ADMITTED.tsv change, no decision row.
+
+### (1) Callee summary with EBP as a data register
+
+`_summary_body` tracked EBP only as a frame pointer: after any other write to EBP it set the offset to None, and a
+later `[ebp+k]` made N (stack arguments read) unknown. New: `_ebp_data_write()` marks EBP as holding data
+(`EBP_DATA`) when it is written by a load from memory (`mov / movzx / movsx ebp, m`), a constant, the zero idiom, or
+arithmetic on an EBP that already holds data with no ESP operand. `[ebp+k]` with a data EBP is then an ordinary memory
+access, as `[esi+k]` already is. A copy from another register, `lea ebp, [...]` and `pop ebp` still leave EBP unknown
+(the value may be a stack address), and the frame-pointer cases (`mov ebp, esp`, `leave`, `mov esp, ebp`, the
+`and esp` alignment) only act on an integer frame offset.
+
+On the image, 0x005ae800: `mov ebp, [esp+0x10]` at 0x005ae803 (counted as a read of argument 0), `mov edi, [ebp+0x10]`
+at 0x005ae80b (now ordinary memory). Summary before: `N=None, n_why=0x005ae80b`. After:
+`{'n_why': False, 'P': 0, 'N': 2, 'livein': frozenset(), 'eax_def': True, 'noreturn': False, 'known': True}`.
+N = 2 is what RESULT_PORT-TOP-AUDIOPOOL-5AE650.md section 1 read from the disassembly; that [UNCERTAIN] now has a tool
+result and a test.
+
+### (2) `rep stos` with a variable count
+
+`strop` raised `unsupported: rep stosd with a variable count`. New `Ctx.stos_var()` (DF clear, as the constant-count
+path already assumes): memory becomes the uninterpreted term `Mfill(previous memory, destination, count, value, size)`,
+EDI moves by count * size, ECX becomes 0, rule `rep-stos-var` is reported. Two sides are equal only when all five
+arguments are equal terms. Nothing is forwarded through the term and no disjointness is claimed across it. A
+destination, count or value holding a stack address is refused (`unsupported ... on a stack address`): the
+private-slot model has no symbolic-size write. `rep movs` with a variable count is unchanged (still unsupported; the
+0x005441f0 reference row pins it).
+
+### 0x005ae650 re-run
+
+`py -3.12 re/tools/match/equiv.py re/match/s26/005ae650.c --only 0x005ae650` (source commit 12234ab8b, flags from the
+source), output `verify/equiv_20261115/equiv_005ae650.txt` / `.json`:
+
+```
+0x005ae650	NOT-PROVEN	ret-memory: region ours +0xeb / orig 0x005ae73d: ...
+```
+
+The proof now passes the call to 0x005ae800 (no call-args failure) and both `rep stosd` / `rep stosb` of the cell
+loop (0x005ae729, 0x005ae730 on the original side). It stops after the loop, at orig 0x005ae73d
+(`mov ecx, [0x7dda80]`): the two memory images differ in the order of a store to `[p+0x20]` (p = a value from the
+0x005ae800 call, stored value 0x7dda80) and a load from the global 0x7dda80. Ours stores first and then loads, the
+original loads first. The tool cannot show that `p+0x20` and 0x7dda80 are different addresses, so the loaded value
+is not equal on both sides. Read from the printed terms of the verdict, not a tool proof: [UNCERTAIN] which source
+statement this is. A rule that a pointer returned by a callee never aliases a fixed global would be a new
+assumption, not in this row's scope (and a decision, not a tool fix).
+
+### Tests
+
+New cases in `re/tools/match/equiv_tests/cases.asm`: `stosv` (same fill, different set-up order: EQUIV, reports
+`rep-stos-var`), `neg_stosv_val` (fill 0 against fill -1: NOT-PROVEN ret-memory), `neg_stosv_stack` (fill of the own
+frame: NOT-PROVEN unsupported). `test_summary_precision` adds the 0x005ae800 summary (N = 2, no n_why) and seven
+`_ebp_data_write` encodings (load, zero idiom, `mov ebp, esp`, `mov ebp, eax`, `lea ebp, [esp+8]`, `add ebp, 4` on
+data, `add ebp, esp`).
+
+`py -3.12 -m pytest re/tools/match/test_equiv.py -v` on the row-2 commit (test-slot slot 3/8, local):
+
+```
+test_equiv.py::test_cases PASSED                                         [ 16%]
+test_equiv.py::test_references PASSED                                    [ 33%]
+test_equiv.py::test_indirect_callers PASSED                              [ 50%]
+test_equiv.py::test_route_audit PASSED                                   [ 66%]
+test_equiv.py::test_summary_precision PASSED                             [ 83%]
+test_equiv.py::test_budgets PASSED                                       [100%]
+============================= 6 passed in 40.05s ==============================
+```
+
+ROW3

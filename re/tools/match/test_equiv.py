@@ -83,6 +83,10 @@ CASES = {
     "com_ambiguous": ("EQUIV", None),
     "neg_com_solution": ("NOT-PROVEN", None),
     "neg_mxcsr": ("NOT-PROVEN", None),
+    # TOOL-EQUIV-EBPDATA-REPSTOS: rep stos with a variable count
+    "stosv": ("EQUIV", None),
+    "neg_stosv_val": ("NOT-PROVEN", None),
+    "neg_stosv_stack": ("NOT-PROVEN", "unsupported"),
 }
 
 # A6 rules a case must (True) or must not (False) report
@@ -96,6 +100,7 @@ RULES = {
     "x87_move_rr": ("x87-motion", True),
     "x87_same": ("x87-motion", False),
     "x87_move_frame": ("x87-motion", True),
+    "stosv": ("rep-stos-var", True),
 }
 
 # rva -> (source, expected verdict, note)
@@ -245,6 +250,20 @@ def test_summary_precision():
     assert equiv.disjoint(equiv.C(0x00773408), 4, stk, 4)            # A7: image constant vs frame slot
     assert not equiv.disjoint(equiv.C(0x10000000), 4, stk, 4)        # outside the image: no claim
     assert not equiv.disjoint(equiv.S("eax_in"), 4, stk, 4)           # unknown pointer: no claim
+    # TOOL-EQUIV-EBPDATA-REPSTOS: 0x005ae800 loads its first argument into EBP (`mov ebp, [esp+0x10]` at 0x005ae803)
+    # and reads through it (`mov edi, [ebp+0x10]` at 0x005ae80b): a data EBP, not a frame. Two stack arguments.
+    s = equiv.summary(0x005ae800)
+    assert s["N"] == 2 and not s["n_why"], s
+    md = equiv._MD
+    for code, ebp, want in (("8b6c2410", None, True),           # mov ebp, [esp+0x10]
+                            ("33ed", None, True),               # xor ebp, ebp
+                            ("8bec", None, False),              # mov ebp, esp (frame, handled apart)
+                            ("8be8", None, False),              # mov ebp, eax (may be a stack address)
+                            ("8d6c2408", None, False),          # lea ebp, [esp+8]
+                            ("83c504", equiv.EBP_DATA, True),   # add ebp, 4 on a data EBP
+                            ("03ec", equiv.EBP_DATA, False)):   # add ebp, esp
+        cs = next(md.disasm(bytes.fromhex(code), 0x1000))
+        assert equiv._ebp_data_write(cs, ebp) is want, (code, cs.op_str)
 
 
 def check_show_budget():

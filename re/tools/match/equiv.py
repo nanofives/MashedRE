@@ -879,6 +879,31 @@ def summary(va, depth=0):
     return res
 
 
+EBP_DATA = "data"   # summary EBP state: EBP holds a value loaded from memory / a constant, not a stack address
+
+
+def _ebp_data_write(cs, ebp):
+    """TOOL-EQUIV-EBPDATA-REPSTOS: True when this write leaves EBP holding a non-stack value, so [ebp+k] is an ordinary
+    memory access and not a stack-argument read: a load from memory (`mov / movzx / movsx ebp, m`), a constant, the
+    zero idiom, or arithmetic on an EBP that already holds data with no ESP / frame-EBP operand. A copy from another
+    register, `lea` and `pop ebp` do not qualify (the value may be a stack address: those stay unknown)."""
+    ops = cs.operands
+    mn = cs.mnemonic
+    if not ops or ops[0].type != X.X86_OP_REG or cs.reg_name(ops[0].reg) != "ebp":
+        return False
+    if mn in ("mov", "movzx", "movsx") and len(ops) == 2 and ops[1].type in (X.X86_OP_MEM, X.X86_OP_IMM):
+        return True
+    if mn in ("xor", "sub") and len(ops) == 2 and ops[1].type == X.X86_OP_REG and ops[1].reg == ops[0].reg:
+        return True
+    if const_idiom(cs):
+        return True
+    if ebp == EBP_DATA and mn in ("add", "sub", "inc", "dec", "and", "or", "xor", "shl", "shr", "sar", "imul", "neg",
+                                  "not"):
+        rd, _ = cs.regs_access()
+        return "esp" not in {cs.reg_name(r) for r in rd}
+    return False
+
+
 def _summary_body(va, depth):
     size = match.ghidra_size(va)
     if size is None:
@@ -949,13 +974,15 @@ def _summary_body(va, depth):
                         if rn == "esp" and not (mn == "mov" and cs.reg_name(ops[0].reg) == "ebp" and
                                                 ops[0].type == X.X86_OP_REG):
                             unknown_n = unknown_n or (pc if "pc" in dir() else -1)
-                        if rn == "ebp" and ebp is not None and not (mn == "mov" and ops[0].type == X.X86_OP_REG and
+                        if rn == "ebp" and isinstance(ebp, int) and not (mn == "mov" and ops[0].type == X.X86_OP_REG and
                                                                      cs.reg_name(ops[0].reg) in ("esp", "ebp")):
                             unknown_n = unknown_n or (pc if "pc" in dir() else -1)
             # stack argument reads
             for op in ops:
                 if op.type == X.X86_OP_MEM and op.mem.base:
                     bn = cs.reg_name(op.mem.base)
+                    if bn == "ebp" and ebp == EBP_DATA:
+                        continue                   # EBP holds data (_ebp_data_write): ordinary memory
                     base_off = esp if bn == "esp" else (ebp if bn == "ebp" else None)
                     if bn in ("esp", "ebp"):
                         if base_off is None or op.mem.index:
@@ -1002,14 +1029,14 @@ def _summary_body(va, depth):
                 ebp = esp
             elif mn == "mov" and ops[0].type == X.X86_OP_REG and ops[1].type == X.X86_OP_REG and \
                     cs.reg_name(ops[0].reg) == "esp" and cs.reg_name(ops[1].reg) == "ebp":
-                esp = ebp
+                esp = ebp if isinstance(ebp, int) else None
                 esp_reset = True
             elif mn == "leave":
-                esp = ebp + 4 if ebp is not None else None
+                esp = ebp + 4 if isinstance(ebp, int) else None
                 ebp = None
                 esp_reset = True
             elif mn == "and" and ops[0].type == X.X86_OP_REG and cs.reg_name(ops[0].reg) == "esp" and \
-                    ops[1].type == X.X86_OP_IMM and esp is not None and ebp is not None:
+                    ops[1].type == X.X86_OP_IMM and esp is not None and isinstance(ebp, int):
                 # frame alignment under a frame pointer (`push ebp; mov ebp, esp; and esp, -8`): the distance to
                 # the entry ESP becomes unknown, so ESP moves to a virtual base far below every real offset. Saves
                 # pushed after it stay tracked (0x00498a00's push esi / push edi were counted as reads: false
@@ -1022,7 +1049,7 @@ def _summary_body(va, depth):
                 esp = None
                 esp_reset = True
             elif "ebp" in wrn:
-                ebp = None
+                ebp = EBP_DATA if _ebp_data_write(cs, ebp) else None
             if mn == "call":
                 tgt = ops[0].imm if ops[0].type == X.X86_OP_IMM else None
                 if tgt is not None:
@@ -1293,7 +1320,7 @@ class Ctx:
                     raise Fallback("stack address in a non-linear term")
                 out.append(k - (1 << 32) if k >= 0x80000000 else k)
                 return out
-        if t.op in ("ld", "st", "M0", "Mc", "call", "X", "Xc", "ret", "reta", "retc", "retd", "argc", "x87o",
+        if t.op in ("ld", "st", "M0", "Mc", "Mfill", "call", "X", "Xc", "ret", "reta", "retc", "retd", "argc", "x87o",
                     "x87sw", "x87"):
             # a value loaded from memory or produced by a callee: any stack address inside it was exposed when
             # it was stored or passed
@@ -1875,6 +1902,9 @@ class Ctx:
         if base not in ("movsd", "movsb", "movsw", "stosd", "stosb", "stosw") or mn.startswith("repne"):
             raise NotProven("unsupported", f"string op {mn}")
         sz = {"d": 4, "b": 1, "w": 2}[base[-1]]
+        if rep and st.r["ecx"].op != "c" and base.startswith("stos"):
+            self.stos_var(side, st, cs, sz)
+            return
         if rep:
             n = st.r["ecx"]
             if n.op != "c":
@@ -1895,6 +1925,22 @@ class Ctx:
             st.r["edi"] = add(st.r["edi"], C(sz))
         if rep:
             st.r["ecx"] = C(0)
+
+    def stos_var(self, side, st, cs, sz):
+        """TOOL-EQUIV-EBPDATA-REPSTOS: `rep stos` with a symbolic count (DF clear, as for the constant count). Memory
+        becomes the uninterpreted term Mfill(previous memory, destination, count, value, size): equal on both sides
+        only when all five are equal terms, and every later load from it is a load from that term (no value is
+        forwarded through it and no disjointness is claimed across it). EDI moves by count * size, ECX becomes 0.
+        A destination in this side's own frame or argument area, or a value that holds a stack address, is refused:
+        the private-slot model has no symbolic-size write."""
+        dst, n = st.r["edi"], st.r["ecx"]
+        v = self.rget(st, {4: "eax", 2: "ax", 1: "al"}[sz])
+        if has_sym(dst, "esp0") or has_sym(n, "esp0") or has_sym(v, "esp0"):
+            raise NotProven("unsupported", f"{cs.mnemonic} with a variable count on a stack address")
+        st.m = mk("Mfill", 0, st.m, dst, n, v, C(sz))
+        st.r["edi"] = add(dst, mulc(n, sz))
+        st.r["ecx"] = C(0)
+        self.used.add("rep-stos-var")
 
     def effects(self, side, st, cs):
         """What one instruction touches, taken on the state before it runs (EQUIV-X87-INTEGER-MOTION, L-147 (a)):
