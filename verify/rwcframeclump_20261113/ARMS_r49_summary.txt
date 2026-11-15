@@ -1,0 +1,78 @@
+== vs_off lines 1847 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+== ddk_off lines 1847 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+== vs_frame lines 137 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [RWC_CORE] MASHED_RWC_FRAME: boot ends after present 1 on the RW core (exit 0x5257F001)
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 1 on the RW core
+      1 [RWC_CORE] live clumps at RwEngineStop: 0 (clump freelist 007D7208)
+== ddk_frame lines 137 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [RWC_CORE] MASHED_RWC_FRAME: boot ends after present 1 on the RW core (exit 0x5257F001)
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 1 on the RW core
+      1 [RWC_CORE] live clumps at RwEngineStop: 0 (clump freelist 007D7208)
+== vs_frameN lines 326 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [RWC_CORE] MASHED_RWC_FRAME: boot ends after present 120 on the RW core (exit 0x5257F001)
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 120 on the RW core
+== ddk_frameN lines 326 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [RWC_CORE] MASHED_RWC_FRAME: boot ends after present 120 on the RW core (exit 0x5257F001)
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 120 on the RW core
+== vs_frameT lines 398 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 6000 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 1 -> 2, DAT_0067eca8 = 255, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 2 -> 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CL
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 100000 on the RW core
+      1 [RWC_CORE] live clumps at RwEngineStop: 1 (clump freelist 007D7208)
+== ddk_frameT lines 398 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 6000 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 1 -> 2, DAT_0067eca8 = 255, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 2 -> 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CL
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 100000 on the RW core
+      1 [RWC_CORE] live clumps at RwEngineStop: 1 (clump freelist 007D7208)
+== vs_dump lines 382 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 1 -> 2, DAT_0067eca8 = 255, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 2 -> 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CL
+      1 [RWC_CORE] MASHED_RWC_FRAME: boot ends after present 590 on the RW core (exit 0x5257F001)
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 590 on the RW core
+      1 [RWC_CORE] drawdump core_f0: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+      1 [RWC_CORE] drawdump core_f1: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+      1 [RWC_CORE] drawdump core_f2: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+      1 [RWC_CORE] drawdump core_f3: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+== ddk_dump lines 382 FAIL=0 AV=0 STOP=0
+      1 self-test PASS (0 of 367 checks failed)
+      1 self-test PASS (0 of 8 checks failed)
+      1 selftest PASS (0 fail)
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 1 -> 2, DAT_0067eca8 = 255, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-
+      1 [ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder: DAT_0067eca4 2 -> 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067e914 = 0, DAT_0067ecac = 22, k1 = 1000.0, k2 = -500.0 (RWC-FRAME-CL
+      1 [RWC_CORE] MASHED_RWC_FRAME: boot ends after present 590 on the RW core (exit 0x5257F001)
+      1 [RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 590 on the RW core
+      1 [RWC_CORE] drawdump core_f0: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+      1 [RWC_CORE] drawdump core_f1: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+      1 [RWC_CORE] drawdump core_f2: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+      1 [RWC_CORE] drawdump core_f3: 80 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1

@@ -1,0 +1,18 @@
+note: pairing first 4 labels (4 in A, 8 in B)
+== orig_f0 (A: 82 draws, x1.0) vs core_f0 (B: 80 draws, x1.0)
+   matched 80  mismatched 0  missing 2  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+== orig_f1 (A: 82 draws, x1.0) vs core_f1 (B: 80 draws, x1.0)
+   matched 80  mismatched 0  missing 2  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+== orig_f2 (A: 82 draws, x1.0) vs core_f2 (B: 80 draws, x1.0)
+   matched 80  mismatched 0  missing 2  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+== orig_f3 (A: 82 draws, x1.0) vs core_f3 (B: 80 draws, x1.0)
+   matched 80  mismatched 0  missing 2  extra 0
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+VERDICT: RED (match=320 mismatch=0 missing=8 extra=0)
