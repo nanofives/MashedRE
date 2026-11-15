@@ -21,4 +21,4 @@ Machine: LIVING-PC, %TEMP% holds 645,127 entries. Row kind: harness, no game lau
 ## Open
 default marker move stays an open row (needs claude3, MachineLock.ps1 + merge_train.ps1). Until it lands, the 38 s status stays on the default path. No .ps1/.sh edited here.
 
-Raw logs are small and committed beside this file: selftest.log, concurrency.log, status.log, status_markerdir.log.
+Raw logs (selftest.log, concurrency.log, status.log, status_markerdir.log) sit beside this file in the worktree but are gitignored, so they are not committed. The outputs quoted above are the record.
