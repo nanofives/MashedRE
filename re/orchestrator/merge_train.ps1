@@ -1113,6 +1113,17 @@ if ($SelfTest) {
     $env:MASHED_LOCK_DIR = $oldLd
   }
 
+  # --- HB-MASHEDLOCK-DEFAULT-MARKERDIR: the train writes its priority markers only through mashed_lock.py (prio-hold /
+  # run --priority / solo-begin), so it follows the python default. With no MASHED_LOCK_DIR / MASHED_LOCK_MARKER_DIR the
+  # marker dir must be <LOCALAPPDATA>\mashed_lock\markers, outside %TEMP% (a 645k-entry %TEMP% made `status` take 42 s).
+  $sv = @{ d = $env:MASHED_LOCK_DIR; m = $env:MASHED_LOCK_MARKER_DIR }
+  try {
+    $env:MASHED_LOCK_DIR = $null; $env:MASHED_LOCK_MARKER_DIR = $null
+    $md = ("" + (& py.exe -3.12 -c "import sys;sys.path.insert(0,r'$(Split-Path -Parent $LOCKPY)');import mashed_lock as ml;print(ml._marker_dir_cfg())" 2>&1 | Select-Object -Last 1)).Trim()
+  } finally { $env:MASHED_LOCK_DIR = $sv.d; $env:MASHED_LOCK_MARKER_DIR = $sv.m }
+  $tmpRoot = [IO.Path]::GetTempPath().TrimEnd([char]92)
+  Check ($md -and $md -match 'mashed_lock\\markers$' -and -not $md.StartsWith($tmpRoot, [StringComparison]::OrdinalIgnoreCase)) "marker dir: default priority/linger marker dir is outside %TEMP% ($md)"
+
   # --- HB-TRAIN-HOOKSCSV-TEXTONLY: a hooks.csv-only re-classify batch is text-only, and the tracker lint still
   # bounces a malformed row. Runs the real Try-Batch on the fake repo (no archive_lint.py there, so no build is reached
   # on a text-only batch). The base carries one 9-column row, like the 4 pre-existing NCOL rows of the live hooks.csv.

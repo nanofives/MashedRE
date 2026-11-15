@@ -33,6 +33,38 @@ $script:SoloEnv = 'MASHED_LOCK_SOLO_TOKEN'
 function Get-LockPath([string]$Name) { Join-Path $env:TEMP "$Name.lock" }
 function Get-SoloLockPath([string]$Name) { Join-Path $env:TEMP "${Name}_solo.lock" }
 
+# HB-MASHEDLOCK-DEFAULT-MARKERDIR: priority/linger markers live in %LOCALAPPDATA%\mashed_lock\markers, the same
+# directory as mashed_lock.py (_default_marker_dir), not in %TEMP% (645k entries there made a listing take 40 s).
+# Overrides, same order as the python side: MASHED_LOCK_MARKER_DIR, then MASHED_LOCK_DIR (an isolated lock dir keeps
+# its markers beside its locks). Changeover: for 3600 s after the stamp file changeover.epoch was first written (by
+# either tool), markers a pre-change tool left in %TEMP% are read too (Get-MarkerScanDirs).
+function Get-MarkerDir {
+  if ($env:MASHED_LOCK_MARKER_DIR) { $d = $env:MASHED_LOCK_MARKER_DIR }
+  elseif ($env:MASHED_LOCK_DIR) { $d = $env:MASHED_LOCK_DIR }
+  else { $base = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME 'AppData\Local' }; $d = Join-Path (Join-Path $base 'mashed_lock') 'markers' }
+  if (-not (Test-Path -LiteralPath $d)) { New-Item -ItemType Directory -Force -Path $d -ErrorAction SilentlyContinue | Out-Null }
+  return $d
+}
+function Get-MarkerScanDirs {
+  $md = Get-MarkerDir
+  $dirs = @($md)
+  $isDefault = -not ($env:MASHED_LOCK_MARKER_DIR -or $env:MASHED_LOCK_DIR)
+  $f = $env:MASHED_LOCK_LEGACY_SCAN
+  $legacy = $false
+  if ($f -eq '1') { $legacy = $true }
+  elseif ($f -eq '0') { $legacy = $false }
+  elseif ($isDefault) {
+    $stamp = Join-Path $md 'changeover.epoch'
+    $now = [int][double]::Parse((Get-Date -UFormat %s))
+    $t0 = $null
+    try { $t0 = [double]((Get-Content -LiteralPath $stamp -Raw -ErrorAction Stop).Trim()) } catch {}
+    if ($null -eq $t0) { $t0 = $now; try { Set-Content -LiteralPath $stamp -Value "$now" -Encoding ascii } catch {} }
+    $legacy = (($now - $t0) -lt 3600)
+  }
+  if ($legacy -and ($md -ne $env:TEMP)) { $dirs += $env:TEMP }
+  return $dirs
+}
+
 function Get-SoloOwner([string]$Name = 'mashed_machine') {
   $p = Get-SoloLockPath $Name
   if (-not (Test-Path $p)) { return $null }
@@ -103,7 +135,7 @@ function Exit-SoloLock($handle) {
 function Get-PrioPending([string]$Name = 'mashed_machine', [int]$IgnorePid = 0) {
   $now = [int][double]::Parse((Get-Date -UFormat %s))
   $out = @()
-  foreach ($f in @(Get-ChildItem -Path $env:TEMP -Filter "${Name}_prio_*.lock" -ErrorAction SilentlyContinue)) {
+  foreach ($f in @(Get-MarkerScanDirs | ForEach-Object { Get-ChildItem -Path $_ -Filter "${Name}_prio_*.lock" -ErrorAction SilentlyContinue })) {
     $o = $null; try { $o = Get-Content $f.FullName -Raw | ConvertFrom-Json } catch {}
     if (-not $o -or -not (Test-PidAlive ([int]$o.pid)) -or ([int]$o.expires -lt $now)) {
       Remove-Item $f.FullName -Force -ErrorAction SilentlyContinue; continue
@@ -117,7 +149,7 @@ function Get-PrioPending([string]$Name = 'mashed_machine', [int]$IgnorePid = 0) 
 function Get-PrioLinger([string]$Name = 'mashed_machine', [int]$IgnorePid = 0) {
   $now = [int][double]::Parse((Get-Date -UFormat %s))
   $out = @()
-  foreach ($f in @(Get-ChildItem -Path $env:TEMP -Filter "${Name}_priolinger_*.lock" -ErrorAction SilentlyContinue)) {
+  foreach ($f in @(Get-MarkerScanDirs | ForEach-Object { Get-ChildItem -Path $_ -Filter "${Name}_priolinger_*.lock" -ErrorAction SilentlyContinue })) {
     $o = $null; try { $o = Get-Content $f.FullName -Raw | ConvertFrom-Json } catch {}
     if (-not $o -or ([int]$o.expires -lt $now) -or ($o.held -and -not (Test-PidAlive ([int]$o.pid)))) {
       if ($o -or ((Get-Date) - $f.LastWriteTime).TotalSeconds -gt $script:EmptyGraceSec) {
@@ -170,7 +202,7 @@ function Acquire-Lock {
     [switch]$Quiet,
     [switch]$Priority
   )
-  $prioPath = Join-Path $env:TEMP "${Name}_prio_$PID.lock"
+  $prioPath = Join-Path (Get-MarkerDir) "${Name}_prio_$PID.lock"
   if ($Priority) {
     $n = [int][double]::Parse((Get-Date -UFormat %s))
     @{ pid = $PID; at = (Get-Date).ToString('o'); epoch = $n; expires = $n + $TimeoutSec + 300;
@@ -257,6 +289,6 @@ function Write-PrioLinger([string]$Name, [string]$Label, [int]$Secs, [bool]$Held
   try {
     @{ pid = $PID; at = (Get-Date).ToString('o'); epoch = $n; expires = $n + $Secs; held = $Held;
        owner_start = (Get-PidStart $PID); label = $Label; host = $env:COMPUTERNAME } | ConvertTo-Json -Compress |
-      Set-Content -LiteralPath (Join-Path $env:TEMP "${Name}_priolinger_$PID.lock") -Encoding utf8
+      Set-Content -LiteralPath (Join-Path (Get-MarkerDir) "${Name}_priolinger_$PID.lock") -Encoding utf8
   } catch {}
 }

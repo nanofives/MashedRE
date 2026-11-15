@@ -108,16 +108,62 @@ import uuid
 # MASHED_LOCK_DIR redirects every lock/solo/priority file (HB-MASHEDLOCK-RACE: the
 # concurrency self-test must not touch the live files other sessions hold).
 LOCK_DIR = os.environ.get('MASHED_LOCK_DIR') or tempfile.gettempdir()
-# HB-MASHEDLOCK-TEMPGLOB: priority/linger markers stay in LOCK_DIR by default, because
-# MachineLock.ps1 and merge_train.ps1 read and write them in $env:TEMP (a move would split the
-# two languages' view; .ps1 edits are outside this row). They are enumerated with os.scandir
-# and a prefix filter, not glob. MASHED_LOCK_MARKER_DIR opts into a small dedicated directory
-# (python side only; legacy %TEMP% markers are then read only with MASHED_LOCK_LEGACY_SCAN=1).
+# HB-MASHEDLOCK-DEFAULT-MARKERDIR (follow-up of HB-MASHEDLOCK-TEMPGLOB): priority/linger markers
+# (<name>_prio_<pid>.lock, <name>_priolinger_<pid>.lock) live in a small dedicated directory,
+# %LOCALAPPDATA%\mashed_lock\markers, NOT in %TEMP%: listing a 645k-entry %TEMP% took 42.75 s per
+# `status`, 0.84 s with a private marker dir (RESULT_HB-MASHEDLOCK-FIXES). MachineLock.ps1 uses the
+# same directory (Get-MarkerDir), merge_train.ps1 only goes through this file. The lock file itself
+# and the solo file stay at their fixed %TEMP% paths (direct opens, no directory listing).
+# Overrides, in order: MASHED_LOCK_MARKER_DIR; an isolated lock dir (MASHED_LOCK_DIR set, or
+# ml.LOCK_DIR reassigned by a self-test) keeps its markers beside its locks; else the default dir.
+# Changeover: a tool older than this change still writes markers into %TEMP%, so for
+# MARKER_LEGACY_WINDOW_SEC after the default dir was first created (stamp file `changeover.epoch`)
+# the old %TEMP% location is scanned too (cost: the slow listing, for that hour only). A marker
+# expires wait+PRIO_GRACE_SEC after its requester started, so the 1 h window covers the usual waits.
+# The reverse direction (a pre-change tool not seeing a new tool's marker) is not covered. Set
+# MASHED_LOCK_LEGACY_SCAN=1 to force the legacy scan, =0 to skip it.
+_REAL_TEMP = tempfile.gettempdir()
+MARKER_LEGACY_WINDOW_SEC = 3600
+
+
+def _default_marker_dir():
+    base = os.environ.get('LOCALAPPDATA') or os.path.join(os.path.expanduser('~'), 'AppData', 'Local')
+    return os.path.join(base, 'mashed_lock', 'markers')
+
+
+def _marker_dir_is_default():
+    return not (os.environ.get('MASHED_LOCK_MARKER_DIR') or os.environ.get('MASHED_LOCK_DIR')
+                or os.path.normcase(os.path.abspath(LOCK_DIR)) != os.path.normcase(os.path.abspath(_REAL_TEMP)))
 
 
 def _marker_dir_cfg():
     # resolved per call: self-tests reassign ml.LOCK_DIR after import
-    return os.environ.get('MASHED_LOCK_MARKER_DIR') or LOCK_DIR
+    return os.environ.get('MASHED_LOCK_MARKER_DIR') or (
+        _default_marker_dir() if _marker_dir_is_default() else LOCK_DIR)
+
+
+def _legacy_scan_wanted(md):
+    """True while markers written by a pre-change tool into LOCK_DIR (%TEMP%) may still exist."""
+    f = os.environ.get('MASHED_LOCK_LEGACY_SCAN')
+    if f in ('0', '1'):
+        return f == '1' and os.path.normcase(md) != os.path.normcase(LOCK_DIR)
+    if not _marker_dir_is_default():
+        return False
+    stamp = os.path.join(md, 'changeover.epoch')
+    try:
+        with open(stamp, encoding='utf-8') as fh:
+            t0 = float(fh.read().strip())
+    except (OSError, ValueError):
+        t0 = time.time()
+        try:
+            os.makedirs(md, exist_ok=True)
+            with open(stamp, 'w', encoding='utf-8') as fh:
+                fh.write(str(int(t0)))
+        except OSError:
+            pass
+    return time.time() - t0 < MARKER_LEGACY_WINDOW_SEC
+
+
 DEFAULT_NAME = 'mashed_machine'
 EMPTY_GRACE_SEC = 10     # an empty/unparsable lock file younger than this is a writer mid-create
 SOLO_ENV = 'MASHED_LOCK_SOLO_TOKEN'
@@ -133,7 +179,7 @@ def _scan_locks(prefix, suffix='.lock'):
     out = []
     md = _marker_dir_cfg()
     dirs = [md]
-    if md != LOCK_DIR and os.environ.get('MASHED_LOCK_LEGACY_SCAN') == '1':
+    if _legacy_scan_wanted(md):
         dirs.append(LOCK_DIR)
     for d in dirs:
         try:
