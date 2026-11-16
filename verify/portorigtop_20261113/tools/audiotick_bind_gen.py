@@ -135,6 +135,9 @@ INIT_ROOT = '004627f0'
 STOP_FORCE = set()
 STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
 STOP_FORCE |= {'005aef30'}   # PORT-TOP-AUDIO-5A8F30-STOPS: reached now through 0x005a8060 (0x005a8328); it calls __beginthread (0x005c2e79, no exe body; the census bulk bind left it out for the LNK2019) and starts the second thread, census order 42: a stop until the init stops are done
+# PORT-TOP-AUDIO-5AEF30-KNOB (L-174 (c)): a caller of a KNOB rva calls this exe function instead of the stop thunk. Knob off
+# it calls the stop thunk (unchanged stop); knob on it is the stand-in (Match/PortTop_Knob_005aef30.cpp, MASHED_OT_AUDIOTHREAD_STANDIN).
+KNOB = {'005aef30': ('PortTop_Knob_005aef30', 'Match/PortTop_Knob_005aef30.cpp')}
 LOCAL_SHARED = {("0045cbe0", "0045c4e0"): "PortTop_Local_0045cb20_0045c4e0"}
 EXTRA_PRE["0045cbe0"] = ["#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp"]
 # re/match/s10/0045c6b0.c carries 0x0045c640 (cast-only text difference from re/match/s10/0045c640.c): that copy is the exe body.
@@ -233,6 +236,9 @@ for rva, p in sorted(plan.items()):
         note = {'reuse': '   // exe body (%s)' % (plan[c][2] if plan[c][0] == 'reuse' else ''), 'bind': '', 'stop': '   // named stop'}[plan[c][0]]
         if c in STOP_FORCE:
             note = '   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)'
+        if c in KNOB and plan[c][0] == 'stop':
+            L.append('#define FUN_%s %s   // knob stand-in, default off = the named stop (%s)' % (c, KNOB[c][0], KNOB[c][1]))
+            continue
         L.append('#define FUN_%s %s%s' % (c, sym(c), note))
     for c in local:
         if (rva, c) in LOCAL_SHARED:

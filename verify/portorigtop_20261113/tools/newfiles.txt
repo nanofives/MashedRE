@@ -204,3 +204,5 @@ mashedmod/src/mashed_re/Match/PortTop_005b8be0.cpp
 mashedmod/src/mashed_re/Match/PortTop_005b9320.cpp
 mashedmod/src/mashed_re/Match/PortTop_005b9460.cpp
 mashedmod/src/mashed_re/Match/PortTop_005bc020.cpp
+mashedmod/src/mashed_re/Match/PortTop_005bce80.cpp
+mashedmod/src/mashed_re/Match/PortTop_005bd9e0.cpp

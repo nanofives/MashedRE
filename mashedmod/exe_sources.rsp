@@ -1952,6 +1952,7 @@
 "Match\PortTop_005b0dc0.cpp"
 "Match\PortTop_005b1110.cpp"
 "Match\PortTop_AudioStops.cpp"
+"Match\PortTop_Knob_005aef30.cpp"
 "Match\PortTop_0045c720.cpp"
 "Match\PortTop_0045cd30.cpp"
 "Match\PortTop_004647f0.cpp"
@@ -2300,3 +2301,5 @@
 "Match\PortTop_005b9320.cpp"
 "Match\PortTop_005b9460.cpp"
 "Match\PortTop_005bc020.cpp"
+"Match\PortTop_005bce80.cpp"
+"Match\PortTop_005bd9e0.cpp"

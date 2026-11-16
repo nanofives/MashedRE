@@ -16,7 +16,7 @@
 #define FUN_005aee20 PortTop_Bound_005aee20
 #define FUN_005aeea0 AudioSemaphoreCreate   // exe body (Audio/AudioDSound.cpp)
 #define FUN_005aef00 AudioThreadDescInit   // exe body (Audio/AudioDSound.cpp)
-#define FUN_005aef30 PortTop_AStop_005aef30   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)
+#define FUN_005aef30 PortTop_Knob_005aef30   // knob stand-in, default off = the named stop (Match/PortTop_Knob_005aef30.cpp)
 extern "C" {
 #include "../../../../re/match/s25/005a8060.c"
 }
