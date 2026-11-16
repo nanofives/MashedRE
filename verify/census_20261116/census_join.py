@@ -115,8 +115,10 @@ res = {"executed_distinct": len(exec_any), "instrumented": len(names),
        "by_phase_status": {p: dict(cnt[p]) for p in ORDER}, "by_phase_binding": {p: dict(cnt_b[p]) for p in ORDER},
        "reached_today": sum(1 for k in exec_any if info[k][3]["_reached"])}
 BAD = ("exe-body", "provisional", "stand-in", "under-stand-in", "missing", "unbound", "stop", "hand-port", "shim", "rw-lib", "lift", "wrapper")
-res["race_tick_nonmatched"] = sorted(([k, info[k][3]["race-tick"], info[k][1], info[k][0], hooks.get(k, ("", "", ""))[2]]
+res["race_tick_nonmatched"] = sorted(([k, info[k][3]["race-tick"], info[k][1], info[k][0], hooks.get(k, ("", "", ""))[2], subsys.get(k, "")]
                                       for k in exec_any if info[k][3]["race-tick"] and info[k][1] in BAD), key=lambda x: -x[1])
+res["race_load_nonmatched"] = sorted(([k, info[k][3]["race-load"], info[k][1], info[k][0], hooks.get(k, ("", "", ""))[2], subsys.get(k, "")]
+                                      for k in exec_any if info[k][3]["race-load"] and info[k][1] in BAD), key=lambda x: -x[1])
 res["audio_pre45d460"] = sorted(([k, info[k][3]["_pre45d"], info[k][1], info[k][0], int(info[k][3]["_reached"])]
                                  for k in exec_any if info[k][3]["_pre45d"] > 0), key=lambda x: x[0])
 # first called after the exe's stop point (first enter of 0x005aa3d0) and up to the first enter of 0x0045d460, plus
@@ -130,5 +132,5 @@ res["stage"] = stage
 res["unbound_by_subsystem"] = {p: dict(Counter(subsys.get(k, "none") for k in exec_any if info[k][3][p] and info[k][1] == "unbound").most_common(12)) for p in ORDER}
 res["first_phase_binding"] = {p: dict(Counter(info[k][1] for k in exec_any if info[k][2] == p)) for p in ORDER}
 (out / "census_counts.json").write_text(json.dumps(res, indent=1))
-print(json.dumps({k: v for k, v in res.items() if k not in ("race_tick_nonmatched", "audio_pre45d460", "window_5aa3d0_to_45d460")}, indent=1))
+print(json.dumps({k: v for k, v in res.items() if k not in ("race_tick_nonmatched", "race_load_nonmatched", "audio_pre45d460", "window_5aa3d0_to_45d460")}, indent=1))
 print("race-tick non-matched", len(res["race_tick_nonmatched"]), "audio pre-45d460 executed", len(res["audio_pre45d460"]))
