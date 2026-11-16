@@ -24,6 +24,7 @@ int PortTop_StandIn04C_00555830();
 int PortTop_StandIn04C_00556e40();
 bool RwCore_FrameRoute(void);                       // RwCore/RwCore_Knob.cpp
 int RwCore_00555830(int param_1);                   // RwCore/RwCore_00555830.cpp (HUDINIT-C)
+int RwCore_00556e40(int param_1);                   // RwCore/RwCore_00556e40.cpp (HUDINIT-D)
 }
 
 namespace {
@@ -52,6 +53,23 @@ unsigned int PortTop_00427620_Call00555830(int p0) {
     return static_cast<unsigned int>(PortTop_StandIn04C_00555830());
 }
 unsigned int PortTop_00427620_Call00556e40(int p0) {
+    // [HUDINIT-D] under MASHED_RWC_FRAME the four handles DAT_0067d83c..0x0067d848 are written by the matched init
+    // 0x00427ca0 (Match/MatchS06_00427ca0.cpp) on the core, so a non-zero handle goes to the RW core body
+    // RwCore_00556e40 (re/match/s24/00556e40.c, match100: --*(h + 0x74) <= 0 -> 0x004c5a60(*(h + 0x68)) when non-zero,
+    // RwGlobals +0x11c(DAT_00912a00, h) through the core's DAT_007d3ff8, return 1, else 0). A zero handle keeps the
+    // stand-in, because the body reads *(h + 0x74) with no null check. Every call on the frame route is logged (the
+    // original's 0x00427620 makes 4). Off the frame route nothing changes.
+    if (RwCore_FrameRoute()) {
+        static int ncalls;
+        const bool core = p0 != 0;
+        if (ncalls < 8) {
+            ++ncalls;
+            SelLog("0x00556e40", p0, core ? "RW core body RwCore_00556e40 (frame route) (HUDINIT-D)"
+                                          : "stand-in (frame route, handle 0) (HUDINIT-D)");
+        }
+        if (core) return static_cast<unsigned int>(RwCore_00556e40(p0));
+        return static_cast<unsigned int>(PortTop_StandIn04C_00556e40());
+    }
     static int logged[2];
     const bool on = MashedRw_RwModKnob() != 0;
     const bool run = on && p0 != 0;

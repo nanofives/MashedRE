@@ -80,6 +80,10 @@ ROOTS = [
     # with 0x004671a0(0) right after 0x00427ca0; on the exe path a stand-in (PortTop_StandIn04E_004275d0). Its 0x00552a60
     # call sets the Rt2d camera 0x00912c0c, which the first 0x00552e40 reads (+0x14 of NULL without it).
     '004275d0',
+    # HUDINIT-D: the font-entry release 0x00556e40 (re/match/s24/00556e40.c, 100%) that AppDestroy's 0x00427620 calls on
+    # the DAT_0067d83c..0x0067d848 handles; under the frame knob its selector (Match/PortTop_00427620.cpp) runs this core
+    # body instead of the stand-in PortTop_StandIn04C_00556e40.
+    '00556e40',
 ]
 # Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
 # re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
