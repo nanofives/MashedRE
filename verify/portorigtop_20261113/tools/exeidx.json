@@ -6103,6 +6103,11 @@
 "Vec2Length",
 "Math/RwV2d.cpp",
 "rh"
+],
+[
+"RwCore_004c3bf0",
+"RwCore/RwCore_004c3bf0.cpp",
+"match-include"
 ]
 ],
 "004c3c60": [
@@ -14272,6 +14277,13 @@
 [
 "RwCore_00402fb0",
 "RwCore/RwCore_00402fb0.cpp",
+"match-include"
+]
+],
+"00403160": [
+[
+"RwCore_00403160",
+"RwCore/RwCore_00403160.cpp",
 "match-include"
 ]
 ],
