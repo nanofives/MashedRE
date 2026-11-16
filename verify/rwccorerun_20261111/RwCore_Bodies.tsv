@@ -1,6 +1,7 @@
 rva	kind	source	best_pct	exe_symbol
 0x00402fb0	match100	re/match/s01/00402fb0.c	100.0	RwCore_00402fb0
 0x00403050	match100	re/match/s01/00403050.c	100.0	RwCore_00403050
+0x00403160	match100	re/match/s01/00403160.c	100.0	RwCore_00403160
 0x00404320	stop	re/match/s01/00403fa0.c		RwCoreMissing_00404320
 0x0040bb50	match100	re/match/s02/0040bb50.c	100.0	RwCore_0040bb50
 0x0040bb70	match100	re/match/s02/0040bb70.c	100.0	RwCore_0040bb70
@@ -168,6 +169,7 @@ rva	kind	source	best_pct	exe_symbol
 0x004c3ac0	match100	re/match/s19/004c3ac0.c	100.0	RwCore_004c3ac0
 0x004c3b30	match100	re/match/s19/004c3b30.c	100.0	RwCore_004c3b30
 0x004c3b90	match100	re/match/s19/004c3b90.c	100.0	RwCore_004c3b90
+0x004c3bf0	match100	re/match/s19/004c3bf0.c	100.0	RwCore_004c3bf0
 0x004c3d60	match100	re/match/s19/004c3d60.c	100.0	RwCore_004c3d60
 0x004c3d90	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_004c3d90
 0x004c3dc0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_004c3dc0
