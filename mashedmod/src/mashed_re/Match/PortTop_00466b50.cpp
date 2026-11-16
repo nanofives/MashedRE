@@ -25,7 +25,7 @@
 #define FUN_0040e370 IsCarSlotActive   // exe body (Match/MatchS02_0040e370.cpp)
 #define FUN_00426c00 GameStateFlagGet   // exe body (Match/MatchS06_00426c00.cpp)
 #define FUN_0042b8f0 StatePhaseIsFinal   // exe body (Match/MatchS07_0042b8f0.cpp)
-#define FUN_0042b900 PortTop_AStop_0042b900   // named stop
+#define FUN_0042b900 PortTop_Bound_0042b900
 #define FUN_0042f6a0 GetRaceSubMode   // exe body (Match/MatchS07_0042f6a0.cpp)
 #define FUN_00431b50 SinGlobalProduct431b50   // exe body (Match/MatchS07_00431b50.cpp)
 #define FUN_00431b60 SinGlobalProduct431b60   // exe body (Match/MatchS07_00431b60.cpp)

@@ -1,0 +1,115 @@
+# Before (run 49 vs_dump, D:/MashedWT/RWC-FRAME-CLUMP_data/vs_dump.log)
+[ORIG_TOP] 0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 60: DAT_0067eca4 = 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067f19c = 0, DAT_00771964 = 00000000 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+
+# After (vs_dump, D:/MashedWT/RWC-FRAME-TITLE-LOGO_data/vs_dump.log)
+[RWC_CORE] drawdump: Im2D prim slot [RwGlobals 017491D0 + 0x30] 00203F80 wrapped (delimiter 0x00492E90, skip 200, frames 8) -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data/core_burst_r50.json
+[ORIG_TOP] 0x00493600 (matched) on the RW core (MASHED_RWC_FRAME): bmp / png registered, returned 1
+[ORIG_TOP] [RWC-FRAME-TITLE-LOGO] after 0x00493600: RwGlobals 017491D0, image module offset [0x007d4628] 0x170, format list head [+0x21c] 08E5F844
+[ORIG_TOP] [RWC-FRAME-TITLE-LOGO]   node 08E5F844: lcExt ".png" ucExt ".PNG" readFn 00180570 writeFn 0025F6F0 next 08E5F810
+[ORIG_TOP] [RWC-FRAME-TITLE-LOGO]   node 08E5F810: lcExt ".bmp" ucExt ".BMP" readFn 00180550 writeFn 0025F5F0 next 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("MashedNEWLogo.png") call 1: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("MashedNEWLogo.png") call 2: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture MashedNEWLogo.png
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00514330("MashedNEWLogo.png"): 15377 bytes from piz, 256x128 -> core RwImage 08F15018 (depth 32, stride 1024)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("MashedNEWLogo", 0) call 1 on the RW core = 08E63EC0 (raster 08E614A0 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001C7ED0 find 001C8D90 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.png") call 3: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.PNG") call 4: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.bmp") call 5: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.bmp") call 6: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture bigE.bmp
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x0052CB00("bigE.bmp"): 630 bytes from piz, 32x32 -> core RwImage 08F15018 (depth 32, stride 128)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("bigE", 0) call 2 on the RW core = 08E63F20 (raster 08E614F8 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001C7ED0 find 001C8D90 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.png") call 7: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.PNG") call 8: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.bmp") call 9: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.bmp") call 10: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture proLogicII.bmp
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x0052CB00("proLogicII.bmp"): 4214 bytes from piz, 128x64 -> core RwImage 08F15018 (depth 32, stride 512)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("proLogicII", 0) call 3 on the RW core = 08E63F80 (raster 08E61550 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001C7ED0 find 001C8D90 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.png") call 11: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.PNG") call 12: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.bmp") call 13: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.bmp") call 14: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture DolbyDig.bmp
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x0052CB00("DolbyDig.bmp"): 9270 bytes from piz, 128x64 -> core RwImage 08F15018 (depth 32, stride 512)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("DolbyDig", 0) call 4 on the RW core = 08E63FE0 (raster 08E615A8 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001C7ED0 find 001C8D90 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("sun", 0) call 5 on the RW core = 08E642E0 (raster 08E61868 dict 01769B44 refCount 2); texture globals: current dict 00000000 read 001C7ED0 find 001C8D90 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.png") call 15: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.PNG") call 16: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.bmp") call 17: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.BMP") call 18: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("test", 0) call 6 on the RW core = 00000000 (raster 00000000 dict 00000000 refCount 0); texture globals: current dict 00000000 read 001C7ED0 find 001C8D90 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.png") call 19: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.PNG") call 20: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.bmp") call 21: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.BMP") call 22: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("GreenStartLight.png") call 23: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("GreenStartLight.PNG") call 24: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 1: DAT_0067eca4 = 1, DAT_0067eca8 = 0, DAT_007f1004 = 0.000000, DAT_0067f19c = 0, DAT_00771964 = 08E63EC0 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 60: DAT_0067eca4 = 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067f19c = 0, DAT_00771964 = 08E63EC0 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[RWC_CORE] drawdump core_f0: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f1: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f2: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f3: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f4: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f5: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f6: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f7: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump written (frames done): D:/MashedWT/RWC-FRAME-TITLE-LOGO_data/core_burst_r50.json, delimiter 0x00492E90 entries seen 209, Im2D prim calls in the whole run 15668
+
+# After (ddk_dump, D:/MashedWT/RWC-FRAME-TITLE-LOGO_data/ddk_dump.log)
+[RWC_CORE] drawdump: Im2D prim slot [RwGlobals 0181E728 + 0x30] 0002BB40 wrapped (delimiter 0x00492E90, skip 200, frames 8) -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data/core_burst_ddk_r50.json
+[ORIG_TOP] 0x00493600 (matched) on the RW core (MASHED_RWC_FRAME): bmp / png registered, returned 1
+[ORIG_TOP] [RWC-FRAME-TITLE-LOGO] after 0x00493600: RwGlobals 0181E728, image module offset [0x007d4628] 0x170, format list head [+0x21c] 08FA5D2C
+[ORIG_TOP] [RWC-FRAME-TITLE-LOGO]   node 08FA5D2C: lcExt ".png" ucExt ".PNG" readFn 001B54F0 writeFn 0025D2F0 next 08FA5CF8
+[ORIG_TOP] [RWC-FRAME-TITLE-LOGO]   node 08FA5CF8: lcExt ".bmp" ucExt ".BMP" readFn 001B54D0 writeFn 0025D1F0 next 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("MashedNEWLogo.png") call 1: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("MashedNEWLogo.png") call 2: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture MashedNEWLogo.png
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00514330("MashedNEWLogo.png"): 15377 bytes from piz, 256x128 -> core RwImage 0903EFA0 (depth 32, stride 1024)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("MashedNEWLogo", 0) call 1 on the RW core = 08FAA3A8 (raster 08FA7988 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001EC4B0 find 001ED370 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.png") call 3: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.PNG") call 4: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.bmp") call 5: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("bigE.bmp") call 6: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture bigE.bmp
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x0052CB00("bigE.bmp"): 630 bytes from piz, 32x32 -> core RwImage 0903EFA0 (depth 32, stride 128)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("bigE", 0) call 2 on the RW core = 08FAA408 (raster 08FA79E0 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001EC4B0 find 001ED370 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.png") call 7: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.PNG") call 8: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.bmp") call 9: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("proLogicII.bmp") call 10: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture proLogicII.bmp
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x0052CB00("proLogicII.bmp"): 4214 bytes from piz, 128x64 -> core RwImage 0903EFA0 (depth 32, stride 512)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("proLogicII", 0) call 3 on the RW core = 08FAA468 (raster 08FA7A38 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001EC4B0 find 001ED370 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.png") call 11: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.PNG") call 12: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.bmp") call 13: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("DolbyDig.bmp") call 14: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] cfglog: Reading texture DolbyDig.bmp
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x0052CB00("DolbyDig.bmp"): 9270 bytes from piz, 128x64 -> core RwImage 0903EFA0 (depth 32, stride 512)
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("DolbyDig", 0) call 4 on the RW core = 08FAA4C8 (raster 08FA7A90 dict 00000000 refCount 1); texture globals: current dict 00000000 read 001EC4B0 find 001ED370 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("sun", 0) call 5 on the RW core = 08FAA7C8 (raster 08FA7D50 dict 0186BD0C refCount 2); texture globals: current dict 00000000 read 001EC4B0 find 001ED370 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.png") call 15: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.PNG") call 16: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.bmp") call 17: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("test.BMP") call 18: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] RwTextureRead 0x004c5cb0("test", 0) call 6 on the RW core = 00000000 (raster 00000000 dict 00000000 refCount 0); texture globals: current dict 00000000 read 001EC4B0 find 001ED370 [+0x1c] 00000000
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.png") call 19: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.PNG") call 20: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.bmp") call 21: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("OrangeDisplay.BMP") call 22: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("GreenStartLight.png") call 23: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("GreenStartLight.PNG") call 24: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 1: DAT_0067eca4 = 1, DAT_0067eca8 = 0, DAT_007f1004 = 0.000000, DAT_0067f19c = 0, DAT_00771964 = 08FAA3A8 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route phase ladder call 60: DAT_0067eca4 = 3, DAT_0067eca8 = 0, DAT_007f1004 = 0.016667, DAT_0067f19c = 0, DAT_00771964 = 08FAA3A8 (0x00403050 gate), DAT_00771a04 = 00000000 (0x00493f70) (RWC-FRAME-CLUMP)
+[RWC_CORE] drawdump core_f0: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f1: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f2: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f3: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f4: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f5: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f6: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f7: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump written (frames done): D:/MashedWT/RWC-FRAME-TITLE-LOGO_data/core_burst_ddk_r50.json, delimiter 0x00492E90 entries seen 209, Im2D prim calls in the whole run 15616

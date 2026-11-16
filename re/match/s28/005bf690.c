@@ -26,7 +26,8 @@ typedef unsigned int undefined4;
 typedef long LONG;
 void FUN_004522d0(int p0);
 void FUN_005bf660(int p0);
-__declspec(dllimport) LONG __stdcall InterlockedDecrement(LONG * p0);// MATCH: 0x005bf690 FUN_005bf690
+__declspec(dllimport) LONG __stdcall InterlockedDecrement(LONG * p0);
+// MATCH: 0x005bf690 FUN_005bf690
 LONG __stdcall FUN_005bf690(int param_1)
 {
   LONG LVar1;

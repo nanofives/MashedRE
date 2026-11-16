@@ -145,9 +145,9 @@ extern "C" int RwCore_004dee40();
 extern "C" int RwCore_004e0920();
 extern "C" int RwCore_004e12b0();
 extern "C" int RwCore_004e2ff0();
-extern "C" int RwCore_00550b00();
 extern "C" int RwInitNullStub();
 extern "C" int _chkstk();
+extern "C" int RwCoreBind_FsFileExists_00550b00();
 extern "C" void* RwCoreIat_005cc21c;
 extern "C" void* RwCoreIat_005cc234;
 extern "C" void* RwCoreIat_005cc23c;
@@ -4592,7 +4592,7 @@ extern "C" __declspec(naked) int RwCoreLift_004ce6f0(void) {
         push edi                                 // 004ce727
         call dword ptr [eax + 0xcc]              // 004ce728
         push ebx                                 // 004ce72e
-        call RwCore_00550b00                    // 004ce72f
+        call RwCoreBind_FsFileExists_00550b00                    // 004ce72f
         add esp, 0xc                             // 004ce734
         test eax, eax                            // 004ce737
         jne L_4ce766                             // 004ce739
@@ -4602,7 +4602,7 @@ extern "C" __declspec(naked) int RwCoreLift_004ce6f0(void) {
         push edi                                 // 004ce745
         call dword ptr [edx + 0xcc]              // 004ce746
         push ebx                                 // 004ce74c
-        call RwCore_00550b00                    // 004ce74d
+        call RwCoreBind_FsFileExists_00550b00                    // 004ce74d
         add esp, 0xc                             // 004ce752
         test eax, eax                            // 004ce755
         jne L_4ce772                             // 004ce757

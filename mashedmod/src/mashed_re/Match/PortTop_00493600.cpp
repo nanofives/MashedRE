@@ -52,9 +52,39 @@ extern "C" {
 
 static bool s_pending00493600 = false;
 
+bool RwCore_FrameRoute(void);   // RwCore/RwCore_Knob.cpp: MASHED_RWC_CORE=1 + MASHED_RWC_FRAME=1
+
+// [RWC-FRAME-TITLE-LOGO] The image format list of the RW core's image module: RwGlobals [0x007d3ff8] + module offset
+// [0x007d4628], +0x21c the node list (re/match/s20/004ce790.c: lcExt +0x00, ucExt +0x14, readFn +0x28, writeFn +0x2c,
+// next +0x30). Logged after the registration so the run shows what 0x004ce6c0 / 0x004ce390 will walk.
+static void PortTop9360_LogFormats(const char* when) {
+    const unsigned g = *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x007d3ff8u));
+    const unsigned off = *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x007d4628u));
+    unsigned node = g ? *reinterpret_cast<const unsigned*>(static_cast<unsigned long>(g + off + 0x21c)) : 0;
+    PortTop9360_Log("[RWC-FRAME-TITLE-LOGO] %s: RwGlobals %08X, image module offset [0x007d4628] 0x%X, format list head "
+                    "[+0x21c] %08X", when, g, off, node);
+    for (int i = 0; node && i < 8; ++i) {
+        const char* p = reinterpret_cast<const char*>(static_cast<unsigned long>(node));
+        PortTop9360_Log("[RWC-FRAME-TITLE-LOGO]   node %08X: lcExt \"%.19s\" ucExt \"%.19s\" readFn %08X writeFn %08X next %08X",
+                        node, p, p + 0x14, *reinterpret_cast<const unsigned*>(p + 0x28),
+                        *reinterpret_cast<const unsigned*>(p + 0x2c), *reinterpret_cast<const unsigned*>(p + 0x30));
+        node = *reinterpret_cast<const unsigned*>(p + 0x30);
+    }
+}
+
 // The call site in rva 0x00493710 (re/match/s15/00493710.c). Knob OFF: the old missing stub. Knob ON: deferred to RegisterRwModules.
 // Both return 1, the value the original returns when both registrations succeed.
+// [RWC-FRAME-TITLE-LOGO] MASHED_RWC_FRAME: RwEngineStart has run on the RW core (the original's order: 0x00493710 calls
+// rva 0x00493600 after it), so the core's image module exists and the matched body runs here, on the core's RwGlobals.
+// Before this row it returned 1 without registering, the core's format list stayed empty and every RwTextureRead on
+// the core (0x004283a0: MashedNEWLogo, bigE, proLogicII, DolbyDig) returned 0.
 int PortTop_Bound_00493600(void) {
+    if (RwCore_FrameRoute()) {
+        const int r = Orig_00493600();
+        PortTop9360_Log("0x00493600 (matched) on the RW core (MASHED_RWC_FRAME): bmp / png registered, returned %d", r);
+        PortTop9360_LogFormats("after 0x00493600");
+        return r;
+    }
     if (!MashedRw_RwModKnob()) {
         PortTop9360_Log("0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1");
         return 1;

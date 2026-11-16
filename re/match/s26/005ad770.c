@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 0x005ad770 (h3): 69.9% exact, regs 84.1%. Residual class (b) memcpy intrinsic for the three copy loops (26.5 -> 59.3%), permuter reordered independent stores (69.9%). */
+/* MATCH-S26 0x005ad770 (h3): was 69.9% (residual class b). PORT-TOP-AUDIOSTOP-5AD770 (2026-11-16): 100%, byte-identical. Shape: the two memcpy calls share one tail after both arms (no per-arm copy), +0xc stored before +0x10, and +0x14 = param_1 stored before the call to 0x005b35a0 (original 0x005ad889, before the call to 0x5b35a0). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -54,9 +54,9 @@ int FUN_005ad770(undefined4 param_1,undefined4 *param_2,undefined4 *param_3,int 
   else {
     *(undefined4 *)(param_4 + 0x1c) = 1;
   }
-  *(undefined4 *)(param_4 + 0x10) = 0;
   *(undefined4 *)(param_4 + 0xc) = 0;
-  if (!(param_5 == 0)) {
+  *(undefined4 *)(param_4 + 0x10) = 0;
+  if (param_5 != 0) {
     *(uint *)(param_4 + 0x1c) = *(uint *)(param_4 + 0x1c) | 2;
     if (param_2 != 0) {
       *(int *)(param_4 + 0xc) = param_5;
@@ -64,12 +64,12 @@ int FUN_005ad770(undefined4 param_1,undefined4 *param_2,undefined4 *param_3,int 
         iVar2 = FUN_005a61b0(param_1);
         *(int *)(param_4 + 0x10) = iVar2 + param_5;
       }
-      memcpy(*(void **)(param_4 + 0xc), param_2, uVar1);
     }
     else if (param_3 != 0) {
       *(int *)(param_4 + 0x10) = param_5;
     }
-  } else {
+  }
+  else {
     if (param_2 != 0) {
       iVar2 = FUN_005ad6f0(param_1);
       *(int *)(param_4 + 0xc) = iVar2;
@@ -85,16 +85,16 @@ int FUN_005ad770(undefined4 param_1,undefined4 *param_2,undefined4 *param_3,int 
         FUN_005ad8d0(param_4);
       }
     }
-    if (param_2 != 0) {
-      memcpy(*(void **)(param_4 + 0xc), param_2, uVar1);
-    }
+  }
+  if (param_2 != 0) {
+    memcpy(*(void **)(param_4 + 0xc), param_2, uVar1);
   }
   if (param_3 != 0) {
     memcpy(*(void **)(param_4 + 0x10), param_3, uVar1);
   }
   FUN_005ae0b0(param_4);
+  *(undefined4 *)(param_4 + 0x14) = param_1;
   *(undefined4 *)(param_4 + 0x18) = 0;
   FUN_005b35a0(&DAT_009146f0,param_4);
-  *(undefined4 *)(param_4 + 0x14) = param_1;
   return param_4;
 }

@@ -243,7 +243,7 @@ def run(args):
                "holdrand": 0x12345678, "witness": [0x00468980, 0x00470670],
                "negctl": int(args.negctl, 16) if args.negctl else 0, "rebase": args.rebase,
                "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
-               "watch": [int(x, 16) for x in args.watch.split(",") if x][:2], "watchFrom": args.watch_from, "watchMode": args.watch_mode,
+               "watch": [int(x, 16) for x in args.watch.split(",") if x][:2], "watchFrom": args.watch_from, "watchMode": args.watch_mode, "watchStack": args.watch_stack,
                "callLogRace": args.call_log_race}
         if args.rec:
             cfg["rec"] = True
@@ -540,6 +540,7 @@ if __name__ == "__main__":
     ap.add_argument("--watch-mode", choices=["w", "rw"], default="w",
                     help="RO-CTL-68BC0C follow-up: 'rw' arms the --watch debug registers for read OR write (x86 has no read-only); "
                          "hits are de-duplicated per pc (first 4 per pc sent, then counts at powers of two)")
+    ap.add_argument("--watch-stack", type=int, default=0, help="RO-67F0B8-CALLER: also send esp, ebp, a FUZZY backtrace and N raw stack dwords per watch hit (0 = off)")
     ap.add_argument("--call-log", action="store_true", help="log every main-thread clock call from the warp to the race anchor (calllog.bin, 64 B per call)")
     ap.add_argument("--qstep", type=int, default=15000, help="QPC counts per main-thread QPC call")
     ap.add_argument("--clock", choices=["n", "tick"], default="n",
