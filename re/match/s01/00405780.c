@@ -37,8 +37,16 @@ typedef struct S_EC {
     int fe4;              /* +0xe4 */
     float fe8;            /* +0xe8 */
 } S_EC;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00639d80 (*(S_EC (*)[1])0x00639d80u)
+#else
 extern S_EC DAT_00639d80[];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d0 (*(int *)0x0063a5d0u)
+#else
 extern int DAT_0063a5d0;
+#endif
 char *FUN_004a2b60(char *d, const char *s);
 // MATCH: 0x00405780 FUN_00405780
 int FUN_00405780(const char *name, int *ids, int n)

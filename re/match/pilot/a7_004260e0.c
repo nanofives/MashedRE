@@ -13,8 +13,16 @@
 char *strcpy(char *, const char *);
 char *strcat(char *, const char *);
 #pragma intrinsic(strcpy, strcat)
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_008991e0 (*(char (*)[1])0x008991e0u)
+#else
 extern char DAT_008991e0[];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005cd4ac (*(const char (*)[1])0x005cd4acu)
+#else
 extern const char DAT_005cd4ac[];
+#endif
 // MATCH: 0x004260e0 _FUN_004260e0
 char *FUN_004260e0(int dos, char *a, char *b, char *c)
 {
