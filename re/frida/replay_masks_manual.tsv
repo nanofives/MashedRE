@@ -12,7 +12,7 @@ va	count	stride	width	action	value	writer	readers	note
 0x00773d60	1	0	4	MASK:os	-	CRT startup, before any hook or body runs	-	kernel32 proc pointer, differs per boot (0x75b6e8c0 vs 0x769fe8c0 across the 2026-11-12 12:24 reboot; RESULT_RO-CONTROL-DRIFT)
 0x007e95a0	1	0	28	MASK:os	-	PeekMessageA 0x0049969d	-	MSG filled by Windows (0x007e95a0..0x007e95bb)
 0x006147d8	1	0	4	MASK:os	-	0x00493eeb 0x0049479a	0x00494485	window-message flag, values 0..1
-0x00771a00	1	0	4	MASK:os	-	0x00493ef0 0x00494794	0x00493c90 0x00493cb9 0x00493eb7 0x00493edf	flag written next to 0x006147d8, values 0..1
+0x00771a00	1	0	4	MASK:os	-	0x00493ef0 0x00494794	0x00493c90 0x00493cb9 0x00493eb7 0x00493edf	one state with 0x006147d8 (RO-CTL-OSWORD): 0x00493edf..0x00493ef0 store old [0x771a00] to 0x006147d8 and (old == 0) to 0x00771a00, 0x00494794 / 0x0049479a store 0 / 1 (ebx = 0 from 0x004944e7), so 0x00771a00 = 1 - 0x006147d8 (152 of 154 dumps, verify/ro_20261115/osword_invariant.txt); index of the slot array 0x00771a10 (0x00493c9b), values 0..1
 0x007eca0c	256	0x40	20	MASK:stale-stack	-	0x00469d90..0x00469daa FUN_00469aa0	see RESULT_RO-STACKROW-READERS.md	ring 0x007ec9e4, 256 rows x 0x40: fields +0x28..+0x3c (0x14 B) hold stack leftovers (detorig_report.py RULE:STACKROW)
 0x006fe7dc	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370 (rep movsd of an RwMatrix into the particle ring 0x006fe790)	-	RwMatrix pad m[7], stale stack
 0x006fe7ec	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[11], held code address 0x004671a5 (run n3_w2)
