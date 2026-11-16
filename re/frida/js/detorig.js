@@ -603,7 +603,10 @@ void onEnter(GumInvocationContext *ic) { unsigned int *c = GUM_IC_GET_FUNC_DATA(
 `));
     count.forEach((rva, j) => {
       const i = bodies.length + j;
-      try { Interceptor.attach(ga(parseInt(rva, 16)), cm, cnt.add(i * 4)); installed.push({ rva, count_only: true }); }
+      // T2-RACETICK-CENSUS (cfg.prov.probe): attach the bare onEnter pointer, a probe listener that does not replace the
+      // return address (no leave trampoline, no per-thread invocation stack). The CModule object form is a call
+      // listener: on the race tick every counted frame's return slot held a trampoline-page address (c10, r2, r3).
+      try { Interceptor.attach(ga(parseInt(rva, 16)), PROV.probe ? cm.onEnter : cm, cnt.add(i * 4)); installed.push({ rva, count_only: true }); }
       catch (e) { installed.push({ rva, count_only: true, err: '' + e }); }
     });
   }
@@ -810,6 +813,18 @@ function crashArm() {
     if (d.type === 'breakpoint' || d.type === 'single-step' || d.type === 'system') return false;
     if (CR_DONE++ < 4) {
       try { crWrite(Object.assign({ what: 'fault', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, memory: d.memory ? { op: d.memory.operation, address: '' + d.memory.address } : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'fault-err', msg: '' + e }); }
+      // T2-RACETICK-CENSUS: every census counter that moved since the anchor snapshot (provSnap), at the first fault:
+      // [rva, calls now, calls at the anchor]. Before the anchor the snapshot is 0, so the rows are all calls so far.
+      if (CR_DONE === 1 && PV && PV.nb) {
+        try {
+          const now = new Uint32Array(PV.cnt.readByteArray(PV.nb * 4)), at = new Uint32Array(PV.cnt.add(PV.nb * 4).readByteArray(PV.nb * 4));
+          const rows = [];
+          for (let i = 0; i < PV.nb; i++) if (now[i] !== at[i]) rows.push([PV.names[i], now[i], at[i]]);
+          const snaps = {};   // first enter / leave of each --prov-snap RVA (seq, n, tick, tid), without the counter copies
+          if (PV.snaps) for (const k of Object.keys(PV.snaps)) { const s = PV.snaps[k]; snaps[k] = { seq: s.seq, n: s.n, tick: s.tick, tid: s.tid, err: s.err }; }
+          crWrite({ what: 'fault-counts', n: N(), moved: rows.length, rows, snaps });
+        } catch (e) { crWrite({ what: 'fault-counts-err', msg: '' + e }); }
+      }
     }
     return false;
   };
