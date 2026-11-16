@@ -40,6 +40,9 @@ the reference race, the audio lane one stop per run). From run 51:
 5. **Stop chasing runs in one session:** a top-down "next stop" worker keeps going through as many named stops as its
    session allows (bind, both builds, self-test, next stop), reporting one RESULT with every stop it passed, instead of one
    row and one drain per stop.
+7. **Standing class P3 (Mariano 2026-11-16, answers L-169..L-173):** an equiv verdict that holds only if callers ignore
+   a register, where a caller reads it or is unknown, means the body is listed in PROVISIONAL.tsv on the knob path with
+   the verdict line cited, never admitted and never C4. No decision row per function for this class.
 6. **Drains:** evidence and text rows take the text-only path (HB-TRAIN-TEXTONLY-VERIFYPY); batch them with build rows
    rather than drain them alone.
 
