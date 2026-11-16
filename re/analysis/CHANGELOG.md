@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-16  0x005aac00  FUN_005aac00  (none)->C1  added (PORT-TOP-AUDIO-5AEF30-KNOB): code pointer, no Ghidra function: reached on the ORIG_TOP init arms as the callee of 0x005adef0 (exe stop at _PortTop_Bound_005adef0+0x23 / +0x20); census audio_window_65 order 66 (33642 calls before 0x0045d460); 24 B leaf 0x005aac00..0x005aac17 (ret at 0x005aac17, nop pad 0x005aac18); evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5AEF30-KNOB.md
 2026-11-16  0x005a8f30  FUN_005a8f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8f30.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
 2026-11-16  0x005a6340  FUN_005a6340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a6340.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
 2026-11-16  0x005b9f30  LAB_005b9f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b9f30.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
