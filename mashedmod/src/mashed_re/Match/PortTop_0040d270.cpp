@@ -22,7 +22,7 @@
 //   0x00426020  GlobalDat00646e58Get         matched exe body (Match/MatchS05_00426020.cpp)
 //   0x00407800  PortTop_StandInRL_00407800   stand-in (C2)
 //   0x004074a0  PortTop_StandInRL_004074a0   stand-in
-//   0x004264d0  PortTop_StandInRL_004264d0   stand-in
+//   0x004264d0  PortTop_RL_004264d0          matched, Match/PortTop_004264d0.cpp via Match/PortTop_StandInsRL.cpp (checkpoint 3)
 //   0x004ccde0  PortTop_RL_004ccde0          RwCore_004ccde0 (RwCore/RwCore_004ccde0.cpp) when its list head 0x007d45cc is
 //                                            set, else a logged skip (the list is not initialised on this path)
 //   0x00426070  TrackPhysWorld2Get                matched, Match/MatchS06_00426070.cpp (the .asi TU, shared with the exe by this row)
@@ -51,7 +51,7 @@
 #define FUN_00426020 GlobalDat00646e58Get
 #define FUN_00407800 PortTop_StandInRL_00407800
 #define FUN_004074a0 PortTop_StandInRL_004074a0
-#define FUN_004264d0 PortTop_StandInRL_004264d0
+#define FUN_004264d0 PortTop_RL_004264d0   // Match/PortTop_StandInsRL.cpp: logs, then the matched body (checkpoint 3)
 #define FUN_004ccde0 PortTop_RL_004ccde0
 #define FUN_00426070 TrackPhysWorld2Get
 #define FUN_00411d90 PortTop_StandInRL_00411d90

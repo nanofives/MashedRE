@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 0x005aee20 (h3): 78.6% exact, regs 78.6%. Residual class (b) original keeps the counter in al, copies to cl without and 0x1f, esi=1 hoisted; 5 spellings tried (1<<b, &0x1f, %32, loop forms). */
+/* MATCH-S26 0x005aee20 (h3), PORT-TOP-AUDIO-5AA3D0-STOPS: BYTE-IDENTICAL 28 B. The original returns the bit index in AL (xor al,al 0x005aee24, inc al 0x005aee34, the loop leaves with al = index or 0x20); the old source (78.6%) returned void and masked the shift count with 0x1f (the original shifts by cl with no mask, shl esi,cl 0x005aee2e). Every caller uses the result only as a shift count (1 << FUN_005aee20(0x28)). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -25,17 +25,14 @@ typedef unsigned char bool;
 typedef unsigned int uint;
 typedef unsigned char byte;
 // MATCH: 0x005aee20 FUN_005aee20
-void FUN_005aee20(uint param_1)
-
+unsigned char FUN_005aee20(uint param_1)
 {
-  byte bVar1;
-  
+  unsigned char bVar1;
+
   bVar1 = 0;
   do {
-    if ((param_1 & 1 << (bVar1 & 0x1f)) != 0) {
-      return;
-    }
+    if ((param_1 & 1 << bVar1) != 0) break;
     bVar1 = bVar1 + 1;
   } while (bVar1 < 0x20);
-  return;
+  return bVar1;
 }

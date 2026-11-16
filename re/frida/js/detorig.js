@@ -603,7 +603,10 @@ void onEnter(GumInvocationContext *ic) { unsigned int *c = GUM_IC_GET_FUNC_DATA(
 `));
     count.forEach((rva, j) => {
       const i = bodies.length + j;
-      try { Interceptor.attach(ga(parseInt(rva, 16)), cm, cnt.add(i * 4)); installed.push({ rva, count_only: true }); }
+      // T2-RACETICK-CENSUS (cfg.prov.probe): attach the bare onEnter pointer, a probe listener that does not replace the
+      // return address (no leave trampoline, no per-thread invocation stack). The CModule object form is a call
+      // listener: on the race tick every counted frame's return slot held a trampoline-page address (c10, r2, r3).
+      try { Interceptor.attach(ga(parseInt(rva, 16)), PROV.probe ? cm.onEnter : cm, cnt.add(i * 4)); installed.push({ rva, count_only: true }); }
       catch (e) { installed.push({ rva, count_only: true, err: '' + e }); }
     });
   }
@@ -732,10 +735,29 @@ function wsDump() {
 }
 let PV_ARM = null;
 function provSnap() { if (PV_ARM) PV_ARM.writeU32(1); if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
-function provReport() {
+function provReport(stage) {
   if (!PV) return;
   const rows = PV.names.map((rva, i) => ({ rva, calls_boot: PV.atTick1 ? PV.atTick1[i] : null, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
-  send({ kind: 'prov', rows, installed: PV.installed });
+  send({ kind: 'prov', stage: stage || 'end', rows, installed: PV.installed, snaps: PV.snaps || null, fpmask: fpmReport() });
+}
+// T2-RACEPATH-CENSUS (cfg.prov.snap): a copy of every census counter at the FIRST enter (or leave) of each listed RVA,
+// so a run splits the counts at function boundaries too (example: the audio init 0x004669b0 enter / leave). One JS
+// listener per snap RVA; it copies once and then only returns.
+function provSnapInstall() {
+  if (!PV || !PROV || !PROV.snap || !PROV.snap.length) return;
+  PV.snaps = {}; PV.snapSeq = 0;   // seq = order of the first calls across the snap RVAs
+  for (const s of PROV.snap) {
+    const key = s.rva + ':' + s.at;
+    let done = false, L = null;
+    const take = () => {
+      if (done) return; done = true;
+      if (L) { const l = L; setTimeout(() => l.detach(), 0); }   // no JS on later calls of this RVA (any thread)
+      PV.snaps[key] = { seq: PV.snapSeq++, n: N(), tick: TK ? tickNow() : null, tid: Process.getCurrentThreadId(),
+                        counts: Array.from(new Uint32Array(PV.cnt.readByteArray(PV.names.length * 4))) };
+    };
+    const cb = s.at === 'leave' ? { onLeave() { take(); } } : { onEnter() { take(); } };
+    try { L = K(Interceptor.attach(ga(parseInt(s.rva, 16)), cb)); } catch (e) { PV.snaps[key] = { err: '' + e }; }
+  }
 }
 
 // ---------------------------------------------------------------- PROV-CRASH-12 first-fault catcher (cfg.crash)
@@ -743,7 +765,18 @@ function provReport() {
 // 64 stack dwords from esp, 32 code bytes from eip-16, and which --prov blob holds eip. A JS timer samples the main
 // thread's context 40 times when N (main-thread clock calls) has not moved for cfg.crash.stall seconds (a hang).
 // Each record is written to cfg.crash.file synchronously, then sent: the process can die before a send is delivered.
-let CR_FILE = null, CR_HANDLER = null, CR_DONE = 0;
+let CR_FILE = null, CR_HANDLER = null, CR_DONE = 0, CR_SYS = 0;
+let FPM = null;   // --crash-fpmask log (crashArm)
+function fpmReport() {
+  if (!FPM) return null;
+  const n = FPM.readU32(), rows = [];
+  for (let i = 0; i < Math.min(n, 16); i++) {
+    const o = FPM.add(16 + i * 32), d = [];
+    for (let k = 0; k < 8; k++) d.push('0x' + (o.add(k * 4).readU32() >>> 0).toString(16));
+    rows.push({ code: d[0], eip: d[1], fip: d[2], fcw: d[3], fsw: d[4], mxcsr: d[5], tid: d[6], esp: d[7] });
+  }
+  return { count: n, rows };
+}
 function crWrite(rec) {
   try { if (!CR_FILE) CR_FILE = new File(CFG.crash.file, 'a'); CR_FILE.write(JSON.stringify(rec) + String.fromCharCode(10)); CR_FILE.flush(); } catch (e) { }
   try { send(Object.assign({ kind: 'crash' }, rec)); } catch (e) { }
@@ -772,13 +805,82 @@ function crCtx(c) {
 function crashArm() {
   if (!CFG.crash) return null;
   CR_HANDLER = (d) => {
+    let dbgPrint = false;   // OutputDebugString raises 0x40010006 through RaiseException: its code is the first stack dword
+    try { dbgPrint = d.type === 'system' && d.context.esp.readU32() === 0x40010006; } catch (e) { }
+    if (d.type === 'system' && CFG.crash.system && !dbgPrint && CR_SYS++ < 16) {   // T2-RACEPATH-CENSUS: --crash-system logs these too (logging only)
+      try { crWrite(Object.assign({ what: 'system', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, nativeCode: d.nativeContext ? '' + d.nativeContext : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'system-err', msg: '' + e }); }
+    }
     if (d.type === 'breakpoint' || d.type === 'single-step' || d.type === 'system') return false;
     if (CR_DONE++ < 4) {
       try { crWrite(Object.assign({ what: 'fault', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, memory: d.memory ? { op: d.memory.operation, address: '' + d.memory.address } : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'fault-err', msg: '' + e }); }
+      // T2-RACETICK-CENSUS: every census counter that moved since the anchor snapshot (provSnap), at the first fault:
+      // [rva, calls now, calls at the anchor]. Before the anchor the snapshot is 0, so the rows are all calls so far.
+      if (CR_DONE === 1 && PV && PV.nb) {
+        try {
+          const now = new Uint32Array(PV.cnt.readByteArray(PV.nb * 4)), at = new Uint32Array(PV.cnt.add(PV.nb * 4).readByteArray(PV.nb * 4));
+          const rows = [];
+          for (let i = 0; i < PV.nb; i++) if (now[i] !== at[i]) rows.push([PV.names[i], now[i], at[i]]);
+          const snaps = {};   // first enter / leave of each --prov-snap RVA (seq, n, tick, tid), without the counter copies
+          if (PV.snaps) for (const k of Object.keys(PV.snaps)) { const s = PV.snaps[k]; snaps[k] = { seq: s.seq, n: s.n, tick: s.tick, tid: s.tid, err: s.err }; }
+          crWrite({ what: 'fault-counts', n: N(), moved: rows.length, rows, snaps });
+        } catch (e) { crWrite({ what: 'fault-counts-err', msg: '' + e }); }
+      }
     }
     return false;
   };
   Process.setExceptionHandler(CR_HANDLER);
+  // T2-RACEPATH-CENSUS (--crash-fpmask): a native vectored handler, first in the chain (ahead of Frida's), for
+  // STATUS_FLOAT_INEXACT_RESULT (0xC000008F) and STATUS_FLOAT_MULTIPLE_TRAPS (0xC00002B5). It logs the first 16
+  // (code, eip, x87 FIP, FCW, FSW, MXCSR, tid, esp), masks the precision exception (x87 FCW bit 5 in FloatSave and in the
+  // FXSAVE area, MXCSR PM), clears the pending x87 exception flags, and continues. An inexact x87 / SSE result is stored
+  // whether PE is masked or not, so the values the program computes do not change; only the trap is gone.
+  if (CFG.crash.fpmask) {
+    const fpm = K(Memory.alloc(Process.pageSize));
+    for (let i = 0; i < 1024; i++) fpm.add(i * 4).writeU32(0);
+    const vcm = K(new CModule(`
+extern unsigned int fpm[];
+extern unsigned int __attribute__((stdcall)) gtid(void);
+__attribute__((stdcall)) int veh(unsigned int **p) {
+  unsigned int *rec = p[0]; unsigned char *c = (unsigned char *)p[1];
+  unsigned int code = rec[0];
+  if (code != 0xC000008F && code != 0xC00002B5) return 0;
+  unsigned int n = fpm[0]++;
+  if (n < 16) {
+    unsigned int *o = fpm + 4 + n * 8;
+    o[0] = code; o[1] = *(unsigned int *)(c + 0xB8); o[2] = *(unsigned int *)(c + 0x28);
+    o[3] = *(unsigned int *)(c + 0x1C); o[4] = *(unsigned int *)(c + 0x20); o[5] = *(unsigned int *)(c + 0xCC + 0x18);
+    o[6] = gtid(); o[7] = *(unsigned int *)(c + 0xC4);
+  }
+  *(unsigned int *)(c + 0x1C) |= 0x20;
+  *(unsigned int *)(c + 0x20) &= ~0x80BFu;
+  *(unsigned short *)(c + 0xCC) |= 0x20;
+  *(unsigned short *)(c + 0xCE) &= (unsigned short)~0x80BFu;
+  *(unsigned int *)(c + 0xCC + 0x18) |= 0x1000;
+  *(unsigned int *)(c + 0xCC + 0x18) &= ~0x20u;
+  return -1;
+}
+`, { fpm, gtid: Process.getModuleByName('kernel32.dll').getExportByName('GetCurrentThreadId') }));
+    const AVEH = new NativeFunction(Process.getModuleByName('kernel32.dll').getExportByName('AddVectoredExceptionHandler'), 'pointer', ['uint32', 'pointer'], 'stdcall');
+    const vk = Object.keys(vcm).find((k) => k === 'veh' || k === '_veh@4' || k.indexOf('veh') >= 0);   // stdcall export may be decorated
+    if (!vk) throw new Error('fpmask: no veh export in ' + Object.keys(vcm).join(','));
+    K(AVEH(1, vcm[vk]));
+    FPM = fpm;
+  }
+  // T2-RACEPATH-CENSUS (--crash-exit): a process exit with no exception (ExitProcess / TerminateProcess) records who called it
+  if (CFG.crash.exit) {
+    // c6: a JS hook on mainCRTStartup's __except filter (0x004a4d4f -> 0x004aba86) killed the process with no exit call,
+    // so the fault is handled natively instead (cfg.crash.fpmask below).
+    const ex = [['kernel32.dll', 'ExitProcess'], ['kernel32.dll', 'TerminateProcess'], ['ntdll.dll', 'NtTerminateProcess'], ['ntdll.dll', 'RtlExitUserProcess']];
+    for (const [m, f] of ex) {
+      let a = null; try { a = Process.getModuleByName(m).getExportByName(f); } catch (e) { }
+      if (!a) continue;
+      Interceptor.attach(a, { onEnter(args) {
+        let bt = [];
+        try { bt = Thread.backtrace(this.context, Backtracer.FUZZY).slice(0, 24).map((x) => { const v = x.toUInt32() >>> 0; const md = Process.findModuleByAddress(x); return md ? md.name + '+0x' + (v - (md.base.toUInt32() >>> 0)).toString(16) : '0x' + v.toString(16); }); } catch (e) { bt = ['bt-err ' + e]; }
+        crWrite({ what: 'exit', fn: f, tid: Process.getCurrentThreadId(), n: N(), a0: '' + args[0], a1: '' + args[1], bt });
+      } });
+    }
+  }
   let lastN = -1, since = Date.now(), sampled = false;
   setInterval(() => {
     const n = N();
@@ -859,6 +961,7 @@ function install() {
   // (14 patchCode calls, or 326 Interceptor attaches) moved the frame-timer phase by one tick in 2 of 4 runs
   PV_AT = provInstall();
   if (PV_AT) res.push(['prov', PV_AT]);
+  provSnapInstall();
   const CRA = crashArm();
   if (CRA) res.push(['crash', CRA]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
@@ -878,6 +981,7 @@ function install() {
     const pins = watchQuiet(warp);
     if (PV_AT) pins.prov = PV_AT;
     if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
+    if (PV && PROV.snap && PROV.snap.length) provReport('warp');   // T2-RACEPATH-CENSUS: partial report, survives a later crash
     if (CFG.callLog) D.add(0x34).writeU32(1);
     send({ kind: 'warp', n: warpN, tick: tickNow(), pins });
     setActive(1);
@@ -894,6 +998,7 @@ function install() {
       }
       raceN = N();
       provSnap();
+      if (PV && PROV.snap && PROV.snap.length) provReport('anchor');   // T2-RACEPATH-CENSUS: partial report
       if (TK) TK.st.writeU32(1);
       if (PZ) PZ.st.writeU32(1);
       if (CFG.callLog && !CFG.callLogRace) {

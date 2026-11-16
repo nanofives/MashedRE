@@ -5,7 +5,11 @@
 char *strcpy(char *, const char *);
 char *strcat(char *, const char *);
 #pragma intrinsic(strcpy, strcat)
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063b7f0 (*(char (*)[1])0x0063b7f0u)
+#else
 extern char DAT_0063b7f0[];
+#endif
 int FUN_00426c00(void);
 int FUN_004a2b60(char *buf, const char *fmt, ...);
 // MATCH: 0x004095a0 FUN_004095a0

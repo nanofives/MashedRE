@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S27 h1: 53.1% (regs 68.8%, permuter best (150 s). Residual not classified beyond register/schedule differences. Class: b. */
+/* MATCH-S27 h1, PORT-TOP-AUDIO-5AA3D0-STOPS: BYTE-IDENTICAL 29 ins. Rewritten from the listing: the list end is param_1+1 (lea edi,[eax+4] 0x005b36c7; cmp ecx,edi 0x005b36d5) and the walk returns 0 when the next node equals it; the old source (53.1%) tested param_1 == node+1, a different condition (equiv branch-condition at 0x005b36d3). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -24,23 +24,26 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 // MATCH: 0x005b36b0 FUN_005b36b0
 int * FUN_005b36b0(int *param_1,int param_2)
-
 {
   int *piVar1;
-  int iVar2;
-  
+  int *piVar2;
+  int iVar3;
+
   if ((param_2 <= *param_1) && (*param_1 != 0)) {
     piVar1 = (int *)param_1[1];
-    iVar2 = 0;
-    if (param_2 <= 0) {
-      return piVar1 + -8;
+    iVar3 = 0;
+    piVar2 = piVar1 + -8;
+    if (0 < param_2) {
+      do {
+        piVar1 = (int *)*piVar1;
+        if (piVar1 == param_1 + 1) {
+          return (int *)0x0;
+        }
+        iVar3 = iVar3 + 1;
+        piVar2 = piVar1 + -8;
+      } while (iVar3 < param_2);
     }
-    while (piVar1 = (int *)*piVar1, param_1 != piVar1 + 1) {
-      iVar2 = iVar2 + 1;
-      if (iVar2 >= param_2) {
-        return piVar1 + -8;
-      }
-    }
+    return piVar2;
   }
   return (int *)0x0;
 }

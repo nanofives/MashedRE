@@ -1,0 +1,185 @@
+rva	name	race_window_calls_census2	status	binding	subsystem	c8
+0x004d40d0	FUN_004d40d0	310639	C4:match	matched	render	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x00477f50	FUN_00477f50	305852	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x004c4a50	RwMatrixRotateInner	237517	C3 prov(provisional 77.8) admitted	exe-body	render	also ran up to the anchor in c8 (race-load)
+0x004c4d20	RwMatrixRotate	237517	C4:frida-replay prov(provisional 90.9)	exe-body	render	also ran up to the anchor in c8 (race-load)
+0x004c51a0	RwMatrixTranslate	212096	C3 prov(refused 14.7)	exe-body	render	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x004c1b40	FUN_004c1b40	202459	C4:frida-replay	unbound	unknown	race-tick-only in this scenario
+0x005a6d60	FUN_005a6d60	135721	C4:frida-replay prov(provisional 50.0)	replay	audio	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x004770a0	FUN_004770a0	127738	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x004c52f0	RwMatrixCombine	89370	C3	exe-body	render	also ran up to the anchor in c8 (race-load)
+0x0047ba20	FUN_0047ba20	84996	C2	unbound	gameplay	race-tick-only in this scenario
+0x00474de0	FUN_00474de0	77956	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x004c4dc0	RwMatrixInvertEntry	70786	C3 prov(provisional 91.2)	exe-body	util	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x004a3384	CRT::acos	61020	C2	unbound	util	also ran up to the anchor in c8 (race-load)
+0x005a75b0	FUN_005a75b0	54268	C2 prov(provisional 43.5)	stop	audio	also ran up to the anchor in c8 (boot,menu,race-load)
+0x00477e60	FUN_00477e60	37617	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x004a3700	CRT::math_float_371d	22698	C2	unbound	util	race-tick-only in this scenario
+0x00425ca0	FUN_00425ca0	21752	C4:frida-replay	unbound	frontend	race-tick-only in this scenario
+0x00454350	FUN_00454350	21752	C2	unbound	gameplay	race-tick-only in this scenario
+0x0046cc40	FUN_0046cc40	21650	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x0046f6c0	VehicleWheelContactSolver	21650	C2 prov(refused 50.7)	unbound	vehicle	race-tick-only in this scenario
+0x00468d80	VehicleTerrainContactSolver	21449	C2 prov(refused 82.1)	unbound	vehicle	race-tick-only in this scenario
+0x004694e0	VehicleObjectContactSolver	21449	C2	unbound	vehicle	race-tick-only in this scenario
+0x00469aa0	VehicleContactScanUpdate	21449	C2 prov(refused 60.0)	unbound	vehicle	race-tick-only in this scenario
+0x0046e9e0	FUN_0046e9e0	21449	C2 prov(refused 81.6)	unbound	vehicle	race-tick-only in this scenario
+0x005aab70	FUN_005aab70	18200	C4:frida-replay prov(provisional 75.6)	replay	audio	also ran up to the anchor in c8 (boot,menu,race-load)
+0x005aab00	FUN_005aab00	18199	C4:frida-replay admitted	replay	audio	also ran up to the anchor in c8 (boot,menu,race-load)
+0x00546b10	FUN_00546b10	12094	C4:match	unbound	vehicle	also ran up to the anchor in c8 (race-load)
+0x00458a40	FUN_00458a40	11983	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x004584e0	FUN_004584e0	11803	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x00443440	FUN_00443440	11058	C2 prov(refused 58.4)	unbound	ai	race-tick-only in this scenario
+0x00463640	FUN_00463640	10900	C2	stop	audio	race-tick-only in this scenario
+0x00420050	PerPlayerViewportRender	10884	C2 admitted	unbound	render	race-tick-only in this scenario
+0x00408610	FUN_00408610	10876	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x0040aef0	FUN_0040aef0	10876	C2	unbound	gameplay	race-tick-only in this scenario
+0x0041af50	FUN_0041af50	10876	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x0041c410	HudStandingsRowUpdate	10876	C4:frida-replay	unbound	hud	race-tick-only in this scenario
+0x0041f590	FUN_0041f590	10876	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x0041f770	FUN_0041f770	10876	C4:frida-replay admitted	unbound	gameplay	race-tick-only in this scenario
+0x00420290	FUN_00420290	10876	C2	unbound	gameplay	also ran up to the anchor in c8 (race-load)
+0x00420870	FUN_00420870	10876	C2	unbound	gameplay	race-tick-only in this scenario
+0x004752f0	FUN_004752f0	10876	C2	unbound	render	race-tick-only in this scenario
+0x00482ae0	SplineCubicBlend3	10876	C4:frida-replay	exe-body	vehicle	race-tick-only in this scenario
+0x00546e70	FUN_00546e70	10876	C2	unbound	vehicle	race-tick-only in this scenario
+0x00407be0	FUN_00407be0	10836	C4:frida-replay admitted	unbound	gameplay	race-tick-only in this scenario
+0x00407e20	FUN_00407e20	10673	C2	unbound	gameplay	race-tick-only in this scenario
+0x00408590	FUN_00408590	10673	C4:frida-replay	exe-body	gameplay	race-tick-only in this scenario
+0x004809e0	VehicleRespawnTeleport	10627	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x004b42c0	FUN_004b42c0	10306	C2	unbound	render	race-tick-only in this scenario
+0x0041faf0	VehicleShadowRender	9620	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x0041fcc0	TireMarkRender	9620	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x004228f0	FUN_004228f0	9620	C2	unbound	render	race-tick-only in this scenario
+0x0045c550	FUN_0045c550	8801	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x004818d0	FUN_004818d0	8589	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x0040c690	FUN_0040c690	8573	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x004c1a70	CameraRecomputeProjCoeffs	8164	C4:frida-replay prov(provisional 90.7)	exe-body	render	also ran up to the anchor in c8 (boot,race-load)
+0x00414570	FUN_00414570	5529	C2	unbound	ai	race-tick-only in this scenario
+0x00416250	FUN_00416250	5529	C2	unbound	ai	race-tick-only in this scenario
+0x00417180	FUN_00417180	5529	C4:frida-replay admitted	exe-body	ai	race-tick-only in this scenario
+0x00443dc0	FUN_00443dc0	5529	C2 prov(provisional 57.5)	unbound	ai	race-tick-only in this scenario
+0x004709a0	VehicleCollisionBroadPhase	5438	C2 prov(refused 55.7)	unbound	vehicle	race-tick-only in this scenario
+0x00490500	FUN_00490500	5438	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x00415880	FUN_00415880	5177	C4:frida-replay	unbound	ai	race-tick-only in this scenario
+0x00477f00	FUN_00477f00	4722	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x0047bb10	FUN_0047bb10	4722	C2	unbound	gameplay	race-tick-only in this scenario
+0x005b0cf0	FUN_005b0cf0	4674	C3	stop	audio	race-tick-only in this scenario
+0x004128f0	FUN_004128f0	4320	C2	unbound	hud	race-tick-only in this scenario
+0x00414300	FUN_00414300	4048	C4:frida-replay	unbound	ai	race-tick-only in this scenario
+0x00414c30	FUN_00414c30	3929	C2	unbound	ai	race-tick-only in this scenario
+0x0045d7a0	FUN_0045d7a0	2725	C2	stop	util	also ran up to the anchor in c8 (boot,menu,race-load)
+0x0045dd60	FUN_0045dd60	2725	C2	stop	audio	also ran up to the anchor in c8 (boot,menu,race-load)
+0x0045efe0	FUN_0045efe0	2725	C2	stop	audio	race-tick-only in this scenario
+0x004647f0	FUN_004647f0	2725	C4:frida-replay prov(provisional 83.3)	replay	audio	also ran up to the anchor in c8 (boot,menu,race-load)
+0x005a6ea0	FUN_005a6ea0	2725	C2 prov(provisional 22.2)	provisional	audio	also ran up to the anchor in c8 (boot,menu,race-load)
+0x005a6f30	FUN_005a6f30	2725	C2 prov(provisional 65.8)	provisional	audio	also ran up to the anchor in c8 (boot,menu,race-load)
+0x005baf00	MusicGroupVolumeSet	2725	C3	unbound	audio	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x004967e0	FUN_004967e0	2724	C2	stand-in	input	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x00448220	Frontend::PostRaceResultCamera	2722	C2 prov(provisional 97.0)	unbound	frontend	race-tick-only in this scenario
+0x00450b10	HudIm2DQuad	2721	C3 prov(provisional 86.6)	exe-body	hud	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x00458b10	FUN_00458b10	2721	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x00412620	FUN_00412620	2719	C2	unbound	render	race-tick-only in this scenario
+0x00412f30	FUN_00412f30	2719	C4:frida-replay	unbound	util	race-tick-only in this scenario
+0x00413cb0	FUN_00413cb0	2719	C4:frida-replay	unbound	hud	race-tick-only in this scenario
+0x0041d930	HudSlideBillboardTick	2719	C4:frida-replay	unbound	hud	race-tick-only in this scenario
+0x004212b0	FUN_004212b0	2719	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x00422ba0	FUN_00422ba0	2719	C4:frida-replay	unbound	ai	race-tick-only in this scenario
+0x00424eb0	FUN_00424eb0	2719	C2 prov(provisional 98.6)	unbound	util	race-tick-only in this scenario
+0x004252c0	FUN_004252c0	2719	C4:frida-replay	unbound	ai	race-tick-only in this scenario
+0x00426810	sub_00426810	2719	C2	unbound	render	race-tick-only in this scenario
+0x00429310	TimeTrial::Tick	2719	C4:frida-replay admitted	unbound	util	race-tick-only in this scenario
+0x004568d0	FUN_004568d0	2719	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x00459000	FUN_00459000	2719	C2	unbound	gameplay	race-tick-only in this scenario
+0x0045a190	FUN_0045a190	2719	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x00467350	VehicleSlipTimerTick	2719	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x00470c70	FUN_00470c70	2719	C2	unbound	vehicle	race-tick-only in this scenario
+0x00471ec0	sub_00471ec0	2719	C2	unbound	camera	race-tick-only in this scenario
+0x00479100	FUN_00479100	2719	C2 prov(provisional 70.9)	unbound	render	race-tick-only in this scenario
+0x0047d640	FUN_0047d640	2719	C2	unbound	hud	race-tick-only in this scenario
+0x0047def0	FUN_0047def0	2719	C2	unbound	hud	race-tick-only in this scenario
+0x0047eb30	VehiclePhysicsWorldStep	2719	C3	unbound	vehicle	race-tick-only in this scenario
+0x00481a30	FUN_00481a30	2719	C2 prov(provisional 69.7)	unbound	vehicle	race-tick-only in this scenario
+0x00484f70	FUN_00484f70	2719	C4:frida-replay	unbound	world-objects	race-tick-only in this scenario
+0x00485ef0	FUN_00485ef0	2719	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x00486830	FUN_00486830	2719	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x00488e70	FUN_00488e70	2719	C2	unbound	util	race-tick-only in this scenario
+0x0048a780	FUN_0048a780	2719	C2	unbound	particle	race-tick-only in this scenario
+0x0048ab70	FUN_0048ab70	2719	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x0048b7c0	FUN_0048b7c0	2719	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x00491340	FUN_00491340	2719	C2	unbound	render	race-tick-only in this scenario
+0x005a8750	FUN_005a8750	2339	C4:match	matched	audio	race-tick-only in this scenario
+0x0048d540	FUN_0048d540	2182	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x00410d10	FUN_00410d10	2179	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x00411ae0	Ghost::PlaybackTick	2179	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x00416060	FUN_00416060	2097	C4:frida-replay	unbound	ai	race-tick-only in this scenario
+0x00415220	FUN_00415220	1859	C4:frida-replay	unbound	ai	race-tick-only in this scenario
+0x00489500	FUN_00489500	1801	C2	unbound	gameplay	race-tick-only in this scenario
+0x00475f90	FUN_00475f90	1706	C2	unbound	render	race-tick-only in this scenario
+0x00441d40	FUN_00441d40	1626	C2 prov(refused 69.2)	unbound	util	race-tick-only in this scenario
+0x00469df0	VehicleVehicleCollisionImpulse	1553	C2 prov(refused 63.1)	unbound	vehicle	race-tick-only in this scenario
+0x00499d90	FUN_00499d90	1512	C2	unbound	render	race-tick-only in this scenario
+0x0048d360	FUN_0048d360	1406	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x00442440	FUN_00442440	1084	C4:frida-replay	unbound	util	race-tick-only in this scenario
+0x00459620	FUN_00459620	686	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x00474e70	FUN_00474e70	686	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x00487280	FUN_00487280	551	C2	unbound	render	race-tick-only in this scenario
+0x00445aa0	CamEntryType0Step445aa0	542	C3 prov(provisional 67.4)	exe-body	util	race-tick-only in this scenario
+0x0045c030	FUN_0045c030	498	C4:frida-replay	unbound	gameplay	race-tick-only in this scenario
+0x004c4eb0	RwMatrixInvert_CofactorPath	419	C3 prov(provisional 47.7)	exe-body	render	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x00408b00	FUN_00408b00	416	C2 prov(provisional 97.0)	unbound	util	race-tick-only in this scenario
+0x00556ca0	FUN_00556ca0	408	C4:frida-replay prov(provisional 60.0)	exe-body	hud	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x00556e90	FUN_00556e90	408	C2 prov(provisional 97.5)	stand-in	render	also ran up to the anchor in c8 (audio-init,boot,menu,race-load)
+0x0040be50	FUN_0040be50	387	C2	unbound	gameplay	race-tick-only in this scenario
+0x00480d60	FUN_00480d60	239	C2	unbound	vehicle	race-tick-only in this scenario
+0x0046da80	VehicleTrackInteraction	238	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x00480b70	FUN_00480b70	238	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x005aa0c0	AudioTreeWalkPredicateSearch	204	C3 prov(provisional 26.2)	provisional	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x00442e00	FUN_00442e00	200	C2 prov(provisional 65.1)	unbound	util	race-tick-only in this scenario
+0x0046ef70	FUN_0046ef70	154	C2 prov(refused 43.9)	unbound	vehicle	race-tick-only in this scenario
+0x00477be0	FUN_00477be0	136	C2	unbound	render	race-tick-only in this scenario
+0x0048aa50	FUN_0048aa50	136	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x00487180	FUN_00487180	115	C1 prov(refused 11.7)	unbound	render	race-tick-only in this scenario
+0x005ad320	FUN_005ad320	92	C4:frida-replay admitted	replay	audio	also ran up to the anchor in c8 (audio-init)
+0x00490020	FUN_00490020	86	C2	unbound	render	race-tick-only in this scenario
+0x0047cea0	FUN_0047cea0	40	C4:frida-replay admitted	unbound	physics	race-tick-only in this scenario
+0x005ae800	AudioPoolBlockAlloc	31	C3 prov(provisional 38.2)	provisional	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x005aa560	FUN_005aa560	20	C2 prov(provisional 79.8)	provisional	audio	also ran up to the anchor in c8 (audio-init)
+0x005aa7e0	FUN_005aa7e0	20	C4:match	matched	audio	also ran up to the anchor in c8 (audio-init)
+0x004704c0	FUN_004704c0	16	C4:frida-replay	unbound	vehicle	race-tick-only in this scenario
+0x005a9f10	FUN_005a9f10	16	C2 prov(provisional 81.0)	stop	audio	also ran up to the anchor in c8 (audio-init)
+0x005aa7a0	FUN_005aa7a0	16	C4:frida-replay admitted	replay	audio	also ran up to the anchor in c8 (audio-init)
+0x005ad0b0	FUN_005ad0b0	16	C2 prov(provisional 44.3)	unbound	audio	also ran up to the anchor in c8 (audio-init)
+0x004864f0	FUN_004864f0	13	C4:frida-replay	unbound	particle	race-tick-only in this scenario
+0x00487020	FUN_00487020	13	C4:frida-replay	unbound	render	race-tick-only in this scenario
+0x004b5080	FUN_004b5080	13	C2	unbound	render	race-tick-only in this scenario
+0x00421d20	FUN_00421d20	12	C4:frida-replay	unbound	util	race-tick-only in this scenario
+0x005ae920	AudioPoolFree	12	C3 admitted	admitted	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x005b3a00	FUN_005b3a00	12	C2	unbound	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x005acda0	FUN_005acda0	10	C4:frida-replay prov(provisional 44.3)	replay	audio	race-tick-only in this scenario
+0x005ace70	FUN_005ace70	10	C4:match admitted	matched	audio	race-tick-only in this scenario
+0x005b3760	FUN_005b3760	10	C2	unbound	audio	race-tick-only in this scenario
+0x0040b290	FUN_0040b290	8	C4:frida-replay admitted	unbound	frontend	race-tick-only in this scenario
+0x005aba20	FUN_005aba20	8	C2 prov(provisional 77.6)	unbound	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x005acd10	AudioFmtTableSearch	8	C4:frida-replay	unbound	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x005ae3a0	FUN_005ae3a0	8	C4:frida-replay admitted	unbound	audio	also ran up to the anchor in c8 (audio-init)
+0x005ae4c0	FUN_005ae4c0	8	C3	unbound	audio	also ran up to the anchor in c8 (audio-init)
+0x00441b30	CamEntryBuild441b30	7	C3	exe-body	camera	race-tick-only in this scenario
+0x0040eee0	FUN_0040eee0	6	C2	unbound	frontend	race-tick-only in this scenario
+0x004d8480	RwErrSlotWrite	5	C4:match	stand-in	render	also ran up to the anchor in c8 (audio-init,boot,race-load)
+0x0040e590	FUN_0040e590	4	C2	unbound	util	race-tick-only in this scenario
+0x00481e00	FUN_00481e00	4	C2 prov(provisional 85.9)	unbound	vehicle	race-tick-only in this scenario
+0x00482140	FUN_00482140	4	C2	unbound	vehicle	race-tick-only in this scenario
+0x005a8890	FUN_005a8890	4	C2 admitted	admitted	audio	race-tick-only in this scenario
+0x005aaac0	FUN_005aaac0	4	C4:frida-replay admitted	unbound	audio	race-tick-only in this scenario
+0x005abd30	FUN_005abd30	4	C2	unbound	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x005acaa0	FUN_005acaa0	4	C2	unbound	audio	also ran up to the anchor in c8 (audio-init,race-load)
+0x005a9e60	FUN_005a9e60	3	C2	stop	audio	also ran up to the anchor in c8 (audio-init)
+0x00424b80	FUN_00424b80	2	C2	unbound	frontend	race-tick-only in this scenario
+0x005ae250	FUN_005ae250	2	C2	unbound	audio	also ran up to the anchor in c8 (audio-init)
+0x005b3b80	FUN_005b3b80	2	C2	unbound	audio	race-tick-only in this scenario
+0x00405540	FUN_00405540	1	C2	unbound	gameplay	race-tick-only in this scenario
+0x0045cd30	FUN_0045cd30	1	C4:frida-replay prov(provisional 62.8)	replay	audio	race-tick-only in this scenario
+0x0047d3c0	VehiclePhysicsWorldCreate	1	C2	unbound	vehicle	race-tick-only in this scenario
+0x004883b0	FUN_004883b0	1	C2	unbound	sky	race-tick-only in this scenario
+0x0048a4e0	FUN_0048a4e0	1	C4:frida-replay admitted	unbound	particle	race-tick-only in this scenario
+0x005ae650	AudioPoolConstruct	1	C3 prov(provisional 74.1)	provisional	audio	also ran up to the anchor in c8 (audio-init)

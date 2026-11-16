@@ -1,0 +1,10 @@
+rva	exe_symbol	exe_va	size	relocs_masked	abs_data_refs_exact	diff_bytes	result	first_diff	vs_copy_in_map	src
+0x0042a5d0	_FUN_0042a5d0	0x0001fb00	112	3	8	0	IDENTICAL		False	re/match/s06/0042a5d0.c
+0x00426460	___ddkreg_00426460	0x0004d300	112	4	0	0	IDENTICAL		False	re/match/s06/004264d0.c
+0x004264d0	_PortTop_Bound_004264d0	0x0004d370	352	19	5	0	IDENTICAL		False	re/match/s06/004264d0.c
+0x0042a5d0	_PortTop_Bound_0042a5d0	0x0004d4d0	112	3	8	0	IDENTICAL		False	re/match/s06/0042a5d0.c
+0x00458d00	_PortTop_Bound_00458d00	0x0004d540	208	3	0	0	IDENTICAL		False	re/match/s09/00458d00.c
+0x00458e00	_PortTop_Bound_00458e00	0x0004d610	288	5	5	0	IDENTICAL		False	re/match/s09/00458e00.c
+0x00458fd0	_PortTop_Bound_00458fd0	0x0004d730	48	2	0	0	IDENTICAL		False	re/match/s09/00458fd0.c
+0x00472690	_PortTop_Bound_00472690	0x0004d760	32	1	0	0	IDENTICAL		False	re/match/s11/00472690.c
+0x0047a130	_PortTop_Bound_0047a130	0x0004d780	80	2	4	0	IDENTICAL		False	re/match/s12/0047a130.c
