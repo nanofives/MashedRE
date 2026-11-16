@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-16  0x005aae90  FUN_005aae90  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aae90.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md
+2026-11-16  0x005aaef0  FUN_005aaef0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aaef0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md
+2026-11-16  0x005aaf50  FUN_005aaf50  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aaf50.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md
+2026-11-16  0x005aa510  FUN_005aa510  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aa510.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md
 2026-11-16  0x005ad910  FUN_005ad910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005ad910.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOSTOP-5A61B0.md
 2026-11-16  0x005ad9d0  FUN_005ad9d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005ad9d0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOSTOP-5A61B0.md
 2026-11-16  0x005aa510  FUN_005aa510  (none)->C1  added (PORT-TOP-AUDIOINIT-SPLIT-5A9970): the callback 0x005aa480 passes to 0x005aa560 as param_5 (re/match/s30/005aa480.c line 59; 0x005aa560 calls it through param_5); Ghidra had no function (pc_funcs.csv had no row); name FUN_005aa510; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md
