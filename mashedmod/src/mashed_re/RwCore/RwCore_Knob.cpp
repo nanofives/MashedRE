@@ -155,6 +155,7 @@ static LONG CALLBACK RwCore_Veh(EXCEPTION_POINTERS* ep) {
 // allocated (0x007d3ec8 is only the static template RwEngineInit fills). Hand RwGlobals installs must not replace it.
 static void* s_coreGlobals = nullptr;
 void* RwCore_GlobalsAtInit(void) { return s_coreGlobals; }
+bool PortTop_RwgSwapLive(void);   // Match/PortTop_RwgSwap.cpp (PORT-UNBLOCK-RWGLOBALS, MASHED_RWC_RWGSWAP)
 int RwCore_EngineInit(int memFuncs, int initFlags) {
     AddVectoredExceptionHandler(1, RwCore_Veh);
     RwCore_SeedData();
@@ -461,6 +462,9 @@ extern "C" int RwCore_FrameShowRaster(int raster, int dev, int flags) {
                "last; presents %ld; device [0x007d4110] %08X", static_cast<unsigned>(raster), static_cast<unsigned>(dev),
                flags, static_cast<unsigned>(r), calls, MashedD3D9Wrap_PresentCount(), U32(0x007d4110));
     RwCore_Probe();
+    // PORT-UNBLOCK-RWGLOBALS: the frame route calls none of the exe FastSqrt / Vec2Length / 0x00403160 bodies, so the
+    // MASHED_RWC_RWGSWAP gate (and its one-shot self-test) runs once here, with the core RwGlobals live. Inert when off.
+    PortTop_RwgSwapLive();
     // [RWC-FRAME-CLUMP] N > 1: the call comes from inside the main loop (RwCameraShowRaster 0x004c1be0 under the frame
     // render 0x00492e90), with the game's clumps, worlds and cameras alive. The original frees them in AppDestroy 0x00402a40
     // before RwEngineStop; stopping the engine here runs plugin closes over live objects (d19: RwFreeListFree 0x004ccba0

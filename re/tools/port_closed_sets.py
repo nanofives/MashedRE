@@ -32,7 +32,8 @@ and reach then follows the matched call edges inside the group.
 
 Blockers per group (reported, not removed): DUP (inplace roots), CROSS (a member has an asi-only body: an exe-only
 matched body makes a CROSS-TARGET pair), ALLOW (a member is already on re/tools/dual_copy_allowlist.txt), DUPFILE,
-SEED (a nonzero file-backed .rdata/.data address a member reads that Compat/PortStateSeed.inc does not seed: the exe
+RWGLOBALS (the body reads RwGlobals 0x007d3ff8; RWG-CORE, note only, when the exe links the RW core
+engine open and the member is not reached on the default path), SEED (a nonzero file-backed .rdata/.data address a member reads that Compat/PortStateSeed.inc does not seed: the exe
 pad maps it as 0), STATE (a bss/zero global the exe names only as a shadow copy or comment, per
 verify/portstate_20261108/inventory.py's rule).
 
@@ -454,6 +455,9 @@ def analyse(build: pathlib.Path):
             allow.add(int(ln.split(":")[1], 16))
 
     # ---- per-member facts
+    # PORT-UNBLOCK-RWGLOBALS: the exe produces RwGlobals at 0x007d3ff8 on the top path when it links the RW core's
+    # RwEngineInit 0x004c32b0 / RwEngineOpen 0x004c30b0 (MASHED_RWC_CORE, RwCore/RwCore_Knob.cpp)
+    rwg_core = name_bindable("RwCore_004c32b0") is not None and name_bindable("RwCore_004c30b0") is not None
     mfact = {}
     for a in sorted(live_rvas):
         r = hooks.get(a, {})
@@ -480,7 +484,10 @@ def analyse(build: pathlib.Path):
             blk.append("NONC4")           # a non-C4 body that the file compiles with its C4 neighbours
         body = bodies_.get(a, "")
         if "DAT_007d3ff8" in body:
-            blk.append("RWGLOBALS")       # reads the original RwGlobals pointer: 0 in the exe pad (hard)
+            # reads the original RwGlobals pointer. Hard unless the exe links the RW core engine open (RWG-CORE, note
+            # only: PORT-UNBLOCK-RWGLOBALS) and the member is not reached on the default path, where [0x007d3ff8] is
+            # the RwIm2DBridge fake device and not RwGlobals
+            blk.append("RWG-CORE" if (rwg_core and not d) else "RWGLOBALS")
         if INDIRECT.search(body):
             blk.append("INDIRECT")        # calls through a pointer it reads (vtable / callback): note only
         rb_def = any("default" in x[3] for x in rebind.get(a, ()))
