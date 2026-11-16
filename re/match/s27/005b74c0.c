@@ -1,5 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S27 h1: 30.4% (regs 33.9%, permuter best (240 s). Not classified beyond structure/register differences (large function, budget spent). Class: b. */
+/* 0x005b74c0: 100.0% BYTE-IDENTICAL, source written from the listing (PORT-TOP-AUDIO-5A8F30-STOPS, 2026-11-16). Constructor:
+   FUN_005a9e10 descriptor call, the nested bit-length macro HB32(M) of re/match/s25/005a8f30.c (M = 1 << FUN_005aee20(0x28)
+   re-evaluated at every use), then the stores in listing order with the +0x40 or one store after +0x28. Previous source: D:/MashedWT/PORT-TOP-AUDIO-5A8F30-STOPS_data/005b74c0_before.c (30.4%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -22,85 +24,38 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char undefined;
 typedef unsigned char undefined1;
 typedef unsigned short undefined2;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-typedef unsigned char byte;
-#ifdef __cplusplus
-typedef int code(...);
-#else
-typedef int code();
-#endif
-MGLOBAL(undefined1, DAT_00617ff8, 0x00617ff8);
+MGLOBALA(signed char, DAT_00617ff8, 256, 0x00617ff8);
 MGLOBAL(undefined1, DAT_005e6d50, 0x005e6d50);
+void FUN_005b7750(void);
+void FUN_005b7880(void);
+void FUN_005b7980(void);
+void FUN_005b7a90(void);
 MGLOBAL(undefined1, DAT_00634924, 0x00634924);
-MGLOBAL(undefined1, FUN_005b7750, 0x005b7750);
-MGLOBAL(undefined1, FUN_005b7a90, 0x005b7a90);
-MGLOBAL(undefined1, FUN_005b7880, 0x005b7880);
-MGLOBAL(undefined1, FUN_005b7980, 0x005b7980);
-undefined4 FUN_005a9e10(undefined4 p0, undefined4 p1, undefined4 p2);
-undefined4 FUN_005aee20(uint p0);
+undefined4 FUN_005a9e10(int p0, undefined1 * p1, undefined4 p2);
+int FUN_005aee20(uint p0);
+#define SH_005b74c0 (1 << FUN_005aee20(0x28))
+#define M_005b74c0 (((short)SH_005b74c0 != 0) ? (SH_005b74c0 & 0xffff) : 1)
+#define HB16_005b74c0(w) ((((w) & 0xff00) != 0) ? DAT_00617ff8[(w) >> 8] + 7 : DAT_00617ff8[(w)] - 1)
+#define HB32_005b74c0(v) ((((v) & 0xffff0000) != 0) ? HB16_005b74c0((v) >> 16) + 16 : HB16_005b74c0(v))
 // MATCH: 0x005b74c0 FUN_005b74c0
-/* WARNING: Removing unreachable block (ram,0x005b7554) */
-/* WARNING: Removing unreachable block (ram,0x005b7535) */
-/* WARNING: Removing unreachable block (ram,0x005b755c) */
-/* WARNING: Removing unreachable block (ram,0x005b75c6) */
-/* WARNING: Removing unreachable block (ram,0x005b7608) */
-/* WARNING: Removing unreachable block (ram,0x005b75dc) */
-/* WARNING: Removing unreachable block (ram,0x005b7568) */
-/* WARNING: Removing unreachable block (ram,0x005b75ac) */
-/* WARNING: Removing unreachable block (ram,0x005b757e) */
-/* [C2 2026-06-01] Constructor/installer for the full audio-stream object: base init + CPU-feature
-   variant select + handler-pointer? */
-
 void FUN_005b74c0(int param_1)
 
 {
-  byte bVar1;
   int iVar2;
-  char cVar4;
-  uint uVar3;
-  
-  FUN_005a9e10(param_1,(undefined4)&DAT_005e6d50,0);
+
+  FUN_005a9e10(param_1,&DAT_005e6d50,0);
   *(undefined4 *)(param_1 + 0x40) = 0x1e0;
-  bVar1 = FUN_005aee20(0x28);
-  if ((short)(1 << (bVar1 & 0x1f)) != 0) {
-    FUN_005aee20(0x28);
-  }
-  bVar1 = FUN_005aee20(0x28);
-  if ((short)(1 << (bVar1 & 0x1f)) == 0) {
-    cVar4 = '\0';
-  }
-  else {
-    bVar1 = FUN_005aee20(0x28);
-    cVar4 = (char)((uint)(1 << (bVar1 & 0x1f)) >> 8);
-  }
-  if (!(cVar4 == '\0')) {
-    bVar1 = FUN_005aee20(0x28);
-    if (!((short)(1 << (bVar1 & 0x1f)) == 0)) {
-      bVar1 = FUN_005aee20(0x28);
-      iVar2 = (&DAT_00617ff8)[(int)(1 << (bVar1 & 0x1f) & 0xffffU) >> 8] + 7;
-    } else {
-      iVar2 = DAT_00617ff8 + 7;
-    }
-  } else {
-    bVar1 = FUN_005aee20(0x28);
-    if (!((short)(1 << (bVar1 & 0x1f)) == 0)) {
-      bVar1 = FUN_005aee20(0x28);
-      uVar3 = 1 << (bVar1 & 0x1f) & 0xffff;
-    } else {
-      uVar3 = 1;
-    }
-    iVar2 = (&DAT_00617ff8)[uVar3] + -1;
-  }
-  *(code **)(param_1 + 0x28) = (code *)(FUN_005b7750);
-  *(code **)(param_1 + 0x34) = (code *)(FUN_005b7880);
+  iVar2 = HB32_005b74c0(M_005b74c0);
+  *(void (**)(void))(param_1 + 0x28) = FUN_005b7750;
   *(uint *)(param_1 + 0x40) = *(uint *)(param_1 + 0x40) | iVar2 << 0x1c;
-  *(code **)(param_1 + 0x2c) = (code *)(FUN_005b7980);
-  *(code **)(param_1 + 0x3c) = (code *)(FUN_005b7a90);
+  *(void (**)(void))(param_1 + 0x34) = FUN_005b7880;
+  *(void (**)(void))(param_1 + 0x2c) = FUN_005b7980;
+  *(void (**)(void))(param_1 + 0x3c) = FUN_005b7a90;
   *(undefined2 *)(param_1 + 0x44) = 0x58;
-  *(undefined **)(param_1 + 0x54) = &DAT_00634924;
+  *(undefined1 **)(param_1 + 0x54) = &DAT_00634924;
   return;
 }

@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 h1 0x005ad420 (287 B). Best 74.5% (regs 79.1%), residual class (b). memset intrinsic gives rep stosd/stosb; orig keeps a zero in ebp for the whole first half and loads p5 into ebp only before loop 2 (source shape unknown; 'int z=0' folds away); jbe-guarded for loops differ; permuter's 91.9% variant stores param_1+0x10 before the allocation (uninitialised), rejected. */
+/* MATCH-S26 h1 0x005ad420 (287 B). Best 74.5% (regs 79.1%), residual class (b). memset intrinsic gives rep stosd/stosb; orig keeps a zero in ebp for the whole first half and loads p5 into ebp only before loop 2 (source shape unknown; 'int z=0' folds away); jbe-guarded for loops differ; permuter's 91.9% variant stores param_1+0x10 before the allocation (uninitialised), rejected. PORT-TOP-AUDIO-5AA3D0-STOPS: guards spelled z < param_3 / 0 < param_5 (clears equiv branch-condition at 0x005ad461, score unchanged 74.5%); remaining NOT-PROVEN call-regargs ecx at the 0x005aea00 call 0x005ad4e5. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -45,7 +45,7 @@ int FUN_005ad420(int param_1,int param_2,unsigned int param_3,int param_4,unsign
   }
   if ((param_2 != z) && (param_4 != z)) {
     uVar3 = 0;
-    if (param_3 != z) {
+    if (z < param_3) {
       iVar4 = param_2 + 0xc;
       do {
         *(int *)(iVar4 + -4) = z;
@@ -58,7 +58,7 @@ int FUN_005ad420(int param_1,int param_2,unsigned int param_3,int param_4,unsign
       } while (uVar3 < param_3);
     }
     uVar3 = 0;
-    if (param_5 != 0) {
+    if (0 < param_5) {
       iVar4 = param_4 + 0xc;
       do {
         *(int *)(iVar4 + -4) = 0;

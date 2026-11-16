@@ -7,7 +7,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_005a9c50 PortTop_Bound_005a9c50
-#define FUN_005aa3d0 PortTop_AStop_005aa3d0   // named stop
+#define FUN_005aa3d0 PortTop_Bound_005aa3d0
 #define FUN_005ae0b0 AudioSubStructZeroInit   // exe body (Audio/AudioRwsLeaves.cpp)
 extern "C" {
 #include "../../../../re/match/s25/005a9c50.c"

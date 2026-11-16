@@ -10,7 +10,7 @@
 #define FUN_005ada40 PortTop_Bound_005ada40
 #define FUN_005ae7e0 PortTop_Bound_005ae7e0
 #define FUN_005b3580 AudioListInit   // exe body (Audio/AudioList_ag.cpp)
-#define FUN_005b36b0 PortTop_AStop_005b36b0   // named stop
+#define FUN_005b36b0 PortTop_Bound_005b36b0
 extern "C" {
 #include "../../../../re/match/s30/005adb70.c"
 }

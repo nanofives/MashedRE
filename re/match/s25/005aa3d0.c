@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S25 0x005aa3d0 (h2): best 86.0% (regs 93.0%), class b. original hoists the field+0x10 load above the ushort test (ecx), ushort "> 0" form. relocheck BAD only because the code differs from the original. */
+/* MATCH-S25 0x005aa3d0 (h2): best 93.0% (regs 96.5%, ops 96.5%, 57/57 ins), class b. PORT-TOP-AUDIO-5AA3D0-STOPS: the loop pointer is computed from field +0x10 / +0x14 before the ushort count load, so the base load is hoisted above the ushort test as in the original (both arms: the then arm and the else arm at 0x005aa430); was 86.0%. Residual: the original keeps the base in ecx and forms the pointer with lea esi,[ecx+0x10], ours loads it into esi and adds 0x10. equiv.py EQUIV-IF-CALLERS-IGNORE(ECX), callers 0x005a9c5e / 0x005a9c66 ignore. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -44,11 +44,10 @@ void FUN_005aa3d0(int param_1,int param_2)
   uVar2 = (undefined4)FUN_005b36b0((int *)&DAT_009146f0,0);
   if (param_2 == 1) {
     iVar5 = *(int *)(param_1 + 0x4c);
-    iVar6 = *(int *)(iVar5 + 0x10);
+    puVar4 = (undefined4 *)(*(int *)(iVar5 + 0x10) + 0x10);
     uVar1 = *(ushort *)(iVar5 + 0xc);
     if (uVar1 > 0) {
       uVar3 = (uint)uVar1;
-      puVar4 = (undefined4 *)(iVar6 + 0x10);
       do {
         puVar4[-1] = uVar2;
         *puVar4 = 0;
@@ -62,11 +61,10 @@ void FUN_005aa3d0(int param_1,int param_2)
   }
   else {
     iVar5 = *(int *)(param_1 + 0x4c);
-    iVar6 = *(int *)(iVar5 + 0x14);
+    puVar4 = (undefined4 *)(*(int *)(iVar5 + 0x14) + 0x10);
     uVar1 = *(ushort *)(iVar5 + 0xe);
     if (uVar1 > 0) {
       uVar3 = (uint)uVar1;
-      puVar4 = (undefined4 *)(iVar6 + 0x10);
       do {
         puVar4[-1] = uVar2;
         *puVar4 = 0;

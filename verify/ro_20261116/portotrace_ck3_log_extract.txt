@@ -1,0 +1,105 @@
+# PORT-OT-RACE checkpoint 3: knob lines of the first (fault) arm and the re-run arms
+=== first arm RO_ROLOAD-pr1 with the bound 0x00458c70 and the SEH filter (D:/MashedWT/PORT-OT-RACE_data3b/RO_ROLOAD-pr1.log)
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004ccde0: stand-in (PORT-OT-RACE) skipped: list head 0x007d45cc is 0 (RW resource list not initialised on this path), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 01106060 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: fault code C0000005 at exe+0x23415, access kind 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: fault address 00000004, eax 11292140, ecx 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: at the fault [0x007d3ff8] = 01106060, [+0xbc] = 00000000, edx 11292148 (PORT-OT-RACE)
+=== code-trap arm RO_ROLOADT-pr1 (D:/MashedWT/PORT-OT-RACE_data3/RO_ROLOADT-pr1.log): code-trap and knob lines
+[code-trap] armed: 0x00401000..0x005CBFFF (459 pages) PAGE_NOACCESS, was 0x8; mode 1 (report the first trap, exit)
+[code-trap] self-test pages PAGE_NOACCESS 459/459
+[code-trap] self-test read         0x00500000: faulted 1 kind read va 0x00500000 slot none 0x00000000 (want 0x00000000) ret 00000000 ok
+[code-trap] self-test write        0x00500004: faulted 1 kind write va 0x00500004 slot none 0x00000000 (want 0x00000000) ret 00000000 ok
+[code-trap] self-test execute      0x00401000: faulted 1 kind execute va 0x00401000 slot 0x00FF8AF0 (want 0x00FF8AF0) ret 001AD701 ok
+[code-trap] self-test execute-null 0x00000000: faulted 1 kind execute-null va 0x00000000 slot 0x00FF8AF0 (want 0x00FF8AF0) ret 001AD701 ok
+[code-trap] carved page 0x005CB000 (RWX, 0xCC-filled) for a B16 thunk
+[code-trap] self-test breakpoint   0x005CB010: faulted 1 kind execute va 0x005CB010 slot 0x00FF8AF0; page restored 1 ok
+[code-trap] self-test PASS (0 of 6 checks failed)
+[code-trap] carved page 0x0042B000 (RWX, 0xCC-filled) for a B16 thunk
+[code-trap] carved page 0x0042D000 (RWX, 0xCC-filled) for a B16 thunk
+[code-trap] carved page 0x00472000 (RWX, 0xCC-filled) for a B16 thunk
+[code-trap] carved page 0x00473000 (RWX, 0xCC-filled) for a B16 thunk
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 01106060 (PORT-OT-RACE)
+=== RO_ROIMG-pr1 (D:/MashedWT/PORT-OT-RACE_data3c/RO_ROIMG-pr1.log), lines from the warp on
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] rva 0x0040d270: stand-in (PORT-TOP-05) course load, args table=005F2728 row=0; the hand path loaded the course at the menu launch
+[ORIG_TOP] [REPLAY] pins at anchor (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] normalisation at anchor: 299 PIN dwords written, 1 changed
+[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+[ORIG_TOP] rva 0x004111c0: stand-in (PORT-TOP-05) race tick: the hand session runs the race (counted, not run)
+[ORIG_TOP] [TRACE] checkpoint k 5 at tick 301: N 904 phase 3, ckpt05.data.bin
+[ORIG_TOP] [REPLAY] tick 360: Q 0x43938778, DAT_007f1030 340122583, phase 3, wrapped QPC reads 1082 (boot 4), passed 0
+[ORIG_TOP] [OT_TIMER] call 360: now 340122583, DAT_007f1000 50, DAT_007f0ffc 126, DAT_00771984 -49872, DAT_007f0ff0 3000, DAT_00771978 0; checks 3590 failed 0
+[ORIG_TOP] frame 360: 0x00492d30 (matched) returned 1, phase 3, 0x0043dfd0 stand-in calls 300, 0x004111c0 calls 61
+[ORIG_TOP] [REPLAY] tick 480: Q 0x44C4B4A0, DAT_007f1030 346122595, phase 3, wrapped QPC reads 1442 (boot 4), passed 0
+[ORIG_TOP] [OT_TIMER] call 480: now 346122595, DAT_007f1000 50, DAT_007f0ffc 378, DAT_00771984 -49620, DAT_007f0ff0 9000, DAT_00771978 0; checks 4790 failed 0
+[ORIG_TOP] frame 480: 0x00492d30 (matched) returned 1, phase 3, 0x0043dfd0 stand-in calls 300, 0x004111c0 calls 181
+[ORIG_TOP] [TRACE] checkpoint k 6 at tick 600: N 1799 phase 3, ckpt06.data.bin
+[ORIG_TOP] [REPLAY] tick 600: Q 0x45F5E1C8, DAT_007f1030 352122607, phase 3, wrapped QPC reads 1800 (boot 4), passed 0
+[ORIG_TOP] [OT_TIMER] call 600: now 352122607, DAT_007f1000 50, DAT_007f0ffc 630, DAT_00771984 -49368, DAT_007f0ff0 15000, DAT_00771978 0; checks 5990 failed 0
+[ORIG_TOP] cfglog: Calling AppDestroy
+[PORT-TOP] rva 0x0041e0d0: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x0041b660: stand-in, not run (PORT-TOP-04C)
+[ORIG_TOP] rva 0x004593b0: stand-in (RWMOD off) (0, 0) (PORT-OT-PICKUPPOOL)
+[PORT-TOP] rva 0x004593b0: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x00404820: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x0041ffb0: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x004196f0: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x00477870: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x0048af70: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x004d8480: stand-in, not run (PORT-TOP-04C)
+[ORIG_TOP] rva 0x00555830(0x00000000): stand-in (RWMOD off) (PORT-OT-HUD-2)
+[PORT-TOP] rva 0x00555830: stand-in, not run (PORT-TOP-04C)
+[ORIG_TOP] rva 0x00556e40(0x00000000): stand-in (RWMOD off) (PORT-OT-HUD-2)
+[PORT-TOP] rva 0x00556e40: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x00552b90: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x004b6700: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x0045e040: stand-in, not run (PORT-TOP-04C)
+[PORT-TOP] rva 0x00466a50: stand-in, not run (PORT-TOP-04C)
+[ORIG_TOP] cfglog: Calling SoftwareTidyUpBeforeExiting
+[ORIG_TOP] cfglog: Calling HardwareExitApplication
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001BD1B0; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+[ORIG_TOP] [TRACE] self-test PASS (0 of 33294 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 8, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reached at tick 300 (N 903)
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 000189F0, 0x00493390 001BD1B0, 0x00497310 00018D20, 0x00534870 00038BF0
+=== RO_ROLOAD-pr1 (D:/MashedWT/PORT-OT-RACE_data3c/RO_ROLOAD-pr1.log), lines from the warp on
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004ccde0: stand-in (PORT-OT-RACE) skipped: list head 0x007d45cc is 0 (RW resource list not initialised on this path), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 01106020 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00458c70: stand-in (PORT-OT-RACE) 136 B, callee 0x004c15c0 (RW core, not called), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body returned    (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[ORIG_TOP] rva 0x0047A020: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC3D, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x0047A020 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0004AC3D
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001BD1B0; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+=== RO_ROLOADC-pr1 (D:/MashedWT/PORT-OT-RACE_data3c/RO_ROLOADC-pr1.log), lines from the warp on
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004ccde0: stand-in (PORT-OT-RACE) skipped: list head 0x007d45cc is 0 (RW resource list not initialised on this path), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 01106020 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00458c70: stand-in (PORT-OT-RACE) 136 B, callee 0x004c15c0 (RW core, not called), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body returned    (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[ORIG_TOP] rva 0x0047A020: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC3D, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00479330: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC51, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] cfglog: Searching piz for LAPDATA.LUA 
+[ORIG_TOP] rva 0x0047B860: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B2B6, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00440BC0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047a0f0 0x0047a130, return 0004B2BA, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0047B8D0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B2C9, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004B7480: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b880, return 0004B29B, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00478660: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC7F, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0057C4B0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047f4c0, return 0004B8FD, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00559560: race-load stop (PORT-OT-RACE), call 1, callers 0x00559b50, return 0004CA1E, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x005595D0: race-load stop (PORT-OT-RACE), call 1, callers 0x00559b50, return 0004CA51, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0055F800: race-load stop (PORT-OT-RACE), call 1, callers 0x0055f450, return 0004CF6A, returns 0 (MASHED_OT_RL_STOPS=count)

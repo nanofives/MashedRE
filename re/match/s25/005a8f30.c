@@ -1,6 +1,11 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S25 0x005a8f30: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs25_20261107/results.tsv. */
+/* MATCH-S25 0x005a8f30: source written from the listing (PORT-TOP-AUDIO-5A8F30-STOPS, 2026-11-16). 100.0%, 589 B
+   BYTE-IDENTICAL. The original expands a nested bit-length macro: HB32(v) = (v & 0xffff0000) ? HB16(v >> 16) + 16 :
+   HB16(v), HB16(w) = (w & 0xff00) ? DAT_00617ff8[w >> 8] + 7 : DAT_00617ff8[w] - 1, with v = M (1 << FUN_005aee20(0x28),
+   or 1 when its low 16 bits are 0) re-evaluated at every use: 14 calls to 0x005aee20 between 0x005a8f4b and 0x005a913c,
+   the +7 / +0x10 pair at 0x005a9011 / 0x005a9014, sar 0x18 / 0x10 / 8 at 0x005a9007 / 0x005a9065 / 0x005a90fc. The
+   (v >> 16) & 0xff00 test reads byte 3 of v from the spilled slot (mov ah,[esp+0xf] 0x005a8fd0). Store order of the
+   tail follows the listing (0x005a9160 +0x28 first). Old raw g2s source (30.4%): D:/MashedWT/PORT-TOP-AUDIO-5A8F30-STOPS_data. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -27,68 +32,27 @@ typedef unsigned char undefined1;
 typedef unsigned short undefined2;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-typedef unsigned char byte;
-typedef int code(void);
-MGLOBAL(undefined1, DAT_00617ff8, 0x00617ff8);
+MGLOBALA(signed char, DAT_00617ff8, 256, 0x00617ff8);
 MGLOBAL(undefined1, DAT_005e617c, 0x005e617c);
-MGLOBAL(undefined1, FUN_005a91b0, 0x005a91b0);
+void FUN_005a91b0(void);
 undefined4 FUN_005a9e10(int p0, undefined1 * p1, undefined4 p2);
-undefined4 FUN_005aee20(uint p0);
+int FUN_005aee20(uint p0);
+#define SH_005a8f30 (1 << FUN_005aee20(0x28))
+#define M_005a8f30 (((short)SH_005a8f30 != 0) ? (SH_005a8f30 & 0xffff) : 1)
+#define HB16_005a8f30(w) ((((w) & 0xff00) != 0) ? DAT_00617ff8[(w) >> 8] + 7 : DAT_00617ff8[(w)] - 1)
+#define HB32_005a8f30(v) ((((v) & 0xffff0000) != 0) ? HB16_005a8f30((v) >> 16) + 16 : HB16_005a8f30(v))
 // MATCH: 0x005a8f30 FUN_005a8f30
-/* WARNING: Removing unreachable block (ram,0x005a8fc4) */
-/* WARNING: Removing unreachable block (ram,0x005a8fa5) */
-/* WARNING: Removing unreachable block (ram,0x005a8fcc) */
-/* WARNING: Removing unreachable block (ram,0x005a9036) */
-/* WARNING: Removing unreachable block (ram,0x005a9078) */
-/* WARNING: Removing unreachable block (ram,0x005a904c) */
-/* WARNING: Removing unreachable block (ram,0x005a8fd8) */
-/* WARNING: Removing unreachable block (ram,0x005a901c) */
-/* WARNING: Removing unreachable block (ram,0x005a8fee) */
-/* [C2 2026-06-01] `void FUN_005a8f30(int param_1)` */
-
 void FUN_005a8f30(int param_1)
 
 {
-  byte bVar1;
   int iVar2;
-  char cVar4;
-  uint uVar3;
-  
+
   FUN_005a9e10(param_1,&DAT_005e617c,0);
   *(undefined4 *)(param_1 + 0x40) = 0x4c;
-  bVar1 = FUN_005aee20(0x28);
-  if ((short)(1 << (bVar1 & 0x1f)) != 0) {
-    FUN_005aee20(0x28);
-  }
-  bVar1 = FUN_005aee20(0x28);
-  if ((short)(1 << (bVar1 & 0x1f)) == 0) {
-    cVar4 = '\0';
-  }
-  else {
-    bVar1 = FUN_005aee20(0x28);
-    cVar4 = (char)((uint)(1 << (bVar1 & 0x1f)) >> 8);
-  }
-  if (!(cVar4 == '\0')) {
-    bVar1 = FUN_005aee20(0x28);
-    if (!((short)(1 << (bVar1 & 0x1f)) == 0)) {
-      bVar1 = FUN_005aee20(0x28);
-      iVar2 = (&DAT_00617ff8)[(int)(1 << (bVar1 & 0x1f) & 0xffffU) >> 8] + 7;
-    } else {
-      iVar2 = DAT_00617ff8 + 7;
-    }
-  } else {
-    bVar1 = FUN_005aee20(0x28);
-    if (!((short)(1 << (bVar1 & 0x1f)) == 0)) {
-      bVar1 = FUN_005aee20(0x28);
-      uVar3 = 1 << (bVar1 & 0x1f) & 0xffff;
-    } else {
-      uVar3 = 1;
-    }
-    iVar2 = (&DAT_00617ff8)[uVar3] + -1;
-  }
-  *(undefined2 *)(param_1 + 0x44) = 0;
+  iVar2 = HB32_005a8f30(M_005a8f30);
+  *(void (**)(void))(param_1 + 0x28) = FUN_005a91b0;
   *(uint *)(param_1 + 0x40) = *(uint *)(param_1 + 0x40) | iVar2 << 0x1c;
-  *(code **)(param_1 + 0x28) = (code *)&FUN_005a91b0;
+  *(undefined2 *)(param_1 + 0x44) = 0;
   *(undefined2 *)(param_1 + 0x46) = 1;
   return;
 }

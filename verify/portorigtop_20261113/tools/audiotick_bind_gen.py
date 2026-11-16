@@ -30,6 +30,11 @@ PROV_BIND |= {'0045d460'}   # PORT-TOP-AUDIO-BODY-45D460: 0x004669b0's permdict 
 PROV_BIND |= {'005a61b0', '005b35a0', '005ae800'}   # PORT-TOP-AUDIOSTOP-5A61B0: 0x005ad770's stops (block order 71.4%, register-only 55.0%, loop shape 38.2%; PROVISIONAL.tsv)
 PROV_BIND |= {'005a9ab0'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: 0x005a9970's stop (67.9%, EQUIV-IF-CALLERS-IGNORE(ECX), callers read; PROVISIONAL.tsv)
 PROV_BIND |= {'005aa560'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: table entry 7 0x005aa480's stop (79.8%, NOT-PROVEN call-args at 0x005aa593, tool limit: 0x005aad40 takes no args; PROVISIONAL.tsv)
+PROV_BIND |= {'005aa330'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: 0x005a9c50's other stop (54.7%, NOT-PROVEN call-args at 0x005aa350, masked-high-bits tool limit; PROVISIONAL.tsv)
+PROV_BIND |= {'005ad420'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: shared callee of the 0x00632c2c entries (74.5%, NOT-PROVEN call-regargs ecx at 0x005ad4e5, register line PORT-TOP-AUDIOSTOP-5A61B0 (b); PROVISIONAL.tsv)
+PROV_BIND |= {'005a8ea0'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: table 0x00632c28 entry (77.6%, EQUIV-IF-CALLERS-IGNORE(EAX), caller 0x005ad080 reads; PROVISIONAL.tsv + decision row)
+PROV_BIND |= {'005aa200'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: census order 5, 0x005a62b0's callee (66.1%, NOT-PROVEN ult-1 / eq-0 form gap at 0x005aa271; PROVISIONAL.tsv + decision row)
+PROV_BIND |= {'005b9ea0', '005b85e0', '005c7a00', '005c6c20', '005a7fe0', '005c80a0', '005b7440', '005b6b80', '005bce20'}   # PORT-TOP-AUDIO-5A8F30-STOPS: table 0x00635194 entries walked by 0x005bbb20 (77.1% to 91.1%, EQUIV-IF-CALLERS-IGNORE(EAX), walker 0x005ad080 reads; PROVISIONAL.tsv + decision row, L-171 class)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
 PEND = {}
@@ -50,9 +55,11 @@ def msrc(rva):
     if rva in PROV_BIND and rva in prov and os.path.exists(prov[rva][2]):
         return prov[rva][2], 'provisional'
     if 'c4=match' in r[8] and ('BYTE-IDENTICAL' in r[8] or 'match evidence: identical' in r[8] or ('100.0%' in r[8] and 'relocheck OK' in r[8])):
-        for m in re.finditer(r'(re/match/[^\s;,()]+?\.c)', r[8]):
-            if os.path.exists(m.group(1)):
-                return m.group(1), 'match'
+        # PORT-TOP-AUDIO-5AA3D0-STOPS: prefer the note's re/match/<d>/<rva>.c (0x005aa510's C1 text cites 005aa480.c first)
+        _ps = [m.group(1) for m in re.finditer(r'(re/match/[^\s;,()]+?\.c)', r[8]) if os.path.exists(m.group(1))]
+        _ps.sort(key=lambda q: not q.endswith('/%s.c' % rva))
+        if _ps:
+            return _ps[0], 'match'
     if rva in adm and os.path.exists(adm[rva][2]):
         return adm[rva][2], 'admitted'
     return None, None
@@ -108,6 +115,8 @@ EXTRA_PRE['005ac590'] = ['// LAB_005ac5c0 is a code address the body stores, not
                          '// a later call through it is reported by MASHED_CODE_TRAP, image design (b)).',
                          '#define LAB_005ac5c0 (*(undefined1 *)0x005ac5c0u)']
 EXTRA_PRE['005ae330'] = ['#define thunk_FUN_004522d0 RwCore_004522d0   // Ghidra thunk_ name of the jump to 0x004522d0 (re/match/s26/005ae330.c)']
+EXTRA_PRE['005ab180'] = ['#define thunk_FUN_005ab620 PortTop_Bound_005ab180   // PORT-TOP-AUDIO-5A8F30-STOPS: re/match/s25/005ab180.c names its body after the jump target (Ghidra thunk name)']
+EXTRA_PRE['005b7880'] = ['#define thunk_FUN_005b1500 PortTop_Bound_005b1500   // PORT-TOP-AUDIO-5A8F30-STOPS: Ghidra thunk_ name of 0x005b15d0 (jmp 0x005b1500, called at 0x005b789a); the port calls the target body']
 EXTRA_IN = {'00407600': ['char *FUN_0047d150(int h);   // declared here: the source declares it only outside MASHED_RE_PORT']}
 FORCE = {"00466b50", "0045d3f0", "0045d430"}
 # PORT-TOP-AUDIO-RWA: re-runs regenerate every wrapper this generator wrote before (the previous plan.json 'bind' rows),
@@ -124,6 +133,8 @@ INIT_ROOT = '004627f0'
 # The copy sits under #ifndef MATCH_PORT_SHARED_0045c4e0 (DDK object unchanged, match.py --bytes BYTE-IDENTICAL), so the
 # port defines that macro and binds the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
 STOP_FORCE = set()
+STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
+STOP_FORCE |= {'005aef30'}   # PORT-TOP-AUDIO-5A8F30-STOPS: reached now through 0x005a8060 (0x005a8328); it calls __beginthread (0x005c2e79, no exe body; the census bulk bind left it out for the LNK2019) and starts the second thread, census order 42: a stop until the init stops are done
 LOCAL_SHARED = {("0045cbe0", "0045c4e0"): "PortTop_Local_0045cb20_0045c4e0"}
 EXTRA_PRE["0045cbe0"] = ["#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp"]
 # re/match/s10/0045c6b0.c carries 0x0045c640 (cast-only text difference from re/match/s10/0045c640.c): that copy is the exe body.

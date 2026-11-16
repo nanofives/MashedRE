@@ -1,0 +1,577 @@
+{
+ "r2": [
+  {
+   "what": "fault",
+   "tid": 20712,
+   "n": 3643,
+   "type": "access-violation",
+   "address": "0xf327cfe9",
+   "ctx": {
+    "eip": "0xf327cfe9",
+    "esp": "0x1afdac",
+    "ebp": "0x9",
+    "eax": "0x0",
+    "ecx": "0x0",
+    "edx": "0x1afdf8",
+    "ebx": "0x0",
+    "esi": "0x4",
+    "edi": "0x0"
+   },
+   "stack": [
+    "0x4340a0f",
+    "0x0",
+    "0x1afdf8",
+    "0x1afdf4",
+    "0x0",
+    "0x0",
+    "0x3f003d64",
+    "0x3f966666",
+    "0xbfffe073",
+    "0x43340000",
+    [
+     "0x803324",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x403324"
+     }
+    ],
+    "0x1418d861",
+    "0x1",
+    "0x1aff74",
+    "0x3c0000",
+    "0x1",
+    "0x1",
+    "0x43340000",
+    [
+     "0x881ec8",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x481ec8"
+     }
+    ],
+    "0x216",
+    "0x3f003d64",
+    "0x3f966666",
+    "0xbfffe073",
+    "0x0",
+    "0x1",
+    "0x2",
+    "0x3",
+    "0x3e600d1b",
+    "0x3e9e00d2",
+    "0x3ee85879",
+    "0xbe600d1b",
+    "0x3d1930be",
+    "0xbf05f6fd",
+    "0x4341c0f",
+    "0x434300f",
+    "0x32",
+    "0xa",
+    [
+     "0x75d8d640",
+     {
+      "mod": "KERNEL32.DLL",
+      "off": "0x1d640"
+     }
+    ],
+    "0x456240f",
+    "0x456080f",
+    "0x0",
+    "0x4560e0f",
+    [
+     "0x400000",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x0"
+     }
+    ],
+    "0x0",
+    "0xe7d691",
+    "0xa",
+    "0x94",
+    "0x6",
+    "0x2",
+    "0x23f0",
+    "0x2",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0"
+   ]
+  },
+  {
+   "what": "fault-counts",
+   "n": 3643,
+   "moved": 719,
+   "new_after_anchor": 345,
+   "snap_last10": []
+  },
+  {
+   "what": "exit",
+   "fn": "ExitProcess",
+   "n": 3643,
+   "a0": "0xc0000005",
+   "bt": [
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "RtlExitUserProcess",
+   "n": 3643,
+   "a0": "0xc0000005",
+   "bt": [
+    "KERNEL32.DLL+0x2ba43",
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "NtTerminateProcess",
+   "n": 3643,
+   "a0": "0x0",
+   "bt": [
+    "ntdll.dll+0x32424",
+    "ntdll.dll+0x3dc49",
+    "ntdll.dll+0x93820",
+    "ntdll.dll+0x3db96",
+    "ntdll.dll+0x3d1fa",
+    "KERNEL32.DLL+0x2ba43",
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  }
+ ],
+ "r3": [
+  {
+   "what": "fault",
+   "tid": 15256,
+   "n": 3644,
+   "type": "access-violation",
+   "address": "0xf261cfe9",
+   "ctx": {
+    "eip": "0xf261cfe9",
+    "esp": "0x1afdac",
+    "ebp": "0x9",
+    "eax": "0x0",
+    "ecx": "0x0",
+    "edx": "0x1afdf8",
+    "ebx": "0x0",
+    "esi": "0x4",
+    "edi": "0x0"
+   },
+   "stack": [
+    "0x433440f",
+    "0x0",
+    "0x1afdf8",
+    "0x1afdf4",
+    "0x0",
+    "0x0",
+    "0x3f003d64",
+    "0x3f966666",
+    "0xbfffe073",
+    "0x43340000",
+    [
+     "0x803324",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x403324"
+     }
+    ],
+    "0x1418d861",
+    "0x1",
+    "0x1aff74",
+    "0x338000",
+    "0x1",
+    "0x1",
+    "0x43340000",
+    [
+     "0x881ec8",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x481ec8"
+     }
+    ],
+    "0x216",
+    "0x3f003d64",
+    "0x3f966666",
+    "0xbfffe073",
+    "0x0",
+    "0x1",
+    "0x2",
+    "0x3",
+    "0x3e600d1b",
+    "0x3e9e00d2",
+    "0x3ee85879",
+    "0xbe600d1b",
+    "0x3d1930be",
+    "0xbf05f6fd",
+    "0x433540f",
+    "0x433660f",
+    "0x32",
+    "0xa",
+    [
+     "0x75d8d640",
+     {
+      "mod": "KERNEL32.DLL",
+      "off": "0x1d640"
+     }
+    ],
+    [
+     "0x4922b8",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x922b8"
+     }
+    ],
+    [
+     "0x4923de",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x923de"
+     }
+    ],
+    "0x0",
+    "0x452260f",
+    [
+     "0x400000",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x0"
+     }
+    ],
+    "0x0",
+    "0xced691",
+    "0xa",
+    "0x94",
+    "0x6",
+    "0x2",
+    "0x23f0",
+    "0x2",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0"
+   ]
+  },
+  {
+   "what": "fault-counts",
+   "n": 3644,
+   "moved": 677,
+   "new_after_anchor": 321,
+   "snap_last10": [
+    "0x0046d3a0:enter",
+    "0x0046f6c0:enter",
+    "0x0046c5f0:enter",
+    "0x00539ec0:enter",
+    "0x00547450:enter",
+    "0x00468b80:enter",
+    "0x0046cc40:enter",
+    "0x00468b40:enter",
+    "0x0047ea60:enter",
+    "0x0040e3a0:enter"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "ExitProcess",
+   "n": 3644,
+   "a0": "0xc0000005",
+   "bt": [
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "RtlExitUserProcess",
+   "n": 3644,
+   "a0": "0xc0000005",
+   "bt": [
+    "KERNEL32.DLL+0x2ba43",
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "NtTerminateProcess",
+   "n": 3644,
+   "a0": "0x0",
+   "bt": [
+    "ntdll.dll+0x32424",
+    "ntdll.dll+0x40670",
+    "ntdll.dll+0x9366c",
+    "ntdll.dll+0x93820",
+    "ntdll.dll+0x3db96",
+    "ntdll.dll+0x3d1fa",
+    "KERNEL32.DLL+0x2ba43",
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  }
+ ],
+ "r4": [
+  {
+   "what": "fault",
+   "tid": 19784,
+   "n": 3642,
+   "type": "access-violation",
+   "address": "0xf327cfe9",
+   "ctx": {
+    "eip": "0xf327cfe9",
+    "esp": "0x1afdac",
+    "ebp": "0x9",
+    "eax": "0x0",
+    "ecx": "0x0",
+    "edx": "0x1afdf8",
+    "ebx": "0x0",
+    "esi": "0x4",
+    "edi": "0x0"
+   },
+   "stack": [
+    [
+     "0x40eeab",
+     {
+      "mod": "MASHED.exe",
+      "off": "0xeeab"
+     }
+    ],
+    "0x0",
+    "0x1afdf8",
+    "0x1afdf4",
+    "0x0",
+    "0x0",
+    "0x3f003d64",
+    "0x3f966666",
+    "0xbfffe073",
+    "0x43340000",
+    [
+     "0x803324",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x403324"
+     }
+    ],
+    "0x1418d861",
+    "0x1",
+    "0x1aff74",
+    "0x3da000",
+    "0x1",
+    "0x1",
+    "0x43340000",
+    [
+     "0x881ec8",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x481ec8"
+     }
+    ],
+    "0x431601a",
+    "0x3f003d64",
+    "0x3f966666",
+    "0xbfffe073",
+    "0x0",
+    "0x1",
+    "0x2",
+    "0x3",
+    "0x3e600d1b",
+    "0x3e9e00d2",
+    "0x3ee85879",
+    "0xbe600d1b",
+    "0x3d1930be",
+    "0xbf05f6fd",
+    [
+     "0x41016c",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x1016c"
+     }
+    ],
+    [
+     "0x492d8a",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x92d8a"
+     }
+    ],
+    "0x32",
+    "0xa",
+    [
+     "0x75d8d640",
+     {
+      "mod": "KERNEL32.DLL",
+      "off": "0x1d640"
+     }
+    ],
+    [
+     "0x4922b8",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x922b8"
+     }
+    ],
+    [
+     "0x4923de",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x923de"
+     }
+    ],
+    "0x0",
+    [
+     "0x4a4d38",
+     {
+      "mod": "MASHED.exe",
+      "off": "0xa4d38"
+     }
+    ],
+    [
+     "0x400000",
+     {
+      "mod": "MASHED.exe",
+      "off": "0x0"
+     }
+    ],
+    "0x0",
+    "0xd6d691",
+    "0xa",
+    "0x94",
+    "0x6",
+    "0x2",
+    "0x23f0",
+    "0x2",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0",
+    "0x0"
+   ]
+  },
+  {
+   "what": "fault-counts",
+   "n": 3642,
+   "moved": 719,
+   "new_after_anchor": 345,
+   "snap_last10": [
+    "0x004669b0:enter",
+    "0x005aa3d0:enter",
+    "0x0045d460:enter",
+    "0x004669b0:leave"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "ExitProcess",
+   "n": 3642,
+   "a0": "0xc0000005",
+   "bt": [
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "MASHED.exe+0xa4bcf",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "RtlExitUserProcess",
+   "n": 3642,
+   "a0": "0xc0000005",
+   "bt": [
+    "KERNEL32.DLL+0x2ba43",
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "MASHED.exe+0xa4bcf",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  },
+  {
+   "what": "exit",
+   "fn": "NtTerminateProcess",
+   "n": 3642,
+   "a0": "0x0",
+   "bt": [
+    "ntdll.dll+0x32424",
+    "ntdll.dll+0x3dc49",
+    "ntdll.dll+0x93820",
+    "ntdll.dll+0x3db96",
+    "ntdll.dll+0x3d1fa",
+    "KERNEL32.DLL+0x2ba43",
+    "MASHED.exe+0xa31e0",
+    "MASHED.exe+0xa3328",
+    "MASHED.exe+0xa3349",
+    "MASHED.exe+0xa4d75",
+    "MASHED.exe+0xa4bcf",
+    "KERNEL32.DLL+0x15d49",
+    "ntdll.dll+0x6c88b",
+    "ntdll.dll+0x6c811"
+   ]
+  }
+ ]
+}

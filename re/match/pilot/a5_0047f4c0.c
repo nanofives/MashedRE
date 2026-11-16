@@ -11,8 +11,16 @@ typedef struct { int a; unsigned int w; int c; unsigned int bits[1]; } BitMap;
 typedef struct { float x, y, z; int pad; } V4;
 typedef struct { V4 lo; V4 hi; } BBox;
 typedef struct { int d[31]; } Buf;    /* 124 bytes */
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0086ecc0 (*(BitMap * *)0x0086ecc0u)
+#else
 extern BitMap *DAT_0086ecc0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_006c6eb8 (*(int (*)[200])0x006c6eb8u)
+#else
 extern int DAT_006c6eb8[200];
+#endif
 void FUN_00562580(Buf *b);
 void FUN_0057c4b0(Buf *b, int a, int c);
 void FUN_005625e0(Buf *b, int a);
