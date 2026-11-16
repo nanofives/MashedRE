@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S08 0x0043dfd0: 45.9% (regs 57.9%, ops 81.1%) after MATCH-43DFD0-FRAME run 51 (2026-11-16: piVar13 = piVar18 hoisted above if (0 < iVar8) in the 5 team-slot loops, frame 0x2c as at 0x0043dfd0, every [esp+N] slot at the original offset; 6421 differing bytes, first at +0x5f, ebx/edi roles swapped), was 32.2% (regs 58.5%, ops 79.6%) after MATCH-43DFD0-RAISE (slices 1+2+3: dword flags, case layout order, team-slot loops; 6384 differing bytes, first at +0x2), was 19.2% (regs 31.7%, ops 59.1%) since RO-MENU-DIV-43DFD0 (2026-11-12), was 17.7% (regs 46.9%), raw g2s 17.1%. RO-MENU-DIV-43DFD0 fixed two converter defects: the four __ftol sites (0x0043e0a7, 0x0043e101, 0x00440a16, 0x00440a5e) called FUN_004a2c48() with nothing on the x87 stack, now (int)(DAT_007f1004 * constant); the key-scan edx flag (extraout_EDX) was read uninitialised, now set as at 0x0043e3f8 / 0x0043e427 / 0x0043e432. Raw converter body with type fixes: the globals the listing touches with x87 instructions (0x0067f1ac, 0x0067e840, 0x007f1004, 0x007f0f00/04/08, 0x0067eaa8 and the .rdata constants) retyped float, FUN_00431b30 returns float and FUN_00495080 takes (float, float), arity of thunk_FUN_00493f70 / thunk_FUN_00494460 / thunk_FUN_00494480 / FUN_0042ae10 fixed to 1 arg, pointer casts for C++. Call sequence is close (190 calls vs 195 in the original). Residual (b): register allocation across the 10.9 KB body (ebx=0 / edi=1 pinned in the original, frame 0x2c vs 0x18 here) and the remaining Ghidra shape, out of budget. */
+/* MATCH-S08 0x0043dfd0: 47.0% (regs 58.3%, ops 81.7%) after MATCH-43DFD0-STORES run 51 (2026-11-16: switch at 0x0043f78b in the original's case layout order 4, 0xf, 2, 8, 3/9, 0x15, 0/5, 1; the 0x007f0f44..0x007f0f50 loads hoisted into locals as at 0x0043f6fd..0x0043f71d; case 8 tests re-read the 0x0067ed3c word as at 0x0043fd3c..0x0043fdb7; 6451 differing bytes, first at +0x5f), was 45.9% (regs 57.9%, ops 81.1%) after MATCH-43DFD0-FRAME run 51 (2026-11-16: piVar13 = piVar18 hoisted above if (0 < iVar8) in the 5 team-slot loops, frame 0x2c as at 0x0043dfd0, every [esp+N] slot at the original offset; 6421 differing bytes, first at +0x5f, ebx/edi roles swapped), was 32.2% (regs 58.5%, ops 79.6%) after MATCH-43DFD0-RAISE (slices 1+2+3: dword flags, case layout order, team-slot loops; 6384 differing bytes, first at +0x2), was 19.2% (regs 31.7%, ops 59.1%) since RO-MENU-DIV-43DFD0 (2026-11-12), was 17.7% (regs 46.9%), raw g2s 17.1%. RO-MENU-DIV-43DFD0 fixed two converter defects: the four __ftol sites (0x0043e0a7, 0x0043e101, 0x00440a16, 0x00440a5e) called FUN_004a2c48() with nothing on the x87 stack, now (int)(DAT_007f1004 * constant); the key-scan edx flag (extraout_EDX) was read uninitialised, now set as at 0x0043e3f8 / 0x0043e427 / 0x0043e432. Raw converter body with type fixes: the globals the listing touches with x87 instructions (0x0067f1ac, 0x0067e840, 0x007f1004, 0x007f0f00/04/08, 0x0067eaa8 and the .rdata constants) retyped float, FUN_00431b30 returns float and FUN_00495080 takes (float, float), arity of thunk_FUN_00493f70 / thunk_FUN_00494460 / thunk_FUN_00494480 / FUN_0042ae10 fixed to 1 arg, pointer casts for C++. Call sequence is close (190 calls vs 195 in the original). Residual (b): register allocation across the 10.9 KB body (ebx=0 / edi=1 pinned in the original, frame 0x2c vs 0x18 here) and the remaining Ghidra shape, out of budget. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -295,6 +295,10 @@ void FUN_0043dfd0(void)
   uint local_28;
   int local_24;
   int local_20;
+  undefined4 uS0;
+  undefined4 uS1;
+  undefined4 uS2;
+  undefined4 uS3;
   
   fVar0 = FUN_00431b30();
   if (fVar0 != _DAT_0067f1ac) {
@@ -1498,22 +1502,94 @@ LAB_0043f203:
   }
 LAB_0043f6d4:
   if (((!bVar2) || (iVar8 = FUN_0042aeb0(), iVar8 == 0)) || (DAT_0067f19c != 0)) goto LAB_0043fc9a;
+  uS0 = DAT_007f0f44;
+  uS1 = DAT_007f0f48;
+  uS2 = DAT_007f0f4c;
+  uS3 = DAT_007f0f50;
   iVar8 = *(int *)(&DAT_0067ed3c + DAT_0067e9f8 * 0x40);
   _DAT_0067e840 = 1.0;
   DAT_0067f1a0 = 1;
   if (iVar8 == 0x1f) {
-    DAT_007f0f30 = DAT_007f0f44;
-    DAT_007f0f34 = DAT_007f0f48;
-    DAT_007f0f38 = DAT_007f0f4c;
-    DAT_007f0f3c = DAT_007f0f50;
+    DAT_007f0f30 = uS0;
+    DAT_007f0f34 = uS1;
+    DAT_007f0f38 = uS2;
+    DAT_007f0f3c = uS3;
   }
   if (iVar8 == 0x21) {
-    DAT_007f0f30 = DAT_007f0f44;
-    DAT_007f0f34 = DAT_007f0f48;
-    DAT_007f0f38 = DAT_007f0f4c;
-    DAT_007f0f3c = DAT_007f0f50;
+    DAT_007f0f30 = uS0;
+    DAT_007f0f34 = uS1;
+    DAT_007f0f38 = uS2;
+    DAT_007f0f3c = uS3;
   }
   switch((&DAT_0067ed7c)[(DAT_0067e9f8 + -2) * 0x10]) {
+  case 4:
+    iVar8 = FUN_00430760();
+    if (iVar8 == 0) {
+      FUN_0042b950();
+    }
+    goto switchD_0043f78b_caseD_6;
+  case 0xf:
+    DAT_0067f1a8 = 0;
+    break;
+  case 2:
+    DAT_0067ea74 = 1;
+    if (DAT_0067ecb0 != 2) goto switchD_0043f78b_caseD_6;
+    DAT_0067ecb4 = 0;
+    break;
+  case 8:
+    if (*(int *)(&DAT_0067ed3c + DAT_0067e9f8 * 0x40) == 0x1a) {
+      DAT_007f0eec = DAT_007f0ef4;
+      DAT_007f0ef0 = DAT_007f0ef8;
+    }
+    if (*(int *)(&DAT_0067ed3c + DAT_0067e9f8 * 0x40) == 0x13) {
+      DAT_007f0f00 = DAT_007f0f14;
+      DAT_007f0f10 = DAT_007f0f24;
+      DAT_007f0f0c = DAT_007f0f20;
+      DAT_007f0f08 = DAT_007f0f1c;
+      DAT_007f0f04 = DAT_007f0f18;
+    }
+    if (*(int *)(&DAT_0067ed3c + DAT_0067e9f8 * 0x40) == 0x20) {
+      FUN_0040ad30(DAT_008990d8);
+    }
+    if (*(int *)(&DAT_0067ed3c + DAT_0067e9f8 * 0x40) == 0x1c) {
+      puVar15 = &DAT_007f105c;
+      puVar12 = &DAT_00899160;
+      do {
+        *puVar15 = *puVar12;
+        puVar12 = puVar12 + 1;
+        puVar15 = puVar15 + 0x13;
+      } while ((int)puVar12 < 0x899190);
+    }
+    if (DAT_0067ecb0 == 0x20) {
+      DAT_0067ecb4 = 0;
+    }
+    else {
+      if (DAT_0067ecb0 != 0x22) goto switchD_0043f78b_caseD_6;
+      DAT_0067ecb4 = 0;
+    }
+    break;
+  case 3:
+  case 9:
+    if (DAT_0067ecb0 == 9) {
+      DAT_0067ecb4 = 0;
+    }
+    else if (DAT_0067ecb0 == 2) {
+      DAT_0067ecb4 = 0;
+    }
+    else {
+      if (DAT_0067ecb0 != 0x1c) goto switchD_0043f78b_caseD_6;
+      DAT_0067ecb4 = 0;
+    }
+    break;
+  case 0x15:
+    if (iVar8 != 8) {
+      DAT_0067edb8 = PTR_DAT_005f763c;
+      DAT_0067edbc = 1;
+      _DAT_0067edf4 = 5;
+      DAT_0067edc0 = 0;
+      goto LAB_0043fea7;
+    }
+    goto switchD_0043f78b_caseD_6;
   case 0:
   case 5:
     if (iVar8 == 8) goto switchD_0043f78b_caseD_6;
@@ -1536,74 +1612,6 @@ LAB_0043fea7:
   default:
 switchD_0043f78b_caseD_6:
     break;
-  case 2:
-    DAT_0067ea74 = 1;
-    if (DAT_0067ecb0 != 2) goto switchD_0043f78b_caseD_6;
-    DAT_0067ecb4 = 0;
-    break;
-  case 3:
-  case 9:
-    if (DAT_0067ecb0 == 9) {
-      DAT_0067ecb4 = 0;
-    }
-    else if (DAT_0067ecb0 == 2) {
-      DAT_0067ecb4 = 0;
-    }
-    else {
-      if (DAT_0067ecb0 != 0x1c) goto switchD_0043f78b_caseD_6;
-      DAT_0067ecb4 = 0;
-    }
-    break;
-  case 4:
-    iVar8 = FUN_00430760();
-    if (iVar8 == 0) {
-      FUN_0042b950();
-    }
-    goto switchD_0043f78b_caseD_6;
-  case 8:
-    if (iVar8 == 0x1a) {
-      DAT_007f0eec = DAT_007f0ef4;
-      DAT_007f0ef0 = DAT_007f0ef8;
-    }
-    if (iVar8 == 0x13) {
-      DAT_007f0f00 = DAT_007f0f14;
-      DAT_007f0f10 = DAT_007f0f24;
-      DAT_007f0f0c = DAT_007f0f20;
-      DAT_007f0f08 = DAT_007f0f1c;
-      DAT_007f0f04 = DAT_007f0f18;
-    }
-    if (iVar8 == 0x20) {
-      FUN_0040ad30(DAT_008990d8);
-    }
-    if (*(int *)(&DAT_0067ed3c + DAT_0067e9f8 * 0x40) == 0x1c) {
-      puVar15 = &DAT_007f105c;
-      puVar12 = &DAT_00899160;
-      do {
-        *puVar15 = *puVar12;
-        puVar12 = puVar12 + 1;
-        puVar15 = puVar15 + 0x13;
-      } while ((int)puVar12 < 0x899190);
-    }
-    if (DAT_0067ecb0 == 0x20) {
-      DAT_0067ecb4 = 0;
-    }
-    else {
-      if (DAT_0067ecb0 != 0x22) goto switchD_0043f78b_caseD_6;
-      DAT_0067ecb4 = 0;
-    }
-    break;
-  case 0xf:
-    DAT_0067f1a8 = 0;
-    break;
-  case 0x15:
-    if (iVar8 != 8) {
-      DAT_0067edb8 = PTR_DAT_005f763c;
-      DAT_0067edbc = 1;
-      _DAT_0067edf4 = 5;
-      DAT_0067edc0 = 0;
-      goto LAB_0043fea7;
-    }
-    goto switchD_0043f78b_caseD_6;
   }
   FUN_0043d2a0(0,1);
 LAB_0043fc9a:
