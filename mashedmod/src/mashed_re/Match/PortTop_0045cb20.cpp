@@ -7,7 +7,7 @@
 #define MATCH_PORT 1
 #define FUN_0045cb20 PortTop_Bound_0045cb20
 #define FUN_0045c640 PortTop_Bound_0045c640   // exe body (Match/PortTop_0045c6b0.cpp)
-#define FUN_0045caf0 PortTop_AStop_0045caf0   // named stop
+#define FUN_0045caf0 PortTop_Bound_0045caf0
 #define FUN_0045c4e0 PortTop_Local_0045cb20_0045c4e0   // file-local in this source
 #define FUN_0045c510 PortTop_Local_0045cb20_0045c510   // file-local in this source
 #define FUN_0045c550 PortTop_Local_0045cb20_0045c550   // file-local in this source

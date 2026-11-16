@@ -1,0 +1,50 @@
+0x005ad770 _FUN_005ad770: 69.9% (regs 84.1%, ops 94.7%)  113/112 ins  flags=/O2 /Ob1 /G5 tc=ddk
+   ! mov dword ptr [ebx + 0x10], ebp              | mov eax, dword ptr [esp + 0x1c]
+   ! je 0x8b                                      | mov dword ptr [ebx + 0x10], ebp
+   !                                              | je 0x5ad7f7
+   ! mov esi, dword ptr [esp + 0x1c]              | 
+   ! cmp esi, ebp                                 | cmp eax, ebp
+   ! je 0x7e                                      | je 0x5ad7ea
+   ! je 0xdd                                      | je 0x5ad83b
+   ! mov eax, dword ptr [esp + 0x18]              | push esi
+   ! push eax                                     | 
+   ! jmp 0xdd                                     | jmp 0x5ad83b
+   ! jmp 0xf2                                     | jmp 0x5ad85e
+   ! mov edi, dword ptr [esp + 0x1c]              | cmp eax, ebp
+   ! cmp edi, ebp                                 | je 0x5ad814
+   ! je 0xac                                      | 
+   ! jne 0xac                                     | jne 0x5ad814
+   ! je 0xd7                                      | je 0x5ad83b
+   ! mov eax, dword ptr [esp + 0x18]              | push esi
+   ! push eax                                     | 
+   ! jne 0xd7                                     | jne 0x5ad83b
+   ! test edi, edi                                | mov eax, dword ptr [esp + 0x1c]
+   ! je 0xf2                                      | test eax, eax
+   ! mov esi, edi                                 | je 0x5ad85e
+   !                                              | mov esi, eax
+   !                                              | mov eax, ecx
+   !                                              | shr ecx, 2
+   !                                              | rep movsd dword ptr es:[edi], dword ptr [esi]
+   !                                              | mov ecx, eax
+   !                                              | and ecx, 3
+   !                                              | rep movsb byte ptr es:[edi], byte ptr [esi]
+   !                                              | mov esi, dword ptr [esp + 0x18]
+   !                                              | test ebp, ebp
+   !                                              | je 0x5ad87d
+   !                                              | mov ecx, dword ptr [esp + 0x10]
+   !                                              | mov edi, dword ptr [ebx + 0x10]
+   !                                              | mov esi, ebp
+   ! test ebp, ebp                                | mov esi, dword ptr [esp + 0x18]
+   ! je 0x10d                                     | 
+   ! mov ecx, dword ptr [esp + 0x10]              | 
+   ! mov edi, dword ptr [ebx + 0x10]              | 
+   ! mov eax, ecx                                 | 
+   ! mov esi, ebp                                 | 
+   ! shr ecx, 2                                   | 
+   ! rep movsd dword ptr es:[edi], dword ptr [esi] | 
+   ! mov ecx, eax                                 | 
+   ! and ecx, 3                                   | 
+   ! rep movsb byte ptr es:[edi], byte ptr [esi]  | 
+   !                                              | mov dword ptr [ebx + 0x14], esi
+   ! mov ecx, dword ptr [esp + 0x24]              | 
+   ! mov dword ptr [ebx + 0x14], ecx              | 

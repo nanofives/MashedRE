@@ -1,0 +1,4 @@
+[1/1] 0x005ad770 match PASS byte-identical 307 B, relocheck OK (12/0)
+batch: 1 pass, 0 refused, 0 skipped (already C4), 1 rows  [by route: match=1]
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-15  0x005ad770  FUN_005ad770  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005ad770.c; evidence: <RESULT>

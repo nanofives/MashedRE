@@ -8,6 +8,6 @@
 #define MATCH_PORT 1
 #define FUN_004cd060 PortTop_Bound_004cd060
 extern "C" {
-#include "../../../../re/match/s30/004cd060.c"
+#include "../../../../re/match/s20/004cd060.c"
 }
 #endif // MASHED_STANDALONE
