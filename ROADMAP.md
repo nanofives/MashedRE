@@ -190,8 +190,41 @@ L-124 supersedes `PORT-BIND-RWCORE-2`, `PORT-OT-BIND-41DEF0` and `PORT-OT-SCREEN
 lead re-reads `RASTER-555FF0`, `PORT-UNBLOCK-RWGLOBALS` and the HUDINIT chain against the RW core before staffing
 them: what they bind on librw objects, the RW core provides itself.
 
-**Exit:** no stand-in on the menu path; the menus render through the RW core; the nav walk matches the original's
-draw lists under the parity harness (`re/analysis/parity_tooling.md`), or every remaining row is cited.
+**Named exception (L-168, Mariano 2026-11-16, `log/orch/DECISIONS.md`; run policy item 4 in
+`.claude/skills/roadmap-loop/SKILL.md`).** The hand stand-in for `0x0043dfd0` (the RWC-FRAME-CLUMP phase-ladder stand-in
+on the RW core frame route) is allowed in T1 while `MATCH-43DFD0-RAISE` raises `re/match/s08/0043dfd0.c` (10,938 B, 19.2%
+at `PORT-TOP-BODY-43DFD0`, ledger note 2026-11-15) toward a byte match. There is no runtime debugging of that body until
+the source is much higher: `PORT-TOP-BODY-43DFD0-AV` and `NAVDEMO-KNOBPATH-FADE` are parked. The exit below therefore
+counts `0x0043dfd0` as the one permitted stand-in on the menu path.
+
+**T1 checklist (2026-11-16, ranked top to bottom; ids are ledger rows, `roadmap.ps1 get <id>`).** Sources: the Rows list
+above, the ledger notes, `re/orchestrator/UNCERTAIN_REGISTER.md`. Full detail with citations:
+`verify/t1_20261116/RESULT_ROADMAP-T1-STANDIN.md`.
+
+| # | Item | Row id | Ledger stage |
+|---|---|---|---|
+| 1 | **Top item that is not `0x0043dfd0` runtime work:** font read chain 3 (`0x00427880` to `0x00554390` and the rest of the chain, stand-ins `0x004d8480` and `0x00553e80`); acceptance `0x00555830` gets a non-zero `DAT_0067d838` | `HUDINIT-C` | open, not staffed |
+| 2 | Strict draw parity on the core frame route: 42 of 82 menu draws match only under `--tol-anim 8`; align the jitter counter, target 80/82 then 82/82 strict | `RWC-FRAME-JITTER-STRICT` | open |
+| 3 | Check the phase-ladder stand-in against the original (original-side write watch of `0x0067eca4` / `0x0067eca8`), the evidence the L-168 exception rests on | `RWC-FRAME-LADDER-CHECK` | open |
+| 4 | First live `+0x60` consumer `0x00555ff0` on the RW core, image function `0x004cdd60` (C2 79.2%), U-9803 depth | `RASTER-555FF0` | open |
+| 5 | Swap `0x00403160`, FastSqrt, Vec2Length now that the core fills `0x007d3ff8` (default-OFF knob + PREREG) | `PORT-UNBLOCK-RWGLOBALS` | open |
+| 6 | Remove the 10 null-guards on routed RW Destroy bindings | `RWC-NULL-DESTROY-GUARD` | open |
+| 7 | Name the destroyer of `Bomb.dff` (1 clump alive at `RwEngineStop`) | `RWC-FRAME-BOMB-DESTROY` | open |
+| 8 | Ledger stage of the core bring-up vs the merged `RWC-FRAME-*` rows | `RWC-CORE-RUN` | blocked (note ends at run 38) |
+| 9 | 21 DirectShow renderer methods behind `0x00494c80`; re-pick when the movie path is needed | `BIND-D3D-REST` | blocked (Mariano 2026-11-12, option c) |
+| 10 | `0x0043dfd0` body: raise the match, then the knob-ON boot and the nav walk | `MATCH-43DFD0-RAISE` (working), `PORT-TOP-BODY-43DFD0` (handoff), `PORT-TOP-BODY-43DFD0-AV`, `NAVDEMO-KNOBPATH`, `NAVDEMO-KNOBPATH-FADE` (blocked by L-168) | per row |
+
+Parked in `UNCERTAIN_REGISTER.md`, promoted only if they block T1: `RWC-IMGREAD-DEPTH`, `RWC-FRAME-CROSSFADE-PHASE`,
+`RWC-FRAME-MOVIE-TEARDOWN`. Superseded by L-124, not staffed: `PORT-BIND-RWCORE-2`, `PORT-OT-BIND-41DEF0`,
+`PORT-OT-SCREENSHOT`. Merged and done: `HUDINIT-A`, `HUDINIT-B`, `NEARMATCH-555360`, `PORT-TOP-08`, `PORT-TOP-04K`,
+`PORT-OT-SEED-CODEPTR`, `BIND-CRT-STDIO`, `BIND-CRT-STRING`, `MATCH-RT2D-FONT`, `RWC-DEVICE`, `RWC-DRIVER`, `RWC-CENSUS`,
+`RWC-MATCH` (ledger stage `merged`; whether `PORT-TOP-08` closed the phase 3 to 4 write is [UNCERTAIN], register line
+`T1-PORTTOP08-PHASE34`). The current stand-in count on the menu path (59 + 32 in `BINDINGS.tsv` at v5) is [UNCERTAIN],
+register line `T1-STANDIN-COUNT`.
+
+**Exit:** no stand-in on the menu path except the `0x0043dfd0` exception above; the menus render through the RW core; the
+nav walk matches the original's draw lists under the parity harness (`re/analysis/parity_tooling.md`), or every
+remaining row is cited.
 
 ### T2, the first race, compared tick by tick
 
