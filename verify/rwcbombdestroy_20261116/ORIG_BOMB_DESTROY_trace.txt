@@ -1,0 +1,12 @@
+spawned pid 20036
+MSG {'k': 'hooked'}
+MSG {'k': 'bombload', 'bomb': 'f0e93d0'}
+WM_CLOSE to 1 window(s)
+MSG {'k': 'enter', 'n': 'AppDestroy_00402a40', 'ra': '0x4923f0', 'bomb': 'f0e93d0'}
+MSG {'k': 'enter', 'n': 'FUN_0045b930', 'ra': '0x402ad7', 'bomb': 'f0e93d0'}
+MSG {'k': 'enter', 'n': 'FUN_00404820', 'ra': '0x45b94a', 'bomb': 'f0e93d0'}
+MSG {'k': 'destroy_bomb', 'clump': 'f0e93d0', 'ra': '0x40482b'}
+MSG {'k': 'leave', 'n': 'FUN_00404820', 'bomb': 'f0e93d0'}
+MSG {'k': 'leave', 'n': 'FUN_0045b930', 'bomb': 'f0e93d0'}
+MSG {'k': 'leave', 'n': 'AppDestroy_00402a40', 'bomb': 'f0e93d0'}
+exited rc 0
