@@ -1,0 +1,17 @@
+{
+  "name": "replay-oracle reference race ref1 (RO-REF-NAME, run 51, 2026-11-16)",
+  "dir_ref": "D:/MashedWT/RO-REF-NAME_data/ref1",
+  "use": "py -3.12 re/frida/detorig_firstdiv.py D:/MashedWT/RO-REF-NAME_data/ref1 <exe arm dir> --masks re/frida/warp_normalize.tsv,re/frida/replay_masks.tsv --ignore 0x00614400-0x00614800,0x00771800-0x00771c00",
+  "control": "ref2 (same recipe, fresh launch): IDENTICAL-FOR-N 600 of 600, N aligned (refname_pair_ref1_ref2.txt)",
+  "harness_commit": "bf833a5621a3dc454aa6159677500b536c80f9a4 (orch/RO-REF-FIXED-LOAD, re/frida/detorig.py + js/detorig.js unchanged by this row)",
+  "root": "D:\MashedWT\RO-REF-FIXED-LOAD_root (MASHED_ROOT)",
+  "exe_sha256": {
+    "original/MASHED.exe": "b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87",
+    "original/MASHED.exe.unpatched": "bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e",
+    "original/gamesave.bin": "bd18788182b2343e5203eb983fddd8bd947a5f3385e9fcaa46a152a9ec002a70"
+  },
+  "argv": "py -3.12 re/frida/detorig.py --label ref1 --out D:/MashedWT/RO-REF-NAME_data/ref1 --clock tick --boot --q0 0x40000000 --tick-raw 0x00603400-0x00603800,0x00614400-0x00614800,0x00618000-0x00618400,0x006dcc00-0x006dd400,0x00773800-0x00773c00,0x007dd000-0x007dd400,0x007f0c00-0x007f1400 --timeout 600 --tick-cap 600 --warp-tick 300 --warp-clock 300 --normalize re/frida/warp_normalize.tsv --load-sleep-ms 0 --boot-sleep-ms 0 --call-log-boot --call-log --read-wait --read-wait-rtfs --ckpt-ticks 0,1,17,18,299,301,600",
+  "driver": "py -3.12 verify/ro_20261116/refname_arms.py ref1 ref2 (under test-slot, mashed_lock label RO-REF-NAME)",
+  "checks": {"ref1": {"race.dn_warp": 108, "bootlen.qpc": 222}, "ref2": {"race.dn_warp": 108, "bootlen.qpc": 222}},
+  "raw_sha256": "verify/ro_20261116/raw_sha256_RO-REF-NAME.txt"
+}

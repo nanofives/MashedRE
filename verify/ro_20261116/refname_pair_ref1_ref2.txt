@@ -1,0 +1,9 @@
+D:/MashedWT/RO-REF-NAME_data/ref1 vs D:/MashedWT/RO-REF-NAME_data/ref2: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 8  NEW blocks: 1  N misaligned at: None
+  IDENTICAL-FOR-N = 600 of 600  (every tick: no NEW block)  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 9]]
+    NEW 0x771800 from tick 9  (other page 0x00771000)
+  mask raw: 0x614400 dropped at the ticks where only ['0x6147d8'] differ
+  raw/hash disagreement in 0x614400 at ticks [21, 33, 36, 45, 157, 159, 161, 163, 165, 167, 169, 173, 175, 177, 179, 183, 185, 187, 191, 193] dropped: the block's only differing dwords are MASK ['0x6147d8']
+  dump route checkpoint ticks (both runs, re-hash OK): [1, 17, 299, 301, 600]
+  raw words: 2304, differing (non-PTR) at some tick: 1
+    RAW 0x6147d8 first differs at tick 9: 00000000 vs 00000001
