@@ -48,10 +48,13 @@ def site(va):
     return f"0x{va:08x}" + (f" (FUN_{f:08x})" if f else "")
 
 
+SEG = "calllog"   # --boot: calllog_boot (RO-CTL-WARP-N, install to the first tick)
+
+
 def load(d):
     meta = json.loads((Path(d) / "meta.json").read_text())
-    rec = meta.get("calllog", {}).get("rec", 64)
-    b = (Path(d) / "calllog.bin").read_bytes()
+    rec = meta.get(SEG, {}).get("rec", 64)
+    b = (Path(d) / (SEG + ".bin")).read_bytes()
     out = []
     for o in range(0, len(b) - rec + 1, rec):
         w = struct.unpack_from("<16I", b, o)
@@ -99,7 +102,10 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("dirs", nargs="*")
     ap.add_argument("--diff", nargs=2)
+    ap.add_argument("--boot", action="store_true", help="read calllog_boot.bin (detorig.py --call-log-boot)")
     a = ap.parse_args()
+    if a.boot:
+        SEG = "calllog_boot"
     if a.diff:
         diff(*a.diff)
     for d in a.dirs:
