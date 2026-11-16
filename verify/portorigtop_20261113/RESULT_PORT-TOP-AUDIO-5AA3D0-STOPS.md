@@ -1,6 +1,6 @@
 # RESULT PORT-TOP-AUDIO-5AA3D0-STOPS: the init-arm stops from 0x005AA3D0 on
 
-## Verdict: in progress (checkpoint 1 done; both builds now stop at 0x005A6340)
+## Verdict: in progress (checkpoints 1-2 done; both builds now stop at 0x005AEE20)
 
 Base: orch/integration @ 810042e0e. Branch orch/PORT-TOP-AUDIO-5AA3D0-STOPS. Top-down row: both builds, ddkobj check,
 knob boot (init arms), self-tests. Gates: not run (top-down row). No menu walk: no menu code changed.
@@ -13,6 +13,7 @@ equiv.py = the merged copy (tool commit 1ed7ceb1a, no diff on this branch).
 | 1 | 0x005aa3d0 | **admitted** (L-126): source reshaped 86.0% -> 93.0%, `EQUIV-IF-CALLERS-IGNORE(ECX)`, callers 2/2 ignore; bound | 1 |
 | 2 | 0x005aa330 | **provisional** (54.7%, NOT-PROVEN call-args at 0x005aa350, masked-high-bits tool limit); bound with 0x005aa3d0 (0x005a9c50's other named stop) | 1 |
 | 3 | 0x005b36b0 | **byte match**: source rewritten from the listing, BYTE-IDENTICAL 57 B, relocheck OK; promotion row; bound (0x005aa3d0's callee) | 1 |
+| 4 | 0x005a6340 | **admitted**: plain `EQUIV` on the merged tool (82.4%); bound. Plus the census bulk bind (21 C4 rows), the 0x00632c2c entries, 0x005aad50 (byte match) and 0x005a8ea0 / 0x005ad420 (provisional) with the code-pointer slots regenerated | 2 |
 
 ## 1. Checkpoint 1: 0x005aa3d0 (admitted), 0x005aa330 (provisional), 0x005b36b0 (match)
 
@@ -84,12 +85,96 @@ equiv.py = the merged copy (tool commit 1ed7ceb1a, no diff on this branch).
     code-trap self-test pages 459/459 and read / write / execute ok.
 
 ### 1.6 Fresh base check
-(filled in below once run)
+This worktree detached at the base 810042e0e, object build (Build OK), `ddkobj.py check`: IDENTICAL 1572/1612,
+DIFFERENT 24, not-in-map 16, units linked 1562/1779, refusals 11, provisional kept VS2022 206 units + 5 fns. The 24
+are the same list as checkpoint 1's minus 0x005aa3d0. So checkpoint 1's only newly DIFFERENT unit is 0x005aa3d0, the
+admitted 93.0% body linked for the first time (classified in 1.1). Raw: `ddkcheck_base.log`, `bytecheck_base.tsv`,
+`build_base_ddk.log`.
+
+## 2. Checkpoint 2: 0x005a6340 (admitted), the census bulk bind, the 0x00632c28 / 0x00632c2c / 0x00632c38 tables
+
+### 2.1 0x005a6340
+- Source unchanged (`re/match/s25/005a6340.c`, 82.4%, 164/170 ins, residual named in its header). On the merged tool
+  equiv.py gives plain `EQUIV [LAYOUT,VALUE-FLOW]`. equiv_dyn.py: default `SAME same=32 inc=0 diff=0`, seeded
+  `SAME same=32 inc=0 diff=0`. ADMITTED.tsv row (source commit c9ff1a67c, tool commit 1ed7ceb1a). Not C4.
+
+### 2.2 The census bulk bind
+- Census `verify/census_20261116/audio_window_65.tsv` (orch/T2-RACEPATH-CENSUS @ bbbe54319, read with git show; copy and
+  the c2e0db02d version with first-call order in the data folder): 29 rows `C4-unbound`. They were added to the roots
+  (`verify/portorigtop_20261113/audio_5aa3d0/roots.txt`, 67 roots = the 39 base roots + 28; 0x005aef30 left out, below).
+- Bound by match (hooks.csv c4=match source): 0x005aae90 0x005aaef0 0x005aaf50 0x005ac7b0 0x005ac7e0 0x005aca40
+  0x005ad6a0 0x005adbe0 0x005aea50 0x005b34f0 0x005b73e0 0x005ba720 0x005bbbb0 0x005bbed0 0x005bbf30 0x005bc800
+  0x005bc860 0x005be0f0 0x005c7990 0x005c9680 0x005c96e0, plus their match callees 0x005a6670 and 0x005aadc0.
+  Already bodies (reuse): 0x005aef00, 0x005bc450, 0x005bf660. Stops (no exe body): 0x004a8815 / 0x005c2dd9 /
+  0x005c2e79 (CRT, C4 by libid, no source to bind).
+- **Left out, two rows:**
+  - 0x005aef30 calls `__beginthread` (0x005c2e79): it has no exe body, the VS2022 link failed (LNK2019
+    `___beginthread` in `_PortTop_Bound_005aef30`), and binding it would start the second thread from the exe. Left a
+    stop; it is census order 42, after the init stops. [UNCERTAIN] line PORT-TOP-AUDIO-5AA3D0-STOPS (a).
+  - 0x005bf610 calls 0x005bf670, which its source declares `__stdcall` (`re/match/s28/005bf610.c` line 28) and which has
+    no body; the generated cdecl stop thunk does not link (LNK2019 `_PortTop_AStop_005bf670@4`). Generator
+    `STOP_FORCE |= {'005bf610'}`, so 0x005be0f0 calls the 0x005bf610 stop thunk.
+- In the object build 12 of the bulk bodies are `not-in-map` (0x005ad6a0 0x005b73e0 0x005ba720 0x005bbbb0 0x005bbed0
+  0x005bbf30 0x005bc800 0x005bc860 0x005be0f0 0x005c7990 0x005c9680 0x005c96e0): roots no bound body calls yet, so the
+  linker keeps no code for them. Every bulk body in the map is IDENTICAL.
+
+### 2.3 The three tables 0x005a6110 walks
+- 0x005a6110 calls 0x005ad080 with (0x00632c2c, 3), then (0x00632c28, eax = 1) and (0x00632c38, eax = 1)
+  (`push 3` / `push 0x632c2c` 0x005a6110 / 0x005a6112; `push eax` / `push 0x632c28` 0x005a6124 / 0x005a6125; `push eax` /
+  `push 0x632c38` 0x005a6137 / 0x005a6138). 0x005ad080 returns 0 when an entry returns 0
+  (`re/match/*/005ad080.c`: `if (param_1[i]() == 0) return 0;`).
+- **0x005aad50** (entry 0x00632c38): no Ghidra function. pc_funcs.csv row (72 B, `ret` at 0x005aad97, then `nop` pad),
+  hooks.csv C1 row through `c1_add.py`. Source from the headless decompile: `match.py --bytes` 100.0% 22/22 ins, 72 B
+  BYTE-IDENTICAL, relocheck OK checked=8; promotion row (dry run `[2/2] 0x005aad50 match PASS byte-identical 72 B,
+  relocheck OK (8/0)`). It stores 0x005aadc0 (bound, C4 match) and 0x005aae10 / 0x005aae30 / 0x005aae60 (no source;
+  the stored values are their stop thunks) at +0xc..+0x18.
+- **0x005a8ea0** (entry 0x00632c28): no Ghidra function. pc_funcs.csv row (137 B, `ret` at 0x005a8f28), hooks.csv C1
+  row. Best 77.6% (41/49 ins): the DDK cross-jumps the two failure tails the original keeps apart (0x005a8eee and
+  0x005a8f04: `push esi` / `call 0x005a9d00` / `xor eax,eax` / `pop esi` / `ret`); nested-if and return-variable
+  spellings gave 65.3% / 77.6%. equiv.py `EQUIV-IF-CALLERS-IGNORE(EAX) [LAYOUT] callers 0`: the one caller is indirect
+  (0x005ad080 through 0x00632c28) and it reads EAX. A conditional verdict with a reading caller is not an admission
+  (L-126): PROVISIONAL.tsv row + decision row (section Decision). Bound. Not C4.
+- **0x005ad420** (callee of the three 0x00632c2c entries): guard spelling from bc5fd77ae, 74.5%; equiv.py `NOT-PROVEN
+  call-regargs` ecx at the 0x005aea00 call 0x005ad4e5 (ours the ecx after the 0x004522d0 call, orig param_5), the
+  register line PORT-TOP-AUDIOSTOP-5A61B0 (b). PROVISIONAL.tsv row, bound. Not C4.
+- `codeptr_inventory.py --write`: the five slots 0x00632c28..0x00632c38 now resolve to `PortTop_Bound_005a8ea0` /
+  `_005aaf50` / `_005aaef0` / `_005aae90` / `_005aad50` (16 slots bound, was 11). `CODEPTR_SLOTS.tsv` and
+  `Compat/PortTopCodePtr.inc` regenerated; no other slot changed.
+
+### 2.4 Binding
+- `audiotick_bind_gen.py`: `PROV_BIND |= {'005ad420', '005a8ea0'}`, `STOP_FORCE |= {'005bf610'}`; roots as in 2.2.
+- Plan: 303 bind (261 match, 18 admitted, 16 provisional, 8 replay), 67 reuse, 45 stops.
+- Wrappers changed: `PortTop_005a62b0.cpp` (0x005a6340 bound), `PortTop_005aeb30.cpp`, `PortTop_AudioStops.cpp`. New
+  TUs: 27 (`PortTop_005a6340`, `_005a6670`, `_005a8ea0`, `_005aad50`, `_005aadc0`, `_005ad420` and the 21 bulk bodies of
+  2.2). newfiles.txt +27, rsp +27, allowlist +1, BINDINGS.tsv updated 44.
+
+### 2.5 Builds, check, arms
+- VS2022: Build OK, rva-lint 328 known, NEW 0. Object build: Build OK.
+- `ddkobj.py check`: IDENTICAL 1585/1639, DIFFERENT 26, not-in-map 28, units linked 1589/1809, refusals 11,
+  provisional kept VS2022 209 units + 5 fns. DIFFERENT = checkpoint 1's 25 + **0x005a6340** (the admitted 82.4% body,
+  linked for the first time). not-in-map +12 = the 2.2 list. All other new units IDENTICAL (bytecheck2.tsv against
+  bytecheck1.tsv). The base list is section 1.6; nothing else moved.
+- Arms:
+
+  | arm | build | stop | return address | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005AEE20** after 3.2 s | 0x0023D722 = `_PortTop_Bound_005a6340+0x22` (`mashed_re.map`, symbol at 0x0023d700) | aeec857d9084d467 |
+  | ddk_init_audio | object | **0x005AEE20** after 3.0 s | 0x0004A580 = `_PortTop_Bound_005a6340+0x20` (`mashed_re_ddk.map`, symbol at 0x0004a560) | 6e2e9dc8429b6078 |
+
+  - 0x005a6340's source calls 0x005aee20 through its bit-scan macro (`#define SH_005a6340 (1 << FUN_005aee20(0x28))`,
+    `re/match/s25/005a6340.c` line 38). 0x005aee20 is census order 4 (hooks.csv C3, hand body `Audio/AudioMemory.cpp`).
+  - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed (188 slots, 16 bound),
+    code-trap 0 of 6 failed (pages 459/459).
 
 ## Next (not done yet)
-- 0x005a6340 (both builds), then the census window (`verify/census_20261116/audio_window_65.tsv` @ bbbe54319).
-- 0x005ad420 (74.5%, guard spelling landed in bc5fd77ae, NOT-PROVEN call-regargs ecx at 0x005ad4e5): provisional when
-  the arms reach the 0x00632c2c entries.
+- 0x005aee20 (both builds), then the census window in first-call order (c2e0db02d version), the three second-thread
+  rows (0x005c2dd9, 0x005aef70, 0x005a84d0) and 0x005aef30 last.
+
+## Decision
+- 0x005a8ea0: `EQUIV-IF-CALLERS-IGNORE(EAX)`, the one caller (0x005ad080, indirect through 0x00632c28) reads EAX. Listed
+  provisional, not admitted (L-126). Decision row to file with `roadmap.ps1 decision` at the end of the row: keep it
+  provisional (recommended: every return path gives 0 or the object, the gap is the merged failure tails) or require a
+  shape that keeps the tails apart.
 
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIO-5AA3D0-STOPS ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIO-5AA3D0-STOPS_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIO-5AA3D0-STOPS -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`

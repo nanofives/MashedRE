@@ -31,6 +31,8 @@ PROV_BIND |= {'005a61b0', '005b35a0', '005ae800'}   # PORT-TOP-AUDIOSTOP-5A61B0:
 PROV_BIND |= {'005a9ab0'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: 0x005a9970's stop (67.9%, EQUIV-IF-CALLERS-IGNORE(ECX), callers read; PROVISIONAL.tsv)
 PROV_BIND |= {'005aa560'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: table entry 7 0x005aa480's stop (79.8%, NOT-PROVEN call-args at 0x005aa593, tool limit: 0x005aad40 takes no args; PROVISIONAL.tsv)
 PROV_BIND |= {'005aa330'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: 0x005a9c50's other stop (54.7%, NOT-PROVEN call-args at 0x005aa350, masked-high-bits tool limit; PROVISIONAL.tsv)
+PROV_BIND |= {'005ad420'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: shared callee of the 0x00632c2c entries (74.5%, NOT-PROVEN call-regargs ecx at 0x005ad4e5, register line PORT-TOP-AUDIOSTOP-5A61B0 (b); PROVISIONAL.tsv)
+PROV_BIND |= {'005a8ea0'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: table 0x00632c28 entry (77.6%, EQUIV-IF-CALLERS-IGNORE(EAX), caller 0x005ad080 reads; PROVISIONAL.tsv + decision row)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
 PEND = {}
@@ -127,6 +129,7 @@ INIT_ROOT = '004627f0'
 # The copy sits under #ifndef MATCH_PORT_SHARED_0045c4e0 (DDK object unchanged, match.py --bytes BYTE-IDENTICAL), so the
 # port defines that macro and binds the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
 STOP_FORCE = set()
+STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
 LOCAL_SHARED = {("0045cbe0", "0045c4e0"): "PortTop_Local_0045cb20_0045c4e0"}
 EXTRA_PRE["0045cbe0"] = ["#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp"]
 # re/match/s10/0045c6b0.c carries 0x0045c640 (cast-only text difference from re/match/s10/0045c640.c): that copy is the exe body.
