@@ -742,14 +742,14 @@ function provReport(stage) {
 // listener per snap RVA; it copies once and then only returns.
 function provSnapInstall() {
   if (!PV || !PROV || !PROV.snap || !PROV.snap.length) return;
-  PV.snaps = {};
+  PV.snaps = {}; PV.snapSeq = 0;   // seq = order of the first calls across the snap RVAs
   for (const s of PROV.snap) {
     const key = s.rva + ':' + s.at;
     let done = false, L = null;
     const take = () => {
       if (done) return; done = true;
       if (L) { const l = L; setTimeout(() => l.detach(), 0); }   // no JS on later calls of this RVA (any thread)
-      PV.snaps[key] = { n: N(), tick: TK ? tickNow() : null, tid: Process.getCurrentThreadId(),
+      PV.snaps[key] = { seq: PV.snapSeq++, n: N(), tick: TK ? tickNow() : null, tid: Process.getCurrentThreadId(),
                         counts: Array.from(new Uint32Array(PV.cnt.readByteArray(PV.names.length * 4))) };
     };
     const cb = s.at === 'leave' ? { onLeave() { take(); } } : { onEnter() { take(); } };
@@ -791,7 +791,9 @@ function crCtx(c) {
 function crashArm() {
   if (!CFG.crash) return null;
   CR_HANDLER = (d) => {
-    if (d.type === 'system' && CFG.crash.system && CR_SYS++ < 16) {   // T2-RACEPATH-CENSUS: --crash-system logs these too (logging only)
+    let dbgPrint = false;   // OutputDebugString raises 0x40010006 through RaiseException: its code is the first stack dword
+    try { dbgPrint = d.type === 'system' && d.context.esp.readU32() === 0x40010006; } catch (e) { }
+    if (d.type === 'system' && CFG.crash.system && !dbgPrint && CR_SYS++ < 16) {   // T2-RACEPATH-CENSUS: --crash-system logs these too (logging only)
       try { crWrite(Object.assign({ what: 'system', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, nativeCode: d.nativeContext ? '' + d.nativeContext : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'system-err', msg: '' + e }); }
     }
     if (d.type === 'breakpoint' || d.type === 'single-step' || d.type === 'system') return false;

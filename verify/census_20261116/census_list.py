@@ -2,7 +2,8 @@
 # (detorig.js provInstall, Interceptor + CModule) unless Interceptor's patch would break the code:
 #   - the instructions Interceptor relocates (whole instructions from the entry until >= 5 bytes) must stay inside the
 #     function's extent (entry .. body_end) and contain no ret / jmp / int3 before 5 bytes
-#   - no direct branch or call anywhere in .text targets a byte strictly inside that window
+#   - no direct branch or call anywhere in .text, and no jump-table entry, targets a byte
+#     strictly inside that window
 # Excluded entries are written with their reason; the census reports them as "not instrumented".
 #   py -3.12 verify/census_20261116/census_list.py <MASHED.exe> <out_list.txt> <out_excluded.tsv>
 import csv, sys
@@ -33,6 +34,22 @@ for e, end, _ in funcs:
                 if op.type == X86_OP_IMM:
                     targets.add(op.imm & 0xffffffff)
 
+# jump tables (the image has no base relocations): every `jmp dword [reg*4 + table]` reads its table while the
+# entries point inside the same function (entry .. body_end)
+from capstone.x86 import X86_OP_MEM
+for e, end, _ in funcs:
+    code = img[e - base:end - base + 1]
+    for ins in md.disasm(code, e):
+        if ins.mnemonic != "jmp" or len(ins.operands) != 1 or ins.operands[0].type != X86_OP_MEM:
+            continue
+        m = ins.operands[0].mem
+        if m.scale != 4 or m.base != 0 or not (base <= (m.disp & 0xffffffff) < base + len(img)):
+            continue
+        t = (m.disp & 0xffffffff) - base
+        while 0 <= t <= len(img) - 4:
+            v = int.from_bytes(img[t:t + 4], "little")
+            if not (e <= v <= end): break
+            targets.add(v); t += 4
 keep, excl = [], []
 for e, end, name in funcs:
     code = img[e - base:e - base + 32]
