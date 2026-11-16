@@ -1,0 +1,24 @@
+D:/MashedWT/RO-REF-FIXED-LOAD_data/r2 vs D:/MashedWT/RO-REF-FIXED-LOAD_data/r3: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 8  NEW blocks: 3  N misaligned at: 307
+  IDENTICAL-FOR-N = 304 of 600  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 2], ['0x7dcc00', 304]]
+    NEW 0x771800 from tick 2  (other page 0x00771000)
+D:/MashedWT/RO-REF-FIXED-LOAD_data/r2 vs D:/MashedWT/RO-REF-FIXED-LOAD_data/r4: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 8  NEW blocks: 3  N misaligned at: 307
+  IDENTICAL-FOR-N = 304 of 600  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 3], ['0x7dcc00', 304]]
+    NEW 0x771800 from tick 3  (other page 0x00771000)
+D:/MashedWT/RO-REF-FIXED-LOAD_data/r3 vs D:/MashedWT/RO-REF-FIXED-LOAD_data/r4: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 8  NEW blocks: 3  N misaligned at: 310
+  IDENTICAL-FOR-N = 307 of 600  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 2], ['0x7dcc00', 307]]
+    NEW 0x771800 from tick 2  (other page 0x00771000)
+D:/MashedWT/RO-REF-FIXED-LOAD_data/r1 vs D:/MashedWT/RO-REF-FIXED-LOAD_data/r2: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 8  NEW blocks: 3  N misaligned at: 307
+  IDENTICAL-FOR-N = 304 of 600  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 2], ['0x7dcc00', 305]]
+    NEW 0x771800 from tick 2  (other page 0x00771000)
+D:/MashedWT/RO-REF-FIXED-LOAD_data/r1 vs D:/MashedWT/RO-REF-FIXED-LOAD_data/r3: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 8  NEW blocks: 3  N misaligned at: 308
+  IDENTICAL-FOR-N = 308 of 600  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 5], ['0x7dcc00', 304]]
+    NEW 0x771800 from tick 5  (other page 0x00771000)
+D:/MashedWT/RO-REF-FIXED-LOAD_data/r1 vs D:/MashedWT/RO-REF-FIXED-LOAD_data/r4: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 8  NEW blocks: 3  N misaligned at: 308
+  IDENTICAL-FOR-N = 307 of 600  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 2], ['0x7dcc00', 304]]
+    NEW 0x771800 from tick 2  (other page 0x00771000)

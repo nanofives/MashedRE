@@ -1,0 +1,6 @@
+p1: boot calls 316, with 0x00429297 128, with 0x00428af4 131, both 0
+p2: boot calls 235, with 0x00429297 87, with 0x00428af4 90, both 0
+v2: boot calls 245, with 0x00429297 93, with 0x00428af4 96, both 0
+s1: boot calls 234, with 0x00429297 87, with 0x00428af4 90, both 0
+s2: boot calls 236, with 0x00429297 87, with 0x00428af4 90, both 0
+s3: boot calls 234, with 0x00429297 87, with 0x00428af4 90, both 0
