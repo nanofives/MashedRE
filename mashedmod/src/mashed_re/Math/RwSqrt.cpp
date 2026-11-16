@@ -148,11 +148,25 @@ static float FastSqrtTwoForm(float x) {
 // [D4-DC-INC-SQRT-FOLD 2026-11-01] hook of 0x004c3b30, default ON since 2026-11-02 (L-86 (a)): Math::LutSqrt, as
 // FastInvSqrt above.
 // MASHED_NO_SQRT_FOLD=1: the form above (std::sqrt in the exe).
-extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
+static float FastSqrtBody(float x) {
     if (!mashed_re::Math::SqrtFoldOn()) return FastSqrtTwoForm(x);
     const float r = mashed_re::Math::LutSqrt(x);
     if (mashed_re::Math::SqrtFoldLogOn()) mashed_re::Math::SqrtFoldNote(0, r, FastSqrtTwoForm(x));
     return r;
+}
+#ifdef MASHED_STANDALONE
+// PORT-UNBLOCK-RWGLOBALS: MASHED_RWC_RWGSWAP (default OFF, Match/PortTop_RwgSwap.cpp) routes this RVA to its matched
+// body once the RW core engine instance is at 0x007d3ff8 on the frame route. g_portTopRwgSwapEnv is 0 when off.
+extern "C" int g_portTopRwgSwapEnv;
+extern "C" bool PortTop_RwgSwapLive(void);
+extern "C" float PortTop_RwgSqrt(float x);
+extern "C" float __cdecl FastSqrtExe(float x) { return FastSqrtBody(x); }
+#endif
+extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
+#ifdef MASHED_STANDALONE
+    if (g_portTopRwgSwapEnv != 0 && PortTop_RwgSwapLive()) return PortTop_RwgSqrt(x);
+#endif
+    return FastSqrtBody(x);
 }
 
 RH_ScopedInstall(FastSqrt, 0x004c3b30);  // re-enabled 2026-05-24 (pre-regression C4 leaf)

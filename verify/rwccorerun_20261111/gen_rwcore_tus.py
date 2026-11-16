@@ -84,6 +84,10 @@ ROOTS = [
     # the DAT_0067d83c..0x0067d848 handles; under the frame knob its selector (Match/PortTop_00427620.cpp) runs this core
     # body instead of the stand-in PortTop_StandIn04C_00556e40.
     '00556e40',
+    # PORT-UNBLOCK-RWGLOBALS: the two matched bodies that read RwGlobals 0x007d3ff8 and had no core TU: the sub-mode 0xb
+    # viewport 0x00403160 (re/match/s01, 100%) that the matched HUD dispatch 0x0040dfc0 calls, and RwV2dLength 0x004c3bf0
+    # (re/match/s19, 100%). Under MASHED_RWC_RWGSWAP (Match/PortTop_RwgSwap.cpp) the exe calls them on the frame route.
+    '00403160', '004c3bf0',
 ]
 # Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
 # re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
@@ -125,6 +129,7 @@ XFOLLOW.add(0x5c4d30)   # RWC-FRAME-492E90: re/match/s28/005c4d30.c (100%), call
 # RWC-FRAME-CLUMP run 44: re/match/s28 callees of the Rt2d font read root 0x00554390 and its callees (0x005533d0,
 # 0x00553590, 0x00553620, 0x005538a0, 0x00553f40): 0x005c4ba0 / 0x005c4bb0 / 0x005c4df0 (100%), 0x005c4c60 (93.0%)
 XFOLLOW |= {0x5c4ba0, 0x5c4bb0, 0x5c4c60, 0x5c4df0}
+XFOLLOW.add(0x403160)   # PORT-UNBLOCK-RWGLOBALS root (game code; its callees 0x00402fb0 / 0x00428760 / 0x004671a0 have core TUs)
 FRAME_STOP = set()   # filled while walking: 8-digit hex RVAs
 # Not roots in this row: 0x00493710's calls after RwEngineStart (GetCurrentMode 0x004c2f00, GetModeInfo 0x004c2ed0,
 # 0x004cbc60..0x004cbc90, RwTexDictionarySetCurrent 0x004c5c80) are not reached, since the knob ends the boot at Start.

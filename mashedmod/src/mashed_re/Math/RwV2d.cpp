@@ -44,11 +44,26 @@ static inline const std::uint32_t* lut_root(std::uint32_t delta)
     return delta == 4u ? RwLutGuard::InvSqrtRoot() : RwLutGuard::SqrtRoot();
 }
 
+#ifdef MASHED_STANDALONE
+// PORT-UNBLOCK-RWGLOBALS: MASHED_RWC_RWGSWAP (default OFF, Match/PortTop_RwgSwap.cpp) routes this RVA to its matched
+// body once the RW core engine instance is at 0x007d3ff8 on the frame route. g_portTopRwgSwapEnv is 0 when off.
+extern "C" int g_portTopRwgSwapEnv;
+extern "C" bool PortTop_RwgSwapLive(void);
+extern "C" float PortTop_RwgV2dLength(const float* v);
+extern "C" float __cdecl Vec2LengthExe(const float* v);
+#endif
 // 0x004c3bf0
 // Returns sqrt(v[0]^2 + v[1]^2).  Zero input returns 0.0f.
 extern "C" __declspec(dllexport)
 float __cdecl Vec2Length(const float* v)
 {
+#ifdef MASHED_STANDALONE
+    if (g_portTopRwgSwapEnv != 0 && PortTop_RwgSwapLive()) return PortTop_RwgV2dLength(v);
+    return Vec2LengthExe(v);
+}
+extern "C" float __cdecl Vec2LengthExe(const float* v)
+{
+#endif
     const float sq = v[1] * v[1] + v[0] * v[0];
 
     std::uint32_t sq_bits;

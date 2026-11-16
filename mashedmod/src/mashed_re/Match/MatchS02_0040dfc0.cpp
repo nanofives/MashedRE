@@ -42,7 +42,10 @@ void RaceFx_HudBindLights();
 } }
 extern "C" std::uint32_t __cdecl GetRaceSubMode();   // 0x0042f6a0
 extern "C" std::uint32_t __cdecl GetDat0067ea64();   // 0x0042f500
-extern "C" void MatchS02_0040dfc0_Call00403160(void) {}
+// PORT-UNBLOCK-RWGLOBALS: under MASHED_RWC_RWGSWAP (default OFF) with the RW core's RwGlobals live, the matched 0x00403160
+// (RwCore/RwCore_00403160.cpp); otherwise nothing is drawn, as before.
+extern "C" bool PortTop_Rwg00403160(void);   // Match/PortTop_RwgSwap.cpp
+extern "C" void MatchS02_0040dfc0_Call00403160(void) { PortTop_Rwg00403160(); }
 extern "C" void MatchS02_0040dfc0_Call0041a3e0(void) {}
 extern "C" void MatchS02_0040dfc0_Call0041b630(void) { mashed_re::LibRw::RaceFx_HudBindNonTeam(); }
 extern "C" void MatchS02_0040dfc0_Call0041c0c0(void) { mashed_re::LibRw::RaceFx_HudBindPanels(); }
