@@ -745,12 +745,11 @@ LAB_0043e736:
                 if (0 < iVar8) {
                   piVar17 = &DAT_007f1a2c;
                   do {
-                    iVar16 = iVar9 + 1;
-                    if (DAT_007f1a14 == iVar16) {
+                    if (DAT_007f1a14 == (iVar9 + 1)) {
                       local_2c = local_2c + 1;
                     }
                     piVar17[-2] = local_2c + 1 + iVar9;
-                    FUN_0040e480(iVar16,2);
+                    FUN_0040e480((iVar9 + 1),2);
                     iVar14 = *piVar18;
                     piVar18 = piVar18 + 1;
                     if (iVar14 == DAT_007f1a1c) {
@@ -765,7 +764,7 @@ LAB_0043e736:
                     *piVar17 = iVar14;
                     piVar17[-1] = 1;
                     piVar17 = piVar17 + 4;
-                    iVar9 = iVar16;
+                    iVar9 = iVar9 + 1;
                   } while (iVar9 < iVar8);
                 }
                 FUN_0046dc00(0,DAT_0067ea84);
@@ -799,12 +798,11 @@ LAB_0043e736:
                 if (0 < iVar8) {
                   piVar17 = &DAT_007f1a2c;
                   do {
-                    iVar16 = iVar9 + 1;
-                    if (DAT_007f1a14 == iVar16) {
+                    if (DAT_007f1a14 == (iVar9 + 1)) {
                       local_2c = local_2c + 1;
                     }
                     piVar17[-2] = local_2c + 1 + iVar9;
-                    FUN_0040e480(iVar16,2);
+                    FUN_0040e480((iVar9 + 1),2);
                     iVar14 = *piVar18;
                     piVar18 = piVar18 + 1;
                     if (iVar14 == DAT_007f1a1c) {
@@ -819,7 +817,7 @@ LAB_0043e736:
                     *piVar17 = iVar14;
                     piVar17[-1] = 1;
                     piVar17 = piVar17 + 4;
-                    iVar9 = iVar16;
+                    iVar9 = iVar9 + 1;
                   } while (iVar9 < iVar8);
                 }
                 FUN_0046dc00(0,DAT_0067ea84);
@@ -866,12 +864,11 @@ LAB_0043e736:
                   if (0 < iVar8) {
                     piVar17 = &DAT_007f1a2c;
                     do {
-                      iVar16 = iVar9 + 1;
-                      if (DAT_007f1a14 == iVar16) {
+                      if (DAT_007f1a14 == (iVar9 + 1)) {
                         local_2c = local_2c + 1;
                       }
                       piVar17[-2] = local_2c + 1 + iVar9;
-                      FUN_0040e480(iVar16,2);
+                      FUN_0040e480((iVar9 + 1),2);
                       iVar14 = *piVar18;
                       piVar18 = piVar18 + 1;
                       if (iVar14 == DAT_007f1a1c) {
@@ -886,7 +883,7 @@ LAB_0043e736:
                       *piVar17 = iVar14;
                       piVar17[-1] = 1;
                       piVar17 = piVar17 + 4;
-                      iVar9 = iVar16;
+                      iVar9 = iVar9 + 1;
                     } while (iVar9 < iVar8);
                   }
                   FUN_0046dc00(0,DAT_0067ea84);
@@ -925,12 +922,11 @@ LAB_0043e736:
                   if (0 < iVar8) {
                     piVar17 = &DAT_007f1a2c;
                     do {
-                      iVar16 = iVar9 + 1;
-                      if (DAT_007f1a14 == iVar16) {
+                      if (DAT_007f1a14 == (iVar9 + 1)) {
                         local_2c = local_2c + 1;
                       }
                       piVar17[-2] = local_2c + 1 + iVar9;
-                      FUN_0040e480(iVar16,2);
+                      FUN_0040e480((iVar9 + 1),2);
                       iVar14 = *piVar18;
                       piVar18 = piVar18 + 1;
                       if (iVar14 == DAT_007f1a1c) {
@@ -945,7 +941,7 @@ LAB_0043e736:
                       *piVar17 = iVar14;
                       piVar17[-1] = 1;
                       piVar17 = piVar17 + 4;
-                      iVar9 = iVar16;
+                      iVar9 = iVar9 + 1;
                     } while (iVar9 < iVar8);
                   }
                   FUN_0046dc00(0,DAT_0067ea84);
@@ -978,12 +974,11 @@ LAB_0043e736:
                   if (0 < iVar8) {
                     piVar17 = &DAT_007f1a2c;
                     do {
-                      iVar16 = iVar9 + 1;
-                      if (DAT_007f1a14 == iVar16) {
+                      if (DAT_007f1a14 == (iVar9 + 1)) {
                         local_2c = local_2c + 1;
                       }
                       piVar17[-2] = local_2c + 1 + iVar9;
-                      FUN_0040e480(iVar16,2);
+                      FUN_0040e480((iVar9 + 1),2);
                       iVar14 = *piVar18;
                       piVar18 = piVar18 + 1;
                       if (iVar14 == DAT_007f1a1c) {
@@ -998,7 +993,7 @@ LAB_0043e736:
                       *piVar17 = iVar14;
                       piVar17[-1] = 0;
                       piVar17 = piVar17 + 4;
-                      iVar9 = iVar16;
+                      iVar9 = iVar9 + 1;
                     } while (iVar9 < iVar8);
                   }
                   FUN_0046dc00(0,DAT_0067ea84);
