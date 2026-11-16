@@ -1,0 +1,13 @@
+{"kind": "watch", "n": 3, "tick": 0, "rec": 0, "cnt": 1, "mode": "w", "tid": 17184, "pc": "0x494ab0", "bt": "0x49539c|0x494ab0|0x40283d|0x7761c88b|0x7761c811", "values": ["0x1"]}
+{"kind": "watch", "n": 4, "tick": 0, "rec": 0, "cnt": 1, "mode": "w", "tid": 17184, "pc": "0x494300", "bt": "0x1|0x494300|0x494485", "values": ["0x0"]}
+{"kind": "watch", "n": 4, "tick": 0, "rec": 0, "cnt": 1, "mode": "w", "tid": 17184, "pc": "0x49447f", "bt": "0x4954af|0x49447f|0x4954af|0x4c2cb2", "values": ["0x0"]}
+{"kind": "watch", "n": 5, "tick": 0, "rec": 0, "cnt": 2, "mode": "w", "tid": 17184, "pc": "0x494ab0", "bt": "0x4954c6|0x494ab0|0x4954c6|0x4c2cb2", "values": ["0x1"]}
+{"kind": "watch", "n": 6, "tick": 0, "rec": 0, "cnt": 2, "mode": "w", "tid": 17184, "pc": "0x494300", "bt": "0x1|0x494300|0x494485", "values": ["0x0"]}
+{"kind": "watch", "n": 7, "tick": 0, "rec": 0, "cnt": 2, "mode": "w", "tid": 17184, "pc": "0x49447f", "bt": "0x4954af|0x49447f|0x4954af|0x4c2cb2", "values": ["0x0"]}
+{"kind": "watch", "n": 8, "tick": 0, "rec": 0, "cnt": 3, "mode": "w", "tid": 17184, "pc": "0x494ab0", "bt": "0x4954c6|0x494ab0|0x4954c6|0x4c2cb2", "values": ["0x1"]}
+{"kind": "watch", "n": 9, "tick": 0, "rec": 0, "cnt": 3, "mode": "w", "tid": 17184, "pc": "0x494300", "bt": "0x1|0x494300|0x494485", "values": ["0x0"]}
+{"kind": "watch", "n": 10, "tick": 0, "rec": 0, "cnt": 3, "mode": "w", "tid": 17184, "pc": "0x49447f", "bt": "0x4954af|0x49447f|0x4954af|0x4c2cb2", "values": ["0x0"]}
+{"kind": "watch", "n": 11, "tick": 0, "rec": 0, "cnt": 4, "mode": "w", "tid": 17184, "pc": "0x494ab0", "bt": "0x4954c6|0x494ab0|0x4954c6|0x4c2cb2", "values": ["0x1"]}
+{"kind": "watch", "n": 12, "tick": 0, "rec": 0, "cnt": 4, "mode": "w", "tid": 17184, "pc": "0x494300", "bt": "0x1|0x494300|0x494485", "values": ["0x0"]}
+{"kind": "watch", "n": 13, "tick": 0, "rec": 0, "cnt": 4, "mode": "w", "tid": 17184, "pc": "0x49447f", "bt": "0x4954af|0x49447f|0x4954af|0x4c2cb2", "values": ["0x0"]}
+{"kind": "watch", "n": 229, "tick": 0, "rec": 0, "cnt": 5, "mode": "w", "tid": 17184, "pc": "0x494ab0", "bt": "0x43e04a|0x494ab0|0x75d85d49|0x7761c88b|0x7761c811", "values": ["0x1"]}

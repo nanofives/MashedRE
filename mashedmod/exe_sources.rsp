@@ -344,6 +344,7 @@
 "Match\MatchS15_00494460.cpp"
 "Match\MatchS16_00494a80.cpp"
 "Match\PortTop_MovieBind.cpp"
+"Match\PortTop_MovieCore.cpp"
 "Match\PortTop_00402a40.cpp"
 "Match\PortTop_00402750.cpp"
 "Match\PortTop_00402750_Pieces.cpp"

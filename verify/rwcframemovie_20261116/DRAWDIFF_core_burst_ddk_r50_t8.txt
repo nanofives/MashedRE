@@ -1,0 +1,22 @@
+note: pairing first 4 labels (4 in A, 8 in B)
+== orig_f0 (A: 82 draws, x1.0) vs core_f0 (B: 83 draws, x1.0)
+   matched 81  mismatched 0  missing 1  extra 2
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+  EXTRA    B[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/50ffffff/00ffffff/50ffffff  @0x226029
+  EXTRA    B[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=50ffffff  @0x226182
+== orig_f1 (A: 82 draws, x1.0) vs core_f1 (B: 83 draws, x1.0)
+   matched 81  mismatched 0  missing 1  extra 2
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+  EXTRA    B[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/60ffffff/00ffffff/60ffffff  @0x226029
+  EXTRA    B[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=60ffffff  @0x226182
+== orig_f2 (A: 82 draws, x1.0) vs core_f2 (B: 83 draws, x1.0)
+   matched 81  mismatched 0  missing 1  extra 2
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+  EXTRA    B[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/70ffffff/00ffffff/70ffffff  @0x226029
+  EXTRA    B[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=70ffffff  @0x226182
+== orig_f3 (A: 82 draws, x1.0) vs core_f3 (B: 83 draws, x1.0)
+   matched 81  mismatched 0  missing 1  extra 2
+  MISSING  A[ 81] x=  80.00 y=  80.00 w= 480.00 h=240.00 col=ffffffff  @0x450c7a,0x428750
+  EXTRA    B[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/80ffffff/00ffffff/80ffffff  @0x226029
+  EXTRA    B[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=80ffffff  @0x226182
+VERDICT: RED (match=324 mismatch=0 missing=4 extra=8)
