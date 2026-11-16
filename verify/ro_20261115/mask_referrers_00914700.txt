@@ -1,0 +1,11 @@
+exe C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe.unpatched
+facts C:/Users/maria/Desktop/Proyectos/Mashed/log/ghidra_funcfacts.jsonl
+target dword 0x00914700
+0x005a6199  mov dword ptr [0x914700], 0x10               fn=0x005a6190  head='audio' family=audio  e116c666b='audio' family=audio
+0x005a61a9  mov dword ptr [0x914700], eax                fn=0x005a6190  head='audio' family=audio  e116c666b='audio' family=audio
+0x005ac2ec  mov eax, dword ptr [0x914700]                fn=0x005ac210  head='audio' family=audio  e116c666b='audio' family=audio
+0x005b823d  mov eax, dword ptr [0x914700]                fn=0x005b8200  head='audio' family=audio  e116c666b='third-party-library[d3dx9-fx]' family=d3dx9
+0x005b82e3  mov eax, dword ptr [0x914700]                fn=0x005b8200  head='audio' family=audio  e116c666b='third-party-library[d3dx9-fx]' family=d3dx9
+0x005b83e2  mov eax, dword ptr [0x914700]                fn=0x005b8200  head='audio' family=audio  e116c666b='third-party-library[d3dx9-fx]' family=d3dx9
+0x005b8466  mov eax, dword ptr [0x914700]                fn=0x005b8200  head='audio' family=audio  e116c666b='third-party-library[d3dx9-fx]' family=d3dx9
+0x005b853d  mov eax, dword ptr [0x914700]                fn=0x005b8200  head='audio' family=audio  e116c666b='third-party-library[d3dx9-fx]' family=d3dx9

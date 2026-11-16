@@ -1,0 +1,599 @@
+run o2: dir D:\MashedWT\RO-FIRST-DIVERGENCE_data\o2 pid 17024 watch_hits 532 records 600 warp N 3527 race N 3636 dn_warp 109 timer.before [338076077, 335375109, 48932, 112692, 111758] stats_end N 33755
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4b2(107698) 0x0077199c=0x0001a4b2(107698) 0x007719a0=0x0001a4b2(107698) 0x007f1010=0x00000000(0) 0x007f1030=0x1341c1c3(323076547) 0x006147d8=0x00000001(1)
+run og1: dir D:\MashedWT\RO-ORACLE-GATE_data\og1 pid 18596 watch_hits 0 records 600 warp N 3524 race N 3637 dn_warp 113 timer.before [338067077, 335366109, 48932, 112689, 111755] stats_end N 33844
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000004(4) 0x00771998=0x0001a4af(107695) 0x0077199c=0x0001a4af(107695) 0x007719a0=0x0001a4af(107695) 0x007f1010=0x00000000(0) 0x007f1030=0x13419e9b(323067547) 0x006147d8=0x00000001(1)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000004(4) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000000(0)
+run c1: dir D:\MashedWT\RO-REF-CONTROL-NOISE_data\c1 pid 20636 watch_hits 0 records 600 warp N 3523 race N 3632 dn_warp 109 timer.before [338067077, 335366109, 48932, 112689, 111755] stats_end N 33729
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4af(107695) 0x0077199c=0x0001a4af(107695) 0x007719a0=0x0001a4af(107695) 0x007f1010=0x00000000(0) 0x007f1030=0x13419e9b(323067547) 0x006147d8=0x00000001(1)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000000(0)
+run c2: dir D:\MashedWT\RO-REF-CONTROL-NOISE_data\c2 pid 20636 watch_hits 0 records 600 warp N 3522 race N 3630 dn_warp 108 timer.before [338067077, 335366109, 48932, 112689, 111755] stats_end N 33716
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4af(107695) 0x0077199c=0x0001a4af(107695) 0x007719a0=0x0001a4af(107695) 0x007f1010=0x00000000(0) 0x007f1030=0x13419e9b(323067547) 0x006147d8=0x00000001(1)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000000(0)
+run c3: dir D:\MashedWT\RO-REF-CONTROL-NOISE_data\c3 pid 22852 watch_hits 0 records 600 warp N 3525 race N 3635 dn_warp 110 timer.before [338067077, 335366109, 48932, 112689, 111755] stats_end N 33798
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4af(107695) 0x0077199c=0x0001a4af(107695) 0x007719a0=0x0001a4af(107695) 0x007f1010=0x00000000(0) 0x007f1030=0x13419e9b(323067547) 0x006147d8=0x00000001(1)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000000(0)
+run c4: dir D:\MashedWT\RO-REF-CONTROL-NOISE_data\c4 pid 20460 watch_hits 0 records 600 warp N 3522 race N 3632 dn_warp 110 timer.before [338067077, 335366109, 48932, 112689, 111755] stats_end N 33762
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4af(107695) 0x0077199c=0x0001a4af(107695) 0x007719a0=0x0001a4af(107695) 0x007f1010=0x00000000(0) 0x007f1030=0x13419e9b(323067547) 0x006147d8=0x00000001(1)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000000(0)
+run c5: dir D:\MashedWT\RO-REF-CONTROL-NOISE_data\c5 pid 8692 watch_hits 0 records 600 warp N 3524 race N 3633 dn_warp 109 timer.before [338067077, 335366109, 48932, 112689, 111755] stats_end N 33741
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4af(107695) 0x0077199c=0x0001a4af(107695) 0x007719a0=0x0001a4af(107695) 0x007f1010=0x00000000(0) 0x007f1030=0x13419e9b(323067547) 0x006147d8=0x00000001(1)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000001(1)
+run cw1: dir D:\MashedWT\RO-REF-CONTROL-NOISE_data\cw1 pid 13076 watch_hits 532 records 600 warp N 3524 race N 3634 dn_warp 110 timer.before [338067077, 335366109, 48932, 112689, 111755] stats_end N 33841
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4af(107695) 0x0077199c=0x0001a4af(107695) 0x007719a0=0x0001a4af(107695) 0x007f1010=0x00000000(0) 0x007f1030=0x13419e9b(323067547) 0x006147d8=0x00000000(0)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000001(1)
+run cw2: dir D:\MashedWT\RO-REF-CONTROL-NOISE_data\cw2 pid 21164 watch_hits 532 records 600 warp N 3528 race N 3637 dn_warp 109 timer.before [338076077, 335375109, 48932, 112692, 111758] stats_end N 38827
+    tick 1: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001a4b2(107698) 0x0077199c=0x0001a4b2(107698) 0x007719a0=0x0001a4b2(107698) 0x007f1010=0x00000000(0) 0x007f1030=0x1341c1c3(323076547) 0x006147d8=0x00000000(0)
+    tick 600: 0x0068bc0c=0x00000000(0) 0x0068bc1c=0x00000000(0) 0x0068bc2c=0x00000000(0) 0x00771998=0x0001ca6d(117357) 0x0077199c=0x0001c6d8(116440) 0x007719a0=0x0001ca6d(117357) 0x007f1010=0x42eab70f(1122678543) 0x007f1030=0x14fc339f(352072607) 0x006147d8=0x00000000(0)
+
+pair o2 vs og1: 600 records, 18 blocks differ at some record; blocks differing at record 0: 14
+    block 0x00614400: first rec 3 last 533 count 201
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 0 last 533 count 364
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair o2 vs c1: 600 records, 16 blocks differ at some record; blocks differing at record 0: 14
+    block 0x00614400: first rec 3 last 598 count 235
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 598 count 459
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair o2 vs c2: 600 records, 16 blocks differ at some record; blocks differing at record 0: 14
+    block 0x00614400: first rec 3 last 538 count 338
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 538 count 420
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair o2 vs c3: 600 records, 17 blocks differ at some record; blocks differing at record 0: 13
+    block 0x00614400: first rec 3 last 598 count 319
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 0 last 598 count 449
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair o2 vs c4: 600 records, 16 blocks differ at some record; blocks differing at record 0: 14
+    block 0x00614400: first rec 2 last 598 count 243
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 598 count 445
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair o2 vs c5: 600 records, 18 blocks differ at some record; blocks differing at record 0: 14
+    block 0x00614400: first rec 3 last 520 count 233
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 599 count 357
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 313 last 313 count 1
+    block 0x007dd000: first rec 313 last 313 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair o2 vs cw1: 600 records, 15 blocks differ at some record; blocks differing at record 0: 13
+    block 0x00614400: first rec 1 last 599 count 353
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 0 last 599 count 449
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair o2 vs cw2: 600 records, 14 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 1 last 599 count 240
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 2 last 599 count 249
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773800: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 308 last 308 count 1
+    block 0x007dd000: first rec 308 last 308 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x00912000: first rec 0 last 599 count 600
+pair og1 vs c1: 600 records, 17 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 4 last 598 count 294
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 1 last 598 count 288
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair og1 vs c2: 600 records, 17 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 32 last 538 count 273
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 34 last 538 count 281
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair og1 vs c3: 600 records, 14 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 4 last 598 count 322
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 2 last 598 count 316
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 300 last 599 count 300
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair og1 vs c4: 600 records, 17 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 2 last 598 count 316
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 3 last 598 count 304
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair og1 vs c5: 600 records, 17 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 9 last 533 count 246
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 9 last 599 count 240
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 313 count 2
+    block 0x007dd000: first rec 301 last 313 count 2
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair og1 vs cw1: 600 records, 16 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 1 last 599 count 332
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 1 last 599 count 328
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 300 last 599 count 300
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair og1 vs cw2: 600 records, 17 blocks differ at some record; blocks differing at record 0: 13
+    block 0x00614400: first rec 1 last 599 count 277
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0068bc00: first rec 0 last 599 count 600
+    block 0x00771800: first rec 0 last 599 count 448
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x00773c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 308 count 2
+    block 0x007dd000: first rec 301 last 308 count 2
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair c1 vs c2: 600 records, 12 blocks differ at some record; blocks differing at record 0: 8
+    block 0x00614400: first rec 4 last 598 count 557
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 1 last 598 count 559
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 300 last 599 count 300
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c1 vs c3: 600 records, 12 blocks differ at some record; blocks differing at record 0: 7
+    block 0x00614400: first rec 8 last 591 count 370
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 1 last 589 count 376
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 598
+    block 0x007f1000: first rec 300 last 300 count 1
+pair c1 vs c4: 600 records, 12 blocks differ at some record; blocks differing at record 0: 8
+    block 0x00614400: first rec 2 last 591 count 332
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 1 last 589 count 362
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 300 last 599 count 300
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c1 vs c5: 600 records, 12 blocks differ at some record; blocks differing at record 0: 8
+    block 0x00614400: first rec 4 last 598 count 330
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 1 last 599 count 312
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 313 last 313 count 1
+    block 0x007dd000: first rec 313 last 313 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x00912000: first rec 0 last 599 count 600
+pair c1 vs cw1: 600 records, 13 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 1 last 599 count 362
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 2 last 599 count 364
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c1 vs cw2: 600 records, 16 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 1 last 599 count 249
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 599 count 453
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 308 last 308 count 1
+    block 0x007dd000: first rec 308 last 308 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair c2 vs c3: 600 records, 15 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 4 last 598 count 251
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 2 last 598 count 245
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c2 vs c4: 600 records, 12 blocks differ at some record; blocks differing at record 0: 8
+    block 0x00614400: first rec 2 last 598 count 293
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 3 last 598 count 263
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 300 last 599 count 300
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c2 vs c5: 600 records, 14 blocks differ at some record; blocks differing at record 0: 8
+    block 0x00614400: first rec 9 last 538 count 243
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 9 last 599 count 267
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 300 last 599 count 300
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 313 last 313 count 1
+    block 0x007dd000: first rec 313 last 313 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c2 vs cw1: 600 records, 13 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 1 last 599 count 253
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 1 last 599 count 253
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c2 vs cw2: 600 records, 16 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 1 last 599 count 348
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 599 count 444
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 308 last 308 count 1
+    block 0x007dd000: first rec 308 last 308 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair c3 vs c4: 600 records, 14 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 2 last 361 count 210
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 2 last 361 count 240
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x00912000: first rec 0 last 599 count 600
+pair c3 vs c5: 600 records, 15 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 4 last 598 count 128
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 2 last 599 count 160
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 313 count 2
+    block 0x007dd000: first rec 301 last 313 count 2
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c3 vs cw1: 600 records, 12 blocks differ at some record; blocks differing at record 0: 8
+    block 0x00614400: first rec 1 last 599 count 288
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 1 last 599 count 276
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 301 count 1
+    block 0x007dd000: first rec 301 last 301 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x00912000: first rec 0 last 599 count 600
+pair c3 vs cw2: 600 records, 15 blocks differ at some record; blocks differing at record 0: 11
+    block 0x00614400: first rec 1 last 599 count 299
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 0 last 599 count 453
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 301 last 308 count 2
+    block 0x007dd000: first rec 301 last 308 count 2
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair c4 vs c5: 600 records, 14 blocks differ at some record; blocks differing at record 0: 8
+    block 0x00614400: first rec 2 last 598 count 242
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 3 last 599 count 274
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 300 last 599 count 300
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 313 last 313 count 1
+    block 0x007dd000: first rec 313 last 313 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c4 vs cw1: 600 records, 12 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 1 last 599 count 334
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 1 last 599 count 300
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x00912000: first rec 0 last 599 count 600
+pair c4 vs cw2: 600 records, 16 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 1 last 599 count 239
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 599 count 449
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 308 last 308 count 1
+    block 0x007dd000: first rec 308 last 308 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair c5 vs cw1: 600 records, 15 blocks differ at some record; blocks differing at record 0: 10
+    block 0x00614400: first rec 1 last 599 count 276
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 1 last 593 count 284
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 313 last 313 count 1
+    block 0x007dd000: first rec 313 last 313 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f1000: first rec 300 last 300 count 1
+    block 0x00912000: first rec 0 last 599 count 600
+pair c5 vs cw2: 600 records, 16 blocks differ at some record; blocks differing at record 0: 12
+    block 0x00614400: first rec 1 last 599 count 299
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x0067d800: first rec 0 last 299 count 300
+    block 0x00771800: first rec 0 last 597 count 437
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 308 last 313 count 2
+    block 0x007dd000: first rec 308 last 313 count 2
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
+pair cw1 vs cw2: 600 records, 15 blocks differ at some record; blocks differing at record 0: 11
+    block 0x00614400: first rec 3 last 597 count 351
+    block 0x00616000: first rec 0 last 599 count 600
+    block 0x00771800: first rec 0 last 597 count 459
+    block 0x00772c00: first rec 0 last 599 count 600
+    block 0x007d4000: first rec 0 last 599 count 600
+    block 0x007d7000: first rec 0 last 599 count 600
+    block 0x007dc800: first rec 0 last 599 count 600
+    block 0x007dcc00: first rec 308 last 308 count 1
+    block 0x007dd000: first rec 308 last 308 count 1
+    block 0x007dd400: first rec 0 last 599 count 600
+    block 0x007de000: first rec 0 last 599 count 600
+    block 0x007e9400: first rec 0 last 599 count 600
+    block 0x007f0c00: first rec 301 last 301 count 1
+    block 0x007f1000: first rec 0 last 300 count 301
+    block 0x00912000: first rec 0 last 599 count 600
