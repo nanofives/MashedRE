@@ -92,3 +92,6 @@ mashedmod/src/mashed_re/Match/PortTop_005b35a0.cpp
 mashedmod/src/mashed_re/Match/PortTop_005ae800.cpp
 mashedmod/src/mashed_re/Match/PortTop_005ad910.cpp
 mashedmod/src/mashed_re/Match/PortTop_005ad9d0.cpp
+mashedmod/src/mashed_re/Match/PortTop_005a9ab0.cpp
+mashedmod/src/mashed_re/Match/PortTop_005a9be0.cpp
+mashedmod/src/mashed_re/Match/PortTop_005a9c50.cpp

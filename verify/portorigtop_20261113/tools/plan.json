@@ -1214,7 +1214,15 @@
 "stop"
 ],
 "005a9ab0": [
-"stop"
+"bind",
+"re/match/s25/005a9ab0.c",
+"provisional",
+[
+"005a9be0",
+"005a9c50",
+"005ae800"
+],
+[]
 ],
 "005a9e10": [
 "bind",
@@ -2051,6 +2059,27 @@
 "AudioListFind",
 "Audio/AudioList_ag.cpp"
 ],
+"005a9be0": [
+"bind",
+"re/match/s25/005a9be0.c",
+"match",
+[
+"005aa330",
+"005ae030",
+"005ae920"
+],
+[]
+],
+"005a9c50": [
+"bind",
+"re/match/s25/005a9c50.c",
+"admitted",
+[
+"005aa3d0",
+"005ae0b0"
+],
+[]
+],
 "005adfe0": [
 "bind",
 "re/match/s26/005adfe0.c",
@@ -2678,6 +2707,12 @@
 "005ae920"
 ],
 []
+],
+"005aa330": [
+"stop"
+],
+"005aa3d0": [
+"stop"
 ],
 "005aac20": [
 "stop"
