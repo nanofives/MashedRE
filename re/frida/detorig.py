@@ -244,7 +244,7 @@ def run(args):
                "negctl": int(args.negctl, 16) if args.negctl else 0, "rebase": args.rebase,
                "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
                "watch": [int(x, 16) for x in args.watch.split(",") if x][:2], "watchFrom": args.watch_from, "watchMode": args.watch_mode,
-               "callLogRace": args.call_log_race}
+               "callLogRace": args.call_log_race, "callLogBoot": args.call_log_boot}
         if args.rec:
             cfg["rec"] = True
         if args.probe:
@@ -326,6 +326,10 @@ def run(args):
             elif p["kind"] == "calllog":
                 (out / "calllog.bin").write_bytes(data or b"")
                 meta["calllog"] = {"count": p["count"], "rec": p["rec"], "file": "calllog.bin"}
+            elif p["kind"] == "calllog_boot":
+                (out / "calllog_boot.bin").write_bytes(data or b"")
+                meta["calllog_boot"] = {"count": p["count"], "rec": p["rec"], "file": "calllog_boot.bin", "tick": p.get("tick")}
+                print(f"  calllog_boot {p['count']} calls", flush=True)
                 print(f"  call log {p['count']} calls", flush=True)
             elif p["kind"] == "boot":
                 meta["boot"] = p["boot"]; print(f"  boot install at entry {p['boot'].get('ep')} main={p['boot'].get('main')}", flush=True)
@@ -553,6 +557,8 @@ if __name__ == "__main__":
     ap.add_argument("--tick-raw", default="", help="comma list of LO-HI hex VA ranges copied raw into every tick record")
     ap.add_argument("--q0", default="0x40000000", help="virtual QPC start (low dword)")
     ap.add_argument("--call-log-race", action="store_true", help="keep the call log on past the race anchor (until 4096 calls)")
+    ap.add_argument("--call-log-boot", action="store_true",
+                    help="RO-CTL-WARP-N: --boot only, log every main-thread clock call from the install to the first tick (calllog_boot.bin)")
     ap.add_argument("--normalize", default="", help="boot-counter normalisation file (re/frida/warp_normalize.tsv): its PIN rows are written on the original")
     ap.add_argument("--normalize-at", choices=["warp", "anchor", "both"], default="both", help="when the PIN rows are written")
     ap.add_argument("--audio-off", choices=["warp", "anchor"], default="", help="suspend every non-main thread whose start address is in MASHED.exe (the __beginthread audio workers) at the warp or the race anchor")

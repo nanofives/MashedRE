@@ -904,6 +904,17 @@ function install() {
     tickSchedule(CFG.warpTick, doWarp);
     // calls made before the first tick (CRT start to the main loop) = the boot segment of the census (provReport)
     if (PV) tickSchedule(1, () => { PV.atTick1 = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32()); });
+    // RO-CTL-WARP-N (cfg.callLogBoot): the call log runs from the install to the first clock call of tick 1, is sent as
+    // 'calllog_boot', and its index is reset so a later --call-log segment (warp to race anchor) starts at record 0
+    if (CFG.callLogBoot) {
+      D.add(0x34).writeU32(1);
+      tickSchedule(1, () => {
+        D.add(0x34).writeU32(0);
+        const cnt = D.add(0x38).readU32();
+        send({ kind: 'calllog_boot', count: cnt, rec: LOGREC, tick: tickNow() }, LOG.readByteArray(cnt * LOGREC));
+        D.add(0x38).writeU32(0);
+      });
+    }
     // RO-FIRST-DIVERGENCE: full-image checkpoints at ticks (k = 200 + i). Tick t's dump is taken in the first clock call
     // of tick t, after that tick's record (the CModule onEnter); detorig_firstdiv.py re-hashes it against record t - 1.
     // Tick 0 = here, at the install (PE entry point), before any instruction of MASHED.exe ran.
