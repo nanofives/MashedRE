@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S08 0x0043dfd0: 49.8% (regs 67.0%, ops 88.6%) after MATCH-43DFD0-RAISE run 51 round 2 (2026-11-16, FRAME + DISPATCH + STORES merged: frame 0x2c, uVar10 switch, switch-1 case order, hoisted store-block loads, case-8 re-reads), RAISE slices 1+2+3 were 32.2%, was 19.2% (regs 31.7%, ops 59.1%) since RO-MENU-DIV-43DFD0 (2026-11-12), was 17.7% (regs 46.9%), raw g2s 17.1%. RO-MENU-DIV-43DFD0 fixed two converter defects: the four __ftol sites (0x0043e0a7, 0x0043e101, 0x00440a16, 0x00440a5e) called FUN_004a2c48() with nothing on the x87 stack, now (int)(DAT_007f1004 * constant); the key-scan edx flag (extraout_EDX) was read uninitialised, now set as at 0x0043e3f8 / 0x0043e427 / 0x0043e432. Raw converter body with type fixes: the globals the listing touches with x87 instructions (0x0067f1ac, 0x0067e840, 0x007f1004, 0x007f0f00/04/08, 0x0067eaa8 and the .rdata constants) retyped float, FUN_00431b30 returns float and FUN_00495080 takes (float, float), arity of thunk_FUN_00493f70 / thunk_FUN_00494460 / thunk_FUN_00494480 / FUN_0042ae10 fixed to 1 arg, pointer casts for C++. Call sequence is close (190 calls vs 195 in the original). Residual (b): register allocation across the 10.9 KB body (ebx=0 / edi=1 pinned in the original, frame 0x2c vs 0x18 here) and the remaining Ghidra shape, out of budget. */
+/* MATCH-S08 0x0043dfd0: 51.5% (regs 67.7%, ops 89.5%) after MATCH-43DFD0-RAISE-R3 (ARMS + LOOPS + REGS merged, 2799/2817 ins, was 49.8%), before that MATCH-43DFD0-RAISE run 51 round 2 (2026-11-16, FRAME + DISPATCH + STORES merged: frame 0x2c, uVar10 switch, switch-1 case order, hoisted store-block loads, case-8 re-reads), RAISE slices 1+2+3 were 32.2%, was 19.2% (regs 31.7%, ops 59.1%) since RO-MENU-DIV-43DFD0 (2026-11-12), was 17.7% (regs 46.9%), raw g2s 17.1%. RO-MENU-DIV-43DFD0 fixed two converter defects: the four __ftol sites (0x0043e0a7, 0x0043e101, 0x00440a16, 0x00440a5e) called FUN_004a2c48() with nothing on the x87 stack, now (int)(DAT_007f1004 * constant); the key-scan edx flag (extraout_EDX) was read uninitialised, now set as at 0x0043e3f8 / 0x0043e427 / 0x0043e432. Raw converter body with type fixes: the globals the listing touches with x87 instructions (0x0067f1ac, 0x0067e840, 0x007f1004, 0x007f0f00/04/08, 0x0067eaa8 and the .rdata constants) retyped float, FUN_00431b30 returns float and FUN_00495080 takes (float, float), arity of thunk_FUN_00493f70 / thunk_FUN_00494460 / thunk_FUN_00494480 / FUN_0042ae10 fixed to 1 arg, pointer casts for C++. Call sequence is close (190 calls vs 195 in the original). Residual (b): register allocation across the 10.9 KB body (ebx=0 / edi=1 pinned in the original, frame 0x2c vs 0x18 here) and the remaining Ghidra shape, out of budget. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -531,7 +531,18 @@ void FUN_0043dfd0(void)
         break;
       case 0xff1d0000:
                 iVar8 = FUN_00430760();
-                if (iVar8 == 0) {
+                if (iVar8 != 0) {
+                  if (DAT_0067f0c0 == 0) {
+                    DAT_007f1a1c = 0;
+                  }
+                  else {
+                    DAT_007f1a1c = DAT_0067f0c0 + -1;
+                  }
+                  FUN_0043d2a0(6,0);
+                  FUN_00431d00();
+                  DAT_0067ea78 = 0;
+                }
+                else {
                   iVar8 = FUN_0042b9e0();
                   if (iVar8 == 0x1000) {
                     iVar8 = 0;
@@ -564,17 +575,6 @@ void FUN_0043dfd0(void)
                   else if (iVar8 == 3) {
                     FUN_0042bf30(0x9e,0,1,0x2d,0,0);
                   }
-                }
-                else {
-                  if (DAT_0067f0c0 == 0) {
-                    DAT_007f1a1c = 0;
-                  }
-                  else {
-                    DAT_007f1a1c = DAT_0067f0c0 + -1;
-                  }
-                  FUN_0043d2a0(6,0);
-                  FUN_00431d00();
-                  DAT_0067ea78 = 0;
                 }
         break;
       case 0xff1e0000:
@@ -745,12 +745,11 @@ LAB_0043e736:
                 if (0 < iVar8) {
                   piVar17 = &DAT_007f1a2c;
                   do {
-                    iVar16 = iVar9 + 1;
-                    if (DAT_007f1a14 == iVar16) {
+                    if (DAT_007f1a14 == (iVar9 + 1)) {
                       local_2c = local_2c + 1;
                     }
                     piVar17[-2] = local_2c + 1 + iVar9;
-                    FUN_0040e480(iVar16,2);
+                    FUN_0040e480((iVar9 + 1),2);
                     iVar14 = *piVar18;
                     piVar18 = piVar18 + 1;
                     if (iVar14 == DAT_007f1a1c) {
@@ -765,7 +764,7 @@ LAB_0043e736:
                     *piVar17 = iVar14;
                     piVar17[-1] = 1;
                     piVar17 = piVar17 + 4;
-                    iVar9 = iVar16;
+                    iVar9 = iVar9 + 1;
                   } while (iVar9 < iVar8);
                 }
                 FUN_0046dc00(0,DAT_0067ea84);
@@ -799,12 +798,11 @@ LAB_0043e736:
                 if (0 < iVar8) {
                   piVar17 = &DAT_007f1a2c;
                   do {
-                    iVar16 = iVar9 + 1;
-                    if (DAT_007f1a14 == iVar16) {
+                    if (DAT_007f1a14 == (iVar9 + 1)) {
                       local_2c = local_2c + 1;
                     }
                     piVar17[-2] = local_2c + 1 + iVar9;
-                    FUN_0040e480(iVar16,2);
+                    FUN_0040e480((iVar9 + 1),2);
                     iVar14 = *piVar18;
                     piVar18 = piVar18 + 1;
                     if (iVar14 == DAT_007f1a1c) {
@@ -819,7 +817,7 @@ LAB_0043e736:
                     *piVar17 = iVar14;
                     piVar17[-1] = 1;
                     piVar17 = piVar17 + 4;
-                    iVar9 = iVar16;
+                    iVar9 = iVar9 + 1;
                   } while (iVar9 < iVar8);
                 }
                 FUN_0046dc00(0,DAT_0067ea84);
@@ -866,12 +864,11 @@ LAB_0043e736:
                   if (0 < iVar8) {
                     piVar17 = &DAT_007f1a2c;
                     do {
-                      iVar16 = iVar9 + 1;
-                      if (DAT_007f1a14 == iVar16) {
+                      if (DAT_007f1a14 == (iVar9 + 1)) {
                         local_2c = local_2c + 1;
                       }
                       piVar17[-2] = local_2c + 1 + iVar9;
-                      FUN_0040e480(iVar16,2);
+                      FUN_0040e480((iVar9 + 1),2);
                       iVar14 = *piVar18;
                       piVar18 = piVar18 + 1;
                       if (iVar14 == DAT_007f1a1c) {
@@ -886,7 +883,7 @@ LAB_0043e736:
                       *piVar17 = iVar14;
                       piVar17[-1] = 1;
                       piVar17 = piVar17 + 4;
-                      iVar9 = iVar16;
+                      iVar9 = iVar9 + 1;
                     } while (iVar9 < iVar8);
                   }
                   FUN_0046dc00(0,DAT_0067ea84);
@@ -925,12 +922,11 @@ LAB_0043e736:
                   if (0 < iVar8) {
                     piVar17 = &DAT_007f1a2c;
                     do {
-                      iVar16 = iVar9 + 1;
-                      if (DAT_007f1a14 == iVar16) {
+                      if (DAT_007f1a14 == (iVar9 + 1)) {
                         local_2c = local_2c + 1;
                       }
                       piVar17[-2] = local_2c + 1 + iVar9;
-                      FUN_0040e480(iVar16,2);
+                      FUN_0040e480((iVar9 + 1),2);
                       iVar14 = *piVar18;
                       piVar18 = piVar18 + 1;
                       if (iVar14 == DAT_007f1a1c) {
@@ -945,7 +941,7 @@ LAB_0043e736:
                       *piVar17 = iVar14;
                       piVar17[-1] = 1;
                       piVar17 = piVar17 + 4;
-                      iVar9 = iVar16;
+                      iVar9 = iVar9 + 1;
                     } while (iVar9 < iVar8);
                   }
                   FUN_0046dc00(0,DAT_0067ea84);
@@ -978,12 +974,11 @@ LAB_0043e736:
                   if (0 < iVar8) {
                     piVar17 = &DAT_007f1a2c;
                     do {
-                      iVar16 = iVar9 + 1;
-                      if (DAT_007f1a14 == iVar16) {
+                      if (DAT_007f1a14 == (iVar9 + 1)) {
                         local_2c = local_2c + 1;
                       }
                       piVar17[-2] = local_2c + 1 + iVar9;
-                      FUN_0040e480(iVar16,2);
+                      FUN_0040e480((iVar9 + 1),2);
                       iVar14 = *piVar18;
                       piVar18 = piVar18 + 1;
                       if (iVar14 == DAT_007f1a1c) {
@@ -998,7 +993,7 @@ LAB_0043e736:
                       *piVar17 = iVar14;
                       piVar17[-1] = 0;
                       piVar17 = piVar17 + 4;
-                      iVar9 = iVar16;
+                      iVar9 = iVar9 + 1;
                     } while (iVar9 < iVar8);
                   }
                   FUN_0046dc00(0,DAT_0067ea84);
@@ -2061,13 +2056,12 @@ LAB_00440a0c:
   if (DAT_0067eca4 == 4) {
     iVar8 = FUN_004325c0();
     iVar9 = (int)(DAT_007f1004 * _DAT_005cc9fc); /* 0x00440a16 */
-    if (DAT_0067eca8 + iVar9 < 0xff) {
-      DAT_0067eca8 = DAT_0067eca8 + iVar9;
+    DAT_0067eca8 = DAT_0067eca8 + iVar9; /* store before the compare: 0x00440a37 mov [0x67eca8],ecx ahead of jl 0x440aa3 */
+    if (DAT_0067eca8 < 0xff) {
       return;
     }
-    DAT_0067eca8 = 0xff;
+    DAT_0067eca8 = 0xff; /* 0x00440a41, scheduled between cmp esi,ebx (0x00440a3f) and je (0x00440a4b) */
     if (iVar8 == 0) {
-      DAT_0067eca8 = 0xff;
       return;
     }
     DAT_0067eca4 = 5;
@@ -2077,13 +2071,14 @@ LAB_00440a0c:
   }
   iVar8 = (int)(DAT_007f1004 * _DAT_005cd8f8); /* 0x00440a5e */
   DAT_0067eca8 = DAT_0067eca8 + iVar8;
-  if (DAT_0067eca8 < 1) {
-    iVar8 = thunk_FUN_00493f70(0);
-    if (iVar8 != 0) {
-      thunk_FUN_00494460(0);
-    }
-    DAT_0067eca4 = 0;
-    DAT_0067eca8 = 0;
+  if (0 < DAT_0067eca8) { /* 0x00440a77 cmp ecx,ebx; jg 0x440aa3 */
+    return;
   }
+  iVar8 = thunk_FUN_00493f70(0);
+  if (iVar8 != 0) {
+    thunk_FUN_00494460(0);
+  }
+  DAT_0067eca4 = 0;
+  DAT_0067eca8 = 0;
   return;
 }

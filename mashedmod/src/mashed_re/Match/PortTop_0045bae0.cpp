@@ -229,7 +229,12 @@ void PortTop_PWI_Call0045bae0(void) {
     // they are 0 (image pad) or the original rva (MASHED_PORTSTATE_IMAGE), so every teardown entry was skipped and the
     // clumps the inits built stayed alive at RwEngineStop (run 45 vs_frameT, 103 clumps). Same rule as the +0x14 slots:
     // a slot is stored only when it is 0 or equals its entry's original value, so a MASHED_OT_CODEPTR binding is kept.
-    if (RwCore_FrameRoute()) {
+    // [RWC-FRAME-BOMB-DESTROY] control knob MASHED_RWC_SLOTS18_OFF=1 (default OFF): skip this +0x18 store, to measure
+    // how much of the run-45 -> run-46 drop (103 -> 1 live clumps at RwEngineStop) the store accounts for.
+    const char* const slotsOff = std::getenv("MASHED_RWC_SLOTS18_OFF");
+    if (RwCore_FrameRoute() && slotsOff && slotsOff[0] == '1') {
+        PortTop_PWI_Log("rva 0x0045bae0: RW core frame route: type table +0x18 store skipped (MASHED_RWC_SLOTS18_OFF=1, control)%s", "");
+    } else if (RwCore_FrameRoute()) {
         unsigned dseeded = 0, dkept = 0;
         for (int i = 0; i < 9; ++i) {
             unsigned* const slot = reinterpret_cast<unsigned*>(static_cast<unsigned long>(0x005f9998u + 0x40u * i + 0x18u));

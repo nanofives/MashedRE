@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-16  0x00432b30  MenuPromptStrip  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00432b30.c; evidence: verify/match_20261116/RESULT_MATCH-S08-00432B30.md
 2026-11-16  0x005add60  FUN_005add60  C4->C4  sha refresh (c4_reclass refresh): src sha256 36920b591b37bfd8 -> b1b814b00cbf37f1, re/match/s26/005add60.c still byte-identical + relocheck OK; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md
 2026-11-16  0x005aae90  FUN_005aae90  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aae90.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md
 2026-11-16  0x005aaef0  FUN_005aaef0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aaef0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970.md

@@ -1,10 +1,31 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S08 h3 0x00432b30 (1327 B): 74.2% (regs 74.2%, ops 89.1%), 343/357 instructions. Raw g2s 18.6%.
+/* MATCH-S08-00432B30 attempt 2 (2026-11-16): BYTE-IDENTICAL, 100.0% 357/357 instructions, match.py --bytes 1648 B
+   0 differing, relocheck OK checked=72 (was 93.6%, 682 differing bytes). Two levers closed the two residuals below:
+   (a) the mode 0 path written as `if (DAT_0067e9f8 == 0) r = 0; else { r = FUN_0042add0(key, 0); if (r == -1)
+   r = 0; }` with no `r = 0` above the mode test and the constant 0 as the idx argument at all three call sites: the
+   extra `xor edi,edi` before 0x00432b78 is gone and the prologue equals the original's 36 instructions. (b) inner
+   orders in1 = 1,2,8,4,5,6,10 and in6 = 6,2,1,4,8,5,10 (every other order as in attempt 1): the in1/in6 shared
+   case 2 / case 4 blocks now sit at 0x00432c22 / 0x00432c36 as in the original, and all eight jump tables
+   (0x00433060..0x004331a0) equal the original's entry for entry. Found by a joint hill-climb over all inner orders
+   with `default` movable (case-order rank metric against the original tables), then grafted onto attempt 1's orders.
+   Attempt 1 (93.6% (regs 93.6%, ops 97.5%), 358/357 instructions, was 74.2% (343/357)):
+   Levers: (1) FUN_0042ad10 parameter order (type, cnt, ...): the caller then loads EAX (cnt) before EDX (type) as
+   the original does at 0x00432bab/0x00432bad; the callee stays 100%. (2) Outer cases written in the original's
+   layout order 1,2,4,8,5,6,10 (0x00433060 table targets) AND every inner switch in that order with its self case
+   first (85.2% on its own; 41.1% before came from the outer order alone). (3) A local search over inner case
+   orders: in4 = 4,2,1,..., in10 = 10,2,4,8,5,6,1 (93.6%). The block-sharing sets now equal the original's for every
+   jump-table target (tables 0x00433060..0x004331a0). Residual: (a) one extra `xor edi,edi` on the mode 0 path
+   before 0x00432b78 (shifts every later address by 2; the idx arg as r / 0 / mode at each of the three call sites
+   did not move it); (b) the blocks shared by in1/in6 for cases 2 and 4 (s2 = 0x43 / 0x225, 0x00432c22 /
+   0x00432c36) sit after HEAD6 in ours, in region 1 in the original; no single permutation of in1 or of in6 moves
+   them (5040 each scored).
+   Previous header (74.2%):
    Register convention: mode in EAX, int *cnt (the caller's item count, &nItems in 0x0043d2a0) in ESI, plus the
    stack args sel and menu (0x0043d797). It is a static function of the 0x0043d2a0 TU, so this file defines it
    static and adds a stand-in caller (`match_standin_00432b30`, not the real caller, excluded under MATCH_PORT) so
    the compiler emits it with that convention. The file also holds two register-arg static callees at 100%:
-   FUN_0042ad10 (cnt in EAX, type in EDX, 3 stack args) and FUN_0042add0 (key in EBX, idx in EDI).
+   FUN_0042ad10 (cnt in EAX, type in EDX, 3 stack args; parameter order now (type, cnt)) and FUN_0042add0 (key in
+   EBX, idx in EDI).
    Structure: outer switch on sel (1,2,4,5,6,8,10), each case FUN_0042ad10 + s1 code, then an inner switch on the
    FUN_0042add0 result whose case equal to sel is the "self" block (s2 = -1, state 0x1000); the 0x48-then-0x13
    double store is literal in every copy. What moved it: self case written FIRST in each inner switch (74.2% vs
@@ -67,7 +88,7 @@ MGLOBALA(MenuItem, DAT_00898ac0, 32, 0x00898ac0);
 int FUN_0042a9c0(void);
 int FUN_0042b920(void);
 // MATCH: 0x0042ad10 FUN_0042ad10
-static void FUN_0042ad10(int *cnt, int type, int x, int y, int z)
+static void FUN_0042ad10(int type, int *cnt, int x, int y, int z)
 {
   DAT_00898ac0[*cnt].type = type;
   DAT_00898ac0[*cnt].rgba[0] = 0xff;
@@ -102,364 +123,368 @@ static void FUN_00432b30(int mode, int *cnt, int sel, int menu)
 {
   int r;
 
-  r = 0;
   if (mode != 0) {
     if (mode == 2) {
       sel = 0;
-      r = FUN_0042add0(0xff080000, r);
+      r = FUN_0042add0(0xff080000, 0);
     }
     else {
       DAT_0067e9f8++;
-      r = FUN_0042add0(0xff080000, r);
+      r = FUN_0042add0(0xff080000, 0);
       if (r == -1) {
         r = 0;
       }
       DAT_0067e9f8--;
     }
   }
-  else if (DAT_0067e9f8 != 0) {
-    r = FUN_0042add0(0xff080000, r);
-    if (r == -1) {
+  else {
+    if (DAT_0067e9f8 == 0) {
       r = 0;
+    }
+    else {
+      r = FUN_0042add0(0xff080000, 0);
+      if (r == -1) {
+        r = 0;
+      }
     }
   }
   switch (sel) {
   case 1:
-    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    FUN_0042ad10(0xff100000, cnt, 0x40, 0x1ac, 0);
     DAT_00898ac0[*cnt].s1 = 0x42;
     if (menu == FUN_0042b920()) {
       DAT_00898ac0[*cnt].s1 = -1;
     }
     switch (r) {
     case 1:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 0x1000;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 0x1000;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 2:
-      DAT_00898ac0[*cnt].s2 = 0x43;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 4:
-      DAT_00898ac0[*cnt].s2 = 0x225;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 5:
-      DAT_00898ac0[*cnt].s2 = 0x48;
-      DAT_00898ac0[*cnt].s2 = 0x13;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 6:
-      DAT_00898ac0[*cnt].s2 = 0x58;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x43;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 8:
-      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 4:
+    DAT_00898ac0[*cnt].s2 = 0x225;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 5:
+    DAT_00898ac0[*cnt].s2 = 0x48;
+    DAT_00898ac0[*cnt].s2 = 0x13;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 6:
+    DAT_00898ac0[*cnt].s2 = 0x58;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 10:
-      DAT_00898ac0[*cnt].s2 = 0x133;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x133;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     default:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 1;
-      DAT_00898ac0[*cnt].f10 = 0;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 1;
+    DAT_00898ac0[*cnt].f10 = 0;
+    break;
     }
     (*cnt)++;
     break;
   case 2:
-    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    FUN_0042ad10(0xff100000, cnt, 0x40, 0x1ac, 0);
     DAT_00898ac0[*cnt].s1 = 0x43;
     switch (r) {
     case 2:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 0x1000;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 0x1000;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 1:
-      DAT_00898ac0[*cnt].s2 = 0x42;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x42;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 4:
-      DAT_00898ac0[*cnt].s2 = 0x225;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 5:
-      DAT_00898ac0[*cnt].s2 = 0x48;
-      DAT_00898ac0[*cnt].s2 = 0x13;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 6:
-      DAT_00898ac0[*cnt].s2 = 0x58;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x225;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 8:
-      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 5:
+    DAT_00898ac0[*cnt].s2 = 0x48;
+    DAT_00898ac0[*cnt].s2 = 0x13;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 6:
+    DAT_00898ac0[*cnt].s2 = 0x58;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 10:
-      DAT_00898ac0[*cnt].s2 = 0x133;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x133;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     default:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 1;
-      DAT_00898ac0[*cnt].f10 = 0;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 1;
+    DAT_00898ac0[*cnt].f10 = 0;
+    break;
     }
     (*cnt)++;
     break;
   case 4:
-    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    FUN_0042ad10(0xff100000, cnt, 0x40, 0x1ac, 0);
     DAT_00898ac0[*cnt].s1 = 0x225;
     switch (r) {
     case 4:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 0x1000;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 1:
-      DAT_00898ac0[*cnt].s2 = 0x42;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 2:
-      DAT_00898ac0[*cnt].s2 = 0x43;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 5:
-      DAT_00898ac0[*cnt].s2 = 0x48;
-      DAT_00898ac0[*cnt].s2 = 0x13;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 6:
-      DAT_00898ac0[*cnt].s2 = 0x58;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 8:
-      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 10:
-      DAT_00898ac0[*cnt].s2 = 0x133;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    default:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 1;
-      DAT_00898ac0[*cnt].f10 = 0;
-      break;
-    }
-    (*cnt)++;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 0x1000;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
-  case 5:
-    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
-    DAT_00898ac0[*cnt].s1 = 0x48;
-    DAT_00898ac0[*cnt].s1 = 0x13;
-    switch (r) {
-    case 5:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 0x1000;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 1:
-      DAT_00898ac0[*cnt].s2 = 0x42;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
     case 2:
-      DAT_00898ac0[*cnt].s2 = 0x43;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 4:
-      DAT_00898ac0[*cnt].s2 = 0x225;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 6:
-      DAT_00898ac0[*cnt].s2 = 0x58;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 8:
-      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 10:
-      DAT_00898ac0[*cnt].s2 = 0x133;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    default:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 1;
-      DAT_00898ac0[*cnt].f10 = 0;
-      break;
-    }
-    (*cnt)++;
+    DAT_00898ac0[*cnt].s2 = 0x43;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
-  case 6:
-    FUN_0042ad10(cnt, 0xff110000, 0x40, 0x1ac, 0);
-    DAT_00898ac0[*cnt].s1 = 0x58;
-    switch (r) {
-    case 6:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 0x1000;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
     case 1:
-      DAT_00898ac0[*cnt].s2 = 0x42;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 2:
-      DAT_00898ac0[*cnt].s2 = 0x43;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 4:
-      DAT_00898ac0[*cnt].s2 = 0x225;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 5:
-      DAT_00898ac0[*cnt].s2 = 0x48;
-      DAT_00898ac0[*cnt].s2 = 0x13;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x42;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 8:
-      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 5:
+    DAT_00898ac0[*cnt].s2 = 0x48;
+    DAT_00898ac0[*cnt].s2 = 0x13;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 6:
+    DAT_00898ac0[*cnt].s2 = 0x58;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 10:
-      DAT_00898ac0[*cnt].s2 = 0x133;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x133;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     default:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 1;
-      DAT_00898ac0[*cnt].f10 = 0;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 1;
+    DAT_00898ac0[*cnt].f10 = 0;
+    break;
     }
     (*cnt)++;
     break;
   case 8:
-    FUN_0042ad10(cnt, 0xff230000, 0x40, 0x1ac, 0);
+    FUN_0042ad10(0xff230000, cnt, 0x40, 0x1ac, 0);
     DAT_00898ac0[*cnt].s1 = FUN_0042a9c0();
     switch (r) {
     case 8:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 0x1000;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 0x1000;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 1:
-      DAT_00898ac0[*cnt].s2 = 0x42;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x42;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 2:
-      DAT_00898ac0[*cnt].s2 = 0x43;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x43;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 4:
-      DAT_00898ac0[*cnt].s2 = 0x225;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x225;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 5:
-      DAT_00898ac0[*cnt].s2 = 0x48;
-      DAT_00898ac0[*cnt].s2 = 0x13;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x48;
+    DAT_00898ac0[*cnt].s2 = 0x13;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 6:
-      DAT_00898ac0[*cnt].s2 = 0x58;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x58;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 10:
-      DAT_00898ac0[*cnt].s2 = 0x133;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x133;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     default:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 1;
-      DAT_00898ac0[*cnt].f10 = 0;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 1;
+    DAT_00898ac0[*cnt].f10 = 0;
+    break;
+    }
+    (*cnt)++;
+    break;
+  case 5:
+    FUN_0042ad10(0xff100000, cnt, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x48;
+    DAT_00898ac0[*cnt].s1 = 0x13;
+    switch (r) {
+    case 5:
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 0x1000;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 1:
+    DAT_00898ac0[*cnt].s2 = 0x42;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 2:
+    DAT_00898ac0[*cnt].s2 = 0x43;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 4:
+    DAT_00898ac0[*cnt].s2 = 0x225;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 8:
+    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 6:
+    DAT_00898ac0[*cnt].s2 = 0x58;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 10:
+    DAT_00898ac0[*cnt].s2 = 0x133;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    default:
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 1;
+    DAT_00898ac0[*cnt].f10 = 0;
+    break;
+    }
+    (*cnt)++;
+    break;
+  case 6:
+    FUN_0042ad10(0xff110000, cnt, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x58;
+    switch (r) {
+    case 6:
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 0x1000;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 2:
+    DAT_00898ac0[*cnt].s2 = 0x43;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 1:
+    DAT_00898ac0[*cnt].s2 = 0x42;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 4:
+    DAT_00898ac0[*cnt].s2 = 0x225;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 8:
+    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 5:
+    DAT_00898ac0[*cnt].s2 = 0x48;
+    DAT_00898ac0[*cnt].s2 = 0x13;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 10:
+    DAT_00898ac0[*cnt].s2 = 0x133;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    default:
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 1;
+    DAT_00898ac0[*cnt].f10 = 0;
+    break;
     }
     (*cnt)++;
     break;
   case 10:
-    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    FUN_0042ad10(0xff100000, cnt, 0x40, 0x1ac, 0);
     DAT_00898ac0[*cnt].s1 = 0x133;
     switch (r) {
     case 10:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 0x1000;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 1:
-      DAT_00898ac0[*cnt].s2 = 0x42;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 0x1000;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 2:
-      DAT_00898ac0[*cnt].s2 = 0x43;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x43;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 4:
-      DAT_00898ac0[*cnt].s2 = 0x225;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 5:
-      DAT_00898ac0[*cnt].s2 = 0x48;
-      DAT_00898ac0[*cnt].s2 = 0x13;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
-    case 6:
-      DAT_00898ac0[*cnt].s2 = 0x58;
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = 0x225;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     case 8:
-      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
-      DAT_00898ac0[*cnt].f4 = 0;
-      DAT_00898ac0[*cnt].f10 = 0x1ff;
-      break;
+    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 5:
+    DAT_00898ac0[*cnt].s2 = 0x48;
+    DAT_00898ac0[*cnt].s2 = 0x13;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 6:
+    DAT_00898ac0[*cnt].s2 = 0x58;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
+    case 1:
+    DAT_00898ac0[*cnt].s2 = 0x42;
+    DAT_00898ac0[*cnt].f4 = 0;
+    DAT_00898ac0[*cnt].f10 = 0x1ff;
+    break;
     default:
-      DAT_00898ac0[*cnt].s2 = -1;
-      DAT_00898ac0[*cnt].f4 = 1;
-      DAT_00898ac0[*cnt].f10 = 0;
-      break;
+    DAT_00898ac0[*cnt].s2 = -1;
+    DAT_00898ac0[*cnt].f4 = 1;
+    DAT_00898ac0[*cnt].f10 = 0;
+    break;
     }
     (*cnt)++;
     break;
