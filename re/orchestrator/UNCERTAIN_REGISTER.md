@@ -20,3 +20,4 @@ Rows parked here on 2026-11-16 (ledger stage blocked, note "parked: UNCERTAIN_RE
 | RWC-FRAME-MOVIE-TEARDOWN | AppDestroy closes the movie through 0x00494460 | log the close path | verify/rwcframemovie_20261116/ |
 | GEN-RWCORE-PROVLIST-DRIFT | generator re-adds 94 dropped PROVISIONAL_RWC rows | make the generator read the drop list | verify/rwcframeclump_20261113/ |
 | MATCH-551A50-BIND-CALLER | 0x00551a50 linked but unreferenced | bind a caller | verify/MATCH-TAG-FIX-005BF690/ |
+| MATCH-43DFD0-RAISE-3 | original source of 0x0043dfd0 lists the switch 2/3 cases in layout order (0x1f,0x21,0x20,4,0x13,0x1e,0xa,0x11,0x1c,0x12,0x18,6/7); rests on DDK c2 laying out case blocks in source order | byte match of the region, or a DDK test unit with permuted case order | verify/match_20261116/RESULT_MATCH-43DFD0-RAISE-3.md |
