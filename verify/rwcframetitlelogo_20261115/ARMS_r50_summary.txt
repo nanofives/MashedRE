@@ -1,0 +1,74 @@
+== vs_off
+vs_off: exited rc=0 (0x00000000) after 21.6 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\vs_off.log
+AV/STOP/FAIL lines: 0
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+      1 self-test PASS (0 of 260 checks failed)
+== vs_frame
+vs_frame: exited rc=1381494785 (0x5257F001) after 1.8 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\vs_frame.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] live clumps at RwEngineStop: 0 (clump freelist 007D7208)
+[RWC_CORE] MASHED_RWC_FRAME: boot ends after present 1 on the RW core (exit 0x5257F001)
+      1 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)
+== vs_frameN
+vs_frameN: exited rc=1381494785 (0x5257F001) after 39.1 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\vs_frameN.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] MASHED_RWC_FRAME: boot ends after present 120 on the RW core (exit 0x5257F001)
+      2 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)
+== vs_frameT
+vs_frameT: exited rc=0 (0x00000000) after 20.2 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\vs_frameT.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] live clump 1 at RwEngineStop: 0F9E1040 frame +0x4 0F9F7B10 atomics +0x8 0F9CF010
+[RWC_CORE] live clumps at RwEngineStop: 1 (clump freelist 007D7208)
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+      1 [OT_TIMER] self-test PASS (0 of 6000 checks failed)
+      2 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)
+== vs_dump
+vs_dump: exited rc=1381494785 (0x5257F001) after 27.8 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\vs_dump.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] MASHED_RWC_FRAME: boot ends after present 590 on the RW core (exit 0x5257F001)
+      2 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)
+== ddk_off
+ddk_off: exited rc=0 (0x00000000) after 29.4 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\ddk_off.log
+AV/STOP/FAIL lines: 0
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+      1 self-test PASS (0 of 260 checks failed)
+== ddk_frame
+ddk_frame: exited rc=1381494785 (0x5257F001) after 1.7 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\ddk_frame.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] live clumps at RwEngineStop: 0 (clump freelist 007D7208)
+[RWC_CORE] MASHED_RWC_FRAME: boot ends after present 1 on the RW core (exit 0x5257F001)
+      1 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)
+== ddk_frameN
+ddk_frameN: exited rc=1381494785 (0x5257F001) after 4.1 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\ddk_frameN.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] MASHED_RWC_FRAME: boot ends after present 120 on the RW core (exit 0x5257F001)
+      2 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)
+== ddk_frameT
+ddk_frameT: exited rc=0 (0x00000000) after 11.3 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\ddk_frameT.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] live clump 1 at RwEngineStop: 0F98B618 frame +0x4 0FA9AE30 atomics +0x8 0F885FA8
+[RWC_CORE] live clumps at RwEngineStop: 1 (clump freelist 007D7208)
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+      1 [OT_TIMER] self-test PASS (0 of 6000 checks failed)
+      2 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)
+== ddk_dump
+ddk_dump: exited rc=1381494785 (0x5257F001) after 11.0 s, log -> D:/MashedWT/RWC-FRAME-TITLE-LOGO_data\ddk_dump.log
+AV/STOP/FAIL lines: 0
+[RWC_CORE] MASHED_RWC_FRAME: boot ends after present 590 on the RW core (exit 0x5257F001)
+      2 self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+      1 self-test PASS (0 of 260 checks failed)
+      1 selftest PASS (0 fail)

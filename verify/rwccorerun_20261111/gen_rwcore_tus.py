@@ -195,7 +195,15 @@ CALL_VIA = {
     # RWC-FRAME-CLUMP run 45: the menu chrome 0x0042e3a0 (called by 0x0043c5b0) is the frame delimiter of the core-side
     # Im2D draw dump (MASHED_RWC_DRAWDUMP), as in re/frida/menu_draw_burst.py. The entry marks the frame and calls the body.
     '0042e3a0': ('RwCore_DrawDumpFrame_0042e3a0', 'RwCore/RwCore_Knob.cpp'),
+    # RWC-FRAME-TITLE-LOGO run 50: RtFS file-exists 0x00550b00 (re/match/s24/00550b00.c, 100%). The exe has no
+    # RtFSManager (PORT-TOP-04F), so the body returns 0 for every name and RwImageFindFileType 0x004ce6c0 finds no
+    # image file. The binding entry calls the body when an RtFS manager is open (DAT_007dc75c != 0), else answers from
+    # the exe's piz mount stack / disk (PortTop_FsFileExists_004b5350, the 0x004b5350 shim). Its core callers are the
+    # source TU 0x004ce690 and the lifted 0x004ce6f0, so this entry is also applied to lifted calls (LIFT_VIA).
+    '00550b00': ('RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_00550b00.cpp'),
 }
+# CALL_VIA entries that lifted (naked-asm) callers take too. The other entries keep their lifted callers on the body.
+LIFT_VIA = {'00550b00'}
 # RW-band RVAs with a hand body in RwCore/RwCore_Hand.cpp (no source; written from the disassembly, provisional).
 HAND = {}
 HAND_FILE = os.path.join(OUT, 'RwCore_Hand.cpp')
@@ -700,7 +708,8 @@ def main(check):
         t = t.replace('(void) {', '(%s) {' % (', '.join('int' for _ in range(nb // 4)) or 'void'), 1)
         for m in re.finditer(r'@@SYM_([0-9a-f]{8})@@', t):
             lrefs.add(m.group(1))
-        t = re.sub(r'@@SYM_([0-9a-f]{8})@@', lambda m: sym_of(m.group(1)), t)
+        t = re.sub(r'@@SYM_([0-9a-f]{8})@@',
+                   lambda m: CALL_VIA[m.group(1)][0] if m.group(1) in LIFT_VIA else sym_of(m.group(1)), t)
         ltxt.append(t)
     ext_syms = {v[0] for v in EXT.values() if v}
     ext_used = sorted(set(w for w in re.findall(r'call (\w+)|offset (\w+)', '\n'.join(ltxt)) for w in w if w in ext_syms))
@@ -733,6 +742,7 @@ def main(check):
         used |= set(re.findall(r'naked\) int (?:__\w+ )?(\w+)\(', '\n'.join(chunk)))
         decls = sorted(set(decl_sym(sym2rva[u]) for u in used if u in sym2rva))
         decls += ['extern "C" int %s();' % e for e in ext_used if e in used]
+        decls += ['extern "C" int %s();' % CALL_VIA[r][0] for r in sorted(LIFT_VIA) if CALL_VIA[r][0] in used]
         decls += ['extern "C" void* RwCoreIat_%s;' % x
                   for x in sorted(set(re.findall(r'RwCoreIat_([0-9a-f]{8})', '\n'.join(chunk))))]
         fn = 'RwCore_Lifted_%02d.cpp' % (ci // LIFT_CHUNK)
@@ -812,7 +822,8 @@ def main(check):
     if b0 in rsp:
         i, j = rsp.index(b0), rsp.index(b1)
         rsp = rsp[:i] + rsp[j + 1:]
-    fixed = ['RwCore\\RwCore_Knob.cpp', 'RwCore\\RwCore_Crt.cpp', 'RwCore\\RwCore_Missing.cpp']
+    fixed = ['RwCore\\RwCore_Knob.cpp', 'RwCore\\RwCore_Crt.cpp', 'RwCore\\RwCore_Missing.cpp',
+             'RwCore\\RwCore_Bind_ImageRead.cpp']   # RWC-FRAME-TITLE-LOGO: route_bindings.py SPECIAL image readers
     if HAND:
         fixed.append('RwCore\\RwCore_Hand.cpp')
     fixed += lifted_files
