@@ -1,0 +1,1 @@
+0x005ad770	NOT-PROVEN	unsupported: rep movsd with a variable count
