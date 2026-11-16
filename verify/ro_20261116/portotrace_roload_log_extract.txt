@@ -1,0 +1,31 @@
+[portstate-image] loaded D:\MashedWT\PORT-OT-RACE_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+[ORIG_TOP] [REPLAY] MASHED_REPLAY=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\PORT-OT-RACE\verify\replayoracle_20261113\replay_trace.json on: main thread 17920, QPC slot 002FA100 was 75D88640 (kernel32 export 75D88640), now Replay_QPC
+[ORIG_TOP] [TRACE] MASHED_REPLAY_TRACE=D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1 on: image 0x005EA000..0x00915008, block 1024 B, 3245 blocks, 2304 raw words in 7 ranges, record 5551 dwords, cap 6000, 7 checkpoint ticks, negctl off
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004ccde0: stand-in (PORT-OT-RACE) skipped: list head 0x007d45cc is 0 (RW resource list not initialised on this path), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: stand-in (PORT-OT-RACE) 351 B, 14 callees, first call arg 0000001E (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: stand-in (PORT-OT-RACE) the course load proper (piz mount, COURSE.LUA, LAPDATA.LUA, AI data), 723 B, 35 callees, 4 C2, first call arg 0000001E (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004074a0: stand-in (PORT-OT-RACE) 167 B, callees 0x0047f290 0x00489c60 0x004e6e00, first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d110: stand-in (PORT-OT-RACE) 320 B, 11 callees (0x0040cea0 and 0x00420420 C2), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00411d90: stand-in (PORT-OT-RACE) 410 B, 11 callees (0x00482900 C3), first call arg 0000001E (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: matched body returned: DAT_0063ba8c = 1, DAT_0080332c = 00000000, DAT_00803324 = 44C30000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: stand-in calls 0x00426e10 1, 0x004264d0 1, 0x004074a0 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: stand-in calls 0x0040d110 1, 0x00411d90 1, 0x0040d040 0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: stand-in calls 0x00426340 0, 0x00407800 0, 0x004ccde0 skipped 3 (PORT-OT-RACE)
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bo
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[ORIG_TOP] [TRACE] self-test PASS (0 of 33294 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 8, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reach
+D:/MashedWT/PORT-OT-RACE_data/RO_ROLOAD-pr1.log:[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1802 (boot 4), passed through 0, T 16787416; warp ran at tick 3
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bod
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[ORIG_TOP] [TRACE] self-test PASS (0 of 33294 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 8, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reache
+D:/MashedWT/PORT-OT-RACE_data/RO_ROIMG-pr1.log:[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 30
