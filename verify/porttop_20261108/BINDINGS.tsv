@@ -819,7 +819,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005a9d00	FUN_005a9d00	missing	PortTop_AStop_005a9d00	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005a9de0	FUN_005a9de0	matched	PortTop_Bound_005a9de0	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005a9de0.c (c4=match), Match/PortTop_005a9de0.cpp	3	
 0x005a9e10	FUN_005a9e10	matched	PortTop_Bound_005a9e10	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005a9e10.c (c4=match), Match/PortTop_005a9e10.cpp	3	
-0x005aa200	FUN_005aa200	missing	PortTop_AStop_005aa200	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
+0x005aa200	FUN_005aa200	near-match	PortTop_Bound_005aa200	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005aa200.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_005aa200.cpp	3	
 0x005aa480	FUN_005aa480	matched	PortTop_Bound_005aa480	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aa480.c (L-126 admitted, re/match/ADMITTED.tsv), Match/PortTop_005aa480.cpp	3	
 0x005aa510	FUN_005aa510	matched	PortTop_Bound_005aa510	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005aa510.c (c4=match), Match/PortTop_005aa510.cpp	3	
 0x005aa520	FUN_005aa520	matched	PortTop_Bound_005aa520	PORT-TOP-AUDIOTICK-STOPS: re/match/s30/005aa520.c (c4=match), Match/PortTop_005aa520.cpp	3	
@@ -931,7 +931,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005adbe0	FUN_005adbe0	matched	PortTop_Bound_005adbe0	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005adbe0.c (c4=match), Match/PortTop_005adbe0.cpp	3	
 0x005ae250	FUN_005ae250	missing	PortTop_AStop_005ae250	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005aea50	FUN_005aea50	matched	PortTop_Bound_005aea50	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005aea50.c (c4=match), Match/PortTop_005aea50.cpp	3	
-0x005aee20	FUN_005aee20	missing	PortTop_AStop_005aee20	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
+0x005aee20	FUN_005aee20	matched	PortTop_Bound_005aee20	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005aee20.c (c4=match), Match/PortTop_005aee20.cpp	3	
 0x005aef00	FUN_005aef00	matched	AudioThreadDescInit	PORT-TOP-AUDIOTICK-STOPS: existing exe body Audio/AudioDSound.cpp	3	
 0x005aef70	FUN_005aef70	missing	PortTop_AStop_005aef70	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005b34f0	FUN_005b34f0	matched	PortTop_Bound_005b34f0	PORT-TOP-AUDIOTICK-STOPS: re/match/s27/005b34f0.c (c4=match), Match/PortTop_005b34f0.cpp	3	
@@ -960,3 +960,4 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005aae10	FUN_005aae10	missing	PortTop_AStop_005aae10	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005aae30	FUN_005aae30	missing	PortTop_AStop_005aae30	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005aae60	FUN_005aae60	missing	PortTop_AStop_005aae60	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
+0x005bf610	FUN_005bf610	missing	PortTop_AStop_005bf610	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	

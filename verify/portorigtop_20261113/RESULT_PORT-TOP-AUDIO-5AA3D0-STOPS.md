@@ -172,9 +172,31 @@ admitted 93.0% body linked for the first time (classified in 1.1). Raw: `ddkchec
 
 ## Decision
 - 0x005a8ea0: `EQUIV-IF-CALLERS-IGNORE(EAX)`, the one caller (0x005ad080, indirect through 0x00632c28) reads EAX. Listed
-  provisional, not admitted (L-126). Decision row to file with `roadmap.ps1 decision` at the end of the row: keep it
-  provisional (recommended: every return path gives 0 or the object, the gap is the merged failure tails) or require a
-  shape that keeps the tails apart.
+  provisional, not admitted (L-126). **Decision L-171** (filed by the lead): keep it provisional (recommended: every
+  return path gives 0 or the object, the gap is the merged failure tails) or require a shape that keeps the tails apart.
+- 0x005aa200 (checkpoint 3): the source that clears the NOT-PROVEN form gap proves to `EQUIV-IF-CALLERS-IGNORE(EDX,ECX)`
+  with 0 of 11 callers scanned as ignoring. The bound source is the unchanged 66.1% one, listed provisional as NOT-PROVEN.
+  Same question as L-171 (reported to the lead, no second row filed).
+
+## Lock status at build/run time
+Times -0300, the start time of each command. `mashed_lock.py status` prints no time; the line is the one printed in
+the same command, before the step.
+
+| checkpoint | step | start | status printed just before the step |
+|---|---|---|---|
+| 1 | VS2022 build | 10:59:13 | `free 'mashed_machine'` (printed in the command right before, about 10:58) |
+| 1 | object build | about 11:05 (same command as VS) | none |
+| 1 | arms | 11:14:18 | none; `mashed_lock.py run` printed `HELD` at start |
+| 1 | base object build (section 1.6) | 11:28:18 | `free 'mashed_machine'` |
+| 2 | (no build) | 11:36 to 11:41 | `SOLO merge-train13:20261116_111112 since 11:36:44` and `PRIORITY-LINGER`: waited in a loop until `free` at 11:41:20 |
+| 2 | build try 1: VS (link failed), then object build | 11:44:44 | `free 'mashed_machine'` before VS; none before the object build (about 11:46) |
+| 2 | build try 2: VS2022 build | 11:49:18 | `free 'mashed_machine'` |
+| 2 | build try 2: object build | about 11:51:46 (same command) | none |
+| 2 | arms | 11:59:29 | none; `mashed_lock.py run` printed `HELD 'mashed_machine' pid=20160` at start |
+
+The object builds of checkpoints 1 and 2 and both arms runs had no status check right before them. If the merge train
+20261116_114223 held PRIORITY-HOLD between 11:44 and 12:11, the checkpoint 2 object builds ran inside it. From
+checkpoint 3 on, the status is printed before each build and each arms run and recorded here.
 
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIO-5AA3D0-STOPS ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIO-5AA3D0-STOPS_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIO-5AA3D0-STOPS -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
