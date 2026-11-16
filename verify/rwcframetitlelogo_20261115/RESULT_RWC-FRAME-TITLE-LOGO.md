@@ -57,7 +57,7 @@ were line-ending only and are not committed. BINDINGS.tsv: notes on 0x0052cb00 /
 (headers read from the extracted piz). The 22.9% BMP source text gives depth 4 for 1 / 4 bpp and 8 for 8 bpp
 (re/match/s23/0052cb00.c, its `depth` assignment), which is not proven, and 0x00514330 has no source. What depth the
 original returns decides the raster format 0x004d5340 picks, not the draw list. Test: an original-side read of the
-RwImage that 0x00514330 / 0x0052cb00 return (+0x0c depth, +0x18 palette) for these four names. Proposed row
+RwImage that 0x00514330 / 0x0052cb00 return (+0x0c depth, +0x18 palette) for these four names. Ledger row (open)
 RWC-IMGREAD-DEPTH.
 
 ## 3. Log of the read (vs_dump, `TITLELOGO_LOG_r50.txt`)
@@ -143,7 +143,7 @@ in `RAW_SHA256_RWC-FRAME-TITLE-LOGO.txt`.
 
 ## 7. Open rows
 
-- RWC-IMGREAD-DEPTH (proposed, filed with this RESULT): the depth / palette of the RwImage the original's 0x00514330 and
+- RWC-IMGREAD-DEPTH (added to the ledger, open): the depth / palette of the RwImage the original's 0x00514330 and
   0x0052cb00 return for MashedNEWLogo.png, bigE.bmp, proLogicII.bmp, DolbyDig.bmp (original-side read), then a core
   reader that returns the same; a source for 0x00514330 (RtPNGImageRead, libpng 1.0.12 callees) and a better than 22.9%
   source for 0x0052cb00 are match work.
