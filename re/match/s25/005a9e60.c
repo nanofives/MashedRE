@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S25 0x005a9e60: hand-matched (h1). */
+/* MATCH-S25 0x005a9e60: hand-matched (h1). PORT-TOP-AUDIO-5AEF30-KNOB (2026-11-16): 100.0%, BYTE-IDENTICAL with the return reads of +0x48 volatile: every path stores +0x48 and reads it back (0x005a9ea8 / 0x005a9eb6, 0x005a9ed6 / 0x005a9ee4, 0x005a9eef / 0x005a9ef6). Was 75.4%; previous source D:/MashedWT/PORT-TOP-AUDIO-5AEF30-KNOB_data/005a9e60_before.c. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -41,13 +41,13 @@ uint FUN_005a9e60(uint param_1,undefined4 param_2,int param_3)
       uVar3 = (undefined4)FUN_005ae650(param_2,uVar1,1 << (*(uint *)(param_1 + 0x40) >> 0x1c),1,0,0x30809);
       *(undefined4 *)(param_1 + 0x48) = uVar3;
       *(uint *)(param_1 + 0xc) = *(uint *)(param_1 + 0xc) | 0x40;
-      return (*(int *)(param_1 + 0x48) != 0) ? param_1 : 0;
+      return (*(volatile int *)(param_1 + 0x48) != 0) ? param_1 : 0;
     }
     uVar3 = (undefined4)FUN_005ae250(param_2,uVar1,1 << (*(uint *)(param_1 + 0x40) >> 0x1c),1,0);
     *(undefined4 *)(param_1 + 0x48) = uVar3;
     *(uint *)(param_1 + 0xc) = *(uint *)(param_1 + 0xc) | 0x80;
-    return (*(int *)(param_1 + 0x48) != 0) ? param_1 : 0;
+    return (*(volatile int *)(param_1 + 0x48) != 0) ? param_1 : 0;
   }
   *(undefined4 *)(param_1 + 0x48) = 1;
-  return (*(int *)(param_1 + 0x48) != 0) ? param_1 : 0;
+  return (*(volatile int *)(param_1 + 0x48) != 0) ? param_1 : 0;
 }

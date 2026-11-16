@@ -1,7 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-// MATCH-S27 0x005bac00: 59.0% (regs 67%). Ghidra's 3-call body was wrong: the real function initialises a 12-dword block and runs three QueryInterface-style vtable calls (+0x14) at IIDs 0x005e70e0/0x005e70c0/0x005e7080, each followed by FUN_005baa60(self, k, block) on param_1 == 3, returning k (1/4/2). Param slot is the out variable. Residual: compiler hoists self+8 / self into esi+edi, original reloads [esi+8] each call; volatile and local-copy forms tried. Class: b.
-/* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
-   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+/* 0x005bac00: 100.0%, BYTE-IDENTICAL (PORT-TOP-AUDIO-5AEF30-KNOB, 2026-11-16), source from the listing. The 0x30-byte block at [esp+4]
+   holds the twelve dwords stored at 0x005bac11..0x005bac65; the dwords stored as immediates twice (0x42c80000 at 0x005bac55 /
+   0x005bac5d) are float fields (an int pair is held in a register, as 0xffffd8f0 is at 0x005bac08). The call result dword reuses
+   the argument slot (lea edx,[esp+0x38] at 0x005bac0d). Previous source (59.0%): D:/MashedWT/PORT-TOP-AUDIO-5AEF30-KNOB_data/005bac00_before.c. */
 #ifndef MATCH_PREAMBLE
 #define MATCH_PREAMBLE
 typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
@@ -22,42 +23,43 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned char undefined1;
-typedef int (__stdcall *QFN)(void *, void *, int, void *);
 MGLOBAL(undefined1, DAT_005e70e0, 0x005e70e0);
 MGLOBAL(undefined1, DAT_005e70c0, 0x005e70c0);
 MGLOBAL(undefined1, DAT_005e7080, 0x005e7080);
-undefined4 FUN_005baa60(int p0, int p1, int *p2);
+int FUN_005baa60(int *p0, int p1, uint *p2);
+typedef int (__stdcall *PFN4_005bac00)(int *, void *, int, uint *);
 // MATCH: 0x005bac00 FUN_005bac00
-undefined4 FUN_005bac00(int param_1)
+int FUN_005bac00(int *param_1)
 {
-  int local[12];
-  int self;
+  struct { uint d0, d4; float f8, fc, f10; uint d14; float f18; uint d1c; float f20, f24, f28, f2c; } l;
+  uint r;
+  int *o;
 
-  self = param_1;
-  local[0] = -10000;
-  local[1] = -10000;
-  local[2] = 0;
-  local[3] = 0x3fbeb852;
-  local[4] = 0x3f547ae1;
-  local[5] = -2602;
-  local[6] = 0x3be56042;
-  local[7] = 200;
-  local[8] = 0x3c343958;
-  local[9] = 0x42c80000;
-  local[10] = 0x42c80000;
-  local[11] = 0x459c4000;
-  if (((QFN)*(int *)(**(int **)(self + 8) + 0x14))(*(int **)(self + 8), &DAT_005e70e0, 0, &param_1) >= 0 && param_1 == 3 &&
-      FUN_005baa60(self, 1, local) != 0) {
+  l.d0 = 0xffffd8f0;
+  l.d4 = 0xffffd8f0;
+  o = (int *)param_1[2];
+  l.f8 = 0.0f;
+  l.fc = 1.49f;
+  l.f10 = 0.83f;
+  l.d14 = 0xfffff5d6;
+  l.f18 = 0.007f;
+  l.d1c = 0xc8;
+  l.f20 = 0.011f;
+  l.f24 = 100.0f;
+  l.f28 = 100.0f;
+  l.f2c = 5000.0f;
+  if ((*(PFN4_005bac00 *)(*o + 0x14))(o, &DAT_005e70e0, 0, &r) >= 0 && r == 3 &&
+      FUN_005baa60(param_1, 1, (uint *)&l) != 0) {
     return 1;
   }
-  if (((QFN)*(int *)(**(int **)(self + 8) + 0x14))(*(int **)(self + 8), &DAT_005e70c0, 1, &param_1) >= 0 && param_1 == 3 &&
-      FUN_005baa60(self, 4, local) != 0) {
+  o = (int *)param_1[2];
+  if ((*(PFN4_005bac00 *)(*o + 0x14))(o, &DAT_005e70c0, 1, &r) >= 0 && r == 3 &&
+      FUN_005baa60(param_1, 4, (uint *)&l) != 0) {
     return 4;
   }
-  if (((QFN)*(int *)(**(int **)(self + 8) + 0x14))(*(int **)(self + 8), &DAT_005e7080, 0, &param_1) >= 0 && param_1 == 3 &&
-      FUN_005baa60(self, 2, local) != 0) {
+  o = (int *)param_1[2];
+  if ((*(PFN4_005bac00 *)(*o + 0x14))(o, &DAT_005e7080, 0, &r) >= 0 && r == 3 &&
+      FUN_005baa60(param_1, 2, (uint *)&l) != 0) {
     return 2;
   }
   return 0;

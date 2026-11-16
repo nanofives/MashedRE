@@ -34,6 +34,8 @@ PROV_BIND |= {'005aa330'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: 0x005a9c50's other st
 PROV_BIND |= {'005ad420'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: shared callee of the 0x00632c2c entries (74.5%, NOT-PROVEN call-regargs ecx at 0x005ad4e5, register line PORT-TOP-AUDIOSTOP-5A61B0 (b); PROVISIONAL.tsv)
 PROV_BIND |= {'005a8ea0'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: table 0x00632c28 entry (77.6%, EQUIV-IF-CALLERS-IGNORE(EAX), caller 0x005ad080 reads; PROVISIONAL.tsv + decision row)
 PROV_BIND |= {'005aa200'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: census order 5, 0x005a62b0's callee (66.1%, NOT-PROVEN ult-1 / eq-0 form gap at 0x005aa271; PROVISIONAL.tsv + decision row)
+PROV_BIND |= {'005a9f10'}   # PORT-TOP-AUDIO-5AEF30-KNOB: census 69, existing PROVISIONAL.tsv row (81.0%, NOT-PROVEN, PROV-FIX-9)
+PROV_BIND |= {'005bad30'}   # PORT-TOP-AUDIO-5AEF30-KNOB: census 58, source from the listing 94.4%, NOT-PROVEN (call-target tool limit at the import call; clamp block order); PROVISIONAL.tsv
 PROV_BIND |= {'005b9ea0', '005b85e0', '005c7a00', '005c6c20', '005a7fe0', '005c80a0', '005b7440', '005b6b80', '005bce20'}   # PORT-TOP-AUDIO-5A8F30-STOPS: table 0x00635194 entries walked by 0x005bbb20 (77.1% to 91.1%, EQUIV-IF-CALLERS-IGNORE(EAX), walker 0x005ad080 reads; PROVISIONAL.tsv + decision row, L-171 class)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
@@ -135,12 +137,17 @@ INIT_ROOT = '004627f0'
 STOP_FORCE = set()
 STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
 STOP_FORCE |= {'005aef30'}   # PORT-TOP-AUDIO-5A8F30-STOPS: reached now through 0x005a8060 (0x005a8328); it calls __beginthread (0x005c2e79, no exe body; the census bulk bind left it out for the LNK2019) and starts the second thread, census order 42: a stop until the init stops are done
+# PORT-TOP-AUDIO-5AEF30-KNOB (L-174 (c)): a caller of a KNOB rva calls this exe function instead of the stop thunk. Knob off
+# it calls the stop thunk (unchanged stop); knob on it is the stand-in (Match/PortTop_Knob_005aef30.cpp, MASHED_OT_AUDIOTHREAD_STANDIN).
+KNOB = {'005aef30': ('PortTop_Knob_005aef30', 'Match/PortTop_Knob_005aef30.cpp')}
 LOCAL_SHARED = {("0045cbe0", "0045c4e0"): "PortTop_Local_0045cb20_0045c4e0"}
 EXTRA_PRE["0045cbe0"] = ["#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp"]
 # re/match/s10/0045c6b0.c carries 0x0045c640 (cast-only text difference from re/match/s10/0045c640.c): that copy is the exe body.
 ALIAS = {"0045c640": ("PortTop_Bound_0045c640", "Match/PortTop_0045c6b0.cpp"), "004671a0": ("RwCore_004671a0", "RwCore/RwCore_004671a0.cpp")}
 # PORT-TOP-AUDIO-BODY-45D460: 0x0045d460 calls printf 0x004a2cbd (CRT, waived L-67); the exe body that logs it is in PortTop_00493710.cpp.
 ALIAS["004a2cbd"] = ("PortTop_Crt_004a2cbd", "Match/PortTop_00493710.cpp")
+# PORT-TOP-AUDIO-5AEF30-KNOB: 0x005c1920 is the import thunk jmp [0x5cc01c] (DSOUND.dll ordinal 11); its exe body resolves the ordinal.
+ALIAS["005c1920"] = ("PortTop_Imp_005c1920", "Match/PortTop_Imp_005c1920.cpp")
 FORCE -= set(ALIAS)
 # PORT-TOP-AUDIO-RWA: 0x004671a0 reuses the RW core body (RWC-FRAME-492E90, same source re/match/s11/004671a0.c): two
 # ORIGTOP-only exe copies of one rva are not a class the lint takes.
@@ -233,6 +240,9 @@ for rva, p in sorted(plan.items()):
         note = {'reuse': '   // exe body (%s)' % (plan[c][2] if plan[c][0] == 'reuse' else ''), 'bind': '', 'stop': '   // named stop'}[plan[c][0]]
         if c in STOP_FORCE:
             note = '   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)'
+        if c in KNOB and plan[c][0] == 'stop':
+            L.append('#define FUN_%s %s   // knob stand-in, default off = the named stop (%s)' % (c, KNOB[c][0], KNOB[c][1]))
+            continue
         L.append('#define FUN_%s %s%s' % (c, sym(c), note))
     for c in local:
         if (rva, c) in LOCAL_SHARED:
