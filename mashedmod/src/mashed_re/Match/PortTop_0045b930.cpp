@@ -14,6 +14,7 @@
 //    0x00427620 selector pattern (Match/PortTop_00427620.cpp).
 #ifdef MASHED_STANDALONE
 #include <cstdio>
+#include <cstdlib>
 #include "../Core/HookSystem.h"
 
 namespace mashed_re { namespace Gameplay { int PickupsOrig_ReleasePool(int* foreign); int PickupsOrig_BuiltLent(); } }
@@ -72,6 +73,29 @@ void PortTop_0045b930_Call004593b0(void) {
     if (on) Orig_004593b0();
     else PortTop_StandIn04C_004593b0();
 }
+// [RWC-FRAME-BOMB-DESTROY] rva 0x00404820 call site (0x0045b945 in 0x0045b930). Bytes of MASHED.exe.unpatched:
+// 0x00404820 mov eax,[0x00636c00] / 0x00404825 push eax / 0x00404826 call 0x004e6e00 (RpClumpDestroy) / pop ecx / ret
+// (re/match/s01/raw/00404820.c, C4 by match). DAT_00636c00 is written once, at 0x004039d1 in 0x004039c0 (Bomb.dff loader),
+// and read by 0x00404650 and 0x00404820 only (absolute-dword scan, RESULT_RWC-FRAME-BOMB-DESTROY.md). With
+// MASHED_RWC_BOMB_DESTROY=1 (default OFF) the call site runs that body through the exe's RpClumpDestroy binding
+// (LibRw/RwApiBind.cpp MashedRw_ClumpDestroy_004e6e00, which takes the core route under RWC_FRAME). Off: the stand-in.
+int MashedRw_ClumpDestroy_004e6e00(int clump);
+int PortTop_StandIn04C_00404820();
+static int PortTop_0045b930_BombKnob() {
+    static int v = -1;
+    if (v < 0) { const char* e = std::getenv("MASHED_RWC_BOMB_DESTROY"); v = (e && e[0] == '1') ? 1 : 0; }
+    return v;
+}
+void PortTop_0045b930_Call00404820(void) {
+    const unsigned bomb = *reinterpret_cast<const unsigned*>(static_cast<unsigned long>(0x00636c00u));
+    if (!PortTop_0045b930_BombKnob()) {
+        PortTop_StandIn04C_00404820();
+        return;
+    }
+    PortTop_0045b930_Log("0x00404820", "RWC-FRAME-BOMB-DESTROY: RpClumpDestroy(DAT_00636c00) (clump, route)",
+                         static_cast<int>(bomb), RwCore_FrameRoute() ? 1 : 0);
+    MashedRw_ClumpDestroy_004e6e00(static_cast<int>(bomb));
+}
 }  // extern "C"
 
 #define MATCH_PORT 1
@@ -80,7 +104,7 @@ void PortTop_0045b930_Call004593b0(void) {
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp
 #define FUN_00458880 PortTop_0045b930_Call00458880   // pool release + matched Orig_00458880 (above)
 #define FUN_004593b0 PortTop_0045b930_Call004593b0   // RWMOD selector: Orig_004593b0 / stand-in (above)
-#define FUN_00404820 PortTop_StandIn04C_00404820   // stand-in: matched (raw g2s source, no MGLOBAL), not compiled (level 2)
+#define FUN_00404820 PortTop_0045b930_Call00404820   // MASHED_RWC_BOMB_DESTROY: matched body via the RpClumpDestroy binding, else the stand-in (above)
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930   // RW: RwTexDictionaryDestroy -> rw::TexDictionary::destroy
 extern "C" {
 #include "../../../../re/match/s09/0045b930.c"
