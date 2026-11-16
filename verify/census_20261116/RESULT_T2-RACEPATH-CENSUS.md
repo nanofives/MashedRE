@@ -1,8 +1,12 @@
 # RESULT T2-RACEPATH-CENSUS: which functions the original runs, and what the top-down route has for each
 
-## Verdict: PARTIAL (boot, audio-init, menu and race-load measured; race-tick pending, see section 7)
+## Verdict: RED (race-tick NOT MEASURED; boot, audio-init, menu and race-load measured)
 
-Every census run up to c8 dies early in the race. c8 is the one clean run up to the race anchor, with no harness
+Race-tick is **not measured**. Every census run with counters dies within about 11 main-thread clock calls of the race
+anchor: c8, c9 and c10 are the last three (section 6). The lead's cap of two more attempts (c9, c10) is spent. Section 7
+gives a fallback taken from an earlier run in another scenario. It is labeled as such and is not this row's measurement.
+
+Every census run dies early in the race. c8 is the one clean run up to the race anchor, with no harness
 intervention, and it is the source of every count below. Its anchor is at N=3633 with dn_warp=108, the same as ref1
 (N=3632, dn_warp=108). The raw files are listed at the end.
 
@@ -76,7 +80,7 @@ The tables are in **`census_tables.md`**, generated from `census_counts.json` wi
 | audio-init | 233 | 22 | 7 | 0 | 21 | 63 | 12 | 10 | 368 |
 | menu | 184 | 44 | 5 | 6 | 15 | 21 | 4 | 2 | 281 |
 | race-load | 713 | 133 | 11 | 14 | 39 | 220 | 35 | 14 | 1179 |
-| race-tick | pending | | | | | | | | |
+| race-tick | NOT MEASURED | | | | | | | | |
 
 Byte-matched (`c4=match`, `c4=libid`) and replay-verified (`c4=frida-replay`) counts stay apart, per L-128.
 
@@ -173,6 +177,8 @@ the same dn_warp, 108.
 | c6 | a JS hook on the filter `0x004aba86` | killed the process with no exit call |
 | c7 | `--crash-fpmask` (diagnostic native VEH that masks PE and continues) | 30 traps, all at `0x00478542`. That is the first x87 instruction after `FUN_004783f0`'s call of CRT acos `0x004a3384` (at `0x0047853d`), with FCW `0x004f` (precision and underflow unmasked) |
 | c8 | 6445 counters | passes the race load with no `0xC000008F`; dies about 11 clock calls after the anchor |
+| c9 | 6212: minus the 233 call-window entries c8 did not run up to the anchor | same AV, at N=3645 (anchor 3634) |
+| c10 | 6094: minus all 353 call-window entries | same AV, at N=3642 (anchor 3631) |
 
 **Why the two new exclusion rules exist (from c7).**
 - acos (`0x004a3384`, 9 bytes) is `lea edx,[esp+4]; call __fload_withFB 0x004a70d5`.
@@ -180,21 +186,53 @@ the same dn_warp, 108.
 - A counter there runs between `__fload_withFB`'s `ret` and the control-word save.
 - Hence: return-site entries are not counted, and neither are the 68 CRT x87 functions.
 
-**c8's death.** An access violation at EIP `0xf327cfe9` with ebp=9 (the same EIP as in c7), with return addresses inside
-Frida trampoline pages on the stack (`0x04340a0f`, `0x0456240f`). [UNCERTAIN] The candidate is a counted function whose
-patch window holds a `call`: relocated, it pushes a trampoline return address, and a callee that reads its return address
-reads trampoline bytes. Test: c9 (section 7).
+**The race-tick crash (c7, c8, c9, c10).**
+- All four die the same way: an access violation reading EIP `0x????cfe9` (`0xf327cfe9`, `0xf327cfe9`, `0xf16dcfe9`,
+  `0xf161cfe9`), with esp=`0x1afdac`, ebp=9, eax=ecx=ebx=edi=0, esi=4. The top of the stack is `0x0434..0f` / `0x0432..0f`.
+- The hypothesis that a counter whose patch window holds a `call` was the cause is **refuted**: c10 counts no such entry
+  and dies the same way.
+- [UNCERTAIN] The cause is not found. Candidates the runs do not rule out:
+  1. A counter on a function new in the race tick, from a class the scans do not catch.
+  2. The harness additions themselves: the partial prov report sent from the main thread at the anchor, the exception
+     handler, or the exit hooks. No run has had those additions without the counters.
+- Test: one census run with the same harness flags and an empty counter list (rules out or confirms 2), then a bisection
+  over the race-tick-new entries. One line is in `re/orchestrator/UNCERTAIN_REGISTER.md`.
 
-## 7. Race-tick: pending
+## 7. Race-tick: NOT MEASURED (fallback from another scenario)
 
-c9 drops 233 more entries from the c8 list (`not_instrumented_c9_callwin.tsv`). Those are the entries whose patch window
-holds a call and that c8 did not run up to the anchor. The 118 call-window entries that did run up to the anchor keep
-their counters, since they are shown safe there. The c9 list has 6212 entries.
+**Not this row's measurement.** The only measured race-window call counts on record are PROV-INSITU's `census2`
+(`verify/provinsitu_20261111/state/census2_prov.json`). That run differs from ref1:
+- It counted a fixed list of 326 RVAs: the provisional / C4 candidates of that row, not all functions.
+- Scenario track 0 / mode 10 / 4 cars, dn_warp 121, a 3000-tick cap.
+
+`census2_racewindow.py` joins it with this row's status and binding rules (`census2_racewindow.tsv`):
+- **184 of the 326 ran in its race window.** By binding: unbound 139, exe-body 14, replay 8, stop 8, provisional 6,
+  matched 4, stand-in 3, admitted 2. By status: C2 83, C4:frida-replay 78, C3 16, C4:match 6, C1 1.
+- **139 of the 184 did not run up to the anchor in c8**, so in that scenario they are race-tick-only. By binding:
+  unbound 126, exe-body 5, stop 3, matched 2, replay 2, admitted 1.
+- The ranked lists by race-window calls:
+
+| binding | rva and race-window calls |
+|---|---|
+| provisional | `0x005a6ea0` 2725, `0x005a6f30` 2725, `0x005aa0c0` 204, `0x005ae800` 31, `0x005aa560` 20, `0x005ae650` 1 |
+| stand-in | `0x004967e0` 2724, `0x00556e90` 408, `0x004d8480` 5 |
+| stop | `0x005a75b0` 54268, `0x00463640` 10900, `0x005b0cf0` 4674, `0x0045d7a0` 2725, `0x0045dd60` 2725, `0x0045efe0` 2725, `0x005a9f10` 16, `0x005a9e60` 3 |
+| missing | none in that list |
+| unbound, top | `0x00477f50` 305852, `0x004c1b40` 202459, `0x004770a0` 127738, `0x0047ba20` 84996, `0x00474de0` 77956, `0x004a3384` CRT::acos 61020, `0x00477e60` 37617 |
+
+This is a lower bound on the race-tick set in another scenario. It is not a census of the ref1 race tick. Because the
+list was chosen by status, its status mix is not the race tick's.
 
 ## Raw files (not committed)
 
 | file | sha256 |
 |---|---|
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c9.log | b0cfc415861d8dd42475c1c32b4dd4470c785bef13ad720544182cc7cfdc0aa7 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c9/crash.jsonl | 0981c90ad15bc5722974f2bfdb85f2cef7266b8c7320329f678eb6023ef3a595 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c10.log | e830c7b458117193fd1f0acc3433eabd485bcf679c768157c3243f978015e639 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c10/crash.jsonl | 911967c408c376f1d6f0deb1beea741d46d08f63042e6147c981e0c87b6281a7 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c10/prov_anchor.json | 2d73d756ad7d3807d536282bf335f713cf936d8fe989ff0f55629903e6767746 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/count_list10.txt (c10) | a6f65d80d82cf3287fd24f34ac9184423eb413de56b98684cd7848bd0231f986 |
 | D:/MashedWT/T2-RACEPATH-CENSUS_data/c8/prov_anchor.json (all counts) | f714de6cf1a8e54f3a050042b96885d5bb4fe80955d08d34c68e3f1265a67181 |
 | D:/MashedWT/T2-RACEPATH-CENSUS_data/c8/prov_warp.json | 64efea5cae53f67696959d4ed3afcdeb17faab4262e7e51a3868fe7aafa1e0f6 |
 | D:/MashedWT/T2-RACEPATH-CENSUS_data/c8/meta.json | 20a05166fb74747e85fc6234139f75b276b5a0ab475e13dbff283a6069d327ba |
@@ -226,9 +264,10 @@ their counters, since they are shown safe there. The c9 list has 6212 entries.
 | `census_T2-RACEPATH-CENSUS.tsv` | one row per rva x phase: calls, status, binding, binding_src, reached_today, reach_static, subsystem, first_phase |
 | `census_counts.json`, `census_tables.md` | the counts and their tables |
 | `audio_window_65.tsv` | the 65 stops before `0x0045d460` |
-| `not_instrumented*.tsv` | the excluded entries, with reasons |
+| `not_instrumented*.tsv` | the excluded entries, with reasons (`_c9_callwin` and `_c10` are the c9 / c10 lists) |
+| `census2_racewindow.tsv` | the section 7 fallback (PROV-INSITU census2, another scenario) |
 | `reach_top_static.tsv` | the static reach of today's exe |
-| `census_list.py`, `census_crtfpu.py`, `census_join.py`, `census_reach.py`, `census_tables.py`, `audio_window.py`, `census_arms.py` | the scripts |
+| `census_list.py` (`--no-call-window` for c10), `census_crtfpu.py`, `census_join.py`, `census_reach.py`, `census_tables.py`, `audio_window.py`, `census2_racewindow.py`, `census_arms.py` | the scripts |
 
 Harness: `re/frida/detorig.py` and `js/detorig.js`.
 - `--prov-snap` (with seq and tid per snap) and partial prov reports at the warp and the anchor.

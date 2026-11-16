@@ -15,6 +15,7 @@ from capstone.x86 import X86_OP_IMM
 
 WT = Path(__file__).resolve().parent.parent.parent
 exe, out_list, out_excl = sys.argv[1], Path(sys.argv[2]), Path(sys.argv[3])
+CALLWIN = len(sys.argv) > 4 and sys.argv[4] == "--no-call-window"   # c10: also exclude every entry with a call in its window
 pe = pefile.PE(exe, fast_load=True)
 base = pe.OPTIONAL_HEADER.ImageBase
 img = pe.get_memory_mapped_image()
@@ -58,6 +59,8 @@ for e, end, name in funcs:
     code = img[e - base:e - base + 32]
     n, why = 0, ""
     for ins in md.disasm(code, e):
+        if CALLWIN and ins.group(CS_GRP_CALL):
+            why = f"call at +{n} inside the patch window (c8 / c9: trampoline return address on the stack at the race-tick AV)"; break
         if n < 5 and ins.mnemonic in ("ret", "retn", "jmp", "int3") and n + ins.size < 5:
             why = f"{ins.mnemonic} at +{n} before 5 bytes"; break
         n += ins.size
