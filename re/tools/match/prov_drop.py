@@ -20,10 +20,14 @@ A row is KEPT, with its reason, when any test fails or cannot run:
   not-byte-identical   match.py --bytes reports differing bytes
   relocheck            relocheck.py does not report OK for the RVA
 
-Dry run by default: prints one line per row (DROP / KEEP) and, with --tsv, writes the evidence table. --apply rewrites
-PROVISIONAL.tsv without the DROP rows, keeping every other byte (comment line, header, line endings).
+PROVISIONAL_RWC.tsv (verify/rwccorerun_20261111/, MATCH-PROVDROP-RWC) is read with the same rule and is rewritten by
+--apply the same way (--rwc PATH overrides the file, --no-rwc skips it). Its lifted rows (RwCore/RwCore_Lifted_NN.cpp)
+come out as no-re-match-source. The table column of the evidence file says which file a row came from.
 
-    py -3.12 re/tools/match/prov_drop.py [--tsv out.tsv] [--apply] [--jobs N] [--only 0xRVA,...]
+Dry run by default: prints one line per row (DROP / KEEP) and, with --tsv, writes the evidence table. --apply rewrites
+each table without its DROP rows, keeping every other byte (comment line, header, line endings).
+
+    py -3.12 re/tools/match/prov_drop.py [--tsv out.tsv] [--apply] [--jobs N] [--only 0xRVA,...] [--rwc PATH | --no-rwc]
 """
 import argparse
 import concurrent.futures as cf
@@ -36,6 +40,7 @@ sys.path.insert(0, str(HERE))
 
 ROOT = HERE.parents[2]
 PROV = ROOT / "re" / "match" / "PROVISIONAL.tsv"
+PROV_RWC_REL = "verify/rwccorerun_20261111/PROVISIONAL_RWC.tsv"  # RwCore closure table (gen_rwcore_tus.py), same rva/source columns
 ADMITTED = ROOT / "re" / "match" / "ADMITTED.tsv"
 SRC_ROOT = ROOT / "mashedmod" / "src" / "mashed_re"
 EXE_RSP = ROOT / "mashedmod" / "exe_sources.rsp"
@@ -237,26 +242,41 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", default=str(ROOT), help="repo root (tests point this at a fixture)")
     ap.add_argument("--tsv", default="", help="write the per-row evidence table here")
-    ap.add_argument("--apply", action="store_true", help="rewrite PROVISIONAL.tsv without the DROP rows")
+    ap.add_argument("--apply", action="store_true", help="rewrite the provisional tables without the DROP rows")
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--only", default="", help="comma-separated RVAs to examine (others are left alone)")
+    ap.add_argument("--rwc", default=PROV_RWC_REL, help="PROVISIONAL_RWC.tsv path, relative to --root")
+    ap.add_argument("--no-rwc", action="store_true", help="read only re/match/PROVISIONAL.tsv")
     a = ap.parse_args(argv)
     root = pathlib.Path(a.root).resolve()
-    prov = root / "re" / "match" / "PROVISIONAL.tsv"
-    header, rows = read_tsv(prov)
+    tables = [("PROVISIONAL.tsv", root / "re" / "match" / "PROVISIONAL.tsv")]
+    if not a.no_rwc and (root / a.rwc).exists():
+        tables.append(("PROVISIONAL_RWC.tsv", root / a.rwc))
+    rows, tbl_of = [], {}
+    for ti, (name, path) in enumerate(tables):
+        header, trows = read_tsv(path)
+        for li, r in trows:
+            rows.append(((ti, li), r))
+            tbl_of[(ti, li)] = name
     if a.only:
         want = {int(x, 16) for x in a.only.split(",") if x}
-        rows = [(li, r) for li, r in rows if int(r["rva"], 16) in want]
+        rows = [(k, r) for k, r in rows if int(r["rva"], 16) in want]
     inc = include_map(root, root / "mashedmod" / "src" / "mashed_re", root / "mashedmod" / "exe_sources.rsp")
     res = classify(rows, root, inc, admitted_rvas(root / "re" / "match" / "ADMITTED.tsv"), checker=CHECKER, jobs=a.jobs)
-    res.sort(key=lambda x: (x[2] != "DROP", x[3], x[4]["rva"]))
-    cols = ["verdict", "reason", "rva", "status", "source", "toolchain", "flags", "match", "relocheck", "include"]
-    lines = ["\t".join(cols)]
+    res.sort(key=lambda x: (x[2] != "DROP", x[3], x[4]["rva"], x[0]))
+    cols = ["verdict", "reason", "rva", "status", "source", "toolchain", "flags", "match", "relocheck", "include", "table"]
+    lines = [chr(9).join(cols)]
     for li, r, v, why, ev in res:
-        lines.append("\t".join([v, why or "-", ev["rva"], r.get("status", ""), ev["source"], ev["toolchain"] or "-",
-                                ev["flags"] or "-", ev["match"] or "-", ev["relocheck"] or "-", ev["include"] or "-"]))
+        lines.append(chr(9).join([v, why or "-", ev["rva"], r.get("status", "") or "-", ev["source"], ev["toolchain"] or "-",
+                                ev["flags"] or "-", ev["match"] or "-", ev["relocheck"] or "-", ev["include"] or "-",
+                                tbl_of[li]]))
     for ln in lines:
         print(ln)
+    per = {}
+    for x in res:
+        d = per.setdefault(tbl_of[x[0]], [0, 0])
+        d[0] += 1
+        d[1] += x[2] == "DROP"
     nd = sum(1 for x in res if x[2] == "DROP")
     counts = {}
     for x in res:
@@ -264,13 +284,16 @@ def main(argv=None):
             counts[x[3]] = counts.get(x[3], 0) + 1
     print(f"# rows examined {len(res)}: DROP {nd}, KEEP {len(res) - nd} "
           + " ".join(f"{k}={v}" for k, v in sorted(counts.items())), file=sys.stderr)
+    for name, (n, d) in per.items():
+        print(f"# {name}: rows {n}, DROP {d}", file=sys.stderr)
     if a.tsv:
-        pathlib.Path(a.tsv).write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+        pathlib.Path(a.tsv).write_text(chr(10).join(lines) + chr(10), encoding="utf-8", newline=chr(10))
     if a.apply:
-        n = apply_drop(prov, {x[0] for x in res if x[2] == "DROP"})
-        print(f"# --apply: {n} rows removed from {prov}", file=sys.stderr)
+        for ti, (name, path) in enumerate(tables):
+            n = apply_drop(path, {x[0][1] for x in res if x[2] == "DROP" and x[0][0] == ti})
+            print(f"# --apply: {n} rows removed from {path}", file=sys.stderr)
     else:
-        print("# dry run: PROVISIONAL.tsv not changed (pass --apply to drop the DROP rows)", file=sys.stderr)
+        print("# dry run: tables not changed (pass --apply to drop the DROP rows)", file=sys.stderr)
     return 0
 
 

@@ -162,3 +162,69 @@ def test_match_error_is_kept(repo, tmp_path):
     m.main(["--root", str(repo), "--tsv", str(out)])
     rows = {r.split("\t")[2]: r.split("\t") for r in out.read_text().splitlines()[1:]}
     assert rows["0x00401000"][0] == "KEEP" and rows["0x00401000"][1] == "match-error"
+
+
+# ---- PROVISIONAL_RWC.tsv (MATCH-PROVDROP-RWC) -------------------------------------------------------------------
+RWC_REL = "verify/rwccorerun_20261111/PROVISIONAL_RWC.tsv"
+RWC_HDR = "rva\tsource\tbest_pct\texe_symbol\tpath\tnote"
+
+
+@pytest.fixture
+def repo_rwc(repo):
+    """The base fixture plus an RWC table in its 6-column format (no status column), CRLF-free like the real file."""
+    sdir = repo / "re" / "match" / "s1"
+    for rva in ("00402000", "00402100"):
+        (sdir / f"{rva}.c").write_text(
+            f"// FLAGS: /O2 /Ob1 /G5\n// MATCH: 0x{rva} _FUN_{rva}\nint FUN_{rva}(void) {{ return 0; }}\n")
+    (repo / "mashedmod/src/mashed_re/Match/Rwc.cpp").write_text('#include "../../../../re/match/s1/00402000.c"\n')
+    rsp = repo / "mashedmod" / "exe_sources.rsp"
+    rsp.write_text(rsp.read_text() + '"Match\Rwc.cpp"\n')
+    rows = [
+        ("0x00402000", "re/match/s1/00402000.c"),          # included, byte-identical -> DROP
+        ("0x00402100", "re/match/s1/00402100.c"),          # byte-identical, no TU includes it -> not-included
+        ("0x00402200", "RwCore/RwCore_Lifted_NN.cpp"),     # lifted -> no-re-match-source
+    ]
+    lines = [RWC_HDR] + ["\t".join([r, s, "99.0", "RwCore_" + r[2:], "MASHED_RWC_CORE", "NOT-PROVEN"]) for r, s in rows]
+    p = repo / RWC_REL
+    p.parent.mkdir(parents=True)
+    p.write_text("\n".join(lines) + "\n")
+    CANNED["00402000.c"] = {0x00402000: (100.0, 40, 0, "OK", "")}
+    CANNED["00402100.c"] = {0x00402100: (100.0, 40, 0, "OK", "")}
+    yield repo
+    CANNED.pop("00402000.c", None)
+    CANNED.pop("00402100.c", None)
+
+
+def test_rwc_rows_classified_with_the_same_rule(repo_rwc, tmp_path):
+    m = load()
+    out = tmp_path / "out.tsv"
+    run(m, repo_rwc, "--tsv", str(out))
+    rows = [ln.split("\t") for ln in out.read_text().splitlines()[1:]]
+    rwc = {r[2]: (r[0], "" if r[1] == "-" else r[1]) for r in rows if r[10] == "PROVISIONAL_RWC.tsv"}
+    assert rwc == {"0x00402000": ("DROP", ""), "0x00402100": ("KEEP", "not-included"),
+                   "0x00402200": ("KEEP", "no-re-match-source")}
+    # the PROVISIONAL.tsv verdicts are unchanged by the extra table
+    base = {r[2]: (r[0], "" if r[1] == "-" else r[1]) for r in rows if r[10] == "PROVISIONAL.tsv"}
+    assert base == EXPECT
+
+
+def test_rwc_apply_rewrites_only_its_own_drop_rows(repo_rwc):
+    m = load()
+    p = repo_rwc / RWC_REL
+    before = p.read_bytes()
+    assert run(m, repo_rwc, "--apply") == 0
+    expect = b"".join(ln for ln in before.splitlines(keepends=True) if not ln.startswith(b"0x00402000\t"))
+    assert p.read_bytes() == expect
+    assert b"0x00402100\t" in p.read_bytes() and p.read_bytes().startswith(RWC_HDR.encode())
+    run(m, repo_rwc, "--apply")
+    assert p.read_bytes() == expect  # idempotent
+
+
+def test_no_rwc_flag_and_missing_file_skip_the_table(repo_rwc, tmp_path):
+    m = load()
+    out = tmp_path / "out.tsv"
+    run(m, repo_rwc, "--no-rwc", "--tsv", str(out))
+    assert {r.split("\t")[10] for r in out.read_text().splitlines()[1:]} == {"PROVISIONAL.tsv"}
+    (repo_rwc / RWC_REL).unlink()
+    run(m, repo_rwc, "--tsv", str(out))
+    assert {r.split("\t")[10] for r in out.read_text().splitlines()[1:]} == {"PROVISIONAL.tsv"}
