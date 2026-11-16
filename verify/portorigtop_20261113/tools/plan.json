@@ -714,6 +714,210 @@
 ],
 []
 ],
+"005aee40": [
+"bind",
+"re/match/s26/005aee40.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005b7fe0": [
+"bind",
+"re/match/s27/005b7fe0.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005b7f80": [
+"bind",
+"re/match/s27/005b7f80.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005b7f20": [
+"bind",
+"re/match/s27/005b7f20.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005b9ea0": [
+"bind",
+"re/match/s27/005b9ea0.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa200",
+"005b9f30",
+"005bc800"
+],
+[]
+],
+"005b85e0": [
+"bind",
+"re/match/s27/005b85e0.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa060",
+"005aa200",
+"005b8680",
+"005bbbb0"
+],
+[]
+],
+"005c7a00": [
+"bind",
+"re/match/s28/005c7a00.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa200",
+"005c7a90",
+"005c96e0"
+],
+[]
+],
+"005c6c20": [
+"bind",
+"re/match/s28/005c6c20.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa060",
+"005aa200",
+"005c6cc0",
+"005c9680"
+],
+[]
+],
+"005a7fe0": [
+"bind",
+"re/match/s25/005a7fe0.c",
+"provisional",
+[
+"005a8060",
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa060",
+"005aa200",
+"005ad6a0"
+],
+[]
+],
+"005c80a0": [
+"bind",
+"re/match/s28/005c80a0.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa060",
+"005aa200",
+"005ad6a0",
+"005c8120"
+],
+[]
+],
+"005b7440": [
+"bind",
+"re/match/s27/005b7440.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa200",
+"005b73e0",
+"005b74c0"
+],
+[]
+],
+"005b6b80": [
+"bind",
+"re/match/s27/005b6b80.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa200",
+"005b6be0"
+],
+[]
+],
+"005bce20": [
+"bind",
+"re/match/s27/005bce20.c",
+"provisional",
+[
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa200",
+"005bce80"
+],
+[]
+],
+"005bb850": [
+"bind",
+"re/match/s27/005bb850.c",
+"match",
+[
+"005aa060",
+"005ac7b0",
+"005ac7e0",
+"005aca40",
+"005bb910",
+"005bba30",
+"005bba60",
+"005bbac0"
+],
+[]
+],
+"005c9230": [
+"bind",
+"re/match/s28/005c9230.c",
+"match",
+[
+"005aa060",
+"005aae60",
+"005ac7b0",
+"005ac7e0",
+"005aca40",
+"005c92c0",
+"005c92f0",
+"005c9310"
+],
+[]
+],
 "0040e340": [
 "reuse",
 "GetLiveCarCount",
@@ -1865,6 +2069,113 @@
 "005aae60": [
 "stop"
 ],
+"005b9f30": [
+"bind",
+"re/match/s27/005b9f30.c",
+"match",
+[
+"005a9e10",
+"005aee20",
+"005ba1d0",
+"005ba780",
+"005ba7f0",
+"005bad30"
+],
+[]
+],
+"005b8680": [
+"stop"
+],
+"005c7a90": [
+"bind",
+"re/match/s28/005c7a90.c",
+"match",
+[
+"005a9e10",
+"005aee20",
+"005c7d30",
+"005c7fb0",
+"005c7fe0",
+"005c8010"
+],
+[]
+],
+"005c6cc0": [
+"bind",
+"re/match/s28/005c6cc0.c",
+"match",
+[
+"005a9e10",
+"005aee20",
+"005c6f50",
+"005c7070",
+"005c70d0"
+],
+[]
+],
+"005a8060": [
+"bind",
+"re/match/s25/005a8060.c",
+"match",
+[
+"005a8390",
+"005a8460",
+"005a84d0",
+"005a8560",
+"005a8680",
+"005a9e10",
+"005aee20",
+"005aeea0",
+"005aef00",
+"005aef30"
+],
+[]
+],
+"005c8120": [
+"bind",
+"re/match/s28/005c8120.c",
+"match",
+[
+"005a9e10",
+"005aee20",
+"005c83a0",
+"005c8810",
+"005c8980",
+"005c89a0",
+"005c8eb0"
+],
+[]
+],
+"005b74c0": [
+"stop"
+],
+"005b6be0": [
+"stop"
+],
+"005bce80": [
+"stop"
+],
+"005bb910": [
+"stop"
+],
+"005bba30": [
+"stop"
+],
+"005bba60": [
+"stop"
+],
+"005bbac0": [
+"stop"
+],
+"005c92c0": [
+"stop"
+],
+"005c92f0": [
+"stop"
+],
+"005c9310": [
+"stop"
+],
 "0040e350": [
 "reuse",
 "GetRenderSubMode",
@@ -2716,6 +3027,131 @@
 "Orig_004d7ff0",
 "Match/PortTop_004d7ff0.cpp"
 ],
+"005ba1d0": [
+"stop"
+],
+"005ba780": [
+"bind",
+"re/match/s27/005ba780.c",
+"match",
+[
+"005aaa00",
+"005ba760",
+"005baf40",
+"005bb000",
+"005bbf30"
+],
+[]
+],
+"005ba7f0": [
+"stop"
+],
+"005bad30": [
+"stop"
+],
+"005c7d30": [
+"stop"
+],
+"005c7fb0": [
+"bind",
+"re/match/s28/005c7fb0.c",
+"match",
+[
+"004522d0",
+"005bb000",
+"005c7f80"
+],
+[]
+],
+"005c7fe0": [
+"bind",
+"re/match/s28/005c7fe0.c",
+"match",
+[
+"005aab00"
+],
+[]
+],
+"005c8010": [
+"stop"
+],
+"005c6f50": [
+"stop"
+],
+"005c7070": [
+"bind",
+"re/match/s28/005c7070.c",
+"match",
+[
+"005c75c0"
+],
+[]
+],
+"005c70d0": [
+"stop"
+],
+"005a8390": [
+"bind",
+"re/match/s25/005a8390.c",
+"match",
+[
+"005aefc0"
+],
+[]
+],
+"005a8460": [
+"stop"
+],
+"005a84d0": [
+"stop"
+],
+"005a8560": [
+"bind",
+"re/match/s25/005a8560.c",
+"match",
+[
+"005a8640",
+"005aab00",
+"005aab70",
+"005af010",
+"005af180",
+"005af200"
+],
+[]
+],
+"005a8680": [
+"stop"
+],
+"005aef30": [
+"stop"
+],
+"005c83a0": [
+"stop"
+],
+"005c8810": [
+"stop"
+],
+"005c8980": [
+"bind",
+"re/match/s28/005c8980.c",
+"match",
+[
+"005aab00"
+],
+[]
+],
+"005c89a0": [
+"stop"
+],
+"005c8eb0": [
+"bind",
+"re/match/s28/005c8eb0.c",
+"match",
+[
+"005b0f10"
+],
+[]
+],
 "0045c880": [
 "bind",
 "re/match/s10/0045c880.c",
@@ -3238,6 +3674,78 @@
 "MashedCrt_malloc_004a45fb",
 "Match/PortTop_CrtHeap.cpp"
 ],
+"005ba760": [
+"bind",
+"re/match/s27/005ba760.c",
+"match",
+[
+"005aabe0",
+"005bc880"
+],
+[]
+],
+"005bb000": [
+"stop"
+],
+"005c7f80": [
+"bind",
+"re/match/s28/005c7f80.c",
+"match",
+[
+"005aaa00"
+],
+[]
+],
+"005c75c0": [
+"bind",
+"re/match/s28/005c75c0.c",
+"match",
+[],
+[]
+],
+"005aefc0": [
+"bind",
+"re/match/s26/005aefc0.c",
+"match",
+[
+"005af070"
+],
+[]
+],
+"005a8640": [
+"stop"
+],
+"005af010": [
+"bind",
+"re/match/s26/005af010.c",
+"match",
+[
+"005af2d0",
+"005af510"
+],
+[]
+],
+"005af180": [
+"bind",
+"re/match/s26/005af180.c",
+"match",
+[
+"005adf30"
+],
+[]
+],
+"005af200": [
+"reuse",
+"AudioChainWalk",
+"Audio/AudioChainWalk.cpp"
+],
+"005b0f10": [
+"bind",
+"re/match/s26/005b0f10.c",
+"match",
+[],
+[]
+],
 "0045c640": [
 "reuse",
 "PortTop_Bound_0045c640",
@@ -3497,6 +4005,52 @@
 ],
 []
 ],
+"005bc880": [
+"bind",
+"re/match/s27/005bc880.c",
+"match",
+[
+"005ae330"
+],
+[]
+],
+"005af070": [
+"bind",
+"re/match/s26/005af070.c",
+"match",
+[
+"005aefa0",
+"005af140",
+"005b0b90"
+],
+[]
+],
+"005af2d0": [
+"bind",
+"re/match/s26/005af2d0.c",
+"match",
+[
+"005af300",
+"005af430",
+"005af470"
+],
+[]
+],
+"005af510": [
+"bind",
+"re/match/s26/005af510.c",
+"match",
+[
+"005af260",
+"005af600",
+"005af690",
+"005af740",
+"005af7a0",
+"005af7d0",
+"005af8f0"
+],
+[]
+],
 "004a34b0": [
 "stop"
 ],
@@ -3548,9 +4102,143 @@
 "MashedCrt_ftol2_004a2c48",
 "Match/PortTop_CrtHelpers.cpp"
 ],
+"005aefa0": [
+"reuse",
+"AudioAtomicExchangeStore",
+"Audio/AtomicExchangeStore.cpp"
+],
+"005af140": [
+"stop"
+],
+"005b0b90": [
+"bind",
+"re/match/s26/005b0b90.c",
+"match",
+[],
+[]
+],
+"005af300": [
+"bind",
+"re/match/s26/005af300.c",
+"match",
+[
+"005b1110"
+],
+[]
+],
+"005af430": [
+"bind",
+"re/match/s26/005af430.c",
+"match",
+[
+"005b1110"
+],
+[]
+],
+"005af470": [
+"bind",
+"re/match/s26/005af470.c",
+"match",
+[
+"005af300",
+"005af430"
+],
+[]
+],
+"005af260": [
+"bind",
+"re/match/s26/005af260.c",
+"match",
+[
+"005af180",
+"005af200",
+"005af230",
+"005af2a0"
+],
+[]
+],
+"005af600": [
+"bind",
+"re/match/s26/005af600.c",
+"match",
+[
+"005af180",
+"005af200",
+"005af670",
+"005af740",
+"005b10d0"
+],
+[]
+],
+"005af690": [
+"stop"
+],
+"005af740": [
+"bind",
+"re/match/s26/005af740.c",
+"match",
+[
+"005af180",
+"005af200",
+"005af780"
+],
+[]
+],
+"005af7a0": [
+"bind",
+"re/match/s26/005af7a0.c",
+"match",
+[
+"005b1140"
+],
+[]
+],
+"005af7d0": [
+"stop"
+],
+"005af8f0": [
+"stop"
+],
 "005b10e0": [
 "reuse",
 "AudioTableDispatchAt8",
 "Audio/AudioTableDispatch.cpp"
+],
+"005af230": [
+"bind",
+"re/match/s26/005af230.c",
+"match",
+[],
+[]
+],
+"005af2a0": [
+"stop"
+],
+"005af670": [
+"stop"
+],
+"005b10d0": [
+"bind",
+"re/match/s26/005b10d0.c",
+"match",
+[
+"005b10a0"
+],
+[]
+],
+"005af780": [
+"stop"
+],
+"005b1140": [
+"bind",
+"re/match/s26/005b1140.c",
+"match",
+[
+"005b10a0"
+],
+[]
+],
+"005b10a0": [
+"stop"
 ]
 }
