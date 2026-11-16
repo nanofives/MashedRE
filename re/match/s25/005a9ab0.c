@@ -1,5 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S25 0x005a9ab0 (h2): best 72.3% (regs 76.8%), class b. param_1 lives in ebp in the original, spilled by the DDK; permuter 300 s. relocheck BAD only because the code differs from the original. */
+/* MATCH-S25 0x005a9ab0 (h2): was 72.3% (regs 76.8%), class b. param_1 lives in ebp in the original, spilled by the DDK; permuter 300 s.
+   PORT-TOP-AUDIOINIT-SPLIT-5A9970: 67.9%, equiv EQUIV-IF-CALLERS-IGNORE(ECX); provisional (PROVISIONAL.tsv). Fixed the +0x4c clear
+   (the old pre-increment loop cleared words [1..6], the original rep stosd at 0x005a9b54 clears [0..5]) and the list-link load
+   order (orig loads [list+0x10] at 0x005a9bbe before the +0x1c store at 0x005a9bc7). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -36,13 +39,11 @@ void FUN_005a9c50(int p0);
 int FUN_005ae800(int * p0, undefined4 p1);
 // MATCH: 0x005a9ab0 FUN_005a9ab0
 int FUN_005a9ab0(int param_1,byte param_2,int param_3,int param_4,int param_5,undefined4 param_6)
-
 {
-  int *piVar1;
-  undefined4 uVar2;
-  int iVar3;
-  undefined4 *puVar4;
-
+  int iVar1;
+  int *piVar2;
+  int *piVar3;
+  int i;
   if ((param_1 == 0) && (DAT_007dccc4 == 0)) {
     param_1 = DAT_009146fc;
   }
@@ -51,17 +52,17 @@ int FUN_005a9ab0(int param_1,byte param_2,int param_3,int param_4,int param_5,un
     if (param_3 == 0) {
       return 0;
     }
-    *(undefined4 *)(param_3 + 0xc) = 2;
+    *(uint *)(param_3 + 0xc) = 2;
   }
   else {
-    *(undefined4 *)(param_3 + 0xc) = 0;
+    *(uint *)(param_3 + 0xc) = 0;
   }
   *(undefined4 *)(param_3 + 0x58) = param_6;
   if ((param_2 & 4) != 0) {
     if (param_4 == 0) {
-      iVar3 = FUN_005ae800((int *)&DAT_007dcbf4,0x30809);
-      *(int *)(param_3 + 0x4c) = iVar3;
-      if (iVar3 == 0) {
+      iVar1 = FUN_005ae800((int *)&DAT_007dcbf4,0x30809);
+      *(int *)(param_3 + 0x4c) = iVar1;
+      if (iVar1 == 0) {
         FUN_005a9be0(param_3);
         return 0;
       }
@@ -70,18 +71,18 @@ int FUN_005a9ab0(int param_1,byte param_2,int param_3,int param_4,int param_5,un
       *(int *)(param_3 + 0x4c) = param_4;
       *(uint *)(param_3 + 0xc) = *(uint *)(param_3 + 0xc) | 0x10;
     }
-    puVar4 = *(undefined4 **)(param_3 + 0x4c);
-    for (iVar3 = 6; iVar3 != 0; iVar3 = iVar3 + -1) {
-      puVar4 = puVar4 + 1;
-      *puVar4 = 0;
+    piVar2 = *(int **)(param_3 + 0x4c);
+    for (i = 6; i != 0; i--) {
+      *piVar2 = 0;
+      piVar2++;
     }
     *(uint *)(param_3 + 0xc) = *(uint *)(param_3 + 0xc) | 4;
   }
   if ((param_2 & 8) != 0) {
     if (param_5 == 0) {
-      iVar3 = FUN_005ae800((int *)&DAT_007dcc18,0x30809);
-      *(int *)(param_3 + 0x50) = iVar3;
-      if (iVar3 == 0) {
+      iVar1 = FUN_005ae800((int *)&DAT_007dcc18,0x30809);
+      *(int *)(param_3 + 0x50) = iVar1;
+      if (iVar1 == 0) {
         FUN_005a9be0(param_3);
         return 0;
       }
@@ -90,20 +91,19 @@ int FUN_005a9ab0(int param_1,byte param_2,int param_3,int param_4,int param_5,un
       *(int *)(param_3 + 0x50) = param_5;
       *(uint *)(param_3 + 0xc) = *(uint *)(param_3 + 0xc) | 0x20;
     }
-    puVar4 = *(undefined4 **)(param_3 + 0x50);
-    *puVar4 = 0;
-    puVar4[1] = 0;
+    piVar2 = *(int **)(param_3 + 0x50);
+    *(__int64 *)piVar2 = 0;
     *(uint *)(param_3 + 0xc) = *(uint *)(param_3 + 0xc) | 8;
   }
   FUN_005a9c50(param_3);
   if (param_1 != 0) {
-    uVar2 = *(undefined4 *)(param_1 + 0x10);
-    piVar1 = (int *)(param_1 + 0x10);
-    puVar4 = (undefined4 *)(param_3 + 0x18);
-    *(int **)(param_3 + 0x1c) = piVar1;
-    *puVar4 = uVar2;
-    *(undefined4 **)(*piVar1 + 4) = puVar4;
-    *piVar1 = (int)puVar4;
+    piVar2 = (int *)(param_1 + 0x10);
+    piVar3 = (int *)(param_3 + 0x18);
+    iVar1 = *piVar2;
+    *(int **)(param_3 + 0x1c) = piVar2;
+    *piVar3 = iVar1;
+    *(int **)(*piVar2 + 4) = piVar3;
+    *piVar2 = (int)piVar3;
   }
   return param_3;
 }
