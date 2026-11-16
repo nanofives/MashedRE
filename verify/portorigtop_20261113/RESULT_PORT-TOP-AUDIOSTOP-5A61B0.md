@@ -10,8 +10,10 @@ boot, self-tests. Gates: not run (top-down row). No menu walk: no menu code chan
 | 1 | 0x005a61b0 | provisional body `re/match/s25/005a61b0.c` 71.4% (NOT-PROVEN, tool limit on the jump table), bound | checkpoint 1 |
 | 1 | 0x005b35a0 | provisional body `re/match/s27/005b35a0.c` reshaped to the original store order, 55.0% (EQUIV-IF-CALLERS-IGNORE, EDX unknown at the caller), bound | checkpoint 1 |
 | 1 | 0x005ae800 | provisional body `re/match/s26/005ae800.c` 38.2% (NOT-PROVEN), bound; no longer a stop. [UNCERTAIN: the arms do not show that it executed, see 1.3] | checkpoint 1 |
+| 2 | 0x005ad910 | **byte match**: `re/match/s26/005ad910.c` 66.7% -> 100% BYTE-IDENTICAL, relocheck OK; bound; promotion row in `re/promotions/PORT-TOP-AUDIOSTOP-5A61B0.tsv` | checkpoint 2 |
 
-Init arms after checkpoint 1: both builds get through 0x005ad770 and stop at **0x005AD910**, the next named stop.
+Init arms after checkpoint 1: both builds get through 0x005ad770 and stop at **0x005AD910**.
+Init arms after checkpoint 2: both builds get through 0x005ad910 and stop at **0x005AD9D0**.
 
 ## 1. Checkpoint 1: 0x005a61b0, 0x005b35a0, 0x005ae800
 
@@ -85,15 +87,56 @@ Roots: PORT-TOP-AUDIO-BODY-45D460's (`roots.txt` sha256 73566306...). `exe_body_
     code-trap PASS (0 of 6 checks failed, 459/459 pages).
 
 ### 1.4 Fresh base check (classifies 0x004938e0)
-See section 3 (run after checkpoint 1).
+The worktree was detached to the base 7630e53ca, object build (`MASHED_DDKOBJ=1`) Build OK, `ddkobj.py check`:
+IDENTICAL 1561/1599, DIFFERENT 22, the same 22 rvas as this branch (0x004938e0 included), units linked 1549/1761,
+provisional kept VS2022 201 units. So **no unit is newly DIFFERENT** on this branch: 0x004938e0 is DIFFERENT on the base.
+The worktree was then returned to the branch head.
+
+## 2. Checkpoint 2: 0x005ad910 (byte match)
+- equiv.py on the old source: `NOT-PROVEN call-memory: region ours +0x0 / orig 0x005ad910 call 0x5ad770`. match.py
+  66.7% (`audiostop_5a61b0/ad910_match_before.txt`).
+- **Shaping, three changes, 100%** (`audiostop_5a61b0/ad910_match_bytes.txt`):
+  - `param_3` copied to a local whose address is passed. The original loads `[esp+0x10]` (param_3) into eax at
+    0x005ad911 and stores it back to `[esp+0x10]` at 0x005ad91d before `lea eax,[esp+0x14]` (0x005ad922); cl puts the
+    local in the param_3 slot.
+  - Returns the node (`int`). The caller's source already declares `int FUN_005ad910(...)` and reads it
+    (`re/match/s26/005adc10.c` lines 28 / 51). With the return, the null path is `test eax,eax` / `jne` / `pop ecx` /
+    `ret` right after the call, the original layout. **Behaviour note:** the old source was `void`, so a caller that
+    reads eax got whatever the body left there; the new source returns the node in every path.
+  - In the `param_2 != 0` arm, `param_1 = [param_2+0x14] | 0x4000` before the `+0x18 = param_2` store, then one shared
+    `+0x14 |= param_1` that cl duplicates per arm (gives the original's ecx / edx roles in both tails).
+  - Result: `match.py --bytes`: 100.0% (regs 100.0%, ops 100.0%, 36/36 ins), 97 B whole symbol, 0 differing unmasked
+    bytes, BYTE-IDENTICAL. `relocheck.py`: OK, checked=1 unchecked=0 (`ad910_relocheck.txt`). equiv.py on the new
+    source: `EQUIV [BYTE-IDENTICAL]`. Not inline asm.
+- Promotion (HB-TRACKER-AT-MERGE): `re/promotions/PORT-TOP-AUDIOSTOP-5A61B0.tsv` route `match`; dry run
+  `c4_reclass.py batch --tsv` (`audiostop_5a61b0/c4_reclass_dry.txt`): `0x005ad910 match PASS byte-identical 97 B,
+  relocheck OK (1/0)`. hooks.csv row today: C2. No `--apply` on the branch. Not in PROVISIONAL.tsv / ADMITTED.tsv.
+- Binding: plan 260 bind (227 match, 15 admitted, 11 provisional, 7 replay), 64 reuse, 35 stops; the only change is
+  0x005ad910 stop -> bind (its one callee 0x005ad770 is bound). New TU `PortTop_005ad910.cpp`, `PortTop_005adc10.cpp`
+  calls the bound body, `PortTop_AudioStops.cpp` stop removed. rsp +1, allowlist +0, BINDINGS.tsv updated 36.
+- Builds: VS2022 Build OK, object build Build OK, rva-lint 322 known, NEW 0. `ddkobj.py check`: IDENTICAL 1562/1600,
+  DIFFERENT 22 (the same 22 as the base, section 1.4), units linked 1550/1765; **0x005ad910 `_PortTop_Bound_005ad910`
+  IDENTICAL** (`re/match/s26/005ad910.c`).
+- Arms:
+
+  | arm | build | stop | return address | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005AD9D0** after 3.9 s | 0x0023C106 = `_PortTop_Bound_005adc10+0x86` (`mashed_re.map`, symbol at 0x0023c080) | ffd41c81a84aa2f0 |
+  | ddk_init_audio | object | **0x005AD9D0** after 3.6 s | 0x0023A126 = `_PortTop_Bound_005adc10+0x86` (`mashed_re_ddk.map`, symbol at 0x0023a0a0) | e854a3ee4607cd32 |
+
+  - 0x005adc10 calls 0x005ad9d0 only in its `== 0x4000` arm (original call 0x005adc8e). Both builds run the same
+    VS2022 body of the provisional 0x005adc10, hence the same +0x86. [UNCERTAIN: the offset is from the maps only.]
+  - Self-tests PASS in both arms, both builds: portstate-image 0 of 8 failed (PortStateSeed 272/272), OT_CODEPTR 0 of
+    367 failed, code-trap 0 of 6 failed (459/459 pages).
 
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIOSTOP-5A61B0 ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIOSTOP-5A61B0_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIOSTOP-5A61B0 -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
 Private root: robocopy of `D:/MashedWT/PORT-TOP-AUDIOSTOP-5AD770_root`, its old `mashed_re.log` removed.
 
-## Raw data (`D:/MashedWT/PORT-TOP-AUDIOSTOP-5A61B0_data/`, sha256), checkpoint 1
-- `vs_init_audio.log` 99be67eb3af1bf85da1903e47f161eb94deeaa29e89cffcedeb168660daca742
-- `ddk_init_audio.log` aea954aa8f2fbbaf770bc6bb5e0cbc7fbe7bb86d5ee0c2b537496cd9cdbf7793
+## Raw data (`D:/MashedWT/PORT-TOP-AUDIOSTOP-5A61B0_data/`, sha256)
+Checkpoint 1:
+- `cp1/vs_init_audio.log` 99be67eb3af1bf85da1903e47f161eb94deeaa29e89cffcedeb168660daca742
+- `cp1/ddk_init_audio.log` aea954aa8f2fbbaf770bc6bb5e0cbc7fbe7bb86d5ee0c2b537496cd9cdbf7793
 - `arms1.out` 5d321e95c7c4d3243ce9b4339d18a38862f3ee26e78d008ded028c6938f3ac44
 - `build_vs.log` f41137c6697de382acbbcccb4180c045e08329cd0f5d78346adcf021aff7f7de
 - `build_ddk.log` e82fc4bc588d2d4e9adcf1e61b63a7f2aa140f332be72ce0659f84d8b4bfcfa1
@@ -103,3 +146,19 @@ Private root: robocopy of `D:/MashedWT/PORT-TOP-AUDIOSTOP-5AD770_root`, its old 
 - `plan_write.txt` 7f9de5d087e2f3e7a26fcac676281590176129265f8d72e7d8360bcef16bc3df
 - `roots.txt` 73566306c2eb5600447befbb32c4667ff8465d6d18e268986f50ac1fe77142bb
 - `005b35a0_before.c` c21a76ca266742e4ffb451a2fc7ee6d7c32e638224d9d7abd13760048fde32a5
+- `exeidx.json` (the regenerated index the plan used; the committed copy stays the base's)
+
+Base check (1.4):
+- `base_build_ddk.log` 3c51d04ca30781e226bed1d460594b2b4f19e054fcd0fb73fa1ba5251e31b187
+- `base_ddkcheck.log` 61dc0a6cd79e032057c7cb07de2ea5fd8ee2595b357d95119e3d27bf8992c3ad
+
+Checkpoint 2:
+- `cp2/vs_init_audio.log` ffd41c81a84aa2f0993fed6b5e303d96a7274896d4e9c3f8e4ef58a9f79df21f
+- `cp2/ddk_init_audio.log` e854a3ee4607cd3239df2237075d38dc879e74e376597c312642c12c20fb6933
+- `arms2.out` 96902f972c379961eef43e67aba0092a4b3f1014ee5c8e6317a2414804bc31e9
+- `build2_vs.log` 8abb8a3c30148cdc32ddc65f073ac4cd964d9c1edbdf151c39d595f7cf63ea87
+- `build2_ddk.log` b550bb029967479055ffd54f488c84bc2fa60b23af1530a73aa79ee018a56d24
+- `ddkcheck2.log` a9f915a53fc5c30022e5ec09a7759051e9e541f1c8e7785aa7c51e81dc4c5964
+- `plan2_dry.txt` 87926773931ae4349e63363d15c20c68695e91b9279bda46d3bf448a3d0ad0ca
+- `plan2_write.txt` 26cee057fa1102976a77ee5fa7f3eb0498a9f3866f822e898278248852c429bb
+- `005ad910_before.c` e4300b10200c82789e681d358e8a99766cfdaed710aa2595d77fb24e199732ab

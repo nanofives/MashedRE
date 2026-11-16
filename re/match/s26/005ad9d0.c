@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 0x005ad9d0 (h3): 88.9% exact, regs 88.9%. Residual class (b) epilogue layout: original puts a ret block right after the call (jne to the fixup tail); if(r!=0){..} and early-return forms both give je-to-end. Loops are while(a==0 && d!=0){a=[+0xc];d=[+0x18];} and *(p3+0x14) is read first into a temp. */
+/* MATCH-S26 0x005ad9d0 (h3). PORT-TOP-AUDIOSTOP-5A61B0 (2026-11-16): 100%, byte-identical. Shape: returns the node (int, the caller 0x005adc10 reads it), so the null path is if (iVar1 == 0) return iVar1; and cl lays out test 0x005ada1b / jne 0x005ada1e / pop pop ret 0x005ada20..0x005ada22. Was: 88.9% exact, regs 88.9%. Residual class (b) epilogue layout: original puts a ret block right after the call (jne to the fixup tail); if(r!=0){..} and early-return forms both give je-to-end. Loops are while(a==0 && d!=0){a=[+0xc];d=[+0x18];} and *(p3+0x14) is read first into a temp. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -26,7 +26,7 @@ typedef unsigned int undefined4;
 typedef unsigned int uint;
 int FUN_005ad770(undefined4 p0, int p1, int p2, int p3, undefined4 p4);
 // MATCH: 0x005ad9d0 FUN_005ad9d0
-void FUN_005ad9d0(int param_1,int param_2,int param_3,int param_4,undefined4 param_5)
+int FUN_005ad9d0(int param_1,int param_2,int param_3,int param_4,undefined4 param_5)
 {
   int iVar1;
   undefined4 uVar2;
@@ -40,8 +40,8 @@ void FUN_005ad9d0(int param_1,int param_2,int param_3,int param_4,undefined4 par
     param_4 = *(int *)(param_3 + 0x18);
   }
   iVar1 = FUN_005ad770(uVar2,param_1,param_2,param_4,param_5);
-  if (iVar1 != 0) {
-    *(int *)(iVar1 + 0x18) = param_3;
-    *(uint *)(iVar1 + 0x14) = *(uint *)(iVar1 + 0x14) | 0x4000;
-  }
+  if (iVar1 == 0) return iVar1;
+  *(int *)(iVar1 + 0x18) = param_3;
+  *(uint *)(iVar1 + 0x14) = *(uint *)(iVar1 + 0x14) | 0x4000;
+  return iVar1;
 }
