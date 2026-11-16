@@ -30,6 +30,7 @@ PROV_BIND |= {'0045d460'}   # PORT-TOP-AUDIO-BODY-45D460: 0x004669b0's permdict 
 PROV_BIND |= {'005a61b0', '005b35a0', '005ae800'}   # PORT-TOP-AUDIOSTOP-5A61B0: 0x005ad770's stops (block order 71.4%, register-only 55.0%, loop shape 38.2%; PROVISIONAL.tsv)
 PROV_BIND |= {'005a9ab0'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: 0x005a9970's stop (67.9%, EQUIV-IF-CALLERS-IGNORE(ECX), callers read; PROVISIONAL.tsv)
 PROV_BIND |= {'005aa560'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: table entry 7 0x005aa480's stop (79.8%, NOT-PROVEN call-args at 0x005aa593, tool limit: 0x005aad40 takes no args; PROVISIONAL.tsv)
+PROV_BIND |= {'005aa330'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: 0x005a9c50's other stop (54.7%, NOT-PROVEN call-args at 0x005aa350, masked-high-bits tool limit; PROVISIONAL.tsv)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
 PEND = {}
@@ -50,9 +51,11 @@ def msrc(rva):
     if rva in PROV_BIND and rva in prov and os.path.exists(prov[rva][2]):
         return prov[rva][2], 'provisional'
     if 'c4=match' in r[8] and ('BYTE-IDENTICAL' in r[8] or 'match evidence: identical' in r[8] or ('100.0%' in r[8] and 'relocheck OK' in r[8])):
-        for m in re.finditer(r'(re/match/[^\s;,()]+?\.c)', r[8]):
-            if os.path.exists(m.group(1)):
-                return m.group(1), 'match'
+        # PORT-TOP-AUDIO-5AA3D0-STOPS: prefer the note's re/match/<d>/<rva>.c (0x005aa510's C1 text cites 005aa480.c first)
+        _ps = [m.group(1) for m in re.finditer(r'(re/match/[^\s;,()]+?\.c)', r[8]) if os.path.exists(m.group(1))]
+        _ps.sort(key=lambda q: not q.endswith('/%s.c' % rva))
+        if _ps:
+            return _ps[0], 'match'
     if rva in adm and os.path.exists(adm[rva][2]):
         return adm[rva][2], 'admitted'
     return None, None

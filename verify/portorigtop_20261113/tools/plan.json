@@ -1211,7 +1211,11 @@
 []
 ],
 "005b36b0": [
-"stop"
+"bind",
+"re/match/s27/005b36b0.c",
+"match",
+[],
+[]
 ],
 "005a9ab0": [
 "bind",
@@ -2761,10 +2765,25 @@
 []
 ],
 "005aa330": [
-"stop"
+"bind",
+"re/match/s25/005aa330.c",
+"provisional",
+[
+"004522d0",
+"005ae030"
+],
+[]
 ],
 "005aa3d0": [
-"stop"
+"bind",
+"re/match/s25/005aa3d0.c",
+"admitted",
+[
+"004d7ff0",
+"005ae0b0",
+"005b36b0"
+],
+[]
 ],
 "005a9e60": [
 "stop"
