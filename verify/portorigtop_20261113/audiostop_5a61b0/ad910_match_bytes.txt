@@ -1,0 +1,2 @@
+0x005ad910 _FUN_005ad910: 100.0% (regs 100.0%, ops 100.0%)  36/36 ins  flags=/O2 /Ob1 /G5 tc=ddk
+   bytes: 97 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)

@@ -1,0 +1,41 @@
+0x005ad910 _FUN_005ad910: 66.7% (regs 83.3%, ops 86.1%)  32/36 ins  flags=/O2 /Ob1 /G5 tc=ddk
+   = push ecx                                     | push ecx
+   ! mov eax, dword ptr [esp + 0x18]              | mov eax, dword ptr [esp + 0x10]
+   ! mov ecx, dword ptr [esp + 0x14]              | mov ecx, dword ptr [esp + 0x18]
+   !                                              | mov edx, dword ptr [esp + 0x14]
+   !                                              | mov dword ptr [esp + 0x10], eax
+   !                                              | push ecx
+   !                                              | lea eax, [esp + 0x14]
+   !                                              | push edx
+   !                                              | lea ecx, [esp + 8]
+   = push eax                                     | push eax
+   ! lea edx, [esp + 0x14]                        | 
+   = push ecx                                     | push ecx
+   ! lea eax, [esp + 8]                           | 
+   ! push edx                                     | 
+   ! push eax                                     | 
+   = push 0x2000                                  | push 0x2000
+   = mov dword ptr [esp + 0x14], 0                | mov dword ptr [esp + 0x14], 0
+   = call 0x27                                    | call 0x5ad770
+   = add esp, 0x14                                | add esp, 0x14
+   = test eax, eax                                | test eax, eax
+   ! je 0x55                                      | jne 0x5ad948
+   !                                              | pop ecx
+   !                                              | ret 
+   = mov edx, dword ptr [esp + 0xc]               | mov edx, dword ptr [esp + 0xc]
+   = test edx, edx                                | test edx, edx
+   ! je 0x49                                      | je 0x5ad963
+   = mov ecx, dword ptr [edx + 0x14]              | mov ecx, dword ptr [edx + 0x14]
+   = mov dword ptr [eax + 0x18], edx              | mov dword ptr [eax + 0x18], edx
+   = mov edx, dword ptr [eax + 0x14]              | mov edx, dword ptr [eax + 0x14]
+   = or ch, 0x40                                  | or ch, 0x40
+   = or edx, ecx                                  | or edx, ecx
+   = mov dword ptr [eax + 0x14], edx              | mov dword ptr [eax + 0x14], edx
+   = pop ecx                                      | pop ecx
+   = ret                                          | ret 
+   = mov ecx, dword ptr [esp + 8]                 | mov ecx, dword ptr [esp + 8]
+   = mov edx, dword ptr [eax + 0x14]              | mov edx, dword ptr [eax + 0x14]
+   = or edx, ecx                                  | or edx, ecx
+   = mov dword ptr [eax + 0x14], edx              | mov dword ptr [eax + 0x14], edx
+   = pop ecx                                      | pop ecx
+   = ret                                          | ret 
