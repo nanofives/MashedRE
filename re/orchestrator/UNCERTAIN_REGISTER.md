@@ -20,3 +20,5 @@ Rows parked here on 2026-11-16 (ledger stage blocked, note "parked: UNCERTAIN_RE
 | RWC-FRAME-MOVIE-TEARDOWN | AppDestroy closes the movie through 0x00494460 | log the close path | verify/rwcframemovie_20261116/ |
 | GEN-RWCORE-PROVLIST-DRIFT | generator re-adds 94 dropped PROVISIONAL_RWC rows | make the generator read the drop list | verify/rwcframeclump_20261113/ |
 | MATCH-551A50-BIND-CALLER | 0x00551a50 linked but unreferenced | bind a caller | verify/MATCH-TAG-FIX-005BF690/ |
+| PORT-TOP-AUDIOSTOP-5A61B0 (a) | the init arms ran the provisional 0x005ae800 body (0x005ad770 calls it only when param_4 == 0) | a one-shot log or probe on PortTop_Bound_005ae800 in vs_init_audio | verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOSTOP-5A61B0.md |
+| PORT-TOP-AUDIOSTOP-5A61B0 (b) | the RwGlobals slot +0x108 that 0x005aea00 jumps to (0x005aea06) does not read ecx, so 0x005ae800 equiv call-regargs ecx difference is dead | equiv.py callee summary for the +0x108 target, or a Frida read of ecx at the slot entry | verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOSTOP-5A61B0.md |

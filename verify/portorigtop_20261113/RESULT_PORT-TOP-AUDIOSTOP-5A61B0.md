@@ -1,5 +1,12 @@
 # RESULT PORT-TOP-AUDIOSTOP-5A61B0: multi-stop row on the audio init lane
 
+## Verdict: GREEN (5 stops passed in 3 checkpoints; after the last one the two builds stop at different rvas, filed as PORT-TOP-AUDIOINIT-SPLIT-5A9970)
+
+- Self-tests PASS in every arm, both builds, all three checkpoints.
+- No newly DIFFERENT unit: branch DIFFERENT 22 = fresh base check DIFFERENT 22 (section 1.4).
+- Two byte matches (0x005ad910, 0x005ad9d0) as `re/promotions/PORT-TOP-AUDIOSTOP-5A61B0.tsv`, dry run 2 pass.
+  Three provisional bodies (0x005a61b0, 0x005b35a0, 0x005ae800), none C4.
+
 Base: orch/integration 7630e53ca. Branch orch/PORT-TOP-AUDIOSTOP-5A61B0. Top-down row: both builds, ddkobj check, knob
 boot, self-tests. Gates: not run (top-down row). No menu walk: no menu code changed.
 
@@ -11,9 +18,12 @@ boot, self-tests. Gates: not run (top-down row). No menu walk: no menu code chan
 | 1 | 0x005b35a0 | provisional body `re/match/s27/005b35a0.c` reshaped to the original store order, 55.0% (EQUIV-IF-CALLERS-IGNORE, EDX unknown at the caller), bound | checkpoint 1 |
 | 1 | 0x005ae800 | provisional body `re/match/s26/005ae800.c` 38.2% (NOT-PROVEN), bound; no longer a stop. [UNCERTAIN: the arms do not show that it executed, see 1.3] | checkpoint 1 |
 | 2 | 0x005ad910 | **byte match**: `re/match/s26/005ad910.c` 66.7% -> 100% BYTE-IDENTICAL, relocheck OK; bound; promotion row in `re/promotions/PORT-TOP-AUDIOSTOP-5A61B0.tsv` | checkpoint 2 |
+| 3 | 0x005ad9d0 | **byte match**: `re/match/s26/005ad9d0.c` 88.9% -> 100% BYTE-IDENTICAL, relocheck OK; bound; promotion row | checkpoint 3 |
 
 Init arms after checkpoint 1: both builds get through 0x005ad770 and stop at **0x005AD910**.
 Init arms after checkpoint 2: both builds get through 0x005ad910 and stop at **0x005AD9D0**.
+Init arms after checkpoint 3: both builds get through 0x005ad9d0, then **split**: VS2022 stops at code pointer
+**0x005AAF50**, the object build at **0x005A9AB0** (section 3).
 
 ## 1. Checkpoint 1: 0x005a61b0, 0x005b35a0, 0x005ae800
 
@@ -129,6 +139,37 @@ The worktree was then returned to the branch head.
   - Self-tests PASS in both arms, both builds: portstate-image 0 of 8 failed (PortStateSeed 272/272), OT_CODEPTR 0 of
     367 failed, code-trap 0 of 6 failed (459/459 pages).
 
+## 3. Checkpoint 3: 0x005ad9d0 (byte match), and the build split
+- Old source 88.9% (`audiostop_5a61b0/ad9d0_match_before.txt`), equiv.py `EQUIV [ORDER,LAYOUT,FRAME]`. Shape: returns
+  the node (`int`; 0x005adc10's source declares `int FUN_005ad9d0(...)` at line 30 and reads it at line 56), null path
+  `if (iVar1 == 0) return iVar1;`, which gives the original's `test eax,eax` 0x005ada1b / `jne 0x5ada23` 0x005ada1e /
+  `pop edi; pop esi; ret` 0x005ada20..0x005ada22. **Behaviour note:** the old source was `void`, same as 0x005ad910.
+  `match.py --bytes` 100.0% (45/45 ins), 98 B, 0 differing unmasked bytes, BYTE-IDENTICAL; `relocheck.py` OK checked=1
+  unchecked=0. Promotion row added; dry run `[2/2] 0x005ad9d0 match PASS byte-identical 98 B, relocheck OK (1/0)`.
+- Binding: plan 261 bind (228 match), 34 stops; only change 0x005ad9d0 stop -> bind. New TU `PortTop_005ad9d0.cpp`,
+  `PortTop_005adc10.cpp` calls it, stop removed. rsp +1, allowlist +0, BINDINGS.tsv updated 35.
+- Builds OK both, rva-lint NEW 0. `ddkobj.py check`: IDENTICAL 1563/1601, DIFFERENT 22 (same set), 0x005ad9d0 and
+  0x005ad910 IDENTICAL.
+- Arms (self-tests PASS in both, same counts as checkpoint 1):
+
+  | arm | build | exit | return address | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005AAF50** after 4.0 s, `[OT_CODEPTR] STOP: a bound code pointer to original 0x005AAF50 was called` | 0x0023A736 = `_PortTop_Bound_005ad080+0x16` (`mashed_re.map`) | cf38a4693eb2580a |
+  | ddk_init_audio | object | **0x005A9AB0** after 3.3 s, `[OT_TIMER] STOP: ... called original 0x005A9AB0` | 0x00048BAF = `_PortTop_Bound_005a9970+0x8f` (`mashed_re_ddk.map`) | f3648ddd20b636d7 |
+
+- What the two stops are (static, capstone on `MASHED.exe.unpatched` + sources):
+  - 0x005a9970 is slot 0x00632bd8 of the init table 0x00632ba8 (hooks.csv note), admitted EQUIV (ADMITTED.tsv),
+    `re/match/s30/005a9970.c` 97.2%, **DIFFERENT in the object build** (21 bytes, first at +0x1; it is in the base's
+    DIFFERENT set too). Its source calls 0x005ae650 three times and 0x005a9ab0 only after all three return nonzero.
+  - 0x005ad080 walks a code-pointer table; 0x005a6110 passes 0x00632c2c (count 3) first, and 0x00632c2c holds
+    0x005aaf50, 0x005aaef0, 0x005aae90 (0x00632c28: 0x005a8ea0, 0x00632c38: 0x005aad50). None of these has a re/match source.
+  - So the object build reached 0x005a9970's 0x005a9ab0 call, and the VS2022 build reached 0x005a6110 (called after
+    0x005a5f00 in 0x004627f0's source) without stopping in 0x005a9970. [UNCERTAIN: which unit makes the two builds take
+    different paths is not located. Candidates on the path that differ between the builds: 0x005a9970 itself (DDK
+    DIFFERENT), and the DIFFERENT pool units 0x005ae5b0 / 0x005ae610 / 0x005ae920 / 0x005aea60. 0x005ae650 and
+    0x005ae800 are provisional and keep the VS2022 body in both builds.] This is first-divergence work, filed as
+    **PORT-TOP-AUDIOINIT-SPLIT-5A9970** (ledger, section D4), not done here.
+
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIOSTOP-5A61B0 ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIOSTOP-5A61B0_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIOSTOP-5A61B0 -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
 Private root: robocopy of `D:/MashedWT/PORT-TOP-AUDIOSTOP-5AD770_root`, its old `mashed_re.log` removed.
@@ -162,3 +203,19 @@ Checkpoint 2:
 - `plan2_dry.txt` 87926773931ae4349e63363d15c20c68695e91b9279bda46d3bf448a3d0ad0ca
 - `plan2_write.txt` 26cee057fa1102976a77ee5fa7f3eb0498a9f3866f822e898278248852c429bb
 - `005ad910_before.c` e4300b10200c82789e681d358e8a99766cfdaed710aa2595d77fb24e199732ab
+- `005ad9d0_before.c` 6e32a2be25b4f5e018f2e43eb1ed20cbec8d87a29e1ee685b02f664afe3a13e1
+
+Checkpoint 3:
+- `cp3/vs_init_audio.log` cf38a4693eb2580af086ab47fa4a2b44ba71db7aa4750b9fd5760c2bb7d86f60
+- `cp3/ddk_init_audio.log` f3648ddd20b636d7c9a681349e4eefc02b5366e10f21885709ee6ed3a0afdff8
+- `arms3.out` 1dce0bc3fe58976c76cc80ef792301760c5e029584b3f6741dcabad3ad191004
+- `build3_vs.log` c04c4ae1626ee62fe689b2e806734d7c66f2377b6fb9034a020cb5bbc4639b19
+- `build3_ddk.log` 6a7a15620d1f4a62329bbccd35b7bab2e096a61fac5d7af2b2f41bec3440415e
+- `ddkcheck3.log` 659c49afa83a5acc40ea3d593939c8f9159b2e29febd9c2e29a137ce27ff26e9
+- `plan3_dry.txt` 6b29c11ba67672dd186dd16025ccdb9c62f10b373d97e28ad22bb3bbad40750a
+- `plan3_write.txt` 4f816b58d72cb0c2111b985429d004a8c721c081931e87e092c28309debf6d6b
+
+## Next
+- PORT-TOP-AUDIOINIT-SPLIT-5A9970: locate the unit that splits the two builds after 0x005ad9d0, then the next stops
+  (0x005a9ab0 72.3% NOT-PROVEN; 0x005aaf50 / 0x005aaef0 / 0x005aae90 have no source).
+- UNCERTAIN_REGISTER lines (a) 0x005ae800 executed, (b) RwGlobals +0x108 does not read ecx.
