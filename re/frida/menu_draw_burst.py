@@ -76,7 +76,7 @@ const RVA_CURSCREEN=0x0067ecb0;
 const RVA_POST=0x0042bf30, RVA_MODAL_FLAG=0x0067eab0, RVA_MODAL_RAMP=0x0067eab8;
 const RVA_MODAL_AUX=0x0067ea5c, RVA_MODAL_BIASON=0x0067ead4;
 let nav=null, postFn=null, collecting=0, frames={}, texts={}, order=[], cur=null;
-let drawHooked=0, textHooked=0;
+let drawHooked=0, textHooked=0, peekDraw=[];
 // --nav (HB-MENUBURST-NAV): drive the REAL menu input path instead of a bare FUN_0043d2a0 push, so states set on
 // the way (e.g. LAB_0043f468's game mode and 0x0067f0c0) are reached. Two in-process mechanisms, both already used
 // by repo tools: confirm = the FUN_00497310 return override for player 0 (re/frida/nav_agent.js, control code 4);
@@ -122,7 +122,8 @@ rpc.exports={
   },
   bias:function(){ return abs(RVA_MODAL_BIASON).readS32(); },
   ramp:function(){ return abs(RVA_MODAL_RAMP).readS32(); },
-  armburst:function(label,k,delim){
+  armburst:function(label,k,delim,pd){
+    peekDraw=pd||[];
     if(!drawHooked){
       const vt=abs(VTBL).readU32();
       const drawFn=ptr(vt).add(0x30).readU32();
@@ -142,7 +143,11 @@ rpc.exports={
           rets=Thread.backtrace(this.context, Backtracer.FUZZY).slice(0,5)
                .map(function(a){ return a.sub(DELTA).toString(); });
         }catch(e){}
-        frames[cur].push({v:h, r:rets});
+        const rec={v:h, r:rets};
+        // --peek-draw (RWC-FRAME-JITTER-STRICT): dwords read at each draw, e.g. the clock DAT_007f1010 that the checker
+        // jitter of 0x00473ee0 reads at 0x00474167. Absent when the option is not given (schema unchanged).
+        if(peekDraw.length){ rec.pk=peekDraw.map(function(a){ try{ return abs(a).readU32()>>>0; }catch(e){ return null; } }); }
+        frames[cur].push(rec);
       }});
       drawHooked=1;
     }
@@ -236,6 +241,10 @@ def main():
                          "menu depth rises (6 tries); a direction writes player 0's cooked edge flag for 3 "
                          "input frames. Runs after the title is up, before --screen/--post-modal. "
                          "walk_04 (colour select, cup flow): confirm,confirm,confirm")
+    ap.add_argument("--boot-wait", type=float, default=25.0, help="seconds to wait for DAT_0067eca4 == 3 (default 25)")
+    ap.add_argument("--burst-wait", type=float, default=15.0, help="seconds to wait for the burst (default 15)")
+    ap.add_argument("--peek-draw", default=None, metavar="0xADDR,..",
+                    help="read these dwords at every captured draw; stored per record as \"pk\" (RWC-FRAME-JITTER-STRICT)")
     ap.add_argument("--peek", default=None, metavar="0xADDR,..",
                     help="read these dwords after --nav and after the burst; printed and stored in *.peek.json")
     args = ap.parse_args()
@@ -259,9 +268,10 @@ def main():
     E = scr.exports_sync
 
     print("waiting for menu...")
-    end = time.time() + 25
+    end = time.time() + args.boot_wait
     while time.time() < end and E.phase() != 3:
         time.sleep(0.2)
+    print("menu phase DAT_0067eca4 =", E.phase())
     time.sleep(1.5)
 
     peeks = {}
@@ -322,8 +332,9 @@ def main():
     if args.text_trace:
         E.texttrace()
 
-    E.armburst(label, args.frames, args.delim)
-    end = time.time() + 15
+    pdraw = [int(t, 16) for t in args.peek_draw.split(",")] if args.peek_draw else []
+    E.armburst(label, args.frames, args.delim, pdraw)
+    end = time.time() + args.burst_wait
     while time.time() < end and E.done() == 0:
         time.sleep(0.2)
     data = json.loads(E.report())

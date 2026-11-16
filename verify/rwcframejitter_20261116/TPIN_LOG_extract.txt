@@ -1,0 +1,20 @@
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] drawdump core_f0 tpin: DAT_007f1010 43713F88 -> 447D34AD
+[RWC_CORE] drawdump core_f0: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f1 tpin: DAT_007f1010 437143BB -> 447D362C
+[RWC_CORE] drawdump core_f1: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f2 tpin: DAT_007f1010 437147FC -> 447D3743
+[RWC_CORE] drawdump core_f2: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f3 tpin: DAT_007f1010 43714C4A -> 447D3857
+[RWC_CORE] drawdump core_f3: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] drawdump core_f0 tpin: DAT_007f1010 438392EC -> 447D34AD
+[RWC_CORE] drawdump core_f0: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f1 tpin: DAT_007f1010 43839510 -> 447D362C
+[RWC_CORE] drawdump core_f1: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f2 tpin: DAT_007f1010 43839732 -> 447D3743
+[RWC_CORE] drawdump core_f2: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+[RWC_CORE] drawdump core_f3 tpin: DAT_007f1010 4383995D -> 447D3857
+[RWC_CORE] drawdump core_f3: 82 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
