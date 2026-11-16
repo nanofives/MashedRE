@@ -88,6 +88,15 @@ void PortTop_StandInRL_004074a0(void) { Hit(s_74a0, 0); }
 void PortTop_StandInRL_004264d0(int p0) { Hit(s_64d0, static_cast<unsigned>(p0)); }
 void PortTop_StandInRL_00411d90(int p0) { Hit(s_1d90, static_cast<unsigned>(p0)); }
 void PortTop_StandInRL_00426e10(unsigned p0) { Hit(s_6e10, p0); }
+// Checkpoint 2: what the matched 0x0040d020 calls. The matched body of 0x00426e10 (Match/PortTop_00426e10.cpp) and its
+// closure (verify/ro_20261116/rltools/plan_rl.json); a callee with no matched body is a named stop that exits with code = rva.
+void PortTop_Bound_00426e10(int track);
+void PortTop_RL_00426e10(int track) {
+    RlLog("rva 0x00426e10: matched course load PortTop_Bound_00426e10(track %u) entered%c%c", static_cast<unsigned>(track), ' ', ' ');
+    PortTop_Bound_00426e10(track);
+    RlLog("rva 0x00426e10: matched course load returned: DAT_0066d704 = %u, DAT_0080332c = %08X, DAT_00656ee8 = %08X", U32(0x0066d704u),
+          U32(0x0080332cu), U32(0x00656ee8u));
+}
 // Guard for the RwCore_004ccde0 call: that body walks the list at 0x007d45cc until it returns to &0x007d45cc (re/match source, RwCore/RwCore_004ccde0.cpp).
 // A head of 0 is an uninitialised list: the walk would read address 0. Skipped and counted then.
 void PortTop_RL_004ccde0(void) {

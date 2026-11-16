@@ -76,3 +76,43 @@ Predictions:
    load length, predicted 3 because the exe piz reader has no per-read clock poll), or it faults or exits at a
    float stop. Whichever it is gets named, with the stops hit.
 8. The first divergent record against ref1 stays record 0 at `0x00604604` on every arm (the knob acts at tick 300).
+
+## Checkpoint 3 (stop 3): the matched 0x004264d0 and its closure (stated before the arms)
+
+Branch base: `orch/integration` `215d5bbb9` merged into `orch/PORT-OT-RACE` at `9410ca739` (clean, overlap only
+`re/orchestrator/UNCERTAIN_REGISTER.md`). 0x0047a020 / 0x00479330 / 0x00478660 / 0x00462950 are not touched (owned by
+RACE-COURSELUA-BODIES): they stay named stops.
+
+Change under test (same knob `MASHED_OT_RACELOAD=1`, default OFF, exe only, ORIG_TOP only):
+
+- The matched 0x0040d270 calls `PortTop_RL_004264d0` (`Match/PortTop_StandInsRL.cpp`: logs, then the matched body
+  `PortTop_Bound_004264d0`, `re/match/s06/004264d0.c`, C4 by match) instead of the counting stand-in. 0x004264d0 runs
+  before 0x0040d020 / 0x00426e10 in 0x0040d270's call order (source lines 91 and 126).
+- Generator run `rl_bind_gen.py . 00426e10,004264d0 --write` (listing `rltools/plan_64d0.txt`): the plan is now 93 bound,
+  44 reused, 33 stops. Against checkpoint 2: +8 bound (0x004264d0, 0x0042a5d0, 0x00458c70, 0x00458d00, 0x00458e00,
+  0x00458fd0, 0x00472690, 0x0047a130), +7 reused (0x0042f6a0, 0x004576b0, 0x00458fa0, 0x004b3bf0, 0x004b5190,
+  0x004c15c0, 0x00534870), +1 stop (0x00458dd0, cpp-unclean), none of checkpoint 2's 85 bound lost.
+  The dry run's "101 bound, 29 reused, 13 stops" was counted before checkpoint 2's TUs existed. Two generator rules added:
+  - 0x0042fe30 reuses its existing exe body `RaceEndFlagIfEndMode` (`Match/MatchS07_0042fe30.cpp`, the same matched
+    source, one callee 0x0042f6a0 = `GetRaceSubMode`) instead of a second copy.
+  - In the bound 0x0042a5d0, callee 0x004b3bf0 binds to `MatchS06_0042a5d0_Call004b3bf0` (the source passes 1 argument,
+    `Orig_004b3bf0` takes 3; the existing forwarder passes 0 / 0, the deviation declared in `Match/MatchS06_0042a5d0.cpp`).
+- Stops in 0x004264d0's closure (static paths): 0x00458dd0 (0x00458fd0 -> 0x00458e00, the clump branch), 0x00440bc0,
+  0x0047b860, 0x004b7480 (C2), 0x0047b8d0 (all under 0x0047a130, the "no powerups_gold.dff clump" branch).
+
+Arms (object build, `A4_RO_CKPT=0,1,17,18,299,301,600`, root `D:/MashedWT/PORT-OT-RACE_root`, data
+`D:/MashedWT/PORT-OT-RACE_data3`): `RO_ROIMG-pr1` (knob off), `RO_ROLOAD-pr1` (stops exit), `RO_ROLOADC-pr1` (stops count).
+
+Predictions:
+
+9. Knob on, both arms: `rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered` before the 0x00426e10
+   entry line. 0x004264d0 returns at once after 0x0042fe30 when that returns 0 (`DAT_0067e9fc` != 0xb and `DAT_0067ea74`
+   = 0); otherwise it mounts the track piz and takes the clump or Lua branch. Which branch runs is read from the log, not
+   predicted.
+10. `RO_ROLOAD-pr1`: if 0x004264d0 returns, the run ends at 0x0047a020 (exit code 4694048) as at checkpoint 2. Otherwise
+    it ends at the first stop the branch taken reaches (list above), or a bound body faults. Whichever it is gets named.
+    The load length is not measurable on this arm while 0x0047a020 exits (no race anchor).
+11. `RO_ROLOADC-pr1`: runs on as at checkpoint 2 and ends at a fault or a float stop. Load length only if the anchor is
+    reached (not expected: the checkpoint-2 fault sits under 0x00426e10's closure, after 0x004264d0).
+12. The first divergent record against ref1 stays record 0 at `0x00604604` on every arm.
+13. `ddkobj.py check`: every new unit (the 8 bound rvas) IDENTICAL, or its refusal reason recorded.

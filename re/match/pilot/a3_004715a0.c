@@ -38,8 +38,16 @@ typedef struct R2510 {
     char pad24f8[0x250c - 0x24f8];
     int ne;                /* +0x250c */
 } R2510;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0086ece0 (*(R2510 (*)[8])0x0086ece0u)
+#else
 extern R2510 DAT_0086ece0[8];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0086cbc4 (*(T110 (*)[1])0x0086cbc4u)
+#else
 extern T110 DAT_0086cbc4[];
+#endif
 int FUN_0047ce40(int p0);
 // MATCH: 0x004715a0 _FUN_004715a0
 void FUN_004715a0(void)
