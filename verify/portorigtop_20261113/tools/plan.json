@@ -456,6 +456,264 @@
 ],
 []
 ],
+"004a8815": [
+"stop"
+],
+"005aae90": [
+"bind",
+"re/match/s25/005aae90.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005aaef0": [
+"bind",
+"re/match/s25/005aaef0.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005aaf50": [
+"bind",
+"re/match/s25/005aaf50.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005ac7b0": [
+"bind",
+"re/match/s25/005ac7b0.c",
+"match",
+[
+"005adfe0",
+"005ae010"
+],
+[]
+],
+"005ac7e0": [
+"bind",
+"re/match/s25/005ac7e0.c",
+"match",
+[
+"005aca40",
+"005ae0b0",
+"005ae800"
+],
+[]
+],
+"005aca40": [
+"bind",
+"re/match/s26/005aca40.c",
+"match",
+[
+"004522d0"
+],
+[]
+],
+"005ad6a0": [
+"bind",
+"re/match/s26/005ad6a0.c",
+"match",
+[
+"005adf30"
+],
+[]
+],
+"005adbe0": [
+"bind",
+"re/match/s26/005adbe0.c",
+"match",
+[
+"005b3620"
+],
+[]
+],
+"005aea50": [
+"bind",
+"re/match/s26/005aea50.c",
+"match",
+[],
+[]
+],
+"005aef00": [
+"reuse",
+"AudioThreadDescInit",
+"Audio/AudioDSound.cpp"
+],
+"005b34f0": [
+"bind",
+"re/match/s27/005b34f0.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005b73e0": [
+"bind",
+"re/match/s27/005b73e0.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005ba720": [
+"bind",
+"re/match/s27/005ba720.c",
+"match",
+[
+"005aabe0",
+"005bc860"
+],
+[]
+],
+"005bbbb0": [
+"bind",
+"re/match/s27/005bbbb0.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005bbed0": [
+"bind",
+"re/match/s27/005bbed0.c",
+"match",
+[],
+[]
+],
+"005bbf30": [
+"bind",
+"re/match/s27/005bbf30.c",
+"match",
+[],
+[]
+],
+"005bc450": [
+"reuse",
+"AudioSlotPairZero",
+"Audio/AudioLeaves_ab3.cpp"
+],
+"005bc800": [
+"bind",
+"re/match/s27/005bc800.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005bc860": [
+"bind",
+"re/match/s27/005bc860.c",
+"match",
+[
+"005ae250"
+],
+[]
+],
+"005be0f0": [
+"bind",
+"re/match/s28/005be0f0.c",
+"match",
+[
+"005bf610",
+"00635850"
+],
+[]
+],
+"005bf660": [
+"reuse",
+"Audio3DwordZero",
+"Audio/AudioLeaves_ab4.cpp"
+],
+"005c2dd9": [
+"stop"
+],
+"005c2e79": [
+"stop"
+],
+"005c7990": [
+"bind",
+"re/match/s28/005c7990.c",
+"match",
+[
+"005aa560"
+],
+[]
+],
+"005c9680": [
+"bind",
+"re/match/s28/005c9680.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005c96e0": [
+"bind",
+"re/match/s28/005c96e0.c",
+"match",
+[
+"005ad420",
+"005ad540",
+"005ad570"
+],
+[]
+],
+"005a8ea0": [
+"bind",
+"re/match/s25/005a8ea0.c",
+"provisional",
+[
+"005a8f30",
+"005a9ab0",
+"005a9d00",
+"005a9de0",
+"005aa200",
+"005b34f0"
+],
+[]
+],
+"005aad50": [
+"bind",
+"re/match/s25/005aad50.c",
+"match",
+[
+"005aadc0",
+"005aae10",
+"005aae30",
+"005aae60",
+"005ac7b0",
+"005ac7e0"
+],
+[]
+],
 "0040e340": [
 "reuse",
 "GetLiveCarCount",
@@ -1211,7 +1469,11 @@
 []
 ],
 "005b36b0": [
-"stop"
+"bind",
+"re/match/s27/005b36b0.c",
+"match",
+[],
+[]
 ],
 "005a9ab0": [
 "bind",
@@ -1462,6 +1724,138 @@
 "005aa560"
 ],
 []
+],
+"005ad420": [
+"bind",
+"re/match/s26/005ad420.c",
+"provisional",
+[
+"004522d0",
+"005adbe0",
+"005aea00"
+],
+[]
+],
+"005ad570": [
+"bind",
+"re/match/s26/005ad570.c",
+"match",
+[
+"005ae0b0",
+"005ae800"
+],
+[]
+],
+"005adfe0": [
+"bind",
+"re/match/s26/005adfe0.c",
+"match",
+[
+"005ae050"
+],
+[]
+],
+"005ae010": [
+"bind",
+"re/match/s26/005ae010.c",
+"match",
+[
+"005ae080"
+],
+[]
+],
+"005ae0b0": [
+"reuse",
+"AudioSubStructZeroInit",
+"Audio/AudioRwsLeaves.cpp"
+],
+"005ae800": [
+"bind",
+"re/match/s26/005ae800.c",
+"provisional",
+[
+"005aea00"
+],
+[]
+],
+"004522d0": [
+"reuse",
+"RwCore_004522d0",
+"RwCore/RwCore_004522d0.cpp"
+],
+"005adf30": [
+"reuse",
+"AudioFmtKeyCompare",
+"Audio/AudioFmtKey.cpp"
+],
+"005b3620": [
+"bind",
+"re/match/s27/005b3620.c",
+"match",
+[
+"005adf30"
+],
+[]
+],
+"005aabe0": [
+"bind",
+"re/match/s25/005aabe0.c",
+"match",
+[
+"005aac00",
+"005adef0"
+],
+[]
+],
+"005ae250": [
+"stop"
+],
+"005bf610": [
+"stop"
+],
+"00635850": [
+"stop"
+],
+"005a8f30": [
+"stop"
+],
+"005a9de0": [
+"bind",
+"re/match/s25/005a9de0.c",
+"match",
+[
+"005ad320"
+],
+[]
+],
+"005aa200": [
+"bind",
+"re/match/s25/005aa200.c",
+"provisional",
+[
+"004d7ff0",
+"005adbe0",
+"005aea00"
+],
+[]
+],
+"005aadc0": [
+"bind",
+"re/match/s25/005aadc0.c",
+"match",
+[
+"005aea50"
+],
+[]
+],
+"005aae10": [
+"stop"
+],
+"005aae30": [
+"stop"
+],
+"005aae60": [
+"stop"
 ],
 "0040e350": [
 "reuse",
@@ -1993,26 +2387,12 @@
 ],
 []
 ],
-"005ae800": [
-"bind",
-"re/match/s26/005ae800.c",
-"provisional",
-[
-"005aea00"
-],
-[]
-],
 "005aea00": [
 "bind",
 "re/match/s26/005aea00.c",
 "match",
 [],
 []
-],
-"004522d0": [
-"reuse",
-"RwCore_004522d0",
-"RwCore/RwCore_004522d0.cpp"
 ],
 "005ae380": [
 "bind",
@@ -2097,24 +2477,6 @@
 ],
 []
 ],
-"005adfe0": [
-"bind",
-"re/match/s26/005adfe0.c",
-"match",
-[
-"005ae050"
-],
-[]
-],
-"005ae010": [
-"bind",
-"re/match/s26/005ae010.c",
-"match",
-[
-"005ae080"
-],
-[]
-],
 "005a9f60": [
 "stop"
 ],
@@ -2171,11 +2533,6 @@
 ],
 []
 ],
-"005ae0b0": [
-"reuse",
-"AudioSubStructZeroInit",
-"Audio/AudioRwsLeaves.cpp"
-],
 "005a7a40": [
 "bind",
 "re/match/s25/005a7a40.c",
@@ -2218,19 +2575,18 @@
 []
 ],
 "005a6340": [
-"stop"
-],
-"005a9de0": [
 "bind",
-"re/match/s25/005a9de0.c",
-"match",
+"re/match/s25/005a6340.c",
+"admitted",
 [
-"005ad320"
+"005a65d0",
+"005a6640",
+"005a6670",
+"005a66c0",
+"005a9e10",
+"005aee20"
 ],
 []
-],
-"005aa200": [
-"stop"
 ],
 "005aeb30": [
 "bind",
@@ -2299,6 +2655,48 @@
 "reuse",
 "AudioListNodeCount",
 "Audio/AudioLeaves_ab1.cpp"
+],
+"005ae050": [
+"bind",
+"re/match/s26/005ae050.c",
+"match",
+[
+"004522d0"
+],
+[]
+],
+"005ae080": [
+"bind",
+"re/match/s26/005ae080.c",
+"match",
+[
+"005ae920"
+],
+[]
+],
+"005aac00": [
+"stop"
+],
+"005adef0": [
+"bind",
+"re/match/s26/005adef0.c",
+"match",
+[],
+[]
+],
+"005ad320": [
+"bind",
+"re/match/s26/005ad320.c",
+"replay",
+[
+"005adf30"
+],
+[]
+],
+"004d7ff0": [
+"reuse",
+"Orig_004d7ff0",
+"Match/PortTop_004d7ff0.cpp"
 ],
 "0045c880": [
 "bind",
@@ -2669,11 +3067,6 @@
 [],
 []
 ],
-"005adf30": [
-"reuse",
-"AudioFmtKeyCompare",
-"Audio/AudioFmtKey.cpp"
-],
 "005a61b0": [
 "bind",
 "re/match/s25/005a61b0.c",
@@ -2723,15 +3116,6 @@
 ],
 []
 ],
-"005b3620": [
-"bind",
-"re/match/s27/005b3620.c",
-"match",
-[
-"005adf30"
-],
-[]
-],
 "005ad730": [
 "bind",
 "re/match/s26/005ad730.c",
@@ -2742,45 +3126,32 @@
 ],
 []
 ],
-"005ae050": [
-"bind",
-"re/match/s26/005ae050.c",
-"match",
-[
-"004522d0"
-],
-[]
-],
-"005ae080": [
-"bind",
-"re/match/s26/005ae080.c",
-"match",
-[
-"005ae920"
-],
-[]
-],
 "005aa330": [
-"stop"
+"bind",
+"re/match/s25/005aa330.c",
+"provisional",
+[
+"004522d0",
+"005ae030"
+],
+[]
 ],
 "005aa3d0": [
-"stop"
+"bind",
+"re/match/s25/005aa3d0.c",
+"admitted",
+[
+"004d7ff0",
+"005ae0b0",
+"005b36b0"
+],
+[]
 ],
 "005a9e60": [
 "stop"
 ],
 "005a9f10": [
 "stop"
-],
-"005aabe0": [
-"bind",
-"re/match/s25/005aabe0.c",
-"match",
-[
-"005aac00",
-"005adef0"
-],
-[]
 ],
 "005aa9c0": [
 "bind",
@@ -2825,26 +3196,30 @@
 ],
 []
 ],
-"005ad320": [
+"005a65d0": [
+"stop"
+],
+"005a6640": [
+"stop"
+],
+"005a6670": [
 "bind",
-"re/match/s26/005ad320.c",
-"replay",
+"re/match/s25/005a6670.c",
+"match",
 [
-"005adf30"
+"005a6e10",
+"005a7520"
 ],
 []
 ],
-"005ad420": [
+"005a66c0": [
 "stop"
 ],
-"005ad570": [
+"005aee20": [
 "bind",
-"re/match/s26/005ad570.c",
+"re/match/s26/005aee20.c",
 "match",
-[
-"005ae0b0",
-"005ae800"
-],
+[],
 []
 ],
 "004a45fb": [
@@ -3064,11 +3439,6 @@
 [],
 []
 ],
-"004d7ff0": [
-"reuse",
-"Orig_004d7ff0",
-"Match/PortTop_004d7ff0.cpp"
-],
 "00550400": [
 "bind",
 "re/match/rwl04/00550400.c",
@@ -3104,16 +3474,6 @@
 "bind",
 "re/match/s27/005b35a0.c",
 "provisional",
-[],
-[]
-],
-"005aac00": [
-"stop"
-],
-"005adef0": [
-"bind",
-"re/match/s26/005adef0.c",
-"match",
 [],
 []
 ],

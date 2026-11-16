@@ -7,11 +7,11 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_005a62b0 PortTop_Bound_005a62b0
-#define FUN_005a6340 PortTop_AStop_005a6340   // named stop
+#define FUN_005a6340 PortTop_Bound_005a6340
 #define FUN_005a9ab0 PortTop_Bound_005a9ab0
 #define FUN_005a9d00 PortTop_AStop_005a9d00   // named stop
 #define FUN_005a9de0 PortTop_Bound_005a9de0
-#define FUN_005aa200 PortTop_AStop_005aa200   // named stop
+#define FUN_005aa200 PortTop_Bound_005aa200
 #define FUN_005aeb30 PortTop_Bound_005aeb30
 extern "C" {
 #include "../../../../re/match/s25/005a62b0.c"
