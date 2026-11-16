@@ -290,7 +290,7 @@ def run(args):
                                            else args.prov_count.split(",")) if x.strip()]
             snap = [{"rva": r.split(":")[0].strip(), "at": (r.split(":")[1].strip() if ":" in r else "enter")}
                     for r in args.prov_snap.split(",") if r.strip()]
-            cfg["prov"] = {"snap": snap, "bodies": bodies, "count": cnt, "wlog": args.prov_wlog, "wstride": (json.loads(Path(args.prov_wstride).read_text()) if args.prov_wstride else None), "warm": args.prov_warm, "wcap": args.prov_wcap, "wlive": (str(out / "wlive.jsonl").replace("\\", "/") if args.prov_wlog else "")}
+            cfg["prov"] = {"snap": snap, "bodies": bodies, "count": cnt, "wlog": args.prov_wlog, "wstride": (json.loads(Path(args.prov_wstride).read_text()) if args.prov_wstride else None), "warm": args.prov_warm, "probe": args.prov_probe, "wcap": args.prov_wcap, "wlive": (str(out / "wlive.jsonl").replace("\\", "/") if args.prov_wlog else "")}
             print(f"  prov: {len(bodies)} bodies, {len(cnt)} counters", flush=True)
         if args.warp_clock:
             cfg["warpClock"] = args.warp_clock
@@ -590,6 +590,7 @@ if __name__ == "__main__":
     ap.add_argument("--crash-fpmask", action="store_true", help="T2-RACEPATH-CENSUS: with --crash-catch, a native first-in-chain VEH masks the x87/SSE precision exception on 0xC000008F / 0xC00002B5 and continues (logged in prov.json fpmask)")
     ap.add_argument("--crash-exit", action="store_true", help="T2-RACEPATH-CENSUS: with --crash-catch, record a backtrace at ExitProcess / TerminateProcess / NtTerminateProcess / RtlExitUserProcess")
     ap.add_argument("--prov-snap", default="", help="T2-RACEPATH-CENSUS: comma list rva[:enter|leave]; with --prov-count, copy every counter at the first enter/leave of each (prov.json snaps)")
+    ap.add_argument("--prov-probe", action="store_true", help="T2-RACETICK-CENSUS: with --prov-count, attach each counter as a probe (bare onEnter pointer, no return-address replacement)")
     ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--boot", action="store_true", help="RO-MENU-REPLAY: frida-spawn, install at the PE entry point, hash every tick from boot (needs --clock tick)")
