@@ -26,6 +26,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-16  0x005b36b0  FUN_005b36b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b36b0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5AA3D0-STOPS.md
+2026-11-16  0x005aad50  FUN_005aad50  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aad50.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5AA3D0-STOPS.md
+2026-11-16  0x005aee20  AudioBitScanForward  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005aee20.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5AA3D0-STOPS.md
 2026-11-16  0x005a8ea0  FUN_005a8ea0  (none)->C1  added (PORT-TOP-AUDIO-5AA3D0-STOPS): code pointer at 0x00632c28, walked by 0x005ad080 from 0x005a6110 (push eax with eax == 1 after cmp eax,1 at 0x005a611f, push 0x632c28 at 0x005a6125); Ghidra had no function (pc_funcs.csv had no row); evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5AA3D0-STOPS.md
 2026-11-16  0x005aad50  FUN_005aad50  (none)->C1  added (PORT-TOP-AUDIO-5AA3D0-STOPS): code pointer at 0x00632c38, walked by 0x005ad080 from 0x005a6110 (push eax with eax == 1 after cmp eax,1 at 0x005a6132, push 0x632c38 at 0x005a6138); Ghidra had no function (pc_funcs.csv had no row); evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5AA3D0-STOPS.md
 2026-11-16  0x00432b30  MenuPromptStrip  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00432b30.c; evidence: verify/match_20261116/RESULT_MATCH-S08-00432B30.md
