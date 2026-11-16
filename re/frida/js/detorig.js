@@ -732,10 +732,29 @@ function wsDump() {
 }
 let PV_ARM = null;
 function provSnap() { if (PV_ARM) PV_ARM.writeU32(1); if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
-function provReport() {
+function provReport(stage) {
   if (!PV) return;
   const rows = PV.names.map((rva, i) => ({ rva, calls_boot: PV.atTick1 ? PV.atTick1[i] : null, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
-  send({ kind: 'prov', rows, installed: PV.installed });
+  send({ kind: 'prov', stage: stage || 'end', rows, installed: PV.installed, snaps: PV.snaps || null });
+}
+// T2-RACEPATH-CENSUS (cfg.prov.snap): a copy of every census counter at the FIRST enter (or leave) of each listed RVA,
+// so a run splits the counts at function boundaries too (example: the audio init 0x004669b0 enter / leave). One JS
+// listener per snap RVA; it copies once and then only returns.
+function provSnapInstall() {
+  if (!PV || !PROV || !PROV.snap || !PROV.snap.length) return;
+  PV.snaps = {};
+  for (const s of PROV.snap) {
+    const key = s.rva + ':' + s.at;
+    let done = false, L = null;
+    const take = () => {
+      if (done) return; done = true;
+      if (L) { const l = L; setTimeout(() => l.detach(), 0); }   // no JS on later calls of this RVA (any thread)
+      PV.snaps[key] = { n: N(), tick: TK ? tickNow() : null, tid: Process.getCurrentThreadId(),
+                        counts: Array.from(new Uint32Array(PV.cnt.readByteArray(PV.names.length * 4))) };
+    };
+    const cb = s.at === 'leave' ? { onLeave() { take(); } } : { onEnter() { take(); } };
+    try { L = K(Interceptor.attach(ga(parseInt(s.rva, 16)), cb)); } catch (e) { PV.snaps[key] = { err: '' + e }; }
+  }
 }
 
 // ---------------------------------------------------------------- PROV-CRASH-12 first-fault catcher (cfg.crash)
@@ -743,7 +762,7 @@ function provReport() {
 // 64 stack dwords from esp, 32 code bytes from eip-16, and which --prov blob holds eip. A JS timer samples the main
 // thread's context 40 times when N (main-thread clock calls) has not moved for cfg.crash.stall seconds (a hang).
 // Each record is written to cfg.crash.file synchronously, then sent: the process can die before a send is delivered.
-let CR_FILE = null, CR_HANDLER = null, CR_DONE = 0;
+let CR_FILE = null, CR_HANDLER = null, CR_DONE = 0, CR_SYS = 0;
 function crWrite(rec) {
   try { if (!CR_FILE) CR_FILE = new File(CFG.crash.file, 'a'); CR_FILE.write(JSON.stringify(rec) + String.fromCharCode(10)); CR_FILE.flush(); } catch (e) { }
   try { send(Object.assign({ kind: 'crash' }, rec)); } catch (e) { }
@@ -772,6 +791,9 @@ function crCtx(c) {
 function crashArm() {
   if (!CFG.crash) return null;
   CR_HANDLER = (d) => {
+    if (d.type === 'system' && CFG.crash.system && CR_SYS++ < 16) {   // T2-RACEPATH-CENSUS: --crash-system logs these too (logging only)
+      try { crWrite(Object.assign({ what: 'system', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, nativeCode: d.nativeContext ? '' + d.nativeContext : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'system-err', msg: '' + e }); }
+    }
     if (d.type === 'breakpoint' || d.type === 'single-step' || d.type === 'system') return false;
     if (CR_DONE++ < 4) {
       try { crWrite(Object.assign({ what: 'fault', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, memory: d.memory ? { op: d.memory.operation, address: '' + d.memory.address } : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'fault-err', msg: '' + e }); }
@@ -859,6 +881,7 @@ function install() {
   // (14 patchCode calls, or 326 Interceptor attaches) moved the frame-timer phase by one tick in 2 of 4 runs
   PV_AT = provInstall();
   if (PV_AT) res.push(['prov', PV_AT]);
+  provSnapInstall();
   const CRA = crashArm();
   if (CRA) res.push(['crash', CRA]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
@@ -878,6 +901,7 @@ function install() {
     const pins = watchQuiet(warp);
     if (PV_AT) pins.prov = PV_AT;
     if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
+    if (PV && PROV.snap && PROV.snap.length) provReport('warp');   // T2-RACEPATH-CENSUS: partial report, survives a later crash
     if (CFG.callLog) D.add(0x34).writeU32(1);
     send({ kind: 'warp', n: warpN, tick: tickNow(), pins });
     setActive(1);
@@ -894,6 +918,7 @@ function install() {
       }
       raceN = N();
       provSnap();
+      if (PV && PROV.snap && PROV.snap.length) provReport('anchor');   // T2-RACEPATH-CENSUS: partial report
       if (TK) TK.st.writeU32(1);
       if (PZ) PZ.st.writeU32(1);
       if (CFG.callLog && !CFG.callLogRace) {

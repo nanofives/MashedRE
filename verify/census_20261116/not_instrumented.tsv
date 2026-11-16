@@ -1,0 +1,28 @@
+rva	name	reason
+0x0040e470	FUN_0040e470	branch target inside window: 0x0040e477
+0x0041a960	FUN_0041a960	branch target inside window: 0x0041a963
+0x0041dc30	FUN_0041dc30	branch target inside window: 0x0041dc33
+0x004248b0	FUN_004248b0	branch target inside window: 0x004248b2
+0x004576b0	FUN_004576b0	branch target inside window: 0x004576b2
+0x00458020	FUN_00458020	branch target inside window: 0x00458024
+0x0045b350	FUN_0045b350	ret at +0 before 5 bytes
+0x0045c6b0	FUN_0045c6b0	branch target inside window: 0x0045c6b4
+0x0045c820	FUN_0045c820	branch target inside window: 0x0045c822
+0x0045da60	FUN_0045da60	branch target inside window: 0x0045da63
+0x00491bd0	FUN_00491bd0	jmp at +2 before 5 bytes
+0x00496400	FUN_00496400	ret at +0 before 5 bytes
+0x00496490	FUN_00496490	ret at +2 before 5 bytes
+0x0049c690	FUN_0049c690	ret at +3 before 5 bytes
+0x004a26e0	FUN_004a26e0	ret at +2 before 5 bytes
+0x004aca5f	__IsZeroMan	branch target inside window: 0x004aca61
+0x004ae28c	FUN_004ae28c	ret at +2 before 5 bytes
+0x004b1c1c	FUN_004b1c1c	branch target inside window: 0x004b1c1e
+0x004b1d1d	_LcidFromHexString	jmp at +2 before 5 bytes
+0x004b1d52	_GetPrimaryLen	branch target inside window: 0x004b1d54
+0x004b6b00	FUN_004b6b00	ret at +2 before 5 bytes
+0x004bc470	FUN_004bc470	ret at +3 before 5 bytes
+0x004ffba7	FUN_004ffba7	ret at +3 before 5 bytes
+0x0051085a	FUN_0051085a	ret at +0 before 5 bytes
+0x005bc750	FUN_005bc750	ret at +2 before 5 bytes
+0x005c2f58	FUN_005c2f58	branch target inside window: 0x005c2f5c
+0x005c9d00	FUN_005c9d00	ret at +2 before 5 bytes

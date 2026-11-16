@@ -274,7 +274,7 @@ def run(args):
         if args.crash_catch:
             # PROV-CRASH-12: first-fault catcher (exception handler, no Interceptor) plus a main-thread EIP sampler when
             # the clock-call count N stalls for --crash-catch seconds (detorig.js crashArm). Written to crash.jsonl.
-            cfg["crash"] = {"file": str(out / "crash.jsonl").replace("\\", "/"), "stall": args.crash_catch}
+            cfg["crash"] = {"file": str(out / "crash.jsonl").replace("\\", "/"), "stall": args.crash_catch, "system": args.crash_system}
         if args.prov or args.prov_count:
             # PROV-INSITU: DDK bodies (re/tools/prov/provlink.py JSON) behind inline JMPs from the warp on, and/or
             # native call counters only (census). detorig.js provInstall.
@@ -288,7 +288,9 @@ def run(args):
             if args.prov_count:
                 cnt = [x.strip() for x in (Path(args.prov_count).read_text().split() if Path(args.prov_count).exists()
                                            else args.prov_count.split(",")) if x.strip()]
-            cfg["prov"] = {"bodies": bodies, "count": cnt, "wlog": args.prov_wlog, "wstride": (json.loads(Path(args.prov_wstride).read_text()) if args.prov_wstride else None), "warm": args.prov_warm, "wcap": args.prov_wcap, "wlive": (str(out / "wlive.jsonl").replace("\\", "/") if args.prov_wlog else "")}
+            snap = [{"rva": r.split(":")[0].strip(), "at": (r.split(":")[1].strip() if ":" in r else "enter")}
+                    for r in args.prov_snap.split(",") if r.strip()]
+            cfg["prov"] = {"snap": snap, "bodies": bodies, "count": cnt, "wlog": args.prov_wlog, "wstride": (json.loads(Path(args.prov_wstride).read_text()) if args.prov_wstride else None), "warm": args.prov_warm, "wcap": args.prov_wcap, "wlive": (str(out / "wlive.jsonl").replace("\\", "/") if args.prov_wlog else "")}
             print(f"  prov: {len(bodies)} bodies, {len(cnt)} counters", flush=True)
         if args.warp_clock:
             cfg["warpClock"] = args.warp_clock
@@ -362,7 +364,7 @@ def run(args):
                 bad = [x for x in p["installed"] if x.get("err") or x.get("jmp_ok") is False]
                 print(f"  prov install {len(p['installed'])} sites, {len(bad)} failed {bad[:3]}", flush=True)
             elif p["kind"] == "prov":
-                (out / "prov.json").write_text(json.dumps(p, indent=0))
+                (out / ("prov.json" if p.get("stage", "end") == "end" else f"prov_{p['stage']}.json")).write_text(json.dumps(p, indent=0))
                 meta["prov"] = {"file": "prov.json", "executed": sum(1 for r in p["rows"] if r["calls_total"]),
                                 "install_fail": sum(1 for x in p["installed"] if x.get("err") or x.get("jmp_ok") is False)}
                 print(f"  prov rows {len(p['rows'])} executed {meta['prov']['executed']} install_fail {meta['prov']['install_fail']}", flush=True)
@@ -584,6 +586,8 @@ if __name__ == "__main__":
     ap.add_argument("--prov-wcap", type=int, default=0, help="PROV-WRITESET-SCENARIO: write-log capacity in records (default 2097152, 40 B each)")
     ap.add_argument("--prov-warm", choices=["", "anchor"], default="", help="PROV-WRITESET-SCENARIO: with --prov-wstride, step no call before the race anchor")
     ap.add_argument("--crash-catch", type=float, default=0, help="PROV-CRASH-12: arm a first-fault exception handler at the install and sample the main thread's EIP once N stalls this many seconds (crash.jsonl)")
+    ap.add_argument("--crash-system", action="store_true", help="T2-RACEPATH-CENSUS: with --crash-catch, also log the first 16 exceptions Frida types 'system' (logging only)")
+    ap.add_argument("--prov-snap", default="", help="T2-RACEPATH-CENSUS: comma list rva[:enter|leave]; with --prov-count, copy every counter at the first enter/leave of each (prov.json snaps)")
     ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--boot", action="store_true", help="RO-MENU-REPLAY: frida-spawn, install at the PE entry point, hash every tick from boot (needs --clock tick)")
