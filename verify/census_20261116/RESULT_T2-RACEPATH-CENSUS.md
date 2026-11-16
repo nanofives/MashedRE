@@ -114,9 +114,18 @@ measurement.
   `0x005bf670`, `0x005c1920`, `0x005c6cc0`, `0x005c7a90`, `0x005c7d30`, `0x005c8120`.
 - The full list with status is in `census_counts.json` → `window_5aa3d0_to_45d460`.
 
-[UNCERTAIN] The counters count every thread. `__beginthread` (`0x005c2e79`) is first called inside this window, so some
-of the 94 can belong to the audio worker threads it starts rather than to the main thread's path to `0x0045d460`. The
-counts do not attribute threads. Test: a rerun with the counter CModule keyed on the main thread id.
+**Order and thread, measured (run c4).** c4 ran `--prov-snap` on all 94 window RVAs, so each one's first call has a
+sequence number and a thread id.
+- The window membership is the same 94 in c2 and c4.
+- 91 are first called on the thread that entered `0x004669b0`.
+- 3 are first called on another thread (tid 21164), the `__beginthread` worker: `0x005c2dd9` (C4 libid), `0x005aef70`,
+  `0x005a84d0` (both not in hooks.csv).
+- The first stops in call order: `0x005aa3d0` (1), `0x005b36b0` (2), `0x005a6340` (3), `0x005aee20` (4, no C4 body),
+  `0x005aa200` (5), `0x005adbe0` (6, C4, 449 calls).
+
+**`audio_window_65.tsv`** has the 65 rows with these columns: class (plan-stop / C4-unbound / no-C4-body),
+first_call_order (rank in the 94), calls up to `0x0045d460`, calls in the whole audio init, status and
+first_call_thread. Generator: `audio_window.py <prov json> census_counts.json <out>`.
 
 ## 5. The race-load crash (c1, c2)
 
@@ -132,6 +141,17 @@ counts do not attribute threads. Test: a rerun with the counter CModule keyed on
   - `--crash-system` now logs `system`-typed exceptions (logging only).
   - Partial `prov` reports are sent at the warp and at the race anchor (`prov_warp.json`, `prov_anchor.json`).
 
+- **c3** had both changes and still exits with `0xC000008F` after the warp, so the snap listeners were not the cause.
+  Its 16 `system` log slots all went to OutputDebugString (`0x40010006` raised through KERNELBASE RaiseException,
+  return address `MASHED.exe+0x987e3`). Those are now filtered.
+- **c4** had the filter and the 94 window snaps. It exits the same way, and the exception handler recorded **no**
+  exception at all, so the process ends without a first-chance exception Frida sees. It executed 1795 functions before
+  the warp, against 1841 in c2: the 94 JS listeners change the boot. c4 is used only for the window order.
+- **Patch-window safety.** A rescan with every jump-table entry as a target (the image has no base relocations,
+  characteristics `0x10f`) excludes no new entry.
+- **c5** records a backtrace at ExitProcess / TerminateProcess / NtTerminateProcess / RtlExitUserProcess
+  (`--crash-exit`) to find who ends the process.
+
 ## 6. Pending
 
 - c3 (D:/MashedWT/T2-RACEPATH-CENSUS_data/c3): race-load and race-tick counts, and the race-tick list of provisional /
@@ -145,6 +165,10 @@ counts do not attribute threads. Test: a rerun with the counter CModule keyed on
 | D:/MashedWT/T2-RACEPATH-CENSUS_data/c2/meta.json | ed6aa726014023c6483fb312fe1b7c7a07d998c482667b8563bc438157e36f25 |
 | D:/MashedWT/T2-RACEPATH-CENSUS_data/c2.log | 406b4200ba23cb6e3b91e75c08fa0c3c52006a9f72d96e1be20195e7b2e13510 |
 | D:/MashedWT/T2-RACEPATH-CENSUS_data/c1.log | b8c8b770510d38fdbbe006faab4b6e2eaddb97daae7a173d33ad3bb9175310ca |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c4/prov_warp.json (window order) | e8307e2d8042b896af8ab4aeeeded0c4d1aa91ac91ba8128825f9fed59148dd7 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c4.log | ca9e7fb9fde3b74da2624d7dddf0695a94004d5bc98486c2f839907501784655 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c3.log | 53a5059238ba3d236ee76a9d83a6239f25368946966d579db4b0a23f3c19ca25 |
+| D:/MashedWT/T2-RACEPATH-CENSUS_data/c3/crash.jsonl | 642f2dedba35047a33ee434dea1be724d13e9853367e8e2ac4bace35c77f0bc2 |
 | D:/MashedWT/T2-RACEPATH-CENSUS_data/count_list.txt | 7226d3ed58553649a73fde527ad75d0cb4b50d2a6b0e0bd60258017d389f2cb4 |
 | ../PORT-TOP-AUDIOINIT-SPLIT-5A9970/mashedmod/build/mashed_re.exe (reach) | 7a5af1b34a28c0b6e44038090f1b2aa033c2e5cca98818362879f6d6c92a0df8 |
 | ../PORT-TOP-AUDIOINIT-SPLIT-5A9970/mashedmod/build/mashed_re.map (reach) | 0b055c33cc393b620bf582428e4f4e851b9ac07164fe8b8b6848d5fc4c895ed4 |

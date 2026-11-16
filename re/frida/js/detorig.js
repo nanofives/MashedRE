@@ -803,6 +803,19 @@ function crashArm() {
     return false;
   };
   Process.setExceptionHandler(CR_HANDLER);
+  // T2-RACEPATH-CENSUS (--crash-exit): a process exit with no exception (ExitProcess / TerminateProcess) records who called it
+  if (CFG.crash.exit) {
+    const ex = [['kernel32.dll', 'ExitProcess'], ['kernel32.dll', 'TerminateProcess'], ['ntdll.dll', 'NtTerminateProcess'], ['ntdll.dll', 'RtlExitUserProcess']];
+    for (const [m, f] of ex) {
+      let a = null; try { a = Process.getModuleByName(m).getExportByName(f); } catch (e) { }
+      if (!a) continue;
+      Interceptor.attach(a, { onEnter(args) {
+        let bt = [];
+        try { bt = Thread.backtrace(this.context, Backtracer.FUZZY).slice(0, 24).map((x) => { const v = x.toUInt32() >>> 0; const md = Process.findModuleByAddress(x); return md ? md.name + '+0x' + (v - (md.base.toUInt32() >>> 0)).toString(16) : '0x' + v.toString(16); }); } catch (e) { bt = ['bt-err ' + e]; }
+        crWrite({ what: 'exit', fn: f, tid: Process.getCurrentThreadId(), n: N(), a0: '' + args[0], a1: '' + args[1], bt });
+      } });
+    }
+  }
   let lastN = -1, since = Date.now(), sampled = false;
   setInterval(() => {
     const n = N();
