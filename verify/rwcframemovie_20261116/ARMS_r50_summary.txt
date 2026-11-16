@@ -1,0 +1,92 @@
+== vs_off: vs_off: exited rc=0 (0x00000000) after 15.2 s, log -> D:/MashedWT/RWC-FRAME-MOVIE-BACKDROP lines=1827 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=0483AF40 0x006905b4=0483A5E0 0x0067f18c=0483A680 0x0067f190=0483A720, DAT_005f9bd8=9, DAT_00771a04=0, DAT_007f0a30=00000000, DAT_008a94a8=00000000
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+== vs_frame: vs_frame: exited rc=1381494785 (0x5257F001) after 0.8 s, log -> D:/MashedWT/RWC-FRAME-MOVI lines=137 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0184BC14; RwGlobals 017CD9C0, module offset 0x3F4, texdict freelist 007D4030, list head 017CDDB4 -> 0184BC24; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] live clumps at RwEngineStop: 0 (clump freelist 007D7208)
+== vs_frameN: vs_frameN: exited rc=1381494785 (0x5257F001) after 3.0 s, log -> D:/MashedWT/RWC-FRAME-MOV lines=330 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 017B6DD4; RwGlobals 017472F8, module offset 0x3F4, texdict freelist 007D4030, list head 017476EC -> 017B6DE4; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 017B6E04; RwGlobals 017472F8, module offset 0x3F4, texdict freelist 007D4030, list head 017B6DFC -> 017B6E14; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[OT-BIND-D3D] 0x004944c0(0) original/toastart/pc/movies/frontend.mpg: graph 0FAA8EE8 ctrl 0FAB8DF4 pos 0FAB8F08 event 0FAB8E10 audio 0FAB8FD8 filter 0FB12E8C texture 0F845200 video 512x512 tex 512x512
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 1: 0x00493f70 read 0 -> 0x00494a80(0, 0, 1); DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA58D78, DAT_00771a50 = 00000000, DAT_00771a10 = 0F845200, DAT_006147d8 = 1 (RWC-FRAM
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 2: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA58D78, DAT_00771a50 = 0EA58D78, DAT_00771a10 = 0F845200, DAT_006147d8 = 1 (RWC-
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 60: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA58D78, DAT_00771a50 = 0EA58D78, DAT_00771a10 = 0F845200, DAT_006147d8 = 1 (RWC
+== vs_frameT: vs_frameT: exited rc=0 (0x00000000) after 11.2 s, log -> D:/MashedWT/RWC-FRAME-MOVIE-BACKD lines=402 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0181B054; RwGlobals 017AE220, module offset 0x3F4, texdict freelist 007D4030, list head 017AE614 -> 0181B064; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 0181B084; RwGlobals 017AE220, module offset 0x3F4, texdict freelist 007D4030, list head 0181B07C -> 0181B094; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[OT-BIND-D3D] 0x004944c0(0) original/toastart/pc/movies/frontend.mpg: graph 0F98FF70 ctrl 0F998AEC pos 0F998C00 event 0F998B08 audio 0F998CD0 filter 0F7BB46C texture 0FA85FC0 video 512x512 tex 512x512
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 1: 0x00493f70 read 0 -> 0x00494a80(0, 0, 1); DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0E9B2660, DAT_00771a50 = 00000000, DAT_00771a10 = 0FA85FC0, DAT_006147d8 = 1 (RWC-FRAM
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 2: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0E9B2660, DAT_00771a50 = 0E9B2660, DAT_00771a10 = 0FA85FC0, DAT_006147d8 = 1 (RWC-
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 60: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0E9B2660, DAT_00771a50 = 0E9B2660, DAT_00771a10 = 0FA85FC0, DAT_006147d8 = 1 (RWC
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=08F114C4 0x006905b4=08F11678 0x0067f18c=08F1182C 0x0067f190=08F119E0, DAT_005f9bd8=9, DAT_00771a04=1, DAT_007f0a30=00000000, DAT_008a94a8=00000000
+[RWC_CORE] live clumps at RwEngineStop: 1 (clump freelist 007D7208)
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 6000 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 0; bodies at 00188150 / 00188070 / 001882F0; 0x0045d3
+== ddk_off: ddk_off: exited rc=0 (0x00000000) after 13.5 s, log -> D:/MashedWT/RWC-FRAME-MOVIE-BACKDRO lines=1827 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=08FAE4F0 0x006905b4=08FADA50 0x0067f18c=08FADFF0 0x0067f190=08FAE090, DAT_005f9bd8=9, DAT_00771a04=0, DAT_007f0a30=00000000, DAT_008a94a8=00000000
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+== ddk_frame: ddk_frame: exited rc=1381494785 (0x5257F001) after 1.0 s, log -> D:/MashedWT/RWC-FRAME-MOV lines=137 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0179C254; RwGlobals 01704DE0, module offset 0x3F4, texdict freelist 007D4030, list head 017051D4 -> 0179C264; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] live clumps at RwEngineStop: 0 (clump freelist 007D7208)
+== ddk_frameN: ddk_frameN: exited rc=1381494785 (0x5257F001) after 3.3 s, log -> D:/MashedWT/RWC-FRAME-MO lines=330 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 017EB2F4; RwGlobals 01794890, module offset 0x3F4, texdict freelist 007D4030, list head 01794C84 -> 017EB304; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 017EB324; RwGlobals 01794890, module offset 0x3F4, texdict freelist 007D4030, list head 017EB31C -> 017EB334; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[OT-BIND-D3D] 0x004944c0(0) original/toastart/pc/movies/frontend.mpg: graph 0F929D98 ctrl 0F7187E4 pos 0F7188F8 event 0F718800 audio 0F7189C8 filter 0F92EAB4 texture 0FA4BEA0 video 512x512 tex 512x512
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 1: 0x00493f70 read 0 -> 0x00494a80(0, 0, 1); DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EB59178, DAT_00771a50 = 00000000, DAT_00771a10 = 0FA4BEA0, DAT_006147d8 = 1 (RWC-FRAM
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 2: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EB59178, DAT_00771a50 = 0EB59178, DAT_00771a10 = 0FA4BEA0, DAT_006147d8 = 1 (RWC-
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 60: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EB59178, DAT_00771a50 = 0EB59178, DAT_00771a10 = 0FA4BEA0, DAT_006147d8 = 1 (RWC
+== ddk_frameT: ddk_frameT: exited rc=0 (0x00000000) after 11.3 s, log -> D:/MashedWT/RWC-FRAME-MOVIE-BACK lines=402 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 017DC1F4; RwGlobals 017749D0, module offset 0x3F4, texdict freelist 007D4030, list head 01774DC4 -> 017DC204; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 017DC224; RwGlobals 017749D0, module offset 0x3F4, texdict freelist 007D4030, list head 017DC21C -> 017DC234; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[OT-BIND-D3D] 0x004944c0(0) original/toastart/pc/movies/frontend.mpg: graph 0F786C30 ctrl 0F9419A4 pos 0F941AB8 event 0F9419C0 audio 0F941B88 filter 08F3BA6C texture 0F998780 video 512x512 tex 512x512
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 1: 0x00493f70 read 0 -> 0x00494a80(0, 0, 1); DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0F6C60D0, DAT_00771a50 = 00000000, DAT_00771a10 = 0F998780, DAT_006147d8 = 1 (RWC-FRAM
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 2: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0F6C60D0, DAT_00771a50 = 0F6C60D0, DAT_00771a10 = 0F998780, DAT_006147d8 = 1 (RWC-
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 60: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0F6C60D0, DAT_00771a50 = 0F6C60D0, DAT_00771a10 = 0F998780, DAT_006147d8 = 1 (RWC
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=08FB8CAC 0x006905b4=08FB8E60 0x0067f18c=08FB9014 0x0067f190=08FB91C8, DAT_005f9bd8=9, DAT_00771a04=1, DAT_007f0a30=00000000, DAT_008a94a8=00000000
+[RWC_CORE] live clumps at RwEngineStop: 1 (clump freelist 007D7208)
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 6000 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 0; bodies at 00018940 / 00018860 / 001B8CE0; 0x0045d3
+== vs_dump: vs_dump: exited rc=1381494785 (0x5257F001) after 11.0 s, log -> D:/MashedWT/RWC-FRAME-MOVI lines=386 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0175C324; RwGlobals 01710600, module offset 0x3F4, texdict freelist 007D4030, list head 017109F4 -> 0175C334; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 0175C354; RwGlobals 01710600, module offset 0x3F4, texdict freelist 007D4030, list head 0175C34C -> 0175C364; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[OT-BIND-D3D] 0x004944c0(0) original/toastart/pc/movies/frontend.mpg: graph 0F94A100 ctrl 0F944444 pos 0F944558 event 0F944460 audio 0F944628 filter 0F76114C texture 0F9A1D80 video 512x512 tex 512x512
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 1: 0x00493f70 read 0 -> 0x00494a80(0, 0, 1); DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA400F8, DAT_00771a50 = 00000000, DAT_00771a10 = 0F9A1D80, DAT_006147d8 = 1 (RWC-FRAM
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 2: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA400F8, DAT_00771a50 = 0EA400F8, DAT_00771a10 = 0F9A1D80, DAT_006147d8 = 1 (RWC-
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 60: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA400F8, DAT_00771a50 = 0EA400F8, DAT_00771a10 = 0F9A1D80, DAT_006147d8 = 1 (RWC
+[RWC_CORE] drawdump core_f0: 83 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1
+== ddk_dump: ddk_dump: exited rc=1381494785 (0x5257F001) after 11.1 s, log -> D:/MashedWT/RWC-FRAME-MOV lines=386 AV=0 FAIL=0
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (11 bound to an exe body, 177 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 017FC70C; RwGlobals 017B53C8, module offset 0x3F4, texdict freelist 007D4030, list head 017B57BC -> 017FC71C; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 017FC73C; RwGlobals 017B53C8, module offset 0x3F4, texdict freelist 007D4030, list head 017FC734 -> 017FC74C; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[OT-BIND-D3D] 0x004944c0(0) original/toastart/pc/movies/frontend.mpg: graph 0FB6FA38 ctrl 0F867D54 pos 0F867E68 event 0F867D70 audio 0F867F38 filter 08FDE49C texture 0FB2E5A0 video 512x512 tex 512x512
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 1: 0x00493f70 read 0 -> 0x00494a80(0, 0, 1); DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA34DA8, DAT_00771a50 = 00000000, DAT_00771a10 = 0FB2E5A0, DAT_006147d8 = 1 (RWC-FRAM
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 2: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA34DA8, DAT_00771a50 = 0EA34DA8, DAT_00771a10 = 0FB2E5A0, DAT_006147d8 = 1 (RWC-
+[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call 60: 0x00493f70 read 1 -> 0x00494480 + 0x00494f30; DAT_00771a04 = 00000001, DAT_00771a08 = 00000001, DAT_00771a18 = 0EA34DA8, DAT_00771a50 = 0EA34DA8, DAT_00771a10 = 0FB2E5A0, DAT_006147d8 = 1 (RWC
+[RWC_CORE] drawdump core_f0: 81 Im2D prim draws, 0 indexed (+0x34, not dumped), 0 counts read as 4; DAT_0067eca4 3 DAT_0067ecb0 33 DAT_00771968 1

@@ -77,13 +77,59 @@ static void PortTop_RwcPhaseLadder_0043dfd0(void) {
     }
 }
 
+// [RWC-FRAME-MOVIE-BACKDROP] run 50: the movie block of 0x0043dfd0, on the RW core frame route only (RwCore_FrameRoute).
+// Disassembly of MASHED.exe.unpatched (re/match/s08/0043dfd0.c lines 296..302):
+//   0x0043e030 push 0; 0x0043e031 call 0x494ef0 (thunk of 0x00493f70 = return DAT_00771a04)
+//   == 0: 0x0043e042..0x0043e045 push 1, push 0, push 0, call 0x494f00 (jmp 0x494a80): start movie 0 (frontend.mpg) with
+//         DAT_00771a08 = 1, DAT_00771a04 = 1, DAT_00771a18 = RwRasterCreate(0, 0, 0, 0x84)
+//   != 0: 0x0043e04f..0x0043e050 push 0, call 0x494f10 (jmp 0x494480): event poll 0x004942b0 and 0x004938e0 (texture into the
+//         raster), then 0x0043e058 call 0x494f30: DAT_00771a50 = DAT_00771a54 = DAT_00771a18
+// then 0x0043e05d 0x0043c000, 0x0043e069 0x0040acd0, and the 0x0067f19c test before the ladder. This block runs first, as
+// in the original. Bodies: RwCore_00494ef0 (re/match/s16/00494ef0.c, 100%), FUN_00494a80 (Match/MatchS16_00494a80.cpp,
+// 100%; its RwRasterCreate binding routes to RwCore_004c77c0 on this route, its 0x004944c0 binding takes the core's
+// device [0x007d4110] on this route, Match/PortTop_MovieBind.cpp), PortTop_Movie_00494480 / _00494f30
+// (Match/PortTop_MovieCore.cpp). Not made here: 0x0043c000 and 0x0040acd0 (not ported by this stand-in, as before).
+// Declared deviation: PortTop_MovieBind_Pump() runs before 0x00494480. The original's texture renderer copies frames on
+// the DirectShow streaming thread; the binding's graph has no renderer of its own and needs a caller on this thread.
+unsigned int RwCore_00494ef0(void);
+void FUN_00494a80(unsigned int param_1, unsigned int param_2, unsigned int param_3);
+unsigned int PortTop_Movie_00494480(void);
+void PortTop_Movie_00494f30(void);
+void PortTop_MovieBind_Pump(void);
+static void PortTop_RwcMovieBlock_0043dfd0(void) {
+    static unsigned s_calls;
+    const unsigned flag = RwCore_00494ef0();
+    if (flag == 0) {
+        FUN_00494a80(0, 0, 1);
+    } else {
+        PortTop_MovieBind_Pump();
+        PortTop_Movie_00494480();
+        PortTop_Movie_00494f30();
+    }
+    if (++s_calls <= 2 || s_calls == 60) {
+        if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(f, "[ORIG_TOP] rva 0x0043dfd0: RW core frame route movie block call %u: 0x00493f70 read %u -> %s; "
+                            "DAT_00771a04 = %08X, DAT_00771a08 = %08X, DAT_00771a18 = %08X, DAT_00771a50 = %08X, DAT_00771a10 = %08X, "
+                            "DAT_006147d8 = %d (RWC-FRAME-MOVIE-BACKDROP)\n", s_calls, flag,
+                         flag == 0 ? "0x00494a80(0, 0, 1)" : "0x00494480 + 0x00494f30",
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00771a04u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00771a08u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00771a18u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00771a50u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00771a10u)),
+                         *reinterpret_cast<const volatile int*>(static_cast<unsigned long>(0x006147d8u)));
+            std::fclose(f);
+        }
+    }
+}
+
 // rva 0043dfd0 (frontend machine): the hand menu navigation and the input-globals write, in the hand order.
 unsigned g_PortTop05_FrontendCalls = 0;
 void PortTop_StandIn05_0043dfd0(void) {
     static int once;
     StandInLog("0x0043dfd0", "hand menu navigation + input globals (HandTop_FrameMenu, HandTop_FrameInputGlobals)", &once);
     ++g_PortTop05_FrontendCalls;
-    if (RwCore_FrameRoute()) PortTop_RwcPhaseLadder_0043dfd0();
+    if (RwCore_FrameRoute()) { PortTop_RwcMovieBlock_0043dfd0(); PortTop_RwcPhaseLadder_0043dfd0(); }
     PortTop_HandFrameMenu();
     PortTop_HandFrameInputGlobals();
 }

@@ -89,8 +89,14 @@ void Publish(unsigned slot, IUnknown* p) {   // the slot takes p's reference
 extern "C" {
 
 // Binding of rva 0x004944c0: build and run the graph for movie [idx], publish its interfaces and texture.
+bool RwCore_FrameRoute(void);
 int PortTop_Bound_004944c0(int idx) {
-    IDirect3DDevice9* const g_device = PortTop_ExeDevice();
+    // [RWC-FRAME-MOVIE-BACKDROP] on the RW core frame route the device is the core's: [0x007d4110], the device the matched
+    // RW d3d9 driver stores (RwCore/RwCore_Knob.cpp logs it as "device [0x007d4110]"). The texture must live on the device
+    // the core's SetTexture runs on. Off that route: the exe device, as before.
+    IDirect3DDevice9* const g_device = RwCore_FrameRoute()
+        ? *reinterpret_cast<IDirect3DDevice9* const volatile*>(static_cast<std::uintptr_t>(0x007d4110u))
+        : PortTop_ExeDevice();
     At<int>(0x00771a1c) = idx;
     if (s_movie.ready()) s_movie.Close();   // the exe's own references of the previous movie
     if (!g_device || idx < 0 || idx > 4) {
