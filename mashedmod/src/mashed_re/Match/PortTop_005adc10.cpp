@@ -7,7 +7,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_005adc10 PortTop_Bound_005adc10
-#define FUN_005a61b0 PortTop_AStop_005a61b0   // named stop
+#define FUN_005a61b0 PortTop_Bound_005a61b0
 #define FUN_005ad770 PortTop_Bound_005ad770
 #define FUN_005ad910 PortTop_AStop_005ad910   // named stop
 #define FUN_005ad980 PortTop_Bound_005ad980

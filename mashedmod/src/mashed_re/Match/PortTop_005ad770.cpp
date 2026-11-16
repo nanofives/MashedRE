@@ -7,13 +7,13 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_005ad770 PortTop_Bound_005ad770
-#define FUN_005a61b0 PortTop_AStop_005a61b0   // named stop
+#define FUN_005a61b0 PortTop_Bound_005a61b0
 #define FUN_005ad6f0 PortTop_Bound_005ad6f0
 #define FUN_005ad8b0 PortTop_Bound_005ad8b0
 #define FUN_005ad8d0 PortTop_Bound_005ad8d0
 #define FUN_005ae0b0 AudioSubStructZeroInit   // exe body (Audio/AudioRwsLeaves.cpp)
-#define FUN_005ae800 PortTop_AStop_005ae800   // named stop
-#define FUN_005b35a0 PortTop_AStop_005b35a0   // named stop
+#define FUN_005ae800 PortTop_Bound_005ae800
+#define FUN_005b35a0 PortTop_Bound_005b35a0
 extern "C" {
 #include "../../../../re/match/s26/005ad770.c"
 }

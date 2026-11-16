@@ -1,0 +1,9 @@
+== orig_f0 (A: 82 draws, x1.0) vs core_f0 (B: 82 draws, x1.0)
+   matched 82  mismatched 0  missing 0  extra 0
+== orig_f1 (A: 82 draws, x1.0) vs core_f1 (B: 82 draws, x1.0)
+   matched 82  mismatched 0  missing 0  extra 0
+== orig_f2 (A: 82 draws, x1.0) vs core_f2 (B: 82 draws, x1.0)
+   matched 82  mismatched 0  missing 0  extra 0
+== orig_f3 (A: 82 draws, x1.0) vs core_f3 (B: 82 draws, x1.0)
+   matched 82  mismatched 0  missing 0  extra 0
+VERDICT: GREEN (match=328 mismatch=0 missing=0 extra=0)

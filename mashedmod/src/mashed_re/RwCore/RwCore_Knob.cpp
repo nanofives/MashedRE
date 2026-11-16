@@ -336,17 +336,52 @@ static void RwCore_DdWrapCamera(void) {
     U32(cam + 0x18) = mine;
 }
 
+// RWC-FRAME-JITTER-STRICT (default OFF, dump knob only): MASHED_RWC_DRAWDUMP_TPIN = comma list of hex dwords, one per
+// dumped frame. At the delimiter that opens dumped frame k (< list length) the clock DAT_007f1010 is overwritten with
+// word k before the frame renders. DAT_007f1010 is written by 0x00493390 (re/match/s15/00493390.c, `(float)now *
+// 3.3333333e-07f`), run from 0x00493480 outside the frame render, and read by the checker jitter of 0x00473ee0
+// (original: fld [0x007f1010] at 0x00474167, fadd st0,st0 at 0x0047416d, w2 stored at 0x0047416f) and by the crossfade
+// phase of 0x0042e5b0. The words come from the original-side capture (menu_draw_burst.py --peek-draw 0x007f1010), so a
+// dumped frame renders at the clock value of the original frame it is compared with. Each frame logs the clock before the
+// pin and at the frame's close.
+static unsigned s_ddTpin[16] = {}, s_ddTpinN = 0;
+static int s_ddTpinRead = 0;
+static void RwCore_DdTpinRead(void) {
+    if (s_ddTpinRead) return;
+    s_ddTpinRead = 1;
+    char v[256] = {};
+    if (GetEnvironmentVariableA("MASHED_RWC_DRAWDUMP_TPIN", v, sizeof(v)) <= 0) return;
+    char* p = v;
+    while (*p && s_ddTpinN < 16) {
+        char* q = nullptr;
+        s_ddTpin[s_ddTpinN++] = static_cast<unsigned>(std::strtoul(p, &q, 16));
+        if (!q || q == p) break;
+        p = (*q == ',') ? q + 1 : q;
+    }
+    RwCore_Log("drawdump: MASHED_RWC_DRAWDUMP_TPIN %u words (DAT_007f1010 pinned at the delimiter of each dumped frame)",
+               s_ddTpinN);
+}
+
 void RwCore_DrawDumpMark(unsigned rva) {
     if (s_ddState != 1 || rva != s_ddDelim) return;
     RwCore_DdInstall();   // re-wrap if the slot was rewritten since the engine start
     RwCore_DdWrapCamera();
+    RwCore_DdTpinRead();
     const unsigned e = s_ddEntries++;
     if (e >= s_ddSkip && e < s_ddSkip + s_ddFrames) {
+        if (s_ddCur >= 0 && s_ddTpinN)
+            RwCore_Log("drawdump core_f%d close: DAT_007f1010 %08X", s_ddCur, U32(0x007f1010u));
         RwCore_DdCloseFrame();
         s_ddDraws = s_ddIdxDraws = s_ddClamped = 0;
         s_ddCur = static_cast<int>(e - s_ddSkip);
+        if (static_cast<unsigned>(s_ddCur) < s_ddTpinN) {
+            RwCore_Log("drawdump core_f%d tpin: DAT_007f1010 %08X -> %08X", s_ddCur, U32(0x007f1010u), s_ddTpin[s_ddCur]);
+            U32(0x007f1010u) = s_ddTpin[s_ddCur];
+        }
         std::fprintf(s_ddOut, "%s\n \"core_f%d\": [", s_ddCur ? "," : "", s_ddCur);
     } else if (e == s_ddSkip + s_ddFrames) {
+        if (s_ddCur >= 0 && s_ddTpinN)
+            RwCore_Log("drawdump core_f%d close: DAT_007f1010 %08X", s_ddCur, U32(0x007f1010u));
         RwCore_DdFinish("frames done");
     }
 }
