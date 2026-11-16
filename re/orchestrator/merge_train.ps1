@@ -269,8 +269,50 @@ function Get-BuildMatchRefs([string]$wt) {
 # HB-TRAIN-MATCHTABLES-BUILD: the match tables decide which units ddkobj.py links, so a change to one is never text-only
 # (it needs at least the object build and ddkobj.py check), whatever folder holds it and whatever the text-only globs say.
 function Test-MatchTablePath([string]$f) { return ([IO.Path]::GetFileName($f) -match '^(ADMITTED|PROVISIONAL|PROVISIONAL_RWC|REFUSED_UNITS)\.tsv$') }
-function Test-TextOnlyPath([string]$f, $matchRefs) {
+# HB-TRAIN-TEXTONLY-VERIFYPY: verify/** and re/frida/** are text-only (merge_train.json text_only_globs) EXCEPT the files the
+# gate legs read: the gate scorers and the files they import, derived from the scorers' own imports (not by directory).
+# Roots = every script / data path named in merge_train.json (runner, full.*) plus gate_scorer_extra (scripts the train
+# itself runs). Closure = .py files named by `import X` / `from X import` or by a quoted *.py token in a root, resolved by
+# basename among the tracked files (over-approximates: a false hit only costs a build, a miss would skip a gate).
+# gate_input_dirs (the arm stacks the runner reads) are build inputs by prefix.
+function Get-GateInputs([string]$wt) {
+  $set = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+  $dirs = @(); if ($CFG.gate_input_dirs) { $dirs = @($CFG.gate_input_dirs) }
+  $vals = @($CFG.runner, $CFG.full.vsum, $CFG.full.ai_speed_env, $CFG.full.d2_score, $CFG.full.run13, $CFG.full.run13_cites, $CFG.full.run13_reference) + @($CFG.gate_scorer_extra)
+  $byBase = @{}
+  foreach ($t in @((Git -C $wt ls-files) | Where-Object { $_ -match '\.py$' })) {
+    $b = [IO.Path]::GetFileName($t).ToLowerInvariant()
+    if (-not $byBase.ContainsKey($b)) { $byBase[$b] = New-Object System.Collections.Generic.List[string] }
+    $byBase[$b].Add($t)
+  }
+  $todo = New-Object 'System.Collections.Generic.Queue[string]'
+  foreach ($v in $vals) { if ($v) { $r = ([string]$v) -replace '\\', '/'; if ($set.Add($r) -and $r -match '\.py$') { $todo.Enqueue($r) } } }
+  while ($todo.Count) {
+    $rel = $todo.Dequeue(); $fp = Join-Path $wt $rel
+    if (-not (Test-Path -LiteralPath $fp -PathType Leaf)) { continue }
+    $txt = Get-Content -LiteralPath $fp -Raw -ErrorAction SilentlyContinue; if (-not $txt) { continue }
+    $names = New-Object System.Collections.Generic.List[string]
+    foreach ($m in [regex]::Matches($txt, '(?m)^\s*(?:from\s+([A-Za-z_]\w*)(?:\.[\w.]+)?\s+import|import\s+([A-Za-z_]\w*(?:\s*,\s*[A-Za-z_]\w*)*))')) {
+      if ($m.Groups[1].Success) { $names.Add($m.Groups[1].Value + '.py') }
+      if ($m.Groups[2].Success) { foreach ($n in ($m.Groups[2].Value -split '\s*,\s*')) { $names.Add($n + '.py') } }
+    }
+    foreach ($m in [regex]::Matches($txt, '["''][^"''\r\n]*?([\w.-]+\.py)["'']')) { $names.Add($m.Groups[1].Value) }
+    foreach ($n in $names) {
+      $b = $n.ToLowerInvariant()
+      if ($byBase.ContainsKey($b)) { foreach ($c in $byBase[$b]) { if ($set.Add($c)) { $todo.Enqueue($c) } } }
+    }
+  }
+  return @{ files = $set; dirs = $dirs }
+}
+function Test-GateInputPath([string]$f, $gi) {
+  if (-not $gi) { return $false }
+  if ($gi.files.Contains($f)) { return $true }
+  foreach ($d in @($gi.dirs)) { if ($d -and $f.StartsWith($d, [StringComparison]::OrdinalIgnoreCase)) { return $true } }
+  return $false
+}
+function Test-TextOnlyPath([string]$f, $matchRefs, $gateIn = $null) {
   if (Test-MatchTablePath $f) { return $false }
+  if (Test-GateInputPath $f $gateIn) { return $false }
   if (Like-Any $f $CFG.text_only_globs) { return $true }
   $roots = @($CFG.text_only_unless_built); if (-not $roots.Count -or -not $roots[0]) { $roots = @('re/match/') }
   foreach ($r in $roots) {
@@ -649,7 +691,9 @@ function Try-Batch($items) {
     # HB-TRAIN-MATCH-TEXTONLY: re/match/** is text-only unless the build reads it; a flip pass (effective -Full) is
     # always built and gated.
     $mRefs = @(); if (@($changed | Where-Object { -not (Like-Any $_ $CFG.text_only_globs) -and $_ -like 're/match/*' }).Count) { $mRefs = @(Get-BuildMatchRefs $wt) }
-    $textOnly = -not $FullEff -and (@($changed | Where-Object { -not (Test-TextOnlyPath $_ $mRefs) }).Count -eq 0)
+    # HB-TRAIN-TEXTONLY-VERIFYPY: the gate-input closure is computed only when the batch touches verify/ or re/frida/.
+    $gIn = $null; if (@($changed | Where-Object { $_ -like 'verify/*' -or $_ -like 're/frida/*' }).Count) { $gIn = Get-GateInputs $wt }
+    $textOnly = -not $FullEff -and (@($changed | Where-Object { -not (Test-TextOnlyPath $_ $mRefs $gIn) }).Count -eq 0)
     # The effective -Full forces the full set too: a decided flip can change a default outside full_set_paths
     # (D3-CF-SNAP-FLIP's default lives in D3d9Render/TrackRenderer.cpp and merged without D2 / 13 tracks).
     $needFull = $FullEff -or (@($changed | Where-Object { $f = $_; @($CFG.full_set_paths | Where-Object { $f.StartsWith($_) }).Count -gt 0 }).Count -gt 0)
@@ -1163,7 +1207,7 @@ if ($SelfTest) {
   }
   $oldGlobs = @('*.md', '*.txt', 'verify/*', 're/analysis/*')
   Check ((-not (Like-Any 'hooks.csv' $oldGlobs)) -and (Like-Any 'hooks.csv' $CFG.text_only_globs)) 'control: hooks.csv was not text-only under the old globs, is under merge_train.json'
-  $src = @('mashedmod/src/mashed_re/Ai/AiStandalone.cpp', 'mashedmod/build.bat', 're/tools/dual_copy_allowlist.txt.bak', 'scripts/lint_rva_bodies.py', 're/match/s01.c', 're/orchestrator/tracker_lint.py', 're/frida/hooks_registry.py', 're/tools/hooks.csv')
+  $src = @('mashedmod/src/mashed_re/Ai/AiStandalone.cpp', 'mashedmod/build.bat', 're/tools/dual_copy_allowlist.txt.bak', 'scripts/lint_rva_bodies.py', 're/match/s01.c', 're/orchestrator/tracker_lint.py', 're/tools/hooks.csv')
   $leak = @($src | Where-Object { Like-Any $_ $CFG.text_only_globs })
   Check ($leak.Count -eq 0) "control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: $($leak -join ','))"
 
@@ -1237,6 +1281,49 @@ if ($SelfTest) {
   Remove-Item -LiteralPath (Join-Path $fake 'mashedmod\build_objs.ps1') -Force
   Check (-not (Test-TextOnlyPath 're/match/s99/x.c' @('*')) -and (Test-TextOnlyPath 're/match/s99/x.c' @('re/match/t01g/a.c')) -and -not (Test-TextOnlyPath 're/matchx/a.c' @()) -and -not (Test-TextOnlyPath 're/tools/match/match.py' @())) 'match-textonly: Test-TextOnlyPath only frees re/match/ (not re/matchx/, not re/tools/match/)'
   Check ((Test-MatchTablePath 're/match/ADMITTED.tsv') -and (Test-MatchTablePath 're/match/PROVISIONAL.tsv') -and (Test-MatchTablePath 're/match/REFUSED_UNITS.tsv') -and (Test-MatchTablePath 'verify/x/PROVISIONAL_RWC.tsv') -and -not (Test-MatchTablePath 're/match/s99/NOTES.tsv') -and -not (Test-MatchTablePath 're/match/ADMITTED.tsv.bak') -and -not (Test-TextOnlyPath 're/match/ADMITTED.tsv' @()) -and -not (Test-TextOnlyPath 'verify/x/PROVISIONAL_RWC.tsv' @()) -and (Test-TextOnlyPath 'verify/x/other.tsv' @())) 'matchtables-build: Test-TextOnlyPath is false for the four match tables (any folder, even under verify/*), other tsv files stay text-only'
+  # --- HB-TRAIN-TEXTONLY-VERIFYPY (real Try-Batch on the fake repo): verify/** and re/frida/** evidence is text-only, the
+  # gate scorers and what they import stay build inputs (closure from the imports), match tables keep the object build.
+  New-Item -ItemType Directory -Force -Path (Join-Path $fake 'verify\savelink_20261023\stacks'), (Join-Path $fake 'verify\ev1'), (Join-Path $fake 're\frida'), (Join-Path $fake 're\tools') | Out-Null
+  Put 'verify\savelink_20261023\run_arms.py' "import os, sys`nimport gate_helper`nfrom scorer_lib import score`n"
+  Put 'verify\savelink_20261023\gate_helper.py' "X = 1`n"
+  Put 'verify\savelink_20261023\vsum.py' "import importlib.util`nspec = importlib.util.spec_from_file_location('w', os.path.join(W, 're', 'tools', 'win_lib.py'))`n"
+  Put 're\tools\scorer_lib.py' "def score(): return 1`n"
+  Put 're\tools\win_lib.py' "Y = 2`n"
+  Put 'verify\savelink_20261023\stacks\H_X.txt' "# stack`n"
+  Put 'verify\ev1\evidence.py' "print('evidence only')`n"
+  Put 'verify\ev1\RESULT_X.md' "# r`n"
+  Put 're\frida\ev_probe.js' "// probe`n"
+  Put 're\frida\hooks_registry.py' "HOOKS = {}`n"
+  Put 're\tools\unrelated_tool.py' "print('x')`n"
+  Git -C $fake add verify re | Out-Null; Git -C $fake commit -q -m 'verifypy base' | Out-Null
+  $gi = Get-GateInputs $fake
+  Check ($gi.files.Contains('verify/savelink_20261023/gate_helper.py') -and $gi.files.Contains('re/tools/scorer_lib.py') -and $gi.files.Contains('re/tools/win_lib.py') -and -not $gi.files.Contains('verify/ev1/evidence.py') -and -not $gi.files.Contains('re/tools/unrelated_tool.py')) "verifypy: gate-input closure follows import / from-import / a quoted .py token from the scorer roots ($(@($gi.files | Where-Object { $_ -match '^(verify|re)/' -and $_ -match '\.py$' } | Sort-Object) -join ','))"
+  $vcases = [ordered]@{
+    'v-evid'   = @{ files = @('verify\ev1\evidence.py', 'verify\ev1\RESULT_X.md'); text = $true }
+    'v-frida'  = @{ files = @('re\frida\ev_probe.js', 're\frida\hooks_registry.py'); text = $true }
+    'v-mix'    = @{ files = @('verify\ev1\evidence.py', 're\frida\ev_probe.js', 'verify\ev1\RESULT_X.md'); text = $true }
+    'v-runner' = @{ files = @('verify\savelink_20261023\run_arms.py'); text = $false }
+    'v-import' = @{ files = @('verify\savelink_20261023\gate_helper.py'); text = $false }
+    'v-retool' = @{ files = @('re\tools\scorer_lib.py'); text = $false }
+    'v-quoted' = @{ files = @('re\tools\win_lib.py'); text = $false }
+    'v-stack'  = @{ files = @('verify\savelink_20261023\stacks\H_X.txt'); text = $false }
+    'v-tool'   = @{ files = @('re\tools\unrelated_tool.py'); text = $false }
+    'v-mixsc'  = @{ files = @('verify\ev1\evidence.py', 'verify\savelink_20261023\vsum.py'); text = $false }
+    'v-table'  = @{ files = @('re\match\ADMITTED.tsv', 'verify\ev1\evidence.py'); text = $false; tbl = $true }
+  }
+  foreach ($k in $vcases.Keys) {
+    Git -C $fake checkout -q -b "step-$k" integration | Out-Null
+    foreach ($fl in $vcases[$k].files) { Put $fl "// changed by $k`n$((Get-Content (Join-Path $fake $fl) -Raw))" }
+    Git -C $fake add verify re | Out-Null; Git -C $fake commit -q -m "step $k" | Out-Null
+    Git -C $fake checkout -q integration | Out-Null
+  }
+  $base = (Git -C $fake rev-parse integration) | Select-Object -First 1
+  foreach ($k in $vcases.Keys) {
+    $res = Try-Batch @(@{ id = "T-$k"; branch = "step-$k" })
+    if ($vcases[$k].text) { Check ($res.ok -and $res.textOnly -and $res.gates -match '^not run: text-only') "verifypy: $k (verify/** or re/frida evidence no gate reads) = text-only, no build, no gates (gates '$($res.gates)')" }
+    else { Check (-not $res.textOnly -and $res.why -match '^build failed') "verifypy: $k = still a build input$(if ($vcases[$k].tbl) { ' (match table: object build path)' }), the train goes on to the build ('$($res.why)')" }
+    Remove-Temp $res.wt
+  }
   # -Full only with a decided flip
   Check (-not (Resolve-FullFlag $true $false @()) -and (Resolve-FullFlag $true $false @('X-FLIP')) -and (Resolve-FullFlag $false $true @()) -and -not (Resolve-FullFlag $false $false @('X-FLIP'))) 'match-textonly: -Full counts only with a decided flip in the batch, -ForceFull always, no flag never'
   # live tree: the spec's example is a build input, and most of re/match is not
