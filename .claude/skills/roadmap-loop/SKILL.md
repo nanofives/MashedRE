@@ -195,9 +195,14 @@ every pass. Driver log and `pass<N>.result.json` files: `D:/MashedWT/mtrain_data
 When to pass `-Full` (run 20): a queue that touches `mashedmod/src` or another build input, and every decided
 flip, runs WITH `-Full` (a default can live outside `full_set_paths`). A text-only queue (trackers, docs, `verify/`
 evidence, `re/` tools that no build reads) runs WITHOUT it. `-Full` on a text-only row runs D2 x3 and the 13 tracks
-for nothing and holds `mashed_lock` past an hour. Queue the two kinds in separate passes. Known gap: the train's own
-text-only check counts any `.py` under `re/tools/` or `verify/` as a build input, so such a pass still builds and
-runs the default gates (kept on purpose: gate scorers live there).
+for nothing and holds `mashed_lock` past an hour. Queue the two kinds in separate passes. Since HB-TRAIN-TEXTONLY-VERIFYPY
+(2026-11-16) a batch of `verify/**` (RESULTs, evidence scripts, data) and `re/frida/**` files is text-only: no build, no
+G-CTRL/B, no D2 x3, no 13 tracks. The exception is derived, not by directory: `Get-GateInputs` takes the gate scorers
+named in `merge_train.json` (`runner`, `full.*`, `gate_scorer_extra`), follows their `import` / `from ... import` and
+quoted `*.py` tokens, and keeps those files (plus `gate_input_dirs`, the arm stacks) as build inputs wherever they sit.
+Match tables (`ADMITTED`, `PROVISIONAL`, `PROVISIONAL_RWC`, `REFUSED_UNITS`) still take the object build (HB-TRAIN-MATCHTABLES-BUILD).
+Remaining gap: a `.py` under `re/tools/` that no scorer imports is still a build input (only `re/frida/` and `verify/`
+were freed); free more by listing the folder in `text_only_globs`.
 Since HB-TRAIN-MATCH-TEXTONLY (2026-11-10) the train applies this itself: `-Full` counts only when the batch holds a
 decided-flip row (id `-FLIP`/`FLIP-` or "decided flip" in the title) and is dropped with a log line otherwise
 (`full_set_paths` still bring the full set in); a text-only batch skips build and gates even under `-Full`; and a
