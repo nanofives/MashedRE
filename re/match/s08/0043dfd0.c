@@ -531,7 +531,18 @@ void FUN_0043dfd0(void)
         break;
       case 0xff1d0000:
                 iVar8 = FUN_00430760();
-                if (iVar8 == 0) {
+                if (iVar8 != 0) {
+                  if (DAT_0067f0c0 == 0) {
+                    DAT_007f1a1c = 0;
+                  }
+                  else {
+                    DAT_007f1a1c = DAT_0067f0c0 + -1;
+                  }
+                  FUN_0043d2a0(6,0);
+                  FUN_00431d00();
+                  DAT_0067ea78 = 0;
+                }
+                else {
                   iVar8 = FUN_0042b9e0();
                   if (iVar8 == 0x1000) {
                     iVar8 = 0;
@@ -564,17 +575,6 @@ void FUN_0043dfd0(void)
                   else if (iVar8 == 3) {
                     FUN_0042bf30(0x9e,0,1,0x2d,0,0);
                   }
-                }
-                else {
-                  if (DAT_0067f0c0 == 0) {
-                    DAT_007f1a1c = 0;
-                  }
-                  else {
-                    DAT_007f1a1c = DAT_0067f0c0 + -1;
-                  }
-                  FUN_0043d2a0(6,0);
-                  FUN_00431d00();
-                  DAT_0067ea78 = 0;
                 }
         break;
       case 0xff1e0000:
