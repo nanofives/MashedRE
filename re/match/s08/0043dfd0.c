@@ -2061,13 +2061,12 @@ LAB_00440a0c:
   if (DAT_0067eca4 == 4) {
     iVar8 = FUN_004325c0();
     iVar9 = (int)(DAT_007f1004 * _DAT_005cc9fc); /* 0x00440a16 */
-    if (DAT_0067eca8 + iVar9 < 0xff) {
-      DAT_0067eca8 = DAT_0067eca8 + iVar9;
+    DAT_0067eca8 = DAT_0067eca8 + iVar9; /* store before the compare: 0x00440a37 mov [0x67eca8],ecx ahead of jl 0x440aa3 */
+    if (DAT_0067eca8 < 0xff) {
       return;
     }
-    DAT_0067eca8 = 0xff;
+    DAT_0067eca8 = 0xff; /* 0x00440a41, scheduled between cmp esi,ebx (0x00440a3f) and je (0x00440a4b) */
     if (iVar8 == 0) {
-      DAT_0067eca8 = 0xff;
       return;
     }
     DAT_0067eca4 = 5;
@@ -2077,13 +2076,14 @@ LAB_00440a0c:
   }
   iVar8 = (int)(DAT_007f1004 * _DAT_005cd8f8); /* 0x00440a5e */
   DAT_0067eca8 = DAT_0067eca8 + iVar8;
-  if (DAT_0067eca8 < 1) {
-    iVar8 = thunk_FUN_00493f70(0);
-    if (iVar8 != 0) {
-      thunk_FUN_00494460(0);
-    }
-    DAT_0067eca4 = 0;
-    DAT_0067eca8 = 0;
+  if (0 < DAT_0067eca8) { /* 0x00440a77 cmp ecx,ebx; jg 0x440aa3 */
+    return;
   }
+  iVar8 = thunk_FUN_00493f70(0);
+  if (iVar8 != 0) {
+    thunk_FUN_00494460(0);
+  }
+  DAT_0067eca4 = 0;
+  DAT_0067eca8 = 0;
   return;
 }
