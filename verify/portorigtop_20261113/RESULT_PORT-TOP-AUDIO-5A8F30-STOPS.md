@@ -6,7 +6,8 @@
   failed, code-trap 0 of 6 failed, pages 459/459).
 - Not reached: 0x0045d460. Every later init row is behind 0x005aef30, which starts a real thread (section 2.4, Decision),
   so RO-AUDIOINIT-45D460-REACH is not answered.
-- Not merged with orch/integration yet (the branch is based on 4c57c7375, which contains orch/integration 215d5bbb9).
+- Merged with orch/integration @ 9e2b496dd (section 3); builds, check and arms re-run on the merged tree: same stop, same
+  DIFFERENT list, self-tests PASS.
 - No newly DIFFERENT unit in the object build: DIFFERENT 25 = the base's 26 minus 0x005a6340, which is byte-identical
   now (section 1.5).
 - Base: orch/PORT-TOP-AUDIO-5AA3D0-STOPS @ 4c57c7375 (contains orch/integration 215d5bbb9). Top-down row: both builds,
@@ -165,6 +166,33 @@ immediates. Not reached yet, not bound.
   0x11 ms on the list the main thread fills. 0x0045d460 is not reachable without passing 0x005aef30: 0x005a8060 is reached
   from entry 5 of the 9-entry table 0x00635194, and 0x005ad080 stops at the first entry that returns 0.
 
+## 3. Merge of orch/integration (merged tree builds + arms)
+
+### 3.1 Merge
+- `git -c merge.autoStash=false merge orch/integration` (9e2b496dd, 23 commits past 215d5bbb9, including the merge of
+  orch/PORT-TOP-AUDIO-5AA3D0-STOPS and its applied promotions, PORT-OT-RACE and T2-RACEPATH-CENSUS), no rebase. Conflicts:
+  one add/add hunk each in `re/analysis/CHANGELOG.md` and `re/tools/dual_copy_allowlist.txt`, resolved as the union of
+  both sides (no duplicate allowlist key). Merge commit 05a6c5717.
+- equiv.py, match.py and re/tools/ddkobj have no diff between 4c57c7375 and the merged tree, so the equiv verdicts above
+  stand on the merged tool.
+- Merged tree: `exe_body_index.py` 2177 rvas; the plan dry run is the checkpoint 2 plan (373 bind, 70 reuse, 88 stops);
+  the only lines that differ are the confidence of 0x005aad50 / 0x005aee20 / 0x005b36b0 (C4 now, applied by the merge
+  train). Promotion dry run on the merged tree: `batch: 16 pass, 0 refused` (`c4_dry3.txt`).
+
+### 3.2 Builds, check, arms (merged tree)
+- VS2022: Build OK, rva-lint 374 known, NEW 0. Object build: Build OK.
+- `ddkobj.py check`: IDENTICAL 1748/1793, DIFFERENT 25 (the checkpoint 1 and 2 list exactly), not-in-map 20, units linked
+  1741/1971, refusals 11, provisional kept VS2022 219 units + 5 fns. No newly DIFFERENT unit from the merge.
+- Arms:
+
+  | arm | build | stop | return address | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005AEF30** after 1.9 s | 0x00243CCC = `_PortTop_Bound_005a8060+0x18c` (`mashed_re.map`, symbol at 0x00243b40) | a75ffbd0cbf51971 |
+  | ddk_init_audio | object | **0x005AEF30** after 1.8 s | 0x0004E11D = `_PortTop_Bound_005a8060+0x2cd` (`mashed_re_ddk.map`, symbol at 0x0004de50) | 0080319e4e13bc18 |
+
+  - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed (31 bound), code-trap
+    0 of 6 failed.
+
 ## Decision
 - **L-173** (filed by the lead): the nine 0x00635194 entries (table in 1.2), `EQUIV-IF-CALLERS-IGNORE(EAX)` with the
   walker 0x005ad080 reading EAX, same class as L-171 (0x005a8ea0). Listed provisional and bound meanwhile.
@@ -189,6 +217,9 @@ Times -0300; the line is printed in the same command right before the step.
 | 2 | VS2022 build (try 2) | 14:05:53 | `free 'mashed_machine'` |
 | 2 | object build | 14:07:19 | `free 'mashed_machine'` |
 | 2 | arms | 14:13:27 | `free 'mashed_machine'`; test-slot waited for memory 570 s, then `HELD 'mashed_machine' pid=13112` |
+| 3 | VS2022 build (merged tree) | 14:29:27 | `free 'mashed_machine'` |
+| 3 | object build (merged tree) | 14:30:31 | `free 'mashed_machine'` |
+| 3 | arms (merged tree) | 14:37:26 | `free 'mashed_machine'`; `mashed_lock.py run` then printed `HELD 'mashed_machine' pid=4396` |
 
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIO-5A8F30-STOPS ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIO-5A8F30-STOPS_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIO-5A8F30-STOPS -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
@@ -225,4 +256,15 @@ Checkpoint 2:
 - `codeptr3.txt` 4a9df00bed6d82a2dd0244434a4d3e0b6e07d2d0548b605680cceb302bd574b9
 - `005b74c0_before.c` bc7489423a5bc242171973c81b5b6f204216416a83368a337604a40779a38f11
 - `005b6be0_before.c` 2d26b60fd48a0a01b78019efd39300055fe345f35308742d754dea335990a9f6
-- `lockstatus.txt` (checkpoints 1 and 2) 6d20b72687f2e8cea922de31bd6357f0827243237c287de33ff93187d1a6e7ee
+Checkpoint 3 (merged tree):
+- `cp3/vs_init_audio.log` a75ffbd0cbf51971c8a1740c44a9dc752c2e4fc0a62c8100fbf69ba4a9be0e40
+- `cp3/ddk_init_audio.log` 0080319e4e13bc18927962b7f085ed333b3fc1b37181ace2029b81ba20f3419a
+- `arms3.out` 48ceabb9cd1ef9eb7fa2e60ad9a1493db39efcf98c26ac28019e24972f085877
+- `build3_vs.log` 22d90ea5b44933b2669ebd8f5611a0ffb1fb714a50e77827c9f4dc55ec93d5e9
+- `build3_ddk.log` 411e4638a1c76a1793ec36277037662cf8604c36f489569de6d23d2a3bec8d1f
+- `ddkcheck3.log` 76ff888739d9456b4db65adb0824ab6e839b0cd74adc0fb7ca89a1b95ea0eee8
+- `bytecheck3.tsv` 7c14ceb1ac3552dd89c99a054fd6bb87b79d47573ecb061c21b813d5010981d1
+- `plan4_dry.txt` 1f773e1ed7f5b0d4ac79f5a7e311fa63a818d430ff11ea58e04984b167b5ecdb
+- `c4_dry3.txt` 2a17932b8756d1e7f6873bc8729185c1cd5b7ee4e209ffd4bef7c2db0f6ce974
+- `thread_scratch_scores.txt` 98ce037f6830208b3ef69f4e70535fb0888aee9713f47c98991e7441e2ded60f
+- `lockstatus.txt` (checkpoints 1 to 3) d664911e4d4a9d6e6c8ceb0baaed7cc4ec4f82fd5488e756eed2e07bb244e031
