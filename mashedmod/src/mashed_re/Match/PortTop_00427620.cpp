@@ -22,6 +22,8 @@ unsigned int Orig_00555830(int p0);                 // matched, Match/PortTop_00
 unsigned int Orig_00556e40(int p0);                 // matched, Match/PortTop_00556e40.cpp
 int PortTop_StandIn04C_00555830();
 int PortTop_StandIn04C_00556e40();
+bool RwCore_FrameRoute(void);                       // RwCore/RwCore_Knob.cpp
+int RwCore_00555830(int param_1);                   // RwCore/RwCore_00555830.cpp (HUDINIT-C)
 }
 
 namespace {
@@ -36,6 +38,14 @@ void SelLog(const char* rva, int handle, const char* path) {
 extern "C" {
 unsigned int PortTop_00427620_Call00555830(int p0) {
     static int once;
+    // [HUDINIT-C] under MASHED_RWC_FRAME the font loader 0x00427880 runs (Match/MatchS06_00427ca0.cpp), so DAT_0067d838
+    // is a core font and the call goes to the RW core body RwCore_00555830 (re/match/s24/00555830.c, match100, its
+    // callees 0x00553e80 / 0x004c5a60 / 0x005c4d50 on the core and RwGlobals +0x10c / +0x11c through the core's
+    // DAT_007d3ff8). Off the frame route nothing changes.
+    if (RwCore_FrameRoute()) {
+        if (!once) { once = 1; SelLog("0x00555830", p0, "RW core body RwCore_00555830 (frame route) (HUDINIT-C)"); }
+        return static_cast<unsigned int>(RwCore_00555830(p0));
+    }
     const bool on = MashedRw_RwModKnob() != 0;
     if (!once) { once = 1; SelLog("0x00555830", p0, on ? "matched body (RWMOD on)" : "stand-in (RWMOD off)"); }
     if (on) return Orig_00555830(p0);
