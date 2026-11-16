@@ -36,6 +36,7 @@ void PortTop_HandFrameInputGlobals(void);
 // per frame). Phases 3 and up (the 3 -> 4 write at 0x0067e914 != 0, the menu rows) are not ported here: that is the
 // frontend machine itself (PORT-TOP-08). The float -> int conversion is (int) truncation, as __ftol at 0x0043e0a7.
 bool RwCore_FrameRoute(void);
+long MashedD3D9Wrap_PresentCount(void);  // Compat/D3d9Wrap.cpp:489 (LONG)
 static void PortTop_RwcPhaseLadder_0043dfd0(void) {
     volatile int& phase = *reinterpret_cast<volatile int*>(static_cast<unsigned long>(0x0067eca4u));
     volatile int& fade = *reinterpret_cast<volatile int*>(static_cast<unsigned long>(0x0067eca8u));
@@ -64,6 +65,31 @@ static void PortTop_RwcPhaseLadder_0043dfd0(void) {
     } else if (p0 == 2) {
         fade = fade + static_cast<int>(dt * k2);
         if (fade < 0) { fade = 0; phase = 3; }
+    }
+    // RWC-FRAME-LADDER-CHECK (run 51): one line per ladder call while the phase is 1 or 2 (and the call that leaves 2),
+    // with the call index and the D3D9 present count, so the transition frames can be set against the original's write
+    // watch of 0x0067eca4 / 0x0067eca8. At most 96 lines. Log only; nothing written.
+    static unsigned s_steps;
+    if ((p0 == 1 || p0 == 2) && s_steps < 96) {
+        ++s_steps;
+        if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(f, "[ORIG_TOP] rva 0x0043dfd0: ladder step call %u presents %ld: DAT_0067eca4 %d -> %d, DAT_0067eca8 = %d, "
+                            "DAT_007f1004 = %.6f (%08X), DAT_0067ecac = %d, DAT_0067e9f8 = %d, DAT_0067ed78 =%08X %08X %08X %08X, "
+                            "DAT_00898ac0 = %08X %08X %08X %08X (RWC-FRAME-LADDER-CHECK)\n",
+                         s_calls, MashedD3D9Wrap_PresentCount(), p0, static_cast<int>(phase), static_cast<int>(fade), dt,
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x007f1004u)),
+                         *reinterpret_cast<const volatile int*>(static_cast<unsigned long>(0x0067ecacu)),
+                         *reinterpret_cast<const volatile int*>(static_cast<unsigned long>(0x0067e9f8u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x0067ed78u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x0067ed7cu)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x0067ed80u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x0067ed84u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00898ac0u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00898ac4u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00898ac8u)),
+                         *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(0x00898accu)));
+            std::fclose(f);
+        }
     }
     if (phase != p0 && s_logged < 8) {
         ++s_logged;

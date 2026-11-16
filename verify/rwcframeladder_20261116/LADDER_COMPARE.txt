@@ -1,0 +1,77 @@
+original runs: D:/MashedWT/RWC-FRAME-LADDER-CHECK_data/orig1 206 hits (54 before the warp tick 300), D:/MashedWT/RWC-FRAME-LADDER-CHECK_data/orig2 206 hits (54 before the warp tick 300)
+original runs identical (tick, pc, values) across all hits: True
+core logs identical (call, phase, fade, present): True
+
+original transitions of 0x0067eca4 (before the warp): tick, new value, writer
+  tick 0 -> 1 at 0x00433249 (ladder call 1)
+  tick 16 -> 2 at 0x0043e0e3 (ladder call 17)
+  tick 48 -> 3 at 0x0043e126 (ladder call 49)
+core transitions: call 17 (present 21) 1 -> 2; call 49 (present 53) 2 -> 3
+
+per-call compare (original tick t = ladder call t+1): call, orig (phase, fade), core (phase, fade), match
+    1  (1, 0)         (1, 0)         match
+    2  (1, 16)        (1, 16)        match
+    3  (1, 32)        (1, 32)        match
+    4  (1, 48)        (1, 48)        match
+    5  (1, 64)        (1, 64)        match
+    6  (1, 80)        (1, 80)        match
+    7  (1, 96)        (1, 96)        match
+    8  (1, 112)       (1, 112)       match
+    9  (1, 128)       (1, 128)       match
+   10  (1, 144)       (1, 144)       match
+   11  (1, 160)       (1, 160)       match
+   12  (1, 176)       (1, 176)       match
+   13  (1, 192)       (1, 192)       match
+   14  (1, 208)       (1, 208)       match
+   15  (1, 224)       (1, 224)       match
+   16  (1, 240)       (1, 240)       match
+   17  (2, 255)       (2, 255)       match
+   18  (2, 247)       (2, 247)       match
+   19  (2, 239)       (2, 239)       match
+   20  (2, 231)       (2, 231)       match
+   21  (2, 223)       (2, 223)       match
+   22  (2, 215)       (2, 215)       match
+   23  (2, 207)       (2, 207)       match
+   24  (2, 199)       (2, 199)       match
+   25  (2, 191)       (2, 191)       match
+   26  (2, 183)       (2, 183)       match
+   27  (2, 175)       (2, 175)       match
+   28  (2, 167)       (2, 167)       match
+   29  (2, 159)       (2, 159)       match
+   30  (2, 151)       (2, 151)       match
+   31  (2, 143)       (2, 143)       match
+   32  (2, 135)       (2, 135)       match
+   33  (2, 127)       (2, 127)       match
+   34  (2, 119)       (2, 119)       match
+   35  (2, 111)       (2, 111)       match
+   36  (2, 103)       (2, 103)       match
+   37  (2, 95)        (2, 95)        match
+   38  (2, 87)        (2, 87)        match
+   39  (2, 79)        (2, 79)        match
+   40  (2, 71)        (2, 71)        match
+   41  (2, 63)        (2, 63)        match
+   42  (2, 55)        (2, 55)        match
+   43  (2, 47)        (2, 47)        match
+   44  (2, 39)        (2, 39)        match
+   45  (2, 31)        (2, 31)        match
+   46  (2, 23)        (2, 23)        match
+   47  (2, 15)        (2, 15)        match
+   48  (2, 7)         (2, 7)         match
+   49  (3, 0)         (3, 0)         match
+per-call mismatches: 0 of 49
+
+D:/MashedWT/RWC-FRAME-LADDER-CHECK_data/orig1 0x0043d2a0 screen build, checkpoint tick 16 -> tick 17:
+  0x0067ecac  00000016  ->  00000016
+  0x0067e9f8  00000000  ->  00000001
+  0x0067ed78  00000000 00000000 00000000 00000000  ->  005f6900 00000016 00000000 00000001
+  0x00898ac0  00000000 00000000 00000000 00000000  ->  ff000000 00000001 00000000 00ffffff
+  0x007f1004  3c888888  ->  3c888888
+
+D:/MashedWT/RWC-FRAME-LADDER-CHECK_data/orig2 0x0043d2a0 screen build, checkpoint tick 16 -> tick 17:
+  0x0067ecac  00000016  ->  00000016
+  0x0067e9f8  00000000  ->  00000001
+  0x0067ed78  00000000 00000000 00000000 00000000  ->  005f6900 00000016 00000000 00000001
+  0x00898ac0  00000000 00000000 00000000 00000000  ->  ff000000 00000001 00000000 00ffffff
+  0x007f1004  3c888888  ->  3c888888
+
+core at ladder call 49: DAT_007f1004 3C888888, DAT_0067ecac 22, DAT_0067e9f8 0, DAT_0067ed78 00000000 00000000 00000000 00000000, DAT_00898ac0 00000000 00000000 00000000 00000000
