@@ -20,3 +20,4 @@ Rows parked here on 2026-11-16 (ledger stage blocked, note "parked: UNCERTAIN_RE
 | RWC-FRAME-MOVIE-TEARDOWN | AppDestroy closes the movie through 0x00494460 | log the close path | verify/rwcframemovie_20261116/ |
 | GEN-RWCORE-PROVLIST-DRIFT | generator re-adds 94 dropped PROVISIONAL_RWC rows | make the generator read the drop list | verify/rwcframeclump_20261113/ |
 | MATCH-551A50-BIND-CALLER | 0x00551a50 linked but unreferenced | bind a caller | verify/MATCH-TAG-FIX-005BF690/ |
+| MATCH-43DFD0-RAISE-1-EDX | 0x0043dfd0 keeps edx live across call 0x0045b350 (0x0043e49b -> read 0x0043e4a3); the DDK reproduces it only when the TU defines the callee (naked RET). How the original TU knew the callee register use (same TU, LTCG) is unknown | check the other 32 callers of 0x0045b350 for a caller-saved register live across the call; then a /GL + /LTCG two-TU DDK compile | verify/match_20261116/RESULT_MATCH-43DFD0-RAISE-1.md |

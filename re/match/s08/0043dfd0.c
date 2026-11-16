@@ -232,7 +232,15 @@ undefined4 FUN_004325c0(void);
 void FUN_00432800(int p0);
 void FUN_0043c000(void);
 void FUN_0043d2a0(int p0, int p1);
+#ifdef __cplusplus
 void FUN_0045b350(void);
+#else
+/* 0x0045b350 is a bare RET (C4 by match, re/match/s09/0045b350.c). Defined here, not declared, so c2 knows the callee
+   writes no register: the original keeps the key-scan flag in edx across call 0x0045b350 (set 0x0043e3f8 / 0x0043e427 /
+   0x0043e432, call 0x0043e49b, read 0x0043e4a3). An empty C body is dropped as a call by c2, a naked RET is not.
+   [UNCERTAIN] how the original TU knew the callee's register use (UNCERTAIN_REGISTER, MATCH-43DFD0-RAISE-1). */
+__declspec(naked) void FUN_0045b350(void) { __asm ret }
+#endif
 void FUN_0046dc00(int p0, undefined4 p1);
 void FUN_00472640(undefined4 p0);
 void FUN_00492340(int p0);
@@ -260,13 +268,13 @@ MGLOBAL(float, _DAT_005cd8f8, 0x005cd8f8);
 void FUN_0043dfd0(void)
 
 {
-  bool bVar1;
-  bool bVar2;
-  bool bVar3;
-  bool bVar4;
-  bool bVar5;
-  bool bVar6;
-  bool bVar7;
+  int bVar1;
+  int bVar2;
+  int bVar3;
+  int bVar4;
+  int bVar5;
+  int bVar6;
+  int bVar7;
   int iVar8;
   int iVar9;
   uint uVar10;
@@ -316,8 +324,8 @@ void FUN_0043dfd0(void)
   DAT_0067f1a4 = 0;
   if (DAT_0067eca4 == 1) {
     iVar8 = (int)(DAT_007f1004 * _DAT_005cc9fc); /* 0x0043e0a7: fld [0x7f1004]; fmul [0x5cc9fc]; call 0x004a2c48 (__ftol) */
-    if (DAT_0067eca8 + iVar8 < 0xff) {
-      DAT_0067eca8 = DAT_0067eca8 + iVar8;
+    DAT_0067eca8 = DAT_0067eca8 + iVar8;
+    if (DAT_0067eca8 < 0xff) {
       return;
     }
     DAT_0067eca8 = 0xff;
@@ -329,7 +337,7 @@ void FUN_0043dfd0(void)
     FUN_004325c0();
     iVar8 = (int)(DAT_007f1004 * _DAT_005cda88); /* 0x0043e101 */
     DAT_0067eca8 = DAT_0067eca8 + iVar8;
-    if (-1 < DAT_0067eca8) {
+    if (DAT_0067eca8 >= 0) {
       return;
     }
     DAT_0067eca8 = 0;
@@ -471,7 +479,10 @@ void FUN_0043dfd0(void)
   bVar2 = false;
   extraout_EDX = 0;
   while (iVar8 != -0xf60000) {
-    if ((iVar8 == -0xf00000) || (iVar8 == -0xdd0000)) {
+    if (iVar8 == -0xf00000) {
+      extraout_EDX = 1;
+    }
+    else if (iVar8 == -0xdd0000) {
       extraout_EDX = 1;
     }
     else {
@@ -497,9 +508,8 @@ void FUN_0043dfd0(void)
         bVar7 = true;
       }
     }
-    piVar13 = piVar18 + 1;
     piVar18 = piVar18 + 1;
-    iVar8 = *piVar13;
+    iVar8 = *piVar18;
   }
   FUN_0045b350();
   if ((extraout_EDX != 0) && (iVar8 = FUN_0042ae10(local_20), iVar8 != 0)) {
