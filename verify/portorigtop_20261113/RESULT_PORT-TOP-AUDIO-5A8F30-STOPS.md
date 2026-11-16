@@ -1,9 +1,12 @@
 # RESULT PORT-TOP-AUDIO-5A8F30-STOPS: the init-arm stops from 0x005A8F30 on
 
-## Verdict: in progress (checkpoint 1 GREEN: both builds now stop at 0x005B8680, census order 34)
+## Verdict: DECISION (2 checkpoints GREEN; both builds now stop at 0x005AEF30, the audio worker-thread start, census order 42)
 
-- **Self-test result (checkpoint 1): PASS** in both arms (portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed,
-  code-trap pages 459/459, read / write ok).
+- **Self-test result: PASS** in every arm, both builds, both checkpoints (portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367
+  failed, code-trap 0 of 6 failed, pages 459/459).
+- Not reached: 0x0045d460. Every later init row is behind 0x005aef30, which starts a real thread (section 2.4, Decision),
+  so RO-AUDIOINIT-45D460-REACH is not answered.
+- Not merged with orch/integration yet (the branch is based on 4c57c7375, which contains orch/integration 215d5bbb9).
 - No newly DIFFERENT unit in the object build: DIFFERENT 25 = the base's 26 minus 0x005a6340, which is byte-identical
   now (section 1.5).
 - Base: orch/PORT-TOP-AUDIO-5AA3D0-STOPS @ 4c57c7375 (contains orch/integration 215d5bbb9). Top-down row: both builds,
@@ -105,11 +108,73 @@ run `batch: 13 pass, 0 refused` (`c4_dry2.txt`). No `--apply` on the branch.
   - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed (188 slots, 31 bound),
     code-trap pages 459/459, read / write ok.
 
-## Decision (requested, not filed by this worker)
-- The nine 0x00635194 entries (table above): `EQUIV-IF-CALLERS-IGNORE(EAX)`, the one caller (0x005ad080, indirect
-  through 0x00635194, from 0x005bbb20) reads EAX (`param_1[i]() == 0`). Same class as L-171 (0x005a8ea0). Options:
-  (a) keep them provisional on the knob path (recommended: every return path gives 0 or the object, the residual is the
-  cross-jumped failure tails), (b) require a shape that keeps the tails apart.
+## 2. Checkpoint 2: 0x005b8680, 0x005b74c0, 0x005b6be0 (macro family), stop at 0x005aef30
+
+### 2.1 Sources
+Same constructor shape as 1.1 (generator spelling, stores in listing order):
+
+| rva | source | before | now | relocheck |
+|---|---|---|---|---|
+| 0x005b8680 | re/match/s27/005b8680.c (new) | no source | 604 B BYTE-IDENTICAL | OK 27 |
+| 0x005b74c0 | re/match/s27/005b74c0.c | g2s source | 611 B BYTE-IDENTICAL | OK 28 |
+| 0x005b6be0 | re/match/s27/005b6be0.c | g2s source | 611 B BYTE-IDENTICAL | OK 28 |
+
+Promotion TSV now 16 rows. 0x005bce80 (census 53, folded form: `movsx ecx,[0x617ff9]` / `dec ecx` at 0x005bce9d, the
+macro on the constant 1) is best 73.9%: the original keeps 0x7b8 in eax (0x005bce92) and ors it (0x005bceaf), ours uses
+immediates. Not reached yet, not bound.
+
+### 2.2 Binding
+- Plan: 373 bind (322 match, 26 provisional, 17 admitted, 8 replay), 70 reuse, 88 stops; rsp +17, allowlist +1
+  (ORIGTOP-ONLY DUP-IN-TARGET 0x005ad2e0 with `Audio/AudioQueuePop.cpp`), BINDINGS.tsv +28. The code pointers the three
+  constructors store bring their own closures (0x005b8be0, 0x005b7880, 0x005b7010, 0x005b70e0 and callees).
+- The first VS2022 link failed on two Ghidra thunk names: `re/match/s25/005ab180.c` names its body `thunk_FUN_005ab620`,
+  and `re/match/s27/005b7880.c` calls `thunk_FUN_005b1500` (0x005b15d0 is `jmp 0x5b1500`, called at 0x005b789a). Generator
+  `EXTRA_PRE` defines for both (same form as 0x005aafe0 / 0x005ae330).
+
+### 2.3 Builds, check, arms
+- VS2022: Build OK, rva-lint 334 known, NEW 0. Object build: Build OK.
+- `ddkobj.py check`: IDENTICAL 1660/1706, DIFFERENT 25 (the checkpoint 1 list exactly), not-in-map 21, units linked
+  1656/1886, refusals 11. 0x005b8680 / 0x005b74c0 / 0x005b6be0 IDENTICAL. No newly DIFFERENT unit.
+- Arms:
+
+  | arm | build | stop | return address | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005AEF30** after 2.3 s | 0x0023F0DC = `_PortTop_Bound_005a8060+0x18c` (`mashed_re.map`, symbol at 0x0023ef50) | 15f9da1bf56b6dc6 |
+  | ddk_init_audio | object | **0x005AEF30** after 2.3 s | 0x0004B4BD = `_PortTop_Bound_005a8060+0x2cd` (`mashed_re_ddk.map`, symbol at 0x0004b1f0) | 054fede33c32ddcc |
+
+  - Both builds passed 0x005b85e0 (0x005b8680, 0x005aa200, 0x005bbbb0), 0x005c7a00 (0x005c7a90, 0x005c96e0), 0x005c6c20
+    (0x005c6cc0, 0x005c9680), then entered 0x005a7fe0 -> 0x005a8060, which calls 0x005aef30 at 0x005a8328 after the two
+    0x005aeea0 calls and 0x005aef00 (0x005a8315). 0x005aef30 is the forced stop of 1.4.
+  - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed (31 bound), code-trap
+    0 of 6 failed.
+
+### 2.4 What 0x005aef30 does (the decision below)
+- 0x005aef30 stores param_2 at param_1+8 (0x005aef3d), calls `__beginthread(0x005aef70, param_1[4], param_1)`
+  (0x005aef41 / 0x005aef46, target 0x005c2e79), returns 0 on -1 (0x005aef4e), else stores the handle at param_1[0] and calls
+  `SetThreadPriority(handle, param_1[3])` (import slot 0x005cc0bc, call 0x005aef5e).
+- Thread entry 0x005aef70 (40 B, no Ghidra function): calls `param_1[1](param_1[2])` (0x005aef78); when that returns
+  non-zero, `ReleaseSemaphore(*ret, 1, 0)` (0x005cc094) and `Sleep(-1)` (0x005cc034). Scratch source BYTE-IDENTICAL
+  (`thread_scratch_scores.txt`; not installed, not bound).
+- param_1[1] = 0x005a84d0, passed by 0x005a8060 to 0x005aef00 (`push 0x5a84d0` at 0x005a8301). 0x005a84d0 (131 B, no
+  Ghidra function) loops until DAT_007dcb4c != 0 (tests at 0x005a84d0 / 0x005a8536): `WaitForSingleObject(DAT_007dcae0,
+  -1)` (0x005a84f1), walk the list at 0x007dcad8 calling 0x005aab00 and 0x005aab70 on each node - 0x14
+  (0x005a8501..0x005a851f; both callees bound, C4), `ReleaseSemaphore(DAT_007dcae0, 1, 0)` (0x005a852c), `Sleep(0x11)`
+  (0x005a8530); then `ReleaseSemaphore(DAT_007dcb50, 1, 0)` (0x005a854d) and returns 0. Scratch source 91.7% (48/48 ins,
+  register residual).
+- Binding 0x005aef30 therefore needs an exe `__beginthread` and starts a real second thread that runs this loop every
+  0x11 ms on the list the main thread fills. 0x0045d460 is not reachable without passing 0x005aef30: 0x005a8060 is reached
+  from entry 5 of the 9-entry table 0x00635194, and 0x005ad080 stops at the first entry that returns 0.
+
+## Decision
+- **L-173** (filed by the lead): the nine 0x00635194 entries (table in 1.2), `EQUIV-IF-CALLERS-IGNORE(EAX)` with the
+  walker 0x005ad080 reading EAX, same class as L-171 (0x005a8ea0). Listed provisional and bound meanwhile.
+- **Requested now (this worker does not file it): the audio worker-thread start 0x005aef30** (section 2.4). Options:
+  (a) bind it: an exe `__beginthread` for 0x005c2e79 (the CRT row, C4 libid, waived-platform-crt, no exe body today) plus
+  sources for 0x005aef70 (byte-identical in scratch) and 0x005a84d0 (91.7%, would be provisional), so the knob path starts
+  the real worker thread; (b) keep 0x005aef30 a stop: the init arms cannot pass census order 42 and RO-AUDIOINIT-45D460-REACH
+  stays open; (c) a default-off knob stand-in for 0x005aef30 that returns param_1 without starting a thread (PREREG), so the
+  main-thread init can reach 0x0045d460 with no worker thread. Recommendation: (c) first to answer
+  RO-AUDIOINIT-45D460-REACH, then (a) as its own row.
 
 ## Lock status at build/run time
 Times -0300; the line is printed in the same command right before the step.
@@ -120,6 +185,10 @@ Times -0300; the line is printed in the same command right before the step.
 | 1 | VS2022 build | 13:34:01 | `free 'mashed_machine'`, `PRIORITY-LINGER ... 58s more` (no HOLD, no SOLO) |
 | 1 | object build | 13:38:31 | `free 'mashed_machine'` |
 | 1 | arms | 13:47:08 | `free 'mashed_machine'`; test-slot waited for memory, then `mashed_lock.py run` held the lock |
+| 2 | VS2022 build (try 1, link failed, 2.2) | 14:03:49 | `free 'mashed_machine'` |
+| 2 | VS2022 build (try 2) | 14:05:53 | `free 'mashed_machine'` |
+| 2 | object build | 14:07:19 | `free 'mashed_machine'` |
+| 2 | arms | 14:13:27 | `free 'mashed_machine'`; test-slot waited for memory 570 s, then `HELD 'mashed_machine' pid=13112` |
 
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIO-5A8F30-STOPS ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIO-5A8F30-STOPS_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIO-5A8F30-STOPS -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
@@ -143,4 +212,17 @@ Checkpoint 1:
 - `c4_dry2.txt` cebc9f703f2254fbacd1648db2dd7c9083ee03cf4b118035ecfc66795bec19a2
 - `005a8f30_before.c` b5772acf200dd3c81e2b4f93c47b7e52f9ca42fa0b1ab09885a505d0adb1b55c
 - `005a6340_before.c` d22b71b6d91a01a8d908d55a3c9ef56f3878114a8c1f40fcd30847665c6c8c92
-- `lockstatus.txt` 07fa3ff032e62c05412e4dfec1b4cdca86ae5feb591176d3fabed2f2a8873134
+Checkpoint 2:
+- `cp2/vs_init_audio.log` 15f9da1bf56b6dc60b7e5838c552a7d2e77ef295a063bb73db0f0fd85d2cf35f
+- `cp2/ddk_init_audio.log` 054fede33c32ddccd8c017b433fc98693b5568001e589159069af43e9f636fe0
+- `arms2.out` 6e47b3aef3eff08426a82eb4e2b1e029a9ac88be550d6d3dc00d7226780762a0
+- `build2_vs.log` f170ed2c2f28b53fe245ffc69123c7d23ec30594821431fcb69ea6cac7be678d
+- `build2_ddk.log` 39ce5689ab8ba1c0360980081d38b8f8dbdb85b3c6b776626c16e3f9e146d986
+- `ddkcheck2.log` dbf767263cc361a96b9e283162c91c72ff2b34d3d029649c39e85d1813ca03a8
+- `bytecheck2.tsv` 8d8062096e9ac119c4d43d7e908f3136d57a65a68da36185a12fd66d6cf21df3
+- `plan3_dry.txt` a4caa836a72f97fe5c79433183bad9825802fad14615b04af58effbe8c47931f
+- `plan3_write.txt` eb0257c5b1ce2b79d7fa405974968c1cdf13415d9869f969fcb9a545b0021768
+- `codeptr3.txt` 4a9df00bed6d82a2dd0244434a4d3e0b6e07d2d0548b605680cceb302bd574b9
+- `005b74c0_before.c` bc7489423a5bc242171973c81b5b6f204216416a83368a337604a40779a38f11
+- `005b6be0_before.c` 2d26b60fd48a0a01b78019efd39300055fe345f35308742d754dea335990a9f6
+- `lockstatus.txt` (checkpoints 1 and 2) 6d20b72687f2e8cea922de31bd6357f0827243237c287de33ff93187d1a6e7ee

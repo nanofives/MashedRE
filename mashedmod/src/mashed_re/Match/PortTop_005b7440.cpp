@@ -12,7 +12,7 @@
 #define FUN_005a9de0 PortTop_Bound_005a9de0
 #define FUN_005aa200 PortTop_Bound_005aa200
 #define FUN_005b73e0 PortTop_Bound_005b73e0
-#define FUN_005b74c0 PortTop_AStop_005b74c0   // named stop
+#define FUN_005b74c0 PortTop_Bound_005b74c0
 extern "C" {
 #include "../../../../re/match/s27/005b7440.c"
 }

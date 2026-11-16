@@ -115,6 +115,8 @@ EXTRA_PRE['005ac590'] = ['// LAB_005ac5c0 is a code address the body stores, not
                          '// a later call through it is reported by MASHED_CODE_TRAP, image design (b)).',
                          '#define LAB_005ac5c0 (*(undefined1 *)0x005ac5c0u)']
 EXTRA_PRE['005ae330'] = ['#define thunk_FUN_004522d0 RwCore_004522d0   // Ghidra thunk_ name of the jump to 0x004522d0 (re/match/s26/005ae330.c)']
+EXTRA_PRE['005ab180'] = ['#define thunk_FUN_005ab620 PortTop_Bound_005ab180   // PORT-TOP-AUDIO-5A8F30-STOPS: re/match/s25/005ab180.c names its body after the jump target (Ghidra thunk name)']
+EXTRA_PRE['005b7880'] = ['#define thunk_FUN_005b1500 PortTop_Bound_005b1500   // PORT-TOP-AUDIO-5A8F30-STOPS: Ghidra thunk_ name of 0x005b15d0 (jmp 0x005b1500, called at 0x005b789a); the port calls the target body']
 EXTRA_IN = {'00407600': ['char *FUN_0047d150(int h);   // declared here: the source declares it only outside MASHED_RE_PORT']}
 FORCE = {"00466b50", "0045d3f0", "0045d430"}
 # PORT-TOP-AUDIO-RWA: re-runs regenerate every wrapper this generator wrote before (the previous plan.json 'bind' rows),
