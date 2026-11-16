@@ -116,3 +116,17 @@ Predictions:
     reached (not expected: the checkpoint-2 fault sits under 0x00426e10's closure, after 0x004264d0).
 12. The first divergent record against ref1 stays record 0 at `0x00604604` on every arm.
 13. `ddkobj.py check`: every new unit (the 8 bound rvas) IDENTICAL, or its refusal reason recorded.
+
+### Checkpoint 3 amendment (after the first arms, lead decision (b))
+
+The first knob-on arms faulted inside 0x004264d0 (`RwCore_004c15c0+0x85`, called from the bound 0x00458c70). Change:
+0x00458c70 binds to the named counting stand-in `PortTop_StandInRL_00458c70` (logs its first call, returns, no RW core
+call), the generator's `ALIAS`. The plan becomes 92 bound, 45 reused, 33 stops; the rest is unchanged.
+
+Predictions for the re-run (`RO_ROIMG-pr1`, `RO_ROLOAD-pr1`, `RO_ROLOADC-pr1`, data `D:/MashedWT/PORT-OT-RACE_data3c`):
+
+14. Knob on: the 0x00458c70 stand-in line with first call arg 0, then `rva 0x004264d0: matched body returned` (0x0042fe30
+    returns 0 because `DAT_0067e9fc` = 0 and `DAT_0067ea74` = 0 on the exe at tick 299), then the 0x00426e10 entry line.
+15. `RO_ROLOAD-pr1` ends at the 0x0047a020 stop (exit code 4694048), as at checkpoint 2. `RO_ROLOADC-pr1` as at
+    checkpoint 2 (fault after the count-mode stops under 0x00426e10). Knob-off control: exit 0, load length 1.
+16. First divergent record against ref1: record 0, `0x00604604`, on every arm.

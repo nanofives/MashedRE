@@ -29,6 +29,13 @@ ALIAS['004952f0'] = ('PortTop_PizFs_Unmount_004952f0', 'Match/PortTop_00402750_P
 ALIAS['004cc230'] = ('PortTop_RwStreamOpen_004cc230', 'Match/PortTop_RwStream04F.cpp')
 ALIAS['004cc160'] = ('PortTop_RwStreamClose_004cc160', 'Match/PortTop_RwStream04F.cpp')
 ALIAS['00550b00'] = ('RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_00550b00.cpp')
+# Checkpoint 3: 0x0042fe30 already has one exe body compiled from the same matched source (re/match/s07/0042fe30.c,
+# MATCH-S07 TU in exe_sources.rsp, its one callee 0x0042f6a0 bound to GetRaceSubMode). reuse() skips it because the
+# source is not a leaf; binding a second copy would be a dual copy of the rva in the exe.
+ALIAS['0042fe30'] = ('RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp')
+# Checkpoint 3 (lead decision (b), 2026-11-16): 0x00458c70 stays the named counting stand-in. Its bound body faulted in
+# RwCore_004c15c0+0x85 (original 0x004c1645): [RwGlobals+0xbc] is 0 on the librw RwGlobals record of this arm.
+ALIAS['00458c70'] = ('PortTop_StandInRL_00458c70', 'Match/PortTop_StandInsRL.cpp')
 # Exe bodies that exist but are not match-include PortTop bodies: an rh or extern "C" body compiled into the exe for the
 # same rva. Reused when the rva is matched (C4) and the body is a C function (no ::).
 def reuse_any(rva):
@@ -46,6 +53,13 @@ if os.path.exists(_up):
         if l.strip() and not l.startswith('#'):
             k, _, why = l.rstrip(chr(13) + chr(10)).partition(chr(9))
             UNCLEAN[k.strip().lower()] = why.strip()
+# Checkpoint 3: a callee whose exe body takes a different argument list than the caller's source declares binds to the
+# existing forwarder that adapts it (same binding as the caller's other exe TU).
+CALLEE_OVERRIDE = {
+    ('0042a5d0', '004b3bf0'): ('MatchS06_0042a5d0_Call004b3bf0',
+                               'Match/MatchS06_0042a5d0.cpp: the source passes 1 argument, Orig_004b3bf0 takes 3; '
+                               'declared deviation there, 2nd / 3rd passed as 0'),
+}
 NOT_LOCAL = {('0047bf70', '0047be80')}   # re/match/s13/0047bf70.c: 0x0047be80 HELD (86.4%), its copy is #ifndef MATCH_PORT
 plan = {}
 q = list(roots)
@@ -125,6 +139,9 @@ for rva, p in sorted(plan.items()):
          '// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#define MATCH_PORT 1',
          '#define FUN_%s PortTop_Bound_%s' % (rva, rva)]
     for c in cs:
+        if (rva, c) in CALLEE_OVERRIDE:
+            L.append('#define FUN_%s %s   // %s' % ((c,) + CALLEE_OVERRIDE[(rva, c)]))
+            continue
         note = {'reuse': '   // exe body (%s)' % (plan[c][2] if plan[c][0] == 'reuse' else ''), 'bind': '', 'stop': '   // named stop'}[plan[c][0]]
         L.append('#define FUN_%s %s%s' % (c, sym(c), note))
     for c in local:
