@@ -1,5 +1,14 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S08-00432B30 (2026-11-16): 93.6% (regs 93.6%, ops 97.5%), 358/357 instructions, was 74.2% (343/357).
+/* MATCH-S08-00432B30 attempt 2 (2026-11-16): BYTE-IDENTICAL, 100.0% 357/357 instructions, match.py --bytes 1648 B
+   0 differing, relocheck OK checked=72 (was 93.6%, 682 differing bytes). Two levers closed the two residuals below:
+   (a) the mode 0 path written as `if (DAT_0067e9f8 == 0) r = 0; else { r = FUN_0042add0(key, 0); if (r == -1)
+   r = 0; }` with no `r = 0` above the mode test and the constant 0 as the idx argument at all three call sites: the
+   extra `xor edi,edi` before 0x00432b78 is gone and the prologue equals the original's 36 instructions. (b) inner
+   orders in1 = 1,2,8,4,5,6,10 and in6 = 6,2,1,4,8,5,10 (every other order as in attempt 1): the in1/in6 shared
+   case 2 / case 4 blocks now sit at 0x00432c22 / 0x00432c36 as in the original, and all eight jump tables
+   (0x00433060..0x004331a0) equal the original's entry for entry. Found by a joint hill-climb over all inner orders
+   with `default` movable (case-order rank metric against the original tables), then grafted onto attempt 1's orders.
+   Attempt 1 (93.6% (regs 93.6%, ops 97.5%), 358/357 instructions, was 74.2% (343/357)):
    Levers: (1) FUN_0042ad10 parameter order (type, cnt, ...): the caller then loads EAX (cnt) before EDX (type) as
    the original does at 0x00432bab/0x00432bad; the callee stays 100%. (2) Outer cases written in the original's
    layout order 1,2,4,8,5,6,10 (0x00433060 table targets) AND every inner switch in that order with its self case
@@ -114,25 +123,29 @@ static void FUN_00432b30(int mode, int *cnt, int sel, int menu)
 {
   int r;
 
-  r = 0;
   if (mode != 0) {
     if (mode == 2) {
       sel = 0;
-      r = FUN_0042add0(0xff080000, r);
+      r = FUN_0042add0(0xff080000, 0);
     }
     else {
       DAT_0067e9f8++;
-      r = FUN_0042add0(0xff080000, r);
+      r = FUN_0042add0(0xff080000, 0);
       if (r == -1) {
         r = 0;
       }
       DAT_0067e9f8--;
     }
   }
-  else if (DAT_0067e9f8 != 0) {
-    r = FUN_0042add0(0xff080000, r);
-    if (r == -1) {
+  else {
+    if (DAT_0067e9f8 == 0) {
       r = 0;
+    }
+    else {
+      r = FUN_0042add0(0xff080000, 0);
+      if (r == -1) {
+        r = 0;
+      }
     }
   }
   switch (sel) {
@@ -153,13 +166,13 @@ static void FUN_00432b30(int mode, int *cnt, int sel, int menu)
     DAT_00898ac0[*cnt].f4 = 0;
     DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
-    case 4:
-    DAT_00898ac0[*cnt].s2 = 0x225;
+    case 8:
+    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
     DAT_00898ac0[*cnt].f4 = 0;
     DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
-    case 8:
-    DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+    case 4:
+    DAT_00898ac0[*cnt].s2 = 0x225;
     DAT_00898ac0[*cnt].f4 = 0;
     DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
@@ -388,13 +401,13 @@ static void FUN_00432b30(int mode, int *cnt, int sel, int menu)
     DAT_00898ac0[*cnt].f4 = 0x1000;
     DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
-    case 1:
-    DAT_00898ac0[*cnt].s2 = 0x42;
+    case 2:
+    DAT_00898ac0[*cnt].s2 = 0x43;
     DAT_00898ac0[*cnt].f4 = 0;
     DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
-    case 2:
-    DAT_00898ac0[*cnt].s2 = 0x43;
+    case 1:
+    DAT_00898ac0[*cnt].s2 = 0x42;
     DAT_00898ac0[*cnt].f4 = 0;
     DAT_00898ac0[*cnt].f10 = 0x1ff;
     break;
