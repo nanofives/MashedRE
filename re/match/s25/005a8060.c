@@ -1,7 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* 40.0% (regs 45.2%, ops 51.0%), 141 vs 210 insns: Ghidra pruned the dead branches of a macro that re-evaluates (1 << FUN_005aee20(0x28))
-   in every sub-expression (ushort test, & 0xffff, high-byte test, sar 0x18/0x10 table index into DAT_00617ff8); the original keeps all
-   of those calls. Reproducing needs the original multi-evaluation macro text. Function addresses stored via (code *) casts. Class (b). */
+/* 0x005a8060: 100.0%, 744 B BYTE-IDENTICAL (PORT-TOP-AUDIO-5A8F30-STOPS, 2026-11-16). The bit scan is the nested macro HB32(M) of
+   re/match/s25/005a8f30.c (M = 1 << FUN_005aee20(0x28), re-evaluated at every use); the tail (list heads, two FUN_005aeea0
+   events, FUN_005aef00 / FUN_005aef30 thread start, CloseHandle unwind) is the previous source unchanged. Previous source (40.0%)
+   kept in D:/MashedWT/PORT-TOP-AUDIO-5A8F30-STOPS_data/005a8060_before.c. */
 /* MATCH-S25 0x005a8060: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchs25_20261107/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -44,74 +45,31 @@ MGLOBAL(undefined4, DAT_0063307c, 0x0063307c);
 MGLOBAL(undefined4, DAT_007dcb4c, 0x007dcb4c);
 MGLOBAL(undefined4, DAT_007dcb50, 0x007dcb50);
 MGLOBAL(undefined4, DAT_007dcae0, 0x007dcae0);
-MGLOBAL(undefined1, DAT_00617ff8, 0x00617ff8);
+MGLOBALA(signed char, DAT_00617ff8, 256, 0x00617ff8);
 MGLOBAL(undefined1, DAT_005e616c, 0x005e616c);
 MGLOBAL(undefined1, DAT_007dcb54, 0x007dcb54);
 void FUN_005a8390(void);
 void FUN_005a8560(void);
 __declspec(dllimport) BOOL __stdcall CloseHandle(HANDLE p0);
 undefined4 FUN_005a9e10(undefined4 p0, undefined4 p1, undefined4 p2);
-undefined4 FUN_005aee20(uint p0);
+int FUN_005aee20(uint p0);
 uint FUN_005aeea0(undefined4 * p0, LONG p1, LONG p2);
 undefined4 FUN_005aef00(undefined4 * p0, undefined4 p1, undefined4 p2, undefined4 p3);
 undefined4 * FUN_005aef30(undefined4 * p0, undefined4 p1);
 MGLOBAL(int, _DAT_007dcadc, 0x007dcadc);
+#define SH_005a8060 (1 << FUN_005aee20(0x28))
+#define M_005a8060 (((short)SH_005a8060 != 0) ? (SH_005a8060 & 0xffff) : 1)
+#define HB16_005a8060(w) ((((w) & 0xff00) != 0) ? DAT_00617ff8[(w) >> 8] + 7 : DAT_00617ff8[(w)] - 1)
+#define HB32_005a8060(v) ((((v) & 0xffff0000) != 0) ? HB16_005a8060((v) >> 16) + 16 : HB16_005a8060(v))
 // MATCH: 0x005a8060 FUN_005a8060
-/* WARNING: Removing unreachable block (ram,0x005a80f4) */
-/* WARNING: Removing unreachable block (ram,0x005a80d5) */
-/* WARNING: Removing unreachable block (ram,0x005a80fc) */
-/* WARNING: Removing unreachable block (ram,0x005a8166) */
-/* WARNING: Removing unreachable block (ram,0x005a81a8) */
-/* WARNING: Removing unreachable block (ram,0x005a817c) */
-/* WARNING: Removing unreachable block (ram,0x005a8108) */
-/* WARNING: Removing unreachable block (ram,0x005a814c) */
-/* WARNING: Removing unreachable block (ram,0x005a811e) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* [C2 2026-06-01] `void FUN_005a8060(int param_1)` */
-
 void FUN_005a8060(int param_1)
 
 {
-  byte bVar1;
   int iVar2;
-  char cVar4;
-  uint uVar3;
-  
+
   FUN_005a9e10(param_1,(undefined4)&DAT_005e616c,0);
   *(undefined4 *)(param_1 + 0x40) = 0xd78;
-  bVar1 = FUN_005aee20(0x28);
-  if ((short)(1 << (bVar1 & 0x1f)) != 0) {
-    FUN_005aee20(0x28);
-  }
-  bVar1 = FUN_005aee20(0x28);
-  if ((short)(1 << (bVar1 & 0x1f)) == 0) {
-    cVar4 = '\0';
-  }
-  else {
-    bVar1 = FUN_005aee20(0x28);
-    cVar4 = (char)((uint)(1 << (bVar1 & 0x1f)) >> 8);
-  }
-  if (cVar4 == '\0') {
-    bVar1 = FUN_005aee20(0x28);
-    if ((short)(1 << (bVar1 & 0x1f)) == 0) {
-      uVar3 = 1;
-    }
-    else {
-      bVar1 = FUN_005aee20(0x28);
-      uVar3 = 1 << (bVar1 & 0x1f) & 0xffff;
-    }
-    iVar2 = (&DAT_00617ff8)[uVar3] + -1;
-  }
-  else {
-    bVar1 = FUN_005aee20(0x28);
-    if ((short)(1 << (bVar1 & 0x1f)) == 0) {
-      iVar2 = DAT_00617ff8 + 7;
-    }
-    else {
-      bVar1 = FUN_005aee20(0x28);
-      iVar2 = (&DAT_00617ff8)[(int)(1 << (bVar1 & 0x1f) & 0xffffU) >> 8] + 7;
-    }
-  }
+  iVar2 = HB32_005a8060(M_005a8060);
   *(uint *)(param_1 + 0x40) = *(uint *)(param_1 + 0x40) | iVar2 << 0x1c;
   *(code **)(param_1 + 0x28) = (code *)FUN_005a8390;
   *(code **)(param_1 + 0x34) = (code *)FUN_005a8460;
