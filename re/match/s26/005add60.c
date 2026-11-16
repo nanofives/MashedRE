@@ -1,6 +1,9 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S26 0x005add60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs26_20261107/results.tsv. */
+   unchanged; globals moved to MGLOBAL. Score: see verify/matchs26_20261107/results.tsv.
+   PORT-TOP-AUDIOINIT-SPLIT-5A9970: return type bool -> int (same DDK bytes, neg/sbb/neg = 0x005add6f..0x005add73).
+   Under VS2022 C++ a bool return set only AL (setne al), so 0x005ada90's `== 1` (orig 0x005adb26 cmp eax,1)
+   saw 0x006337xx and failed: that was the init-arm split between the two builds. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -28,7 +31,7 @@ typedef unsigned int uint;
 MGLOBAL(undefined1, DAT_00633720, 0x00633720);
 int FUN_005adc10(int p0, uint p1);
 // MATCH: 0x005add60 FUN_005add60
-bool FUN_005add60(void)
+int FUN_005add60(void)
 
 {
   int iVar1;
