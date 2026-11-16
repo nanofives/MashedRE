@@ -26,6 +26,22 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-16  0x005a8f30  FUN_005a8f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8f30.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005a6340  FUN_005a6340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a6340.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005b9f30  LAB_005b9f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b9f30.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005c7a90  FUN_005c7a90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c7a90.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005c6cc0  FUN_005c6cc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c6cc0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005a8060  FUN_005a8060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8060.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005c8120  FUN_005c8120  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c8120.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005aee40  FUN_005aee40  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005aee40.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005b7fe0  FUN_005b7fe0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b7fe0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005b7f80  FUN_005b7f80  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b7f80.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005b7f20  FUN_005b7f20  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b7f20.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005bb850  FUN_005bb850  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005bb850.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005c9230  FUN_005c9230  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c9230.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005b8680  FUN_005b8680  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b8680.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005b74c0  FUN_005b74c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b74c0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
+2026-11-16  0x005b6be0  FUN_005b6be0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b6be0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
 2026-11-16  0x005c9230  FUN_005c9230  (none)->C1  added (PORT-TOP-AUDIO-5A8F30-STOPS): code pointer at 0x006351e0 (table 0x006351dc, 2 entries), walked by 0x005ad080 from 0x005bbb20 (push 2 / push 0x6351dc at 0x005bbb46 / 0x005bbb48); Ghidra had no function; pc_funcs.csv row added; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
 2026-11-16  0x005bb850  FUN_005bb850  (none)->C1  added (PORT-TOP-AUDIO-5A8F30-STOPS): code pointer at 0x006351dc (table 0x006351dc, 2 entries), walked by 0x005ad080 from 0x005bbb20 (push 2 / push 0x6351dc at 0x005bbb46 / 0x005bbb48); Ghidra had no function; pc_funcs.csv row added; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
 2026-11-16  0x005b7f20  FUN_005b7f20  (none)->C1  added (PORT-TOP-AUDIO-5A8F30-STOPS): code pointer at 0x006351f8 (table 0x006351ec, 4 entries), walked by 0x005ad080 from 0x005bbb20 (push 4 / push 0x6351ec at 0x005bbb20 / 0x005bbb22); Ghidra had no function; pc_funcs.csv row added; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5A8F30-STOPS.md
