@@ -1,8 +1,8 @@
 # RESULT RO-MASKS-REGEN + RO-CTL-PAD-68BC (run 50, 2026-11-15)
 
 Branch `orch/RO-MASKS-REGEN` from `f55abfff3` (orch/RO-CTL-OSWORD). Row kind: tool + text (mask table). No build, no game run, no G-CTRL, no B.
-No reference race is named (L-167 open). Files changed: `re/frida/replay_masks_manual.tsv` (+3 rows), `re/frida/replay_masks.tsv` (regenerated).
-The OSWORD `0x00771a00 MASK:os` note is present once in each file and is not in the diff (`grep -c 771a00` = 1 / 1).
+No reference race is named (L-167 open). Files changed against `f55abfff3`: `re/frida/replay_masks.tsv` only (regenerated). `replay_masks_manual.tsv` is
+identical to `f55abfff3` after the follow-up commit. The OSWORD `0x00771a00 MASK:os` note is present once in each file and is not in the diff (`grep -c 771a00` = 1 / 1).
 
 ## 1. RO-MASKS-REGEN
 
@@ -35,11 +35,15 @@ command, `gen_replay_masks.py --facts ... ` and a commit of the diff when non-em
 `qhull`, `lua` on either side. No automation added. [UNCERTAIN] whether a mask drop (membership removed) also needs a human look: not
 observed here.
 
-## 2. RO-CTL-PAD-68BC: decision, mask the pad family (12 words)
+## 2. RO-CTL-PAD-68BC: no mask added, waits for RO-CTL-PAD-68BC-READWATCH
 
-Mask: three rows in `replay_masks_manual.tsv`, `count 4, stride 0x68, width 4, MASK:stale-stack`, at `0x0068bba4`, `0x0068bbb4`, `0x0068bbc4`
-(regenerated into `replay_masks.tsv`). Class `stale-stack` follows the existing row `0x006fe7dc` ("RwMatrix pad m[7], stale stack", writer
-`0x004863e4`, a `rep movsd` of an RwMatrix).
+Verdict (follow-up from the lead and L0, run 50): **no mask added.** A new mask merges only with reader evidence for every word it
+masks, and 10 of the 12 pad words below have none (only `0x0068bc0c` / `0x0068bc1c` were read-watched). The first commit `6f106eae6` added
+three rows (`0x0068bba4`, `0x0068bbb4`, `0x0068bbc4`, `count 4, stride 0x68, MASK:stale-stack`). The follow-up commit removes them,
+restoring `replay_masks_manual.tsv` to `f55abfff3`, and regenerates `replay_masks.tsv`. The row waits for **RO-CTL-PAD-68BC-READWATCH**: one
+`detorig.py --watch-mode rw` run on the 10 unwatched words (`0x0068bba4`, `0x0068bbb4`, `0x0068bbc4`, `0x0068bc2c`, `0x0068bc74`,
+`0x0068bc84`, `0x0068bc94`, `0x0068bcdc`, `0x0068bcec`, `0x0068bcfc`). The harness arms two debug-register slots per run (RESULT_RO-CTL-68BC0C section 6), so 10 words
+need 5 runs or a watch rotation. Then mask only the words with no reader. The analysis below stays as the evidence for that row.
 
 Addresses (RESULT_RO-CTL-68BC0C section 1): record array `DAT_0068bb60[4]`, record size 0x68, `mat` (16 dwords) at record +0x28, written
 by the `rep movsd` at `0x0045a736` in FUN_0045a6b0 (`lea edi,[ebx+0x28]` `0x0045a729`, `mov ecx,0x10` `0x0045a72c`, loop `0x0045a6dd`
@@ -71,15 +75,12 @@ Limits, stated as missing evidence:
   (`detorig.py --watch-mode rw`) on the 9 other pad addresses plus `0x0068bc2c`, then drop the unproven rows if a reader runs.
 - [UNCERTAIN] the source of the nonzero value (frame `+0x50 + 0x1c / 0x2c / 0x3c` of the cloned atom's frame, via FUN_004c0ed0 return
   param_1 + 0x50), unchanged from RESULT_RO-CTL-68BC0C section 3.
-- Reason to mask all 12 and not only record 1: the one loop at `0x0045a6dd..0x0045a768` writes all four records with the same instruction
-  `0x0045a736`, so the pad words share one writer, and the existing `0x006fe7dc` row takes the same class for the same field.
-- The class label `stale-stack` is taken from that precedent. This RESULT does not show that the source pad holds stack contents.
-- Masks apply in `detorig_firstdiv` / `detorig_ticks` via `replay_masks.tsv` (verified: `detorig.load_norm` returns MASK for
-  `0x0068bba4`, `0x0068bc0c`, `0x0068bc2c`, `0x0068bcdc`, `0x0068bcfc` and `0x00914700`, and None for `0x0068bc10`, `0x0068bc28`).
-  `prov_compare.py` keeps its own two-word mask, unchanged.
-- No oracle re-score was run (needs captures). Predicted effect, not measured: og1 no longer reports block `0x0068bc00`.
+- Mask state after the follow-up (`loadnorm_check.out`, `detorig.load_norm` on `warp_normalize.tsv,replay_masks.tsv`): MASK:audio at
+  `0x00914700`, MASK:os at `0x00771a00`. None at `0x0068bba4`, `0x0068bc0c`, `0x0068bc2c`, `0x0068bcdc`, `0x0068bcfc`, `0x0068bc28`, `0x0068bc10`.
+  `prov_compare.py` keeps its own two-word mask (`0x0068bc0c`, `0x0068bc1c`), unchanged.
+- No oracle re-score was run (needs captures). The mask set over block `0x0068bc00` is the same as at `f55abfff3`.
 
 ## Files
 
-Committed in `verify/ro_20261115/`: this RESULT, `pad68bc_scan.py`, `pad68bc_scan.out`, `gen_masks.out`.
+Committed in `verify/ro_20261115/`: this RESULT, `pad68bc_scan.py`, `pad68bc_scan.out`, `gen_masks.out`, `loadnorm_check.out`.
 Raw data not used by this row. Facts file `log/ghidra_funcfacts.jsonl` (main checkout) SHA-256 above.
