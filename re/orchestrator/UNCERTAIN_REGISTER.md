@@ -20,3 +20,6 @@ Rows parked here on 2026-11-16 (ledger stage blocked, note "parked: UNCERTAIN_RE
 | RWC-FRAME-MOVIE-TEARDOWN | AppDestroy closes the movie through 0x00494460 | log the close path | verify/rwcframemovie_20261116/ |
 | GEN-RWCORE-PROVLIST-DRIFT | generator re-adds 94 dropped PROVISIONAL_RWC rows | make the generator read the drop list | verify/rwcframeclump_20261113/ |
 | MATCH-551A50-BIND-CALLER | 0x00551a50 linked but unreferenced | bind a caller | verify/MATCH-TAG-FIX-005BF690/ |
+| RO-REF-FIXED-LOAD (k site) | the boot 0x00428af4 QPC call is made inside FUN_00429290's call 0x004967e0 (counts move with the callback, no record holds both returns) | boot call log with a deeper stack window (--call-log-boot, 32 dwords) | verify/ro_20261116/RESULT_RO-REF-FIXED-LOAD.md |
+| RO-REF-FIXED-LOAD (f1) | 50 ms sleep holds did not bound piz read time because the run started under the memory cap | sleep-hold runs on an idle machine | verify/ro_20261116/RESULT_RO-REF-FIXED-LOAD.md |
+| RO-REF-FIXED-LOAD (Interceptor AV) | Interceptor.attach at 0x004b6894 plus a JS GetOverlappedResult call clobbers edi (AV 0x004b6b40) | one run with an empty onEnter at 0x004b6894 | verify/ro_20261116/RESULT_RO-REF-FIXED-LOAD.md |

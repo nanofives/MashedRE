@@ -1,0 +1,8 @@
+f1: boot N 243 qpc 230 tgt 13 piz polls None pending None | warp N 3533 race N 3664 dn_warp 131 | end piz polls None pending None rtfs polls None pending None | timer.before [338103077, 335402109, 48932, 112701, 111767]
+r1: boot N 237 qpc 222 tgt 15 piz polls 93 pending 15 | warp N 3527 race N 3635 dn_warp 108 | end piz polls 190 pending 16 rtfs polls None pending None | timer.before [338067077, 335366109, 48932, 112689, 111755]
+r2: boot N 234 qpc 222 tgt 12 piz polls 93 pending 2 | warp N 3524 race N 3632 dn_warp 108 | end piz polls 190 pending 7 rtfs polls None pending None | timer.before [338067077, 335366109, 48932, 112689, 111755]
+r3: boot N 234 qpc 222 tgt 12 piz polls 93 pending 11 | warp N 3524 race N 3632 dn_warp 108 | end piz polls 190 pending 22 rtfs polls None pending None | timer.before [338067077, 335366109, 48932, 112689, 111755]
+r4: boot N 234 qpc 222 tgt 12 piz polls 93 pending 14 | warp N 3524 race N 3632 dn_warp 108 | end piz polls 190 pending 35 rtfs polls None pending None | timer.before [338067077, 335366109, 48932, 112689, 111755]
+s1: boot N 234 qpc 222 tgt 12 piz polls 93 pending 2 | warp N 3524 race N 3632 dn_warp 108 | end piz polls 190 pending 6 rtfs polls 17 pending 4 | timer.before [338067077, 335366109, 48932, 112689, 111755]
+s2: boot N 236 qpc 222 tgt 14 piz polls 93 pending 0 | warp N 3526 race N 3634 dn_warp 108 | end piz polls 190 pending 2 rtfs polls 17 pending 4 | timer.before [338067077, 335366109, 48932, 112689, 111755]
+s3: boot N 234 qpc 222 tgt 12 piz polls 93 pending 1 | warp N 3524 race N 3632 dn_warp 108 | end piz polls 190 pending 1 rtfs polls 17 pending 4 | timer.before [338067077, 335366109, 48932, 112689, 111755]

@@ -1,0 +1,4 @@
+D:/MashedWT/RO-REF-FIXED-LOAD_data/r1 vs D:/MashedWT/RO-CTL-WARP-N_data/p2: 600 ticks, block 1024 B, load calls [108, 108]
+  constant blocks: 10  NEW blocks: 1  N misaligned at: None
+  IDENTICAL-FOR-N = 600 of 600  (every tick: no NEW block)  ignoring 0x00614400-0x00614800,0x00771800-0x00771c00: [['0x771800', 2]]
+    NEW 0x771800 from tick 2  (other page 0x00771000)

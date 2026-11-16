@@ -40,6 +40,10 @@
 //   witness         RVAs whose first code byte is reported (hook-live check)
 //   negctl          negative control at the race anchor: 1 = +1 on the RW RNG word at the cursor, else a VA bumped by one
 //   loadSleepMs     real ms slept in each main-thread clock call between the warp and phase 3 (load hold)
+//   readWait        RO-REF-FIXED-LOAD: GetOverlappedResult from the piz poll loop (ret 0x004b68a4) waits (bWait 1), so each
+//                   piz read costs one progress callback: fixed track-load length and boot count k (readWaitArm)
+//   readWaitRtfs    with readWait, also the RtFS poll's GetOverlappedResult (ret 0x005510f5, FUN_00551090)
+//   bootSleepMs     RO-REF-FIXED-LOAD: real ms slept per main-thread clock call until tick 1 (did not fix k, see the RESULT)
 //   rebase          set T / Q at the race anchor to the values of an anchor at N = warpAt + 200
 //   watch           [va, ...] (at most 2): hardware WRITE (cfg.watchMode 'rw': read or write) watchpoints on every thread from the race anchor on;
 //                   each hit sends {kind:'watch', pc, bt, value, n} (pc = the instruction after the store)
@@ -792,6 +796,50 @@ function crashArm() {
   return 'crash catcher armed, stall ' + CFG.crash.stall + ' s';
 }
 
+// ---------------------------------------------------------------- RO-REF-FIXED-LOAD read wait (cfg.readWait)
+// FUN_004b67e0 (piz read) issues ReadFile with an OVERLAPPED at esp+0x10 of its loop frame (`lea edx, [esp+0x10]`
+// 0x004b683e, `call [0x5cc1a4]` 0x004b685d), then loops at 0x004b6873: the progress callback [0x7d3e5c] (0x004b688f,
+// FUN_00429290: two QPC calls, at 0x005a60bf and 0x00428af4), then GetOverlappedResult([0x7d3e48], ovl, .., bWait 0)
+// (`call ebp` 0x004b68a2, ebp = [0x5cc100]), and repeats while the error is 0x3e4 (0x004b68b0). So the number of
+// callbacks, and of clock calls, per read is the number of polls, which is how long the disk takes. The IAT slot
+// 0x005cc100 (GetOverlappedResult) is pointed at a native stub that, when the return address is 0x004b68a4 (the
+// game's call in that loop), sets the bWait argument to 1, so the first poll waits for the read: one callback per read,
+// independent of the disk. The slot's only other reader is `call [0x5cc100]` at 0x005510ef (byte scan of
+// MASHED.exe.unpatched for 00 c1 5c 00: 0x004b686f and 0x005510f1), which goes to the real API unchanged.
+// A first form (Interceptor.attach at 0x004b6894 calling GetOverlappedResult(.., 1) from JS) crashed every run at
+// 0x004b6b40 with edi clobbered after FUN_004b67e0 returned (RESULT_RO-REF-FIXED-LOAD runs r1_av, c1).
+// Counters: D+0x40 forced calls, D+0x44 forced calls whose OVERLAPPED Internal word was STATUS_PENDING (0x103).
+// cfg.readWaitRtfs also forces the slot's other caller, call [0x5cc100] at 0x005510ef (return 0x005510f5) in
+// FUN_00551090 (RtFS handler: state +0x20 == 3 at 0x005510a8, bWait from its argument [esp+0x14] at 0x005510dd);
+// counters D+0x48 / D+0x4c.
+const RW = { get polls() { return D.add(0x40).readU32(); }, get waits() { return D.add(0x44).readU32(); },
+             get fsPolls() { return D.add(0x48).readU32(); }, get fsWaits() { return D.add(0x4c).readU32(); } };
+function readWaitArm() {
+  for (const o of [0x40, 0x44, 0x48, 0x4c]) D.add(o).writeU32(0);
+  const slot = ga(0x005cc100);
+  const real = slot.readPointer();
+  const c = cell(real);
+  const sites = [[0x004b68a4, 0x40]];
+  if (CFG.readWaitRtfs) sites.push([0x005510f5, 0x48]);
+  const b = [];
+  for (const [ret, co] of sites) {
+    b.push(0x81, 0x3c, 0x24, ...u32(ga(ret)), 0x75, 0x00);                   // cmp dword [esp], ret; jne next
+    const jneAt = b.length - 1;
+    b.push(0xf0, 0xff, 0x05, ...d(co),                                       // lock inc [forced]
+           0x50, 0x8b, 0x44, 0x24, 0x0c,                                     // push eax; mov eax, [esp+0xc] (lpOverlapped)
+           0x81, 0x38, 0x03, 0x01, 0x00, 0x00, 0x75, 0x07,                   // cmp dword [eax], 0x103; jne +7
+           0xf0, 0xff, 0x05, ...d(co + 4),                                   // lock inc [pending]
+           0x58, 0xc7, 0x44, 0x24, 0x10, 0x01, 0x00, 0x00, 0x00,             // pop eax; mov dword [esp+0x10], 1 (bWait)
+           0xff, 0x25, ...u32(c));                                           // jmp [cell]
+    b[jneAt] = b.length - (jneAt + 1);                                       // next:
+  }
+  b.push(0xff, 0x25, ...u32(c));                                             // other callers: jmp [cell]
+  const stub = emit(b);
+  Memory.protect(slot, 4, 'rw-');
+  slot.writePointer(stub);
+  return 'read wait: IAT 0x005cc100 ' + real + ' -> ' + stub + ' sites ' + sites.map((x) => x[0].toString(16)).join(',');
+}
+
 // ---------------------------------------------------------------- install
 const SLOTS =[[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
 function install() {
@@ -817,6 +865,7 @@ function install() {
   // RO-CTL-68BC0C: cfg.watchFrom = 'install' arms the write watch here too (boot mode: the PE entry point; else the menu),
   // and re-arms it at the warp, so threads created after an arm are covered from the next one (anchor arm unchanged)
   if (CFG.watchFrom === 'install' && CFG.watch && CFG.watch.length) res.push(['watch', watchArm()]);
+  if (CFG.readWait) res.push(['readwait', readWaitArm()]);
   const doWarp = () => {
     warpN = N();
     if (CFG.boot) {
@@ -871,7 +920,7 @@ function install() {
       else if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
       else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
       send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, tick: TK ? TK.st.add(8).readU32() : null, frames_7f101c: ga(0x007f101c).readU32(),
-             clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness() });
+             clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness(), rw_polls: RW.polls, rw_waits: RW.waits, fs_polls: RW.fsPolls, fs_waits: RW.fsWaits });
       if (CFG.watch && CFG.watch.length) send({ kind: 'info', msg: watchArm() });
       if (CFG.rec && TK) { recAnchor = tickNow(); REC.add(8).writeU32(TK.st.add(8).toUInt32()); REC.writeU32(1); }
       if (CFG.inputTick) { const t0 = tickNow(); for (const [dt, c, v] of CFG.input) tickSchedule(t0 + dt, () => { CTL.add(c * 4).writeS32(v); }); }
@@ -896,7 +945,7 @@ function install() {
           const nr = REC.add(4).readU32();
           send({ kind: 'inputrec', rows: nr, overflow: REC.add(12).readU32(), tick_anchor: recAnchor }, nr ? REC.add(68 * 4).readByteArray(nr * 12) : new ArrayBuffer(0));
         }
-        send({ kind: 'done', n: N() });
+        send({ kind: 'done', n: N(), rw_polls: RW.polls, rw_waits: RW.waits, fs_polls: RW.fsPolls, fs_waits: RW.fsWaits });
       });
     };
     schedule(warpN + 1, watch);
@@ -910,6 +959,20 @@ function install() {
     D.add(4).writeU32(CFG.bootStep >>> 0); D.add(0x18).writeU32(CFG.bootQstep >>> 0);
     TK.st.add(16).writeU32(1);
     tickSchedule(CFG.warpTick, doWarp);
+    // RO-REF-FIXED-LOAD (cfg.bootSleepMs): BOOT HOLD, the load hold's twin for the boot segment. Before the first tick the
+    // piz reads poll an overlapped read through the callback FUN_00429290 (stack 0x00429297 / 0x0045d414), and each poll
+    // costs one QPC at 0x005a60bf and one at 0x00428af4 (RESULT_RO-CTL-WARP-N section 4, the k extra boot iterations).
+    // Sleeping cfg.bootSleepMs of real time in every main-thread clock call until tick 1 lets each read complete before
+    // its first poll. At tick 1 the per-kind call counts are sent ('bootlen') so a run's k can be checked.
+    if (CFG.bootSleepMs) {
+      const bh = () => {
+        if (tickNow() >= 1) return;
+        Thread.sleep(CFG.bootSleepMs / 1000);
+        schedule(N() + 1, bh);
+      };
+      schedule(N() + 1, bh);
+    }
+    tickSchedule(1, () => send({ kind: 'bootlen', n: N(), tgt: D.add(0x20).readU32(), qpc: D.add(0x24).readU32(), tick: tickNow(), rw_polls: RW.polls, rw_waits: RW.waits, fs_polls: RW.fsPolls, fs_waits: RW.fsWaits }));
     // calls made before the first tick (CRT start to the main loop) = the boot segment of the census (provReport)
     if (PV) tickSchedule(1, () => { PV.atTick1 = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32()); });
     // RO-CTL-WARP-N (cfg.callLogBoot): the call log runs from the install to the first clock call of tick 1, is sent as

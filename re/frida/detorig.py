@@ -244,7 +244,7 @@ def run(args):
                "negctl": int(args.negctl, 16) if args.negctl else 0, "rebase": args.rebase,
                "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
                "watch": [int(x, 16) for x in args.watch.split(",") if x][:2], "watchFrom": args.watch_from, "watchMode": args.watch_mode, "watchStack": args.watch_stack,
-               "callLogRace": args.call_log_race, "callLogBoot": args.call_log_boot}
+               "callLogRace": args.call_log_race, "callLogBoot": args.call_log_boot, "bootSleepMs": args.boot_sleep_ms, "readWait": args.read_wait, "readWaitRtfs": args.read_wait_rtfs}
         if args.rec:
             cfg["rec"] = True
         if args.probe:
@@ -331,6 +331,8 @@ def run(args):
                 meta["calllog_boot"] = {"count": p["count"], "rec": p["rec"], "file": "calllog_boot.bin", "tick": p.get("tick")}
                 print(f"  calllog_boot {p['count']} calls", flush=True)
                 print(f"  call log {p['count']} calls", flush=True)
+            elif p["kind"] == "bootlen":
+                meta["bootlen"] = p; print(f"  bootlen at tick {p['tick']}: N={p['n']} qpc={p['qpc']} tgt={p['tgt']}", flush=True)
             elif p["kind"] == "boot":
                 meta["boot"] = p["boot"]; print(f"  boot install at entry {p['boot'].get('ep')} main={p['boot'].get('main')}", flush=True)
             elif p["kind"] == "warp":
@@ -374,6 +376,7 @@ def run(args):
                 print(f"  inputrec: {p['rows']} rows, anchor tick {p['tick_anchor']}, overflow {p['overflow']}", flush=True)
             elif p["kind"] == "done":
                 state["done"] = True
+                meta["done"] = p
             else:
                 print("  [agent]", p, flush=True)
                 if p["kind"] == "err": state["err"] = p["msg"]
@@ -538,6 +541,14 @@ if __name__ == "__main__":
     ap.add_argument("--negctl", default="", help="negative control at the race anchor: 1 = RW RNG word at the cursor +1, else a hex VA bumped by one")
     ap.add_argument("--rebase", action="store_true", help="set T / Q at the race anchor (runs off_e/off_f/neg_b; made worse, see RESULT)")
     ap.add_argument("--load-sleep-ms", type=int, default=50, help="load hold: real ms slept per main-thread clock call until phase 3 (0 = off)")
+    ap.add_argument("--read-wait", action="store_true",
+                    help="RO-REF-FIXED-LOAD: at 0x004b6894 (piz read poll loop, FUN_004b67e0) wait for a pending overlapped read, "
+                         "so every read costs one progress callback (fixed track-load length and boot count k)")
+    ap.add_argument("--read-wait-rtfs", action="store_true",
+                    help="RO-REF-FIXED-LOAD: with --read-wait, also wait in the RtFS poll's GetOverlappedResult (0x005510ef, FUN_00551090)")
+    ap.add_argument("--boot-sleep-ms", type=int, default=0,
+                    help="RO-REF-FIXED-LOAD, --boot only: boot hold, real ms slept per main-thread clock call until tick 1 (0 = off), "
+                         "so every boot piz read completes before its first poll (fixed boot count k)")
     ap.add_argument("--watch", default="", help="comma list (max 2) of hex VAs: hardware write watchpoints from the race anchor on (watch.jsonl)")
     ap.add_argument("--watch-from", choices=["anchor", "install"], default="anchor",
                     help="RO-CTL-68BC0C: 'install' also arms --watch at the install (boot mode: PE entry; else the menu) and re-arms at the warp")

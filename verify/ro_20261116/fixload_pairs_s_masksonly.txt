@@ -1,0 +1,3 @@
+  IDENTICAL-FOR-N = 2 of 600
+  IDENTICAL-FOR-N = 5 of 600
+  IDENTICAL-FOR-N = 600 of 600  (every tick: no NEW block)
