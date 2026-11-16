@@ -20,3 +20,4 @@ Rows parked here on 2026-11-16 (ledger stage blocked, note "parked: UNCERTAIN_RE
 | RWC-FRAME-MOVIE-TEARDOWN | AppDestroy closes the movie through 0x00494460 | log the close path | verify/rwcframemovie_20261116/ |
 | GEN-RWCORE-PROVLIST-DRIFT | generator re-adds 94 dropped PROVISIONAL_RWC rows | make the generator read the drop list | verify/rwcframeclump_20261113/ |
 | MATCH-551A50-BIND-CALLER | 0x00551a50 linked but unreferenced | bind a caller | verify/MATCH-TAG-FIX-005BF690/ |
+| MATCH-43DFD0-RAISE-2 | slice-2 rewrites of re/match/s08/0043dfd0.c (case-10 order, 5 team-slot loops, base pointer) preserve behaviour | equiv.py new vs 7630e53ca source, or the PROVISIONAL knob-path menu walk ON vs OFF | verify/match_20261116/RESULT_MATCH-43DFD0-RAISE-2.md |
