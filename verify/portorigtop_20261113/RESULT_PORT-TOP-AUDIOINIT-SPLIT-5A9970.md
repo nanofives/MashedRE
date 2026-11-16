@@ -1,6 +1,6 @@
 # RESULT PORT-TOP-AUDIOINIT-SPLIT-5A9970: the init-arm build split, then the stops after it
 
-## Verdict: in progress (checkpoints 1-2 done)
+## Verdict: in progress (checkpoints 1-3 done)
 
 Base: orch/PORT-TOP-AUDIOSTOP-5A61B0 @ c3b0b6356. Branch orch/PORT-TOP-AUDIOINIT-SPLIT-5A9970. Top-down row: both builds,
 ddkobj check, knob boot, self-tests. Gates: not run (top-down row). No menu walk: no menu code changed.
@@ -11,6 +11,7 @@ ddkobj check, knob boot, self-tests. Gates: not run (top-down row). No menu walk
 |---|---|---|---|
 | 1 | build split (VS2022 0x005AAF50 / object 0x005A9AB0) | first divergence located: `0x005add60`'s source returned `bool`; VS2022 C++ set only AL, so `0x005ada90`'s `== 1` failed in the VS2022 build only. Source return type -> `int`, still BYTE-IDENTICAL + relocheck OK; both builds now stop at **0x005A9AB0** | checkpoint 1 |
 | 2 | 0x005a9ab0 | provisional body `re/match/s25/005a9ab0.c` 67.9% (EQUIV-IF-CALLERS-IGNORE(ECX), 16 of 17 callers read or unknown: listed provisional + decision row), with two behaviour fixes to the old source; bound. Its callees 0x005a9c50 (admitted, plain EQUIV 96.7%) and 0x005a9be0 (C4 match) bound. Both builds pass 0x005a9970 and stop at **0x005AA560** (table entry 7, 0x005aa480) | checkpoint 2 |
+| 3 | 0x005aa560 | provisional body `re/match/s25/005aa560.c` 79.8% (unchanged source; NOT-PROVEN call-args at 0x005aa593 is a tool limit: 0x005aad40 takes no arguments), bound with 6 C4 callees (0x005aa030, 0x005aa7e0, 0x005aa900, 0x005aa9c0, 0x005aabe0, 0x005adef0 by match; 0x005aa7a0 by frida-replay). Both builds stop at **0x005AA510** (0x005aa480's callback) | checkpoint 3 |
 
 ## 1. Checkpoint 1: the first divergence
 
@@ -121,6 +122,38 @@ only; those were not committed.
     (`re/match/s30/005aa480.c`). So entry 6 (0x005a9970) returned nonzero in both builds.
   - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed, code-trap 0 of 6 failed.
 
+## 3. Checkpoint 3: 0x005aa560 (provisional)
+- Source `re/match/s25/005aa560.c` unchanged: match.py 79.8% (regs 79.8%, ops 91.7%, 184/193 ins), residual named in its
+  header (prologue / argument-load order, register allocation).
+- equiv.py: `NOT-PROVEN call-args: region ours +0x30 / orig 0x005aa593 call 0x5aad40 arg 0: (esp0+-0x20c) | (esp0+-0x218)
+  (fallback: stack address inside lin)`. 0x005aad40 is `mov eax,[0x7dcd20]` 0x005aad40 / `ret` 0x005aad45: it takes no
+  arguments, so the compared "arg 0" is the stack pointer at the call. It differs by 0xc because the original pushes
+  ebx / ebp / esi / edi (0x005aa574 / 0x005aa57c / 0x005aa57d / 0x005aa57e) before that call. This is a tool limit, not a
+  located difference. Listed provisional (PROVISIONAL.tsv). Not C4.
+- Binding: `PROV_BIND |= {'005aa560'}`. Plan 272 bind (235 match, 16 admitted, 13 provisional, 8 replay), 64 reuse,
+  37 stops. Changes against checkpoint 2: 0x005aa560 stop -> bind; new binds 0x005aa030, 0x005aa7e0, 0x005aa900,
+  0x005aa9c0, 0x005aabe0, 0x005adef0 (hooks.csv C4 c4=match) and 0x005aa7a0 (C4 c4=frida-replay); new stops 0x005a9e60,
+  0x005a9f10 (0x005aa7a0's callees) and 0x005aac00. Wrappers changed: `PortTop_005a6280.cpp`, `PortTop_005a7f70.cpp`,
+  `PortTop_005a8e70.cpp`, `PortTop_005aa480.cpp`, `PortTop_005b8570.cpp`, `PortTop_005b9e30.cpp`,
+  `PortTop_AudioStops.cpp`; 8 new TUs; newfiles.txt +8, rsp +8, allowlist +3 (ORIGTOP-ONLY CROSS-TARGET for
+  0x005aa030 / 0x005aa9c0 with `Util/PromoLoop_sessionB.cpp`, 0x005aa7a0 with `Lane2/L2_005aa7a0.cpp`); BINDINGS.tsv
+  updated 35, added 10.
+- Builds: VS2022 Build OK, rva-lint 325 known, NEW 0. Object build Build OK.
+- `ddkobj.py check`: IDENTICAL 1570/1610, DIFFERENT 24, not-in-map 16, units linked 1560/1777, provisional kept VS2022
+  206 units. DIFFERENT = checkpoint 2's 23 + **0x005aa7a0** (first difference +0x16). It is newly linked by this
+  checkpoint and its C4 is by frida-replay (IDENTICAL-FOR-2724), not by byte match: match.py 82.1% (25/28 ins),
+  relocheck BAD only on the 0x005a9f10 call it makes (now a named stop). The six match callees are IDENTICAL.
+- Arms:
+
+  | arm | build | stop | return address | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005AA510** after 3.1 s | 0x0023CF96 = `_PortTop_Bound_005aa560+0xe6` (`mashed_re.map`, symbol at 0x0023ceb0) | 56fc6d7cb2159a79 |
+  | ddk_init_audio | object | **0x005AA510** after 2.6 s | 0x0023AE36 = `_PortTop_Bound_005aa560+0xe6` (`mashed_re_ddk.map`, symbol at 0x0023ad50) | 85df95eeced4e078 |
+
+  - 0x005aa560 calls its param_5 (`(*param_5)(param_1,param_6,puVar4,uVar5)`), which 0x005aa480 passes as
+    `FUN_005aa510`. Both builds run the VS2022 body of the provisional 0x005aa560, hence the same +0xe6.
+  - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed, code-trap 0 of 6 failed.
+
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIOINIT-SPLIT-5A9970 ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIOINIT-SPLIT-5A9970_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIOINIT-SPLIT-5A9970 -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
 Private root: robocopy of `D:/MashedWT/PORT-TOP-AUDIOSTOP-5A61B0_root`, its old `mashed_re.log` removed.
@@ -150,3 +183,16 @@ Checkpoint 2:
 - `plan1_dry.txt` b1b387d445f6609443ac7cd2e793fa1fe2735dfd9262b4a5bc8e4933ba28bbce
 - `plan1_write.txt` 06afc1782db18c0c0714d616652b463b72c3d9e6176327d8e719ac241a7d9e93
 - `exeidx.json` 555f29d122118cce8e1e99bd2b656e5e02295477ee859c1bcca39b5e1965e3e3 (the regenerated index; the committed copy stays the base's)
+
+Checkpoint 3:
+- `cp3/vs_init_audio.log` 56fc6d7cb2159a79110fa907fe5b7376b87edd3c0724f48611552515acf53d6b
+- `cp3/ddk_init_audio.log` 85df95eeced4e078a898c6905fde84c54c9e3c62289fba9b449e022b5a390fa9
+- `arms3.out` 83cb815198feb0b3f34b976f363fcfefa62484e806a31f75afcde94e7a138583
+- `build3_vs.log` 4c807ee03dbf8acf654f27a02f1f09d1aa88dfb5ff3a4d2e1e001fd176132975
+- `build3_ddk.log` 85dfd54feeb411de3997c9fe558d21c3629087e306e02e317862a016ffe465f3
+- `ddkcheck3.log` 52473cdbf8fd7aee7ddee7eba7cf93a6fec9700ef44c166c330108e97fff577e
+- `plan2_dry.txt` 23d0db561ed78d6839da01169ca456b08c594ca3def16f5b77d66749621daadf
+- `plan2_write.txt` 4c0f5fb23bc2716ca79646169b6a1b9a9db1a51c0972b9cacf475a643b004d7b
+- `equiv_a560_before.txt` 158a74205bee6897792305b5162aec5a3b73ad8f19db20c7dc67fb882f82feab
+- `a7a0_match.txt` a1b62187fa0d24b4c03d3d61f27af91cf5e6d003f5dc2972c2cc0547c6e302c2
+- `exeidx3.json` 7cf41a02f4301c839507018e61baefd447b5e03829aa7bcd564505d65e0fbff2
