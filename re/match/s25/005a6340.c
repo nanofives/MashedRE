@@ -1,5 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S25 0x005a6340 (h2): best 82.4% (regs 82.4%), class b. inline bit-scan macro (M evaluated per use, 1<<FUN(0x28)); +7+0x10 and -1+0x10 folded, m kept in memory in the original. relocheck BAD only because the code differs from the original. */
+/* MATCH-S25 0x005a6340: 100.0%, 604 B BYTE-IDENTICAL (PORT-TOP-AUDIO-5A8F30-STOPS, 2026-11-16). The bit scan is the nested
+   macro HB32(v) = (v & 0xffff0000) ? HB16(v >> 16) + 16 : HB16(v), HB16(w) = (w & 0xff00) ? DAT_00617ff8[w >> 8] + 7 :
+   DAT_00617ff8[w] - 1, v = M re-evaluated at every use (same form as re/match/s25/005a8f30.c). The earlier 82.4% source
+   (volatile m spill) is in D:/MashedWT/PORT-TOP-AUDIO-5A8F30-STOPS_data/005a6340_before.c. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -37,32 +40,17 @@ undefined4 FUN_005a9e10(int p0, undefined1 * p1, undefined4 p2);
 int FUN_005aee20(uint p0);
 #define SH_005a6340 (1 << FUN_005aee20(0x28))
 #define M_005a6340 (((short)SH_005a6340 != 0) ? (SH_005a6340 & 0xffff) : 1)
+#define HB16_005a6340(w) ((((w) & 0xff00) != 0) ? DAT_00617ff8[(w) >> 8] + 7 : DAT_00617ff8[(w)] - 1)
+#define HB32_005a6340(v) ((((v) & 0xffff0000) != 0) ? HB16_005a6340((v) >> 16) + 16 : HB16_005a6340(v))
 // MATCH: 0x005a6340 FUN_005a6340
 void FUN_005a6340(int param_1)
 
 {
   int iVar2;
-  volatile uint m;
 
   FUN_005a9e10(param_1,&DAT_005e614c,0);
   *(undefined4 *)(param_1 + 0x40) = 100;
-  if ((M_005a6340 & 0xffff0000) != 0) {
-    m = M_005a6340;
-    if ((m & 0xff000000) != 0) {
-      iVar2 = DAT_00617ff8[M_005a6340 >> 0x18] + 7 + 0x10;
-    }
-    else {
-      iVar2 = DAT_00617ff8[M_005a6340 >> 0x10] - 1 + 0x10;
-    }
-  }
-  else {
-    if ((M_005a6340 & 0xff00) != 0) {
-      iVar2 = DAT_00617ff8[M_005a6340 >> 8] + 7;
-    }
-    else {
-      iVar2 = DAT_00617ff8[M_005a6340] - 1;
-    }
-  }
+  iVar2 = HB32_005a6340(M_005a6340);
   *(void (**)(void))(param_1 + 0x28) = FUN_005a65d0;
   *(void (**)(void))(param_1 + 0x34) = FUN_005a6640;
   *(uint *)(param_1 + 0x40) = *(uint *)(param_1 + 0x40) | iVar2 << 0x1c;

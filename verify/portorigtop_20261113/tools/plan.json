@@ -1817,7 +1817,15 @@
 "stop"
 ],
 "005a8f30": [
-"stop"
+"bind",
+"re/match/s25/005a8f30.c",
+"match",
+[
+"005a91b0",
+"005a9e10",
+"005aee20"
+],
+[]
 ],
 "005a9de0": [
 "bind",
@@ -2577,7 +2585,7 @@
 "005a6340": [
 "bind",
 "re/match/s25/005a6340.c",
-"admitted",
+"match",
 [
 "005a65d0",
 "005a6640",
@@ -2680,6 +2688,16 @@
 "005adef0": [
 "bind",
 "re/match/s26/005adef0.c",
+"match",
+[],
+[]
+],
+"005a91b0": [
+"stop"
+],
+"005aee20": [
+"bind",
+"re/match/s26/005aee20.c",
 "match",
 [],
 []
@@ -3214,13 +3232,6 @@
 ],
 "005a66c0": [
 "stop"
-],
-"005aee20": [
-"bind",
-"re/match/s26/005aee20.c",
-"match",
-[],
-[]
 ],
 "004a45fb": [
 "reuse",
