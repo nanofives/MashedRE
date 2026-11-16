@@ -35,6 +35,15 @@ SPECIAL = {'004c7730': 'RwCore_FrameShowRaster',   # first Present on the core e
 for _r in ('004c5930', '004c5a60', '004e5700', '004d41e0', '004c1cf0', '004c0c20', '004e6e00', '004c7650', '004e6920',
            '004e4d90'):
     SPECIAL[_r] = 'RwCore_FrameDestroy0_' + _r
+# RWC-FRAME-TITLE-LOGO run 50: the image file readers 0x00493600 registers on the core (bmp 0x0052cb00, png 0x00514330)
+# have no core body (0x00514330 missing, 0x0052cb00 22.9% and outside the closure). They route to wrappers that build a
+# core RwImage from the exe's piz reader + WIC decoder (RwCore/RwCore_Bind_ImageRead.cpp). Routed even when the RVA is
+# not in RwCore_Bodies.tsv (FRAME_ONLY).
+SPECIAL['00514330'] = 'RwCore_FrameImageRead_00514330'
+SPECIAL['0052cb00'] = 'RwCore_FrameImageRead_0052cb00'
+FRAME_ONLY = {'0052cb00'}
+# and RwTextureRead logs its arguments and result on the frame route (same file)
+SPECIAL['004c5cb0'] = 'RwCore_FrameTextureRead_004c5cb0'
 
 
 def split_params(p):
@@ -65,6 +74,8 @@ def main(check):
             continue
         rva, name = m.group('rva'), m.group('name')
         b = bodies.get(rva)
+        if not b and rva in FRAME_ONLY:
+            b = {'rva': '0x' + rva, 'kind': 'wrapper', 'exe_symbol': SPECIAL[rva]}
         verdict = None
         if rva in SKIP:
             verdict = 'engine knob or CALL_VIA'
