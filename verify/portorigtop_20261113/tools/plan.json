@@ -1969,7 +1969,13 @@
 []
 ],
 "005ae800": [
-"stop"
+"bind",
+"re/match/s26/005ae800.c",
+"provisional",
+[
+"005aea00"
+],
+[]
 ],
 "005aea00": [
 "bind",
@@ -2588,7 +2594,11 @@
 "Audio/AudioFmtKey.cpp"
 ],
 "005a61b0": [
-"stop"
+"bind",
+"re/match/s25/005a61b0.c",
+"provisional",
+[],
+[]
 ],
 "005ad770": [
 "bind",
@@ -2969,7 +2979,11 @@
 []
 ],
 "005b35a0": [
-"stop"
+"bind",
+"re/match/s27/005b35a0.c",
+"provisional",
+[],
+[]
 ],
 "005ade10": [
 "bind",
