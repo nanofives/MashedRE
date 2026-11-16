@@ -373,8 +373,16 @@ function watchArm() {
       if (watchHits++ < 2000 || rw) {
         let bt = '';
         try { bt = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 12).map((p) => '0x' + (p.toUInt32() >>> 0).toString(16)).join('|'); } catch (e) { bt = 'bt-err'; }
+        // RO-67F0B8-CALLER: cfg.watchStack = N also sends esp, ebp, a FUZZY backtrace and N raw dwords from esp, so the
+        // caller chain can be resolved offline (call-before-return check) when the ACCURATE walk stops in FPO frames.
+        let stk = null;
+        if (CFG.watchStack) {
+          stk = { esp: '0x' + (c.sp.toUInt32() >>> 0).toString(16), ebp: '0x' + (c.ebp.toUInt32() >>> 0).toString(16), fuzzy: '', words: [] };
+          try { stk.fuzzy = Thread.backtrace(c, Backtracer.FUZZY).slice(0, 24).map((p) => '0x' + (p.toUInt32() >>> 0).toString(16)).join('|'); } catch (e) { stk.fuzzy = 'bt-err'; }
+          try { for (let k = 0; k < CFG.watchStack; k++) stk.words.push((c.sp.add(4 * k).readU32() >>> 0).toString(16)); } catch (e) { stk.words.push('read-err'); }
+        }
         send({ kind: 'watch', n: N(), tick: tickNow(), rec: TK ? TK.st.add(4).readU32() : null, cnt, mode: CFG.watchMode || 'w', tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
-               values: rw ? [] : addrs.map((a) => '0x' + a.readU32().toString(16)) });  // rw: a read here would re-trap
+               values: rw ? [] : addrs.map((a) => '0x' + a.readU32().toString(16)), ...(stk ? { stack: stk } : {}) });  // rw: a read here would re-trap
       }
     } catch (e) { /* keep running */ }
     return true;

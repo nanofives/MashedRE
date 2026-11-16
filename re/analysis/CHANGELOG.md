@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-16  0x005ad770  FUN_005ad770  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005ad770.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOSTOP-5AD770.md
 2026-11-15  0x00401000  FUN_00401000  C4->C4  sha refresh (c4_reclass refresh): src sha256 7080e5fc784b6846 -> a67fa889cde3b8a1, re/match/s01/00401000.c still byte-identical + relocheck OK; evidence: verify/c4audit_20261115/RESULT_C4RECLASS-SHA-EOL.md
 2026-11-15  0x004011f0  FUN_004011f0  C4->C4  sha eol-normalise (c4_reclass refresh): src sha256 20e120e88414c0df -> d5c9082233d5fad3, re/match/s01/004011f0.c still byte-identical + relocheck OK; evidence: verify/c4audit_20261115/RESULT_C4RECLASS-SHA-EOL.md
 2026-11-15  0x00401340  CupSpinSpeedAndColor  C4->C4  sha eol-normalise (c4_reclass refresh): src sha256 96783c4b4e72fe52 -> 241f509cdff76b69, re/match/s01/00401340.c still byte-identical + relocheck OK; evidence: verify/c4audit_20261115/RESULT_C4RECLASS-SHA-EOL.md

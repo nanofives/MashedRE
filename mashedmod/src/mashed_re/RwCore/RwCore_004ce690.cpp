@@ -6,7 +6,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_004ce690 RwCore_004ce690
-#define FUN_00550b00 RwCore_00550b00
+#define FUN_00550b00 RwCoreBind_FsFileExists_00550b00   // binding entry, RwCore/RwCore_Bind_00550b00.cpp
 extern "C" {
 #include "../../../../re/match/s20/004ce690.c"
 }

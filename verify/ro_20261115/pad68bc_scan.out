@@ -1,0 +1,15 @@
+0x00459311  mov esi, 0x68bb90   disp=0x0068bb90 kind=imm
+0x004593cd  cmp esi, 0x68bb90   disp=0x0068bb90 kind=imm
+0x0045a140  mov esi, 0x68bbac   disp=0x0068bbac kind=imm
+0x0045a768  cmp ebx, 0x68bb60   disp=0x0068bb60 kind=imm
+0x0045a791  mov esi, 0x68bb70   disp=0x0068bb70 kind=imm
+0x0045a7d2  add esi, 0x68bb60   disp=0x0068bb60 kind=imm
+0x0045a85d  add eax, 0x68bb60   disp=0x0068bb60 kind=imm
+0x0045a89d  mov edx, dword ptr [ecx + 0x68bb60]   disp=0x0068bb60 kind=mem
+0x0045a8bf  add esi, 0x68bb60   disp=0x0068bb60 kind=imm
+0x0045a91d  add eax, 0x68bb60   disp=0x0068bb60 kind=imm
+0x0045abd8  cmp esi, 0x68bb70   disp=0x0068bb70 kind=imm
+0x0045ac0b  cmp esi, 0x68bb84   disp=0x0068bb84 kind=imm
+0x0045ac32  cmp esi, 0x68bb60   disp=0x0068bb60 kind=imm
+0x0045af07  cmp esi, 0x68bb64   disp=0x0068bb64 kind=imm
+0x0045af18  mov ebx, 0x68bb60   disp=0x0068bb60 kind=imm

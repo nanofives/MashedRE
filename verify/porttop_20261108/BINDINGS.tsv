@@ -277,8 +277,8 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004935d0	FUN_004935d0	port	PortTop_ImgRead_004935d0	Match/PortTop_004ce790.cpp: hand port from the disassembly (0x004935d5..0x004935f1), returns 0x00514330's result. Stored as the "png" read function at node +0x28 (PORT-OT-IMAGE-FMT)	4	0x00493600
 0x0052d530	FUN_0052d530	bound	MashedRw_RtBMPImageWrite_0052d530	LibRw/RwApiBind.cpp: RW toolkit BMP writer -> rw::writeBMP, returns the image (0x0052d7c5). "bmp" write function at node +0x2c (PORT-OT-IMAGE-FMT)	4	0x00493600
 0x00513f90	FUN_00513f90	bound	MashedRw_RtPNGImageWrite_00513f90	LibRw/RwApiBind.cpp: RW toolkit PNG writer -> rw::writePNG, returns the image (0x005142bd). "png" write function at node +0x2c (PORT-OT-IMAGE-FMT)	4	0x00493600
-0x0052cb00	image_library_bmp_loader	bound	MashedRw_RtBMPImageRead_0052cb00	LibRw/RwApiBind.cpp: RW toolkit BMP reader -> rw::readBMP (PORT-OT-IMAGE-FMT)	5	0x004935a0
-0x00514330	FUN_00514330	bound	MashedRw_RtPNGImageRead_00514330	LibRw/RwApiBind.cpp: RW toolkit PNG reader -> rw::readPNG (PORT-OT-IMAGE-FMT)	5	0x004935d0
+0x0052cb00	image_library_bmp_loader	bound	MashedRw_RtBMPImageRead_0052cb00	LibRw/RwApiBind.cpp: RW toolkit BMP reader -> rw::readBMP (PORT-OT-IMAGE-FMT). RWC-FRAME-TITLE-LOGO: under MASHED_RWC_FRAME routed to RwCore_FrameImageRead_0052cb00 (RwCore/RwCore_Bind_ImageRead.cpp): piz/disk read + WIC decode into a 32-bit RW core RwImage	5	0x004935a0
+0x00514330	FUN_00514330	bound	MashedRw_RtPNGImageRead_00514330	LibRw/RwApiBind.cpp: RW toolkit PNG reader -> rw::readPNG (PORT-OT-IMAGE-FMT). RWC-FRAME-TITLE-LOGO: under MASHED_RWC_FRAME routed to RwCore_FrameImageRead_00514330 (RwCore/RwCore_Bind_ImageRead.cpp) instead of the RwCoreMissing stop: piz/disk read + WIC decode into a 32-bit RW core RwImage	5	0x004935d0
 0x004a2cbd	printf	crt	PortTop_Crt_004a2cbd	Match/PortTop_00493710.cpp: CRT printf; the formatted line goes to mashed_re.log	3	0x00493710
 0x004936f0	FUN_004936f0	missing	PortTop_Missing_004936f0	Match/PortTop_00493710.cpp: pointer argument only (not in hooks.csv); the RW shims never call it	3	0x00493710
 0x00493700	FUN_00493700	missing	PortTop_Missing_00493700	Match/PortTop_00493710.cpp: pointer argument only (not in hooks.csv); the RW shims never call it	3	0x00493710
@@ -390,6 +390,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0042a530	FUN_0042a530	matched	FUN_0042a530	PORT-TOP-04G: exe body Match/MatchS06_0042a530.cpp (re/match/s06/0042a530.c)	4	0x0042a6b0
 0x0042a470	FUN_0042a470	matched	FUN_0042a470	PORT-TOP-04G: exe body Match/MatchS06_0042a470.cpp (re/match/s06/0042a470.c); RwGlobals +0xcc / +0xd4 string functions on the record (LibRw/RwApiBind.cpp)	5	0x0042a530
 0x004b5350	FUN_004b5350	shim	PortTop_FsFileExists_004b5350	PORT-TOP-04G: Match/PortTop_RwStream04F.cpp: 1 when the name is in a mounted piz or on the disk under original/ (the original asks the RtFS file system, 0x00550b00)	6	0x0042a470
+0x00550b00	FUN_00550b00	shim	RwCoreBind_FsFileExists_00550b00	RWC-FRAME-TITLE-LOGO: RwCore/RwCore_Bind_00550b00.cpp, binding entry of the core callers 0x004ce690 / 0x004ce6f0 (gen_rwcore_tus.py CALL_VIA + LIFT_VIA): the matched body RwCore_00550b00 when an RtFS manager is open (DAT_007dc75c != 0), else the 0x004b5350 shim answer (piz mount stack or disk under original/)	6	0x004ce6f0
 0x004b3d20	FUN_004b3d20	stand-in	PortTop_StandIn04G_004b3d20	PORT-TOP-04G: Match/PortTop_0040bbb0.cpp: returns 0; its chunk-0x16 reader 0x004cf7d0 has no matched source (C2). Not reached by the sfx.piz names	4	0x0042a6b0
 0x0048bbe0	FUN_0048bbe0	matched	Orig_0048bbe0	PORT-TOP-04G: Match/PortTop_0048bbe0.cpp = re/match/s14/0048bbe0.c; RwImageSetPath(""), DAT_00722134 = RwTextureRead("sun")	3	0x0040bbb0
 0x004c5bc0	RwTexDictionaryAddTexture	rw	MashedRw_TexDictionaryAddTexture_004c5bc0	PORT-TOP-04G: LibRw/RwApiBind.cpp -> rw::TexDictionary::addFront (head insert, as rwLinkListAddLLLink)	3	0x0040bbb0
@@ -559,7 +560,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005a60b0	FUN_005a60b0	matched	PortTop_Bound_005a60b0	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005a60b0.c (c4=match), Match/PortTop_005a60b0.cpp	3	0x0045d3f0
 0x005a60e0	FUN_005a60e0	matched	PortTop_Bound_005a60e0	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005a60e0.c (c4=match), Match/PortTop_005a60e0.cpp	3	0x0045d430
 0x0040e370	FUN_0040e370	matched	IsCarSlotActive	PORT-TOP-AUDIOTICK-STOPS: existing exe body Match/MatchS02_0040e370.cpp	3	0x00466b50
-0x0042b900	FUN_0042b900	missing	PortTop_AStop_0042b900	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	0x00466b50
+0x0042b900	FUN_0042b900	matched	PortTop_Bound_0042b900	PORT-TOP-AUDIOTICK-STOPS: re/match/s07/0042b900.c (c4=match), Match/PortTop_0042b900.cpp	3	0x00466b50
 0x00431b50	FUN_00431b50	matched	SinGlobalProduct431b50	PORT-TOP-AUDIOTICK-STOPS: existing exe body Match/MatchS07_00431b50.cpp	3	0x00466b50
 0x00431b60	FUN_00431b60	matched	SinGlobalProduct431b60	PORT-TOP-AUDIOTICK-STOPS: existing exe body Match/MatchS07_00431b60.cpp	3	0x00466b50
 0x00432290	FUN_00432290	matched	PortTop_Bound_00432290	PORT-TOP-AUDIOTICK-STOPS: re/match/s08/00432290.c (c4=match), Match/PortTop_00432290.cpp	3	0x00466b50
@@ -667,7 +668,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0045c880	FUN_0045c880	matched	PortTop_Bound_0045c880	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045c880.c (c4=match), Match/PortTop_0045c880.cpp	5	0x0045d1e0
 0x0045ca30	FUN_0045ca30	matched	PortTop_Bound_0045ca30	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045ca30.c (c4=match), Match/PortTop_0045ca30.cpp	6	0x0045d250
 0x0045cab0	FUN_0045cab0	matched	PortTop_Bound_0045cab0	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045cab0.c (c4=match), Match/PortTop_0045cab0.cpp	6	0x0045d0e0
-0x0045caf0	FUN_0045caf0	missing	PortTop_AStop_0045caf0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	7	0x0045cb20
+0x0045caf0	FUN_0045caf0	matched	PortTop_Bound_0045caf0	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045caf0.c (c4=match), Match/PortTop_0045caf0.cpp	7	0x0045cb20
 0x0045cb20	FUN_0045cb20	matched	PortTop_Bound_0045cb20	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045cb20.c (c4=match), Match/PortTop_0045cb20.cpp	6	0x0045cc80
 0x0045cbe0	FUN_0045cbe0	matched	PortTop_Bound_0045cbe0	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045cbe0.c (c4=match), Match/PortTop_0045cbe0.cpp	5	0x0045d1e0
 0x0045cc50	FUN_0045cc50	matched	PortTop_Bound_0045cc50	PORT-TOP-AUDIOTICK-STOPS: re/match/s10/0045cc50.c (c4=match), Match/PortTop_0045cc50.cpp	5	0x0045d330
@@ -885,7 +886,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005b3670	FUN_005b3670	matched	AudioListFind	PORT-TOP-AUDIOTICK-STOPS: existing exe body Audio/AudioList_ag.cpp	3	
 0x005b36b0	FUN_005b36b0	missing	PortTop_AStop_005b36b0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005aea00	FUN_005aea00	matched	PortTop_Bound_005aea00	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005aea00.c (c4=match), Match/PortTop_005aea00.cpp	3	
-0x005ad770	FUN_005ad770	missing	PortTop_AStop_005ad770	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
+0x005ad770	FUN_005ad770	matched	PortTop_Bound_005ad770	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ad770.c (c4=match), Match/PortTop_005ad770.cpp	3	
 0x005ad910	FUN_005ad910	missing	PortTop_AStop_005ad910	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
 0x005ad980	FUN_005ad980	matched	PortTop_Bound_005ad980	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ad980.c (c4=match), Match/PortTop_005ad980.cpp	3	
 0x005ad9d0	FUN_005ad9d0	missing	PortTop_AStop_005ad9d0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
@@ -899,3 +900,5 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005aded0	FUN_005aded0	matched	AudioListNodeCount	PORT-TOP-AUDIOTICK-STOPS: existing exe body Audio/AudioLeaves_ab1.cpp	3	
 0x005adf60	FUN_005adf60	matched	PortTop_Bound_005adf60	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005adf60.c (c4=match), Match/PortTop_005adf60.cpp	3	
 0x005b8570	FUN_005b8570	matched	PortTop_Bound_005b8570	PORT-TOP-AUDIOTICK-STOPS: re/match/s27/005b8570.c (c4=match), Match/PortTop_005b8570.cpp	3	
+0x005ad6f0	FUN_005ad6f0	matched	PortTop_Bound_005ad6f0	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ad6f0.c (c4=match), Match/PortTop_005ad6f0.cpp	3	
+0x005b35a0	FUN_005b35a0	missing	PortTop_AStop_005b35a0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
