@@ -1,6 +1,16 @@
 # RESULT PORT-TOP-AUDIO-5AA3D0-STOPS: the init-arm stops from 0x005AA3D0 on
 
-## Verdict: in progress (checkpoints 1-2 done; both builds now stop at 0x005AEE20)
+## Verdict: GREEN (9 stops passed in 3 checkpoints; both builds now stop at 0x005A8F30, census order 23)
+
+- **Self-test result: PASS** in every arm, both builds, all three checkpoints (portstate-image 0 of 8 failed,
+  OT_CODEPTR 0 of 367 failed, code-trap 0 of 6 failed).
+- No newly DIFFERENT unit outside the bodies this row links: the base has 24 (fresh base check, section 1.6); this row
+  adds 0x005aa3d0 (admitted 93.0%) and 0x005a6340 (admitted 82.4%), both linked for the first time. The merge with
+  orch/integration (section 3.3) added none.
+- Byte matches: 0x005b36b0, 0x005aad50, 0x005aee20 (`re/promotions/PORT-TOP-AUDIO-5AA3D0-STOPS.tsv`, dry run 3 pass).
+  Admitted: 0x005aa3d0, 0x005a6340. Provisional: 0x005aa330, 0x005ad420, 0x005a8ea0 (decision L-171), 0x005aa200
+  (decision row requested). 21 C4 rows bound in bulk from the census. None of the admitted or provisional bodies is C4.
+- Not reached: 0x0045d460, so RO-AUDIOINIT-45D460-REACH is not answered (Next).
 
 Base: orch/integration @ 810042e0e. Branch orch/PORT-TOP-AUDIO-5AA3D0-STOPS. Top-down row: both builds, ddkobj check,
 knob boot (init arms), self-tests. Gates: not run (top-down row). No menu walk: no menu code changed.
@@ -14,6 +24,9 @@ equiv.py = the merged copy (tool commit 1ed7ceb1a, no diff on this branch).
 | 2 | 0x005aa330 | **provisional** (54.7%, NOT-PROVEN call-args at 0x005aa350, masked-high-bits tool limit); bound with 0x005aa3d0 (0x005a9c50's other named stop) | 1 |
 | 3 | 0x005b36b0 | **byte match**: source rewritten from the listing, BYTE-IDENTICAL 57 B, relocheck OK; promotion row; bound (0x005aa3d0's callee) | 1 |
 | 4 | 0x005a6340 | **admitted**: plain `EQUIV` on the merged tool (82.4%); bound. Plus the census bulk bind (21 C4 rows), the 0x00632c2c entries, 0x005aad50 (byte match) and 0x005a8ea0 / 0x005ad420 (provisional) with the code-pointer slots regenerated | 2 |
+| 5 | 0x005aee20 | **byte match**: source returns the AL counter, BYTE-IDENTICAL 28 B, relocheck OK; promotion row; bound | 3 |
+| 6 | 0x005aa200 | **provisional** (66.1%, NOT-PROVEN ult-1 / eq-0 form gap at 0x005aa271); bound; decision row requested | 3 |
+| 7 | 0x005adbe0, 0x005ad420, 0x005aaf50 / 0x005aaef0 / 0x005aae90 | passed in the arms (bound in checkpoint 2); the arms enter the 0x00632c28 entry 0x005a8ea0 | 3 |
 
 ## 1. Checkpoint 1: 0x005aa3d0 (admitted), 0x005aa330 (provisional), 0x005b36b0 (match)
 
@@ -166,17 +179,86 @@ admitted 93.0% body linked for the first time (classified in 1.1). Raw: `ddkchec
   - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed (188 slots, 16 bound),
     code-trap 0 of 6 failed (pages 459/459).
 
-## Next (not done yet)
-- 0x005aee20 (both builds), then the census window in first-call order (c2e0db02d version), the three second-thread
-  rows (0x005c2dd9, 0x005aef70, 0x005a84d0) and 0x005aef30 last.
+## 3. Checkpoint 3: 0x005aee20 (match), 0x005aa200 (provisional), merge of orch/integration
+
+### 3.1 0x005aee20
+- The old source (78.6%) returned `void` and masked the shift count with 0x1f. The original returns the bit index in AL:
+  `xor al,al` 0x005aee24, `mov esi,1` / `mov cl,al` / `shl esi,cl` 0x005aee27..0x005aee2e (no mask), `test edx,esi`,
+  `inc al` 0x005aee34, `cmp al,0x20` / `jb` 0x005aee36, leaving al = the index or 0x20.
+- New source: `unsigned char` counter, do-while, `break` on the first set bit, `return bVar1`. `match.py --bytes`
+  100.0% 13/13 ins, 28 B BYTE-IDENTICAL; relocheck OK checked=0; equiv.py `EQUIV [BYTE-IDENTICAL]`. Three other loop
+  spellings are also byte-identical. Promotion row (dry run `[3/3] 0x005aee20 match PASS byte-identical 28 B, relocheck
+  OK (0/0)`). hooks.csv is C3 (hand body `Audio/AudioMemory.cpp`, frozen hand path, untouched).
+- Callers declare a 4-byte return (`int` / `undefined4` / `unsigned int`, 9 sources). Every use in them is a shift count,
+  `1 << FUN_005aee20(0x28)` (`re/match/s25/005a6340.c` line 38, `re/match/s28/005c6cc0.c` line 36, and the macro text
+  named in the headers of 0x005a8060 / 0x005b9f30 / 0x005c7a90 / 0x005c8120), so only CL is read and the byte return
+  does not reopen the `bool` / `int` class of RESULT_PORT-TOP-AUDIOINIT-SPLIT-5A9970 1.2.
+
+### 3.2 0x005aa200 (census order 5, 0x005a62b0's callee at 0x005a62f2)
+- Source unchanged (`re/match/s25/005aa200.c`, 66.1%, 112/108 ins). equiv.py `NOT-PROVEN branch-condition` at
+  0x005aa271: ours `(ushort)param_3 >= 1` (ult 1), orig `== 0`, the same value for an unsigned count.
+- The `param_3 != 0` / `param_5 != 0` spelling (46.4%, `005aa200_eq0_variant.c` in the data folder) proves further, to
+  `EQUIV-IF-CALLERS-IGNORE(EDX,ECX) [LAYOUT,FRAME,VALUE-FLOW]`, callers 11, scan says ignore 0/11: 0x005a62f2,
+  0x005a802e, 0x005a8ee2, 0x005b7482, 0x005b862e, 0x005b9ee2, 0x005c6c6e, 0x005c7a42, 0x005c80ee `reads/reads`;
+  0x005b6bc2, 0x005bce62 `unknown/unknown`. Read at two of them: after 0x005a62f2 the caller runs `add esp,0x18` /
+  `test eax,eax` / `jne` and then `push esi` / `call 0x005a9d00` or `call 0x005aeb30` (0x005a62f7..0x005a630b); after
+  0x005a8ee2 the same shape (0x005a8ee7..0x005a8efb). Neither reads ecx or edx itself before its next call.
+  [UNCERTAIN: the scan's `reads` comes from the next call, not from the caller's own instructions; whether 0x005a9d00 /
+  0x005aeb30 / 0x005b34f0 read ecx or edx at entry is not resolved by a tool.]
+- Listed provisional (the 66.1% source, NOT-PROVEN), bound. Not C4. Decision row requested from the lead (section
+  Decision).
+
+### 3.3 Merge of orch/integration
+- `git -c merge.autoStash=false merge orch/integration` (215d5bbb9, no rebase) after the pre-merge commit 12857f712:
+  conflicts in `re/analysis/CHANGELOG.md` and `re/tools/dual_copy_allowlist.txt` (one add/add hunk each), resolved as the
+  union of both sides. Against orch/integration the merged tree differs in those two files, hooks.csv, ADMITTED.tsv,
+  PROVISIONAL.tsv, BINDINGS.tsv, UNCERTAIN_REGISTER.md, exe_sources.rsp and pc_funcs.csv only by this row's lines (the
+  six BINDINGS.tsv removals are this row's stop -> bound updates). Merge commit ec6a20f1e.
+- The merge brought source changes (`re/match/s08/00432b30.c`, `0043dfd0.c`, five PortTop wrappers, `PortTop_StandInsRL.cpp`,
+  rsp +8). `exe_body_index.py` on the merged tree (2032 rvas) and the plan dry run give the same plan as before the merge
+  (305 bind, 67 reuse, 43 stops).
+
+### 3.4 Builds, check, arms (merged tree)
+- VS2022: Build OK, rva-lint 330 known, NEW 0. Object build: Build OK.
+- `ddkobj.py check`: IDENTICAL 1593/1647, DIFFERENT 26, not-in-map 28, units linked 1597/1818, refusals 11, provisional
+  kept VS2022 210 units + 5 fns. DIFFERENT is checkpoint 2's list exactly: no newly DIFFERENT unit from this checkpoint
+  or from the merge. 0x005aee20 IDENTICAL; 0x005aa200 provisional (kept VS2022).
+- Arms:
+
+  | arm | build | stop | return address | log sha256 (16) |
+  |---|---|---|---|---|
+  | vs_init_audio | VS2022 | **0x005A8F30** after 2.7 s | 0x0023E4C5 = `_PortTop_Bound_005a8ea0+0x35` (`mashed_re.map`, symbol at 0x0023e490) | 1deb4ce006563c16 |
+  | ddk_init_audio | object | **0x005A8F30** after 2.9 s | 0x0023C2B5 = `_PortTop_Bound_005a8ea0+0x35` (`mashed_re_ddk.map`, symbol at 0x0023c280) | 0f8d95f16ce36690 |
+
+  - 0x005a8ea0 (the 0x00632c28 entry) calls 0x005a8f30 right after 0x005a9ab0 (`push esi` / `call 0x5a8f30`
+    0x005a8ecd / 0x005a8ece). So both builds passed census orders 4 to 22: 0x005aee20, 0x005aa200, 0x005adbe0,
+    0x005ad420 and the three 0x00632c2c entries, and entered the 0x00632c28 entry through the regenerated slot. Both
+    builds run the provisional (VS2022) body of 0x005a8ea0, hence the same +0x35.
+  - **Self-tests PASS in both arms:** portstate-image 0 of 8 failed, OT_CODEPTR 0 of 367 failed (188 slots, 16 bound),
+    code-trap 0 of 6 failed.
+
+## Next (not done in this row)
+- **0x005a8f30** (census order 23, both builds): `re/match/s25/005a8f30.c` is raw g2s output, 30.4% (97/168 ins, 589 B),
+  equiv.py `NOT-PROVEN branch-condition` at the entry: the same masked-shift form as 3.1
+  (`and8(ext8(and32(ret,0x1f)),0x1f)` against `and8(ext8(ret))`). It needs a source written from the listing; its
+  header names the repeated `1 << FUN_005aee20(0x28)` macro.
+- Then the census window in first-call order (c2e0db02d version): 24 to 39 are bound C4 rows except 0x005b9f30 (29),
+  0x005b8680 (34), 0x005c7a90 (36), 0x005c6cc0 (38), 0x005a8060 (40) with no C4 body; 41 0x005aef00 reuse; 42
+  0x005aef30 (`__beginthread`, left a stop, register line (a)); 43 to 47 are CRT / second-thread rows (0x005c2e79,
+  0x004a8815, 0x005c2dd9, 0x005aef70, 0x005a84d0); 48 to 92 hold 22 more rows with no C4 body (0x005c8120 0x005b74c0
+  0x005b6be0 0x005bce80 0x005bad30 0x005c1920 0x005bbdb0 0x005bac00 0x005ba1d0 0x005ae250 0x005bb000 0x005bbc10 0x005bbd50
+  0x005c7d30 0x005bc470 0x005bf670 0x005bbfc0 0x005baf00 0x005a91b0 and the stops 0x005aac00 0x005a9e60 0x005a9f10).
+- 0x005bf610: forced to a stop (its callee 0x005bf670 is `__stdcall` with no body); bind it once 0x005bf670 has one.
+- **RO-AUDIOINIT-45D460-REACH not answered:** the arms do not reach 0x0045d460 yet, so DAT_00604604 at record 0 and the
+  MASHED_OT_AUDIOINIT oracle re-run are still open.
 
 ## Decision
 - 0x005a8ea0: `EQUIV-IF-CALLERS-IGNORE(EAX)`, the one caller (0x005ad080, indirect through 0x00632c28) reads EAX. Listed
   provisional, not admitted (L-126). **Decision L-171** (filed by the lead): keep it provisional (recommended: every
   return path gives 0 or the object, the gap is the merged failure tails) or require a shape that keeps the tails apart.
-- 0x005aa200 (checkpoint 3): the source that clears the NOT-PROVEN form gap proves to `EQUIV-IF-CALLERS-IGNORE(EDX,ECX)`
-  with 0 of 11 callers scanned as ignoring. The bound source is the unchanged 66.1% one, listed provisional as NOT-PROVEN.
-  Same question as L-171 (reported to the lead, no second row filed).
+- 0x005aa200 (checkpoint 3, section 3.2): the source that clears the NOT-PROVEN form gap proves to
+  `EQUIV-IF-CALLERS-IGNORE(EDX,ECX)` with 0 of 11 callers scanned as ignoring. The bound source is the unchanged 66.1%
+  one, listed provisional as NOT-PROVEN. The lead files its own decision row (question text sent to the lead).
 
 ## Lock status at build/run time
 Times -0300, the start time of each command. `mashed_lock.py status` prints no time; the line is the one printed in
@@ -197,6 +279,14 @@ the same command, before the step.
 The object builds of checkpoints 1 and 2 and both arms runs had no status check right before them. If the merge train
 20261116_114223 held PRIORITY-HOLD between 11:44 and 12:11, the checkpoint 2 object builds ran inside it. From
 checkpoint 3 on, the status is printed before each build and each arms run and recorded here.
+
+| checkpoint | step | time printed | status printed just before the step |
+|---|---|---|---|
+| 3 | VS2022 build (merged tree) | 12:35:31 | `free 'mashed_machine'` |
+| 3 | object build (merged tree) | 12:40:33 | `free 'mashed_machine'` |
+| 3 | arms | 12:47:40 | `free 'mashed_machine'`; `mashed_lock.py run` then printed `HELD 'mashed_machine' pid=11848` |
+
+(`lockstatus3.txt` in the data folder.)
 
 ## Arms command
 `ARMS_STEP=PORT-TOP-AUDIO-5AA3D0-STOPS ARMS_ROOT=D:/MashedWT/PORT-TOP-AUDIO-5AA3D0-STOPS_root ARMS_EXTRA="MASHED_PORTSTATE_IMAGE=1 MASHED_CODE_TRAP=1 MASHED_OT_CODEPTR=1" test-slot py -3.12 <ORCH>/re/orchestrator/mashed_lock.py run --label PORT-TOP-AUDIO-5AA3D0-STOPS -- py -3.12 verify/portorigtop_20261113/audiotick_stops_arms.py vs_init_audio ddk_init_audio`
@@ -224,3 +314,48 @@ Checkpoint 1:
 - `exeidx1.json` 6f7403c4e9476ef48f7d1f2c871e843254d444ea8c41cc14e871d576df6e4513
 - `roots.txt` 73566306c2eb5600447befbb32c4667ff8465d6d18e268986f50ac1fe77142bb
 - `sync1.txt` eef80ba63a0ed94a64d6d5a1d791a8b15ef3f3f868d398e4b9a4dc16bbfc9bde
+
+Base check (section 1.6):
+- `ddkcheck_base.log` cd187b211157810159c94b5b184e620666e3e14bcabdcb34131b72cdef2a7ec4
+- `bytecheck_base.tsv` 62efcef05b7b081dc1fcad91ee2535fa54c8bb8949da8b01b803c5842f82dde5
+- `build_base_ddk.log` 67259cb4b02eb8f770926d1b06ea0ba93144a619a94a3e11bc2ad35237484f0a
+Checkpoint 2:
+- `cp2/vs_init_audio.log` aeec857d9084d467975ffffdf8bf0a736d751dbf759e142181e91db60e2feeda
+- `cp2/ddk_init_audio.log` 6e2e9dc8429b6078c5c78b12deac9119301220380029a1f5967f32df54068360
+- `arms2.out` e35a633101f34dbf45412c2a9c2e6d632cd5347e18a52313a177ba3b6d6805eb
+- `build2_vs.log` 09d18aef298c0494d7d6b5f40e12d93e687f6880d7a143c3179b9395aa8240a3
+- `build2_ddk.log` 9315237bd6ce94891b195db585456ac61b90967652832eb6aa73d16fa7524db4
+- `ddkcheck2.log` dad59c3a5d0eaae491761d9348c521626fbd67c4b4fa57fd68be23d34a6b37bf
+- `bytecheck2.tsv` fcb2462f40c3c642d0a7e410946cba424f6191eb9a291d111b47ed2eb65bc7ab
+- `plan4_dry.txt` aad8e6eec45e3c9654f0c5db94700b1be7a5118a07260e2354c4a577c98a1d4e
+- `plan4_write.txt` d02c624288e3d4ec56bec050a5fc30486e11b711162fd0cca1b628d11fbeb670
+- `equiv_6340.txt` de01e11f3b2e3abf390310434112843edb098e17199e2e5b4afca99659805a30
+- `6340_xcheck_default.txt` 62a6c49205cb2cd557c23af1ec3bd35bfd259bd623a6ddf691c863285825bfaf
+- `6340_xcheck_seeded.txt` 62a6c49205cb2cd557c23af1ec3bd35bfd259bd623a6ddf691c863285825bfaf
+- `equiv_d420.txt` af6eda7bbfd2d1737fc28fc5f3b0136c15d8815f4d117a749be067eb79db3aca
+- `c4_dry2.txt` 83240936f00455f7d576e57be83d5e6080f902d83892833652ba8e8a6fc042e6
+- `codeptr4.txt` ea3fc94edd2e310264908518d9bdc98f1020643ba9d06a909b9553a74ba571b4
+- `roots4.txt` fd1ba37a34f71b8d718ba3f81e014beae7bc5467f2a5756f1d91a3a740caa65b
+- `exeidx2.json` 6f7403c4e9476ef48f7d1f2c871e843254d444ea8c41cc14e871d576df6e4513
+- `audio_window_65.tsv` a53faacf8ff6d33d5d964ca8e6fef68c449deb34c320d4efeac93e6f2b08bf13
+- `audio_window_65_v2.tsv` 7e226127dd9b81445fae46d4901cc9fc1aa70f1ec8dee2abefb3cf5052a6aec6
+Checkpoint 3:
+- `cp3/vs_init_audio.log` 1deb4ce006563c1650a3e69b436e106bc706ed32fe0c56b4209a9b7784124b35
+- `cp3/ddk_init_audio.log` 0f8d95f16ce366902a475b4bd5bc196ee7f1cae97e5d7308a209eef94c103f8e
+- `arms3.out` fdeaac5319fa2ddbebb335b6037db3a90885b49eabd13f98e397057e8863a899
+- `build3_vs.log` b4ed0b348558f13d1d1f20519a272a30de6819737c0eb0b375d27bf90b5ababe
+- `build3_ddk.log` a6a5c195cf5753ce263b5d35d5bf313e19dcc1a33a72ff668e7808f9a4ee16ba
+- `ddkcheck3.log` 95f0b2f08ba0285451b848ed362d1cf10edf775070baf793e38c246985d2d1e3
+- `bytecheck3.tsv` 747ff8aaeb71f164fe986104020c8c025b271a04a5bb4c98941adcf91cc64fde
+- `plan5_dry.txt` 518418e49e498b09b0bf95419f97a952807f9f4f7e4e46061f997d8a2e99f84a
+- `plan5_write.txt` 591136f267a7d26cee236e8d5e5ed40f4b9327f4ad12ce9dafe8c730a8bfbdd0
+- `plan6_dry.txt` 518418e49e498b09b0bf95419f97a952807f9f4f7e4e46061f997d8a2e99f84a
+- `exeidx3.json` 7af60fca9f76b5fb13be5478602815fe5a29d3e1b215d967c414b497eb783c9b
+- `equiv_a200.txt` 81c5483fdb5d8da7c95f6cf71a9d81056a1d5a8752abd8b11f1cb6f0700052c4
+- `equiv_a200_eq0.txt` d9686802790500c6235db84f31adbd3071f2a1166368f2d084af3f3d49af4ae1
+- `005aa200_eq0_variant.c` 5697a116ee08f91a7679b0092bf36d482c1b03cfaee41f876437319a4c55ebf7
+- `005aee20_before.c` 6ac05448525af20a0a96ee1bd13c7ea3206e6fb8a15d04e3b9403b8cc5a96ce9
+- `ee20_match_bytes.txt` 6df7e97ae709627ab03335d69095b1fc798dc6a4910c0b9eca3f0547ee8efddf
+- `ee20_relocheck.txt` b321012150c45ab02147f494d031d1b737c5994ef37893edd03e723e50d28c42
+- `c4_dry3.txt` ea72c127909056bfbbba24388a2483298a4343c65d01db92325f8a75c5752e75
+- `lockstatus3.txt` c3aa978e816c198fab830913fe1839d2950a5c89ca6735dfd3a38332ce277f2d
