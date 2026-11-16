@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 0x005ad770 (h3): was 69.9% (residual class b). PORT-TOP-AUDIOSTOP-5AD770 (2026-11-16): 100%, byte-identical. Shape: the two memcpy calls share one tail after both arms (no per-arm copy), +0xc stored before +0x10, and +0x14 = param_1 stored before the call to 0x005b35a0 (original 0x005ad87d..). */
+/* MATCH-S26 0x005ad770 (h3): was 69.9% (residual class b). PORT-TOP-AUDIOSTOP-5AD770 (2026-11-16): 100%, byte-identical. Shape: the two memcpy calls share one tail after both arms (no per-arm copy), +0xc stored before +0x10, and +0x14 = param_1 stored before the call to 0x005b35a0 (original 0x005ad889, before the call to 0x5b35a0). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
