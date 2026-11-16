@@ -25,6 +25,24 @@ Rules every child reads: `$ORCH\re\orchestrator\WORKER_RULES.md`. Decisions: `lo
 3. Plan the wave: group the `ready` rows by `section`, lowest wave first. One lead per section. Skip rows whose
    note starts "FROZEN by ROADMAP v5" (hand-path work, L-127): they are not planned until Mariano names one.
 
+## Run policy (Mariano 2026-11-16, after run 50)
+Runs 48-50 merged mostly tooling, audits and test rows while the milestones stood still (T1 blocked on 0x0043dfd0, T2 on
+the reference race, the audio lane one stop per run). From run 51:
+1. **Every run names its milestone goals first** (T1 checklist items, T2 steps, audio stops) in the kickoff, and the run
+   report scores those, not "rows merged".
+2. **Meta work is capped at about a quarter of the workers** of a run: tooling, lints, audits, tracker hygiene, harness
+   fixes. A meta row is staffed only when it blocks a milestone or cuts the run's own cost (train time, worker stalls).
+3. **[UNCERTAIN] claims go to `re/orchestrator/UNCERTAIN_REGISTER.md`, not to new rows.** A worker or lead writes one line
+   there (claim, test, RESULT). L0 promotes a line to a ledger row only when it blocks a milestone. NO-GUESSING is
+   unchanged: the claim stays marked [UNCERTAIN] in its RESULT. Rows parked there carry the note "parked: UNCERTAIN_REGISTER".
+4. **No runtime debugging of a low-percentage body** to chase a milestone (L-168): raise its match first. 0x0043dfd0 is the
+   case in point; T1 counts its hand stand-in as allowed while MATCH-43DFD0-RAISE runs.
+5. **Stop chasing runs in one session:** a top-down "next stop" worker keeps going through as many named stops as its
+   session allows (bind, both builds, self-test, next stop), reporting one RESULT with every stop it passed, instead of one
+   row and one drain per stop.
+6. **Drains:** evidence and text rows take the text-only path (HB-TRAIN-TEXTONLY-VERIFYPY); batch them with build rows
+   rather than drain them alone.
+
 ## Row kinds (ROADMAP v5, L-127, 2026-11-11)
 Tell each lead the kind of every row it gets, and put the kind in the worker task. Full table: WORKER_RULES.md
 "Row kinds and what the worker runs".
