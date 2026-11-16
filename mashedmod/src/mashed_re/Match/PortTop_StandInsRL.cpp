@@ -10,6 +10,8 @@
 //                                     is no table without the file-backed .data image (MASHED_PORTSTATE_IMAGE)
 //   knob on                        -> Orig_0040d270, the matched body
 #ifdef MASHED_STANDALONE
+#include <windows.h>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 
@@ -42,7 +44,9 @@ void Hit(Count& c, unsigned arg) {
 }
 Count s_d040 = {"0x0040d040", "201 B, 4 callees, the B path of 0x0040d270", 0};
 Count s_d110 = {"0x0040d110", "320 B, 11 callees (0x0040cea0 and 0x00420420 C2)", 0};
-Count s_8c70 = {"0x00458c70", "136 B, callee 0x004c15c0", 0};
+// Checkpoint 3: also what the bound 0x004264d0 calls (lead decision (b)): the matched body faulted in RwCore_004c15c0+0x85
+// (original 0x004c1645), [RwGlobals+0xbc] = 0 on the librw RwGlobals record. No RW core call here.
+Count s_8c70 = {"0x00458c70", "136 B, callee 0x004c15c0 (RW core, not called)", 0};
 Count s_6340 = {"0x00426340", "280 B, 10 callees (rule 5 path)", 0};
 Count s_7800 = {"0x00407800", "C2, 19 callees (rule 5 path)", 0};
 Count s_74a0 = {"0x004074a0", "167 B, callees 0x0047f290 0x00489c60 0x004e6e00", 0};
@@ -96,6 +100,38 @@ void PortTop_RL_00426e10(int track) {
     PortTop_Bound_00426e10(track);
     RlLog("rva 0x00426e10: matched course load returned: DAT_0066d704 = %u, DAT_0080332c = %08X, DAT_00656ee8 = %08X", U32(0x0066d704u),
           U32(0x0080332cu), U32(0x00656ee8u));
+}
+// Checkpoint 3: what the matched 0x0040d270 calls for 0x004264d0 (was the stand-in PortTop_StandInRL_004264d0, which stays
+// defined and is no longer called). The matched body (Match/PortTop_004264d0.cpp, re/match/s06/004264d0.c) and its closure
+// (verify/ro_20261116/rltools/plan_rl.json). The body returns early when 0x0042fe30 returns 0 (read here as DAT_0067ea74).
+void PortTop_Bound_004264d0(int param_1);
+// A fault inside the bound closure is logged (exe offset of the faulting instruction, access kind and address, the RW
+// globals record and its +0xbc word) and then passed on (EXCEPTION_CONTINUE_SEARCH): the process still ends as before.
+static int RlFaultFilter(EXCEPTION_POINTERS* ep) {
+    const EXCEPTION_RECORD* er = ep->ExceptionRecord;
+    const unsigned base = static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(GetModuleHandleA(nullptr)));
+    const unsigned at = static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(er->ExceptionAddress));
+    const unsigned kind = er->NumberParameters >= 2 ? static_cast<unsigned>(er->ExceptionInformation[0]) : 9u;
+    const unsigned addr = er->NumberParameters >= 2 ? static_cast<unsigned>(er->ExceptionInformation[1]) : 0u;
+    RlLog("rva 0x004264d0: fault code %08X at exe+0x%X, access kind %u", static_cast<unsigned>(er->ExceptionCode), at - base, kind);
+    RlLog("rva 0x004264d0: fault address %08X, eax %08X, ecx %08X", addr, static_cast<unsigned>(ep->ContextRecord->Eax),
+          static_cast<unsigned>(ep->ContextRecord->Ecx));
+    const unsigned g = U32(0x007d3ff8u);
+    RlLog("rva 0x004264d0: at the fault [0x007d3ff8] = %08X, [+0xbc] = %08X, edx %08X", g, g ? U32(g + 0xbcu) : 0u,
+          static_cast<unsigned>(ep->ContextRecord->Edx));
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+static void RlCall004264d0(int param_1) {
+    __try {
+        PortTop_Bound_004264d0(param_1);
+    } __except (RlFaultFilter(GetExceptionInformation())) {
+    }
+}
+void PortTop_RL_004264d0(int param_1) {
+    RlLog("rva 0x004264d0: matched body PortTop_Bound_004264d0(%08X) entered, DAT_0067ea74 = %u, DAT_007d3ff8 = %08X",
+          static_cast<unsigned>(param_1), U32(0x0067ea74u), U32(0x007d3ff8u));
+    RlCall004264d0(param_1);
+    RlLog("rva 0x004264d0: matched body returned%c%c%c", ' ', ' ', ' ');
 }
 // Guard for the RwCore_004ccde0 call: that body walks the list at 0x007d45cc until it returns to &0x007d45cc (re/match source, RwCore/RwCore_004ccde0.cpp).
 // A head of 0 is an uninitialised list: the walk would read address 0. Skipped and counted then.

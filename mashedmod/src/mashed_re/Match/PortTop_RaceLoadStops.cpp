@@ -38,10 +38,14 @@ int PortTop_RLStop_00409710(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_00425bf0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00425bf0u, "0x004262f0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00425bf0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00440bc0: declared void by 0x0047a0f0; cpp-unclean: C2632 'char' seguido de 'bool' no es v lido
+// stop rva 00440bc0: declared void by 0x0047a0f0 0x0047a130; cpp-unclean: C2632 'char' seguido de 'bool' no es v lido
 int PortTop_RLStop_00440bc0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00440bc0u, "0x0047a0f0", n, _ReturnAddress(), ex);
+    if (n == 1 || ex) RlStopLog(0x00440bc0u, "0x0047a0f0 0x0047a130", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00440bc0u, 0u, _ReturnAddress()); return 0; }
+// stop rva 00458dd0: declared void by 0x00458e00; cpp-unclean: C2664 'int *Orig_004e8090(int *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+int PortTop_RLStop_00458dd0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
+    if (n == 1 || ex) RlStopLog(0x00458dd0u, "0x00458e00", n, _ReturnAddress(), ex);
+    if (ex) PortTop_AudioCalleeStop(0x00458dd0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00462950: declared void by 0x00426e10; no matched or admitted source
 int PortTop_RLStop_00462950(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00462950u, "0x00426e10", n, _ReturnAddress(), ex);

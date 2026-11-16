@@ -1,0 +1,173 @@
+Counter({'bind': 92, 'reuse': 45, 'stop': 33}) Counter({'match': 92})
+004053d0 reuse Orig_004053d0 C4 TrackDataSlotSet
+00409680 stop cpp-unclean: C2632 'char' seguido de 'bool' no es v lido C4 LedArrayInit
+00409710 stop cpp-unclean: C2632 'char' seguido de 'bool' no es v lido C4 FUN_00409710
+00412050 bind re/match/s02/00412050.c C4 FUN_00412050
+0041e870 reuse TrackNodeRecordScan C4 TrackNodeRecordScan
+0041e8b0 bind re/match/s04/0041e8b0.c C4 TrackNodeDispatch14
+0041e970 bind re/match/s04/0041e970.c C4 TrackNodeDispatch44
+0041e980 bind re/match/s04/0041e980.c C4 TrackNodeRecordFind
+0041e9d0 bind re/match/s04/0041e9d0.c C4 TrackNodeFnPtrGet14
+0041ea90 bind re/match/s04/0041ea90.c C4 TrackNodeFnPtrGet44
+00423480 bind re/match/s05/00423480.c C4 AiFilenameBuild
+004235b0 bind re/match/s05/004235b0.c C4 FUN_004235b0
+00423630 bind re/match/s05/00423630.c C4 AiDataBufInit
+00425ab0 bind re/match/s05/00425ab0.c C4 EntryHeaderClear
+00425b70 reuse SlotFieldSetter C4 SlotFieldSetter
+00425b90 bind re/match/s05/00425b90.c C4 FUN_00425b90
+00425bf0 stop cpp-unclean: C2664 'void PortTop_PizFs_Mount_00495280(undefined4)': el argumento 1 no puede convertirse de 'const char [28]' a 'u C4 FUN_00425bf0
+00425c00 bind re/match/s05/00425c00.c C4 FUN_00425c00
+00426060 bind re/match/s05/00426060.c C4 TrackPhysWorld1Get
+00426070 reuse TrackPhysWorld2Get C4 TrackPhysWorld2Get
+004260e0 bind re/match/pilot/a7_004260e0.c C4 FUN_004260e0
+004262f0 bind re/match/s06/004262f0.c C4 FUN_004262f0
+004264d0 bind re/match/s06/004264d0.c C4 FUN_004264d0
+00426c00 reuse GameStateFlagGet C4 FUN_00426c00
+00426cd0 bind re/match/s06/00426cd0.c C4 TrackSlotArrayReset
+00426e10 bind re/match/s06/00426e10.c C4 FUN_00426e10
+0042a470 bind re/match/s06/0042a470.c C4 FUN_0042a470
+0042a530 bind re/match/s06/0042a530.c C4 FUN_0042a530
+0042a5d0 bind re/match/s06/0042a5d0.c C4 FUN_0042a5d0
+0042a8d0 bind re/match/s06/0042a8d0.c C4 FUN_0042a8d0
+0042f510 reuse Vehicle0HandleGet C4 Vehicle0HandleGet
+0042fe30 reuse RaceEndFlagIfEndMode C4 RaceEndFlagIfEndMode
+00440bc0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es v lido C4 FUN_00440bc0
+0044d6e0 bind re/match/s08/0044d6e0.c C4 Set684b34
+004516d0 bind re/match/s09/004516d0.c C4 FUN_004516d0
+004576b0 reuse AnyActive4576b0 C4 AnyActive4576b0
+00458c70 reuse PortTop_StandInRL_00458c70 C4 FUN_00458c70
+00458d00 bind re/match/s09/00458d00.c C4 FUN_00458d00
+00458dd0 stop cpp-unclean: C2664 'int *Orig_004e8090(int *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'int *' C4 FUN_00458dd0
+00458e00 bind re/match/s09/00458e00.c C4 PickupPoolSpawn
+00458fa0 reuse TtlSet68b1b0 C4 TtlSet68b1b0
+00458fd0 bind re/match/s09/00458fd0.c C4 FUN_00458fd0
+00462950 stop  C2 FUN_00462950
+004671a0 reuse RwCore_004671a0 C4 BackBuffRasterOpen
+004715a0 bind re/match/pilot/a3_004715a0.c C4 FUN_004715a0
+00472690 bind re/match/s11/00472690.c C4 FUN_00472690
+00478110 bind re/match/s12/00478110.c C4 FUN_00478110
+004781b0 reuse Orig_004781b0 C4 FUN_004781b0
+00478660 stop  C2 FUN_00478660
+00479330 stop  C2 FUN_00479330
+0047a020 stop  C2 FUN_0047a020
+0047a0f0 bind re/match/s12/0047a0f0.c C4 FUN_0047a0f0
+0047a130 bind re/match/s12/0047a130.c C4 FUN_0047a130
+0047b860 stop cpp-unclean: C2660 'PortTop_RLStop_004b7330': la funci¢n no acepta 1 argumentos C4 FUN_0047b860
+0047b880 bind re/match/s13/0047b880.c C4 FUN_0047b880
+0047b8d0 stop cpp-unclean: C2664 'void Orig_004b6520(undefined4,undefined4)': el argumento 1 no puede convertirse de 'undefined1 [32768]' a 'un C4 FUN_0047b8d0
+0047b9b0 bind re/match/s13/0047b9b0.c C4 FUN_0047b9b0
+0047be80 stop  C2 FUN_0047be80
+0047bf70 bind re/match/s13/0047bf70.c C4 FUN_0047bf70
+0047c0b0 bind re/match/s13/0047c0b0.c C4 ClearColl47c0b0
+0047c0f0 bind re/match/s13/0047c0f0.c C4 FUN_0047c0f0
+0047cdc0 bind re/match/s13/0047cdc0.c C4 StoreDistSq47cdc0
+0047ce40 bind re/match/s13/0047ce40.c C4 Search47ce40
+0047d080 bind re/match/s13/0047d080.c C4 FUN_0047d080
+0047d100 bind re/match/s13/0047d100.c C4 FUN_0047d100
+0047f4c0 bind re/match/pilot/a5_0047f4c0.c C4 FUN_0047f4c0
+0047f7d0 stop  C1 FUN_0047f7d0
+0047f840 bind re/match/s13/0047f840.c C4 FUN_0047f840
+0047f940 bind re/match/s13/0047f940.c C4 FUN_0047f940
+0047fad0 bind re/match/s13/0047fad0.c C4 FUN_0047fad0
+0047fc40 bind re/match/s13/0047fc40.c C4 FUN_0047fc40
+0047fe00 bind re/match/s13/0047fe00.c C4 FUN_0047fe00
+0047ff70 bind re/match/s13/0047ff70.c C4 FUN_0047ff70
+00480100 bind re/match/s13/00480100.c C4 FUN_00480100
+00480340 bind re/match/s13/00480340.c C4 FUN_00480340
+00487280 stop  C2 FUN_00487280
+00491590 stop  C2 FUN_00491590
+00491780 bind re/match/s15/00491780.c C4 FUN_00491780
+004924c0 bind re/match/s15/004924c0.c C4 Set6147b4Triple
+00495280 reuse PortTop_PizFs_Mount_00495280 C4 FUN_00495280
+004952f0 reuse PortTop_PizFs_Unmount_004952f0 C4 FUN_004952f0
+00496400 reuse Orig_00496400 C4 ConfigLogDebug
+004987b0 reuse DbgPrintf_004987b0 C4 FUN_004987b0
+004a2b60 reuse MashedCrt_sprintf_004a2b60 C4 sprintf
+004b3bf0 reuse Orig_004b3bf0 C4 FUN_004b3bf0
+004b3f50 stop  C2 FUN_004b3f50
+004b3f90 reuse RwCore_004b3f90 C4 FUN_004b3f90
+004b3fc0 reuse Orig_004b3fc0 C4 FUN_004b3fc0
+004b5190 reuse RwCore_004b5190 C4 FUN_004b5190
+004b5240 reuse Orig_004b5240 C4 FUN_004b5240
+004b5350 bind re/match/s18/004b5350.c C4 thunk_FUN_00550b00
+004b53b0 stop  C2 FUN_004b53b0
+004b6520 reuse Orig_004b6520 C4 ZeroFillWrapper
+004b7480 stop  C2 FUN_004b7480
+004c0b30 reuse RwCore_004c0b30 C4 FUN_004c0b30
+004c0e50 reuse RwCore_004c0e50 C4 FUN_004c0e50
+004c0ed0 reuse RwCore_004c0ed0 C4 FUN_004c0ed0
+004c15c0 reuse RwCore_004c15c0 C4 FUN_004c15c0
+004c1b10 reuse RwCore_004c1b10 C4 FUN_004c1b10
+004c39b0 reuse RwCore_004c39b0 C2 RwV3dNormalize
+004c3d90 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_004c3d90
+004c45f0 reuse RwCore_004c45f0 C4 FUN_004c45f0
+004c4600 reuse RwCore_004c4600 C4 RwMatrixMultiply
+004c5c80 reuse RwCore_004c5c80 C4 FUN_004c5c80
+004cbd30 reuse RwCore_004cbd30 C4 RwStreamRead
+004cc160 reuse PortTop_RwStreamClose_004cc160 C4 FUN_004cc160
+004cc230 reuse PortTop_RwStreamOpen_004cc230 C2 FUN_004cc230
+004cc5e0 reuse RwCore_004cc5e0 C2 FUN_004cc5e0
+004cc790 reuse RwCore_004cc790 C4 FUN_004cc790
+004cf2b0 stop  C2 FUN_004cf2b0
+004e4380 bind re/match/rwl02/004e4380.c C4 FUN_004e4380
+004e66d0 reuse RwCore_004e66d0 C4 RpClumpForAllAtomics
+004e69a0 reuse RwCore_004e69a0 C4 FUN_004e69a0
+004e6e00 reuse RwCore_004e6e00 C4 RpClumpDestroy
+004e7e30 reuse Orig_004e7e30 C4 FUN_004e7e30
+00534870 reuse RwCore_00534870 C4 FUN_00534870
+00550b00 reuse RwCoreBind_FsFileExists_00550b00 C4 VfsFileExists
+00559560 stop  C3 FUN_00559560
+005595d0 stop  C3 FUN_005595d0
+00559b50 bind re/match/rwl05/00559b50.c C4 FUN_00559b50
+00559c40 stop  C3 PhysicsSceneBodyRegister
+00559ee0 stop  C3 FUN_00559ee0
+0055ab30 stop  C4 FUN_0055ab30
+0055ac00 stop  C4 RwpShapeActiveBitSet
+0055ad20 bind re/match/rwl05/0055ad20.c C4 FUN_0055ad20
+0055ade0 bind re/match/rwl05/0055ade0.c C4 FUN_0055ade0
+0055af40 bind re/match/rwl05/0055af40.c C4 FUN_0055af40
+0055b860 bind re/match/rwl05/0055b860.c C4 FUN_0055b860
+0055b930 bind re/match/rwl05/0055b930.c C4 FUN_0055b930
+0055b940 stop  C3 PhysicsBodySetMass
+0055bab0 bind re/match/rwl05/0055bab0.c C4 PhysicsBodySetDamping
+0055bac0 bind re/match/rwl05/0055bac0.c C4 FUN_0055bac0
+0055bad0 bind re/match/rwl05/0055bad0.c C4 FUN_0055bad0
+0055bd80 bind re/match/rwl05/0055bd80.c C4 FUN_0055bd80
+0055c380 bind re/match/rwl05/0055c380.c C4 FUN_0055c380
+0055c490 bind re/match/rwl05/0055c490.c C4 FUN_0055c490
+0055c4a0 bind re/match/rwl05/0055c4a0.c C4 PhysicsBodySetRestitution
+0055c4f0 bind re/match/s24/0055c4f0.c C4 PhysicsBodySetFriction
+0055c540 bind re/match/rwl05/0055c540.c C4 FUN_0055c540
+0055c810 bind re/match/s24/0055c810.c C4 PhysicsBodySetLinearVelocity
+0055dc70 bind re/match/rwl05/0055dc70.c C4 FUN_0055dc70
+0055dca0 bind re/match/rwl05/0055dca0.c C4 FUN_0055dca0
+0055ddd0 bind re/match/rwl05/0055ddd0.c C4 FUN_0055ddd0
+0055deb0 reuse RwCore_0055deb0 C4 RwpWorldSolverHandle_RegAbi
+0055dec0 reuse UtilDeref55dec0 C4 FUN_0055dec0
+0055ded0 stop  C3 FUN_0055ded0
+0055dff0 stop  C4 RwpBodyRefreshGate
+0055e440 bind re/match/rwl05/0055e440.c C4 FUN_0055e440
+0055f450 bind re/match/rwl05/0055f450.c C4 FUN_0055f450
+0055f800 stop  C3 FUN_0055f800
+0055fe10 bind re/match/rwl05/0055fe10.c C4 FUN_0055fe10
+0055fe30 bind re/match/rwl05/0055fe30.c C4 FUN_0055fe30
+0055fe40 bind re/match/rwl05/0055fe40.c C4 FUN_0055fe40
+00562520 bind re/match/rwl05/00562520.c C4 FUN_00562520
+00562580 bind re/match/rwl05/00562580.c C4 FUN_00562580
+005625e0 bind re/match/rwl05/005625e0.c C4 FUN_005625e0
+00562600 bind re/match/rwl05/00562600.c C4 FUN_00562600
+00562ac0 stop  C1 FUN_00562ac0
+00562fd0 bind re/match/rwl05/00562fd0.c C4 FUN_00562fd0
+00564130 bind re/match/rwl05/00564130.c C4 FUN_00564130
+00564190 bind re/match/rwl05/00564190.c C4 FUN_00564190
+00565590 bind re/match/rwl06/00565590.c C4 FUN_00565590
+0057c1b0 bind re/match/rwl06/0057c1b0.c C4 FUN_0057c1b0
+0057c210 stop  C4 RwpBodyTableLookup
+0057c220 bind re/match/rwl06/0057c220.c C4 RWP37WorldSlotAssign
+0057c300 bind re/match/rwl06/0057c300.c C4 RWP37BodyCreate
+0057c420 bind re/match/rwl06/0057c420.c C4 FUN_0057c420
+0057c4b0 stop  C2 FUN_0057c4b0
+0057c500 bind re/match/rwl06/0057c500.c C4 RWP37WorldCreate
+0057c550 bind re/match/rwl06/0057c550.c C4 FUN_0057c550
+REMOVED mashedmod/src/mashed_re/Match\PortTop_00458c70.cpp
+wrote 92 bind files + 33 stops

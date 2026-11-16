@@ -1,4 +1,4 @@
-# RESULT PORT-OT-RACE (run 52, 2026-11-16), checkpoints 1 and 2: matched 0x0040d270 and 0x00426e10 on ORIG_TOP
+# RESULT PORT-OT-RACE (run 52, 2026-11-16), checkpoints 1, 2 and 3: matched 0x0040d270, 0x00426e10 and 0x004264d0 on ORIG_TOP
 
 Branch `orch/PORT-OT-RACE` from `orch/integration` `810042e0e`. Row kind: top-down. Worker claude2 (account2), Opus 5.5,
 lead cmwjaf65a3d7fp0153fg1nefc. (Corrected at checkpoint 2: this header said "claude3" at checkpoint 1; the worker ran on
@@ -254,3 +254,130 @@ Commands:
 - Builds: as checkpoint 1; `py -3.12 re/tools/ddkobj/ddkobj.py check`.
 - Arms: as checkpoint 1 with `A4_OUT=D:/MashedWT/PORT-OT-RACE_data2` and arms `RO_ROIMG-pr1 RO_ROLOAD-pr1 RO_ROLOADC-pr1`.
 - First divergence: as checkpoint 1, per arm, into `D:/MashedWT/PORT-OT-RACE_data2/fd_ref1_<arm>.out`.
+
+## 7. Checkpoint 3 (stop 3): the matched 0x004264d0 and its closure
+
+`orch/integration` `215d5bbb9` merged into the branch first (`9410ca739`, clean, the only file both sides touched was
+`re/orchestrator/UNCERTAIN_REGISTER.md`). PREREG section "Checkpoint 3" committed alone at `e46a08bc5`; after the first
+arms faulted, the lead chose (b) and the amendment was committed alone at `c40ea3f66`, before the re-run.
+0x0047a020 / 0x00479330 / 0x00478660 / 0x00462950 (owned by RACE-COURSELUA-BODIES) are not touched: they stay named stops.
+
+### 7.0 Verdict: GREEN for stop 3 as amended (the matched 0x004264d0 runs and returns; the exit arm ends at the 0x0047a020 stop again)
+
+| item | result |
+|---|---|
+| the matched 0x004264d0 runs on the exe arm | yes: `PortTop_Bound_004264d0(0000001E) entered`, the 0x00458c70 stand-in line, `matched body returned`, then the 0x00426e10 entry |
+| every bound unit byte-identical in the object build | yes: the 7 new bound rvas and the file-local 0x00426460 IDENTICAL (`portotrace_ck3_bytecheck_rows.txt`) |
+| stops-exit arm (`RO_ROLOAD-pr1`) | ends at **0x0047a020**, exit code 4694048 = `0x0047A020`, 300 ticks, as at checkpoint 2 |
+| stops-count arm (`RO_ROLOADC-pr1`) | the same stop sequence as checkpoint 2, then `0xC0000005` after 0x0055f800 |
+| knob-off control (`RO_ROIMG-pr1`) | unchanged: exit 0, 600 ticks, load length 1 |
+| load length | **not measured**: no knob-on arm reaches the race anchor (`race.reached` false, `race.n` 0). ref1: 108. Checkpoint 1: 3 |
+| first divergence against ref1 | unchanged on all three arms: record 0 (tick 1), `0x00604604` ref 4 exe 0, IDENTICAL-FOR-N 17 |
+
+What does not run: 0x00458c70 is a counting stand-in (7.2), and the body returns right after 0x0042fe30 on the exe
+(no PIZ_FS mount line between entry and return), so its piz / clump / Lua branch (0x00495280, 0x0042a5d0, 0x00426460,
+0x0042a470, 0x0047a130, 0x004952f0) is bound and byte-checked but not executed on this arm.
+
+### 7.1 Change (knob `MASHED_OT_RACELOAD=1`, default OFF, exe only, ORIG_TOP only)
+
+- `Match/PortTop_0040d270.cpp`: 0x004264d0 binds to `PortTop_RL_004264d0` (`Match/PortTop_StandInsRL.cpp`: logs entry with
+  `DAT_0067ea74` and `[0x007d3ff8]`, calls `PortTop_Bound_004264d0` under an SEH filter that logs a fault and passes it on
+  with `EXCEPTION_CONTINUE_SEARCH`, then logs the return). The stand-in `PortTop_StandInRL_004264d0` stays defined, no longer called.
+- Generator `rl_bind_gen.py . 00426e10,004264d0 --write` (listing `rltools/plan_64d0.txt`): **92 bound, 45 reused,
+  33 stops**. Against checkpoint 2: +7 bound (0x004264d0, 0x0042a5d0, 0x00458d00, 0x00458e00, 0x00458fd0, 0x00472690,
+  0x0047a130), +1 stop (0x00458dd0, cpp-unclean: C2664 on `Orig_004e8090`), none of checkpoint 2's 85 bound lost.
+  The dry run's "101 bound, 29 reused, 13 stops" was counted before checkpoint 2's TUs existed. Three generator rules added:
+  - `ALIAS 0x0042fe30 -> RaceEndFlagIfEndMode` (`Match/MatchS07_0042fe30.cpp`): the exe already compiles that matched source
+    once (callee 0x0042f6a0 = `GetRaceSubMode`). `reuse()` skipped it because the source is not a leaf.
+  - `CALLEE_OVERRIDE (0x0042a5d0, 0x004b3bf0) -> MatchS06_0042a5d0_Call004b3bf0`: the source declares 0x004b3bf0 with 1
+    argument, `Orig_004b3bf0` takes 3. The existing forwarder passes 0 / 0 (deviation declared in `Match/MatchS06_0042a5d0.cpp`).
+    0x0042a5d0's source is the only bound source that declares 0x004b3bf0.
+  - `ALIAS 0x00458c70 -> PortTop_StandInRL_00458c70` (lead decision (b), 7.2): the named counting stand-in (logs its first
+    call, returns, no RW core call). The generated `PortTop_00458c70.cpp` and its rsp line are removed by the generator.
+- `rltools/same_source_exe.py` (new): 7 planned binds have a source another exe TU already compiles under `FUN_<rva>`
+  (`exe_body_index.py` does not see those). 6 were bound at checkpoint 2 (0x00423480, 0x00425c00, 0x004262f0, 0x0042a470,
+  0x0042a530, 0x0042a8d0) and stay separate bound copies: a bound copy takes the race-load closure's callee bindings.
+  0x0042a5d0 is bound the same way, with the override above.
+- `exe_sources.rsp` +7 TUs. `re/tools/dual_copy_allowlist.txt` +5 `ORIGTOP-ONLY` lines: 0x004264d0, 0x00426460,
+  0x00472690 (CROSS-TARGET against their .asi MatchS TUs), 0x0042a5d0 (DUP-IN-TARGET against `MatchS06_0042a5d0.cpp`),
+  0x00458e00 (DUP-IN-TARGET against the hand-path `Gameplay/PickupPoolSpawn.cpp`). rva-lint NEW 0.
+  `rltools/prune_allowlist.py` removed three lines whose rva is a file-local function, not a plan key (0x0047bc90,
+  0x0047bcc0 from checkpoint 2, 0x00426460); they were put back (the first two from HEAD, the third by `rl_sync.py`). Its
+  rule needs the file-local keys before it is used again.
+- Stack `verify/savelink_20261023/stacks/ROLOADT.txt` = `@ROLOAD` + `MASHED_CODE_TRAP=1` (diagnostic, used once).
+
+### 7.2 The fault that made 0x00458c70 a stand-in (first arms, before the amendment)
+
+With 0x00458c70 bound (the matched body), both knob-on arms ended `0xC0000005` inside 0x004264d0, before any stop or
+mount line (`D:/MashedWT/PORT-OT-RACE_data3`). The code trap arm logged no trap (the fault is outside 0x00401000..0x005cbfff).
+The SEH filter run (`D:/MashedWT/PORT-OT-RACE_data3b/RO_ROLOAD-pr1.log` lines 827..830):
+
+- fault `C0000005` at `exe+0x23415` = `_RwCore_004c15c0+0x85` (map preferred load address `0x00010000`, symbol at
+  `0x00033390`), original **0x004c1645**. `RwCore_004c15c0` is IDENTICAL in `BYTECHECK.tsv` (192 B).
+- access kind 1 (write), address `0x00000004`, ecx 0, edx `0x11292148`.
+- at the fault `[0x007d3ff8]` = `0x01106060` and `[0x01106060 + 0xbc]` = **0**.
+- The source line (`re/match/rwl01/004c15c0.c`): `*(int *)(*(int *)(DAT_007d3ff8 + 0xbc) + 4) = *(int *)(param_1 + 0xa0) + 8;`
+  in the `(*(byte *)(*(int *)(param_1 + 0xa0) + 3) & 3) == 0` branch. The call is 0x00458c70's
+  `FUN_004c15c0(*(int *)(r->clump + 4))`, first record (index 24).
+- `0x01106060` is the librw RwGlobals record of this arm: `[RW_BIND] RwGlobals: 0x007d3ff8 00FF1C90 (B15 device) -> record
+  01106060; ... strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw`. That record's +0xbc is 0.
+  [UNCERTAIN] Whether +0xbc is the RW core's dirty-frame list head is read from 0x004c15c0's source only; no RW core
+  RwGlobals is built on this arm to compare.
+- The 25 clump fields of the pool at `0x0068b198` (stride 0x50) are non-zero on both sides at tick 299 (ref1 `ckpt204`,
+  exe `ckpt04`, `portotrace_ck3_words_t299.txt`), so the fault is not a NULL clump.
+
+A second difference in the same body, from the same dump: **`0x0067ea74` ref1 1, exe 0** at tick 299; `0x0067e9fc` 0 on
+both. 0x0042fe30 returns `DAT_0067ea74` unless 0x0042f6a0 returns 0xb, so on the exe 0x004264d0 returns after 0x0042fe30
+and the original takes the branch with the piz mount. Which writer sets `0x0067ea74` on the original is not measured.
+
+### 7.3 Builds and checks (after the amendment)
+
+| check | result |
+|---|---|
+| VS2022 build (`MASHED_NO_DEPLOY=1`) | `=== Build OK ===` (first attempt after the amendment stopped at rva-lint NEW 1, 0x00426460, the pruned line, fixed as in 7.1). `mashed_re.exe` SHA-256 `ad14d57e...` |
+| object build (`MASHED_DDKOBJ=1`) | `=== Build OK ===`, `mashed_re_ddk.exe` SHA-256 `3bd2db82...` |
+| `ddkobj.py check` | IDENTICAL 1675/1714 (checkpoint 2: 1667/1706; the merged integration adds units), DIFFERENT 24 (the same 24), not-in-map 15, units linked 1661/1878, refusals 11 |
+
+### 7.4 Arms (object build, root `D:/MashedWT/PORT-OT-RACE_root`, data `D:/MashedWT/PORT-OT-RACE_data3c`)
+
+| | ref1 | `RO_ROIMG-pr1` (knob off) | `RO_ROLOAD-pr1` (stops exit) | `RO_ROLOADC-pr1` (stops count) |
+|---|---|---|---|---|
+| exit | | 0, 11 s | 4694048 (`0x0047A020`), 5 s | `0xC0000005`, 6 s |
+| ticks recorded (meta) | | 600 | 300 | 300 |
+| `race.dn_warp` (load length) | 108 | 1 | not reached | not reached |
+| first divergent record vs ref1 | | 0, `0x00604604` | 0, `0x00604604` | 0, `0x00604604` |
+| detorig_ticks verdict | | IDENTICAL-FOR-N 17 of 600 | 17 of 300 | 17 of 283 |
+| self-tests | | `[REPLAY]` PASS 0/666, `[TRACE]` PASS 0/33294, `[OT_TIMER]` PASS 0/5990 | `[OT_TIMER]` PASS 0/2990 | |
+
+Knob-on log, both arms (`portotrace_ck3_log_extract.txt`): 0x004264d0 entered with `0x1E`, `DAT_0067ea74` 0,
+`[0x007d3ff8]` `0x01106020`; the 0x00458c70 stand-in first call; 0x004264d0 returned; `PortTop_Bound_00426e10(track 30)`
+entered. Exit arm: the 0x0047a020 stop (callers 0x00426e10) and `[OT_TIMER] STOP ... 0x0047A020`. Count arm, stops in
+order: 0x0047a020, 0x00479330, 0x0047b860, 0x00440bc0, 0x0047b8d0, 0x004b7480, 0x00478660, 0x0057c4b0, 0x00559560,
+0x005595d0, 0x0055f800, then the fault (the checkpoint-2 sequence). PREREG predictions 14, 15, 16 hold; prediction 13
+holds for the amended set. Predictions 9 to 11 were stated for the bound 0x00458c70 and were overtaken by the fault in 7.2.
+
+### 7.5 Next
+
+1. The RW layer under the race load: 0x00458c70 (and every other RW core body the closure reaches) needs the RW core's
+   RwGlobals on this arm, not the librw record (L-124). Until then 0x00458c70 stays a stand-in.
+2. The writer of `0x0067ea74` on the exe: with it 0x004264d0 takes the piz / clump branch, whose stops (0x00458dd0,
+   0x00440bc0, 0x0047b860, 0x004b7480, 0x0047b8d0) become reachable.
+3. Unchanged from checkpoint 2: 0x0047a020 / 0x00479330 / 0x00478660 / 0x00462950 (RACE-COURSELUA-BODIES), and the
+   24 cpp-unclean sources of `rltools/cpp_unclean.txt` (0x00458dd0 is one of them; this checkpoint's plan reaches it).
+
+### 7.6 Evidence
+
+Committed (`verify/ro_20261116/`): this section, PREREG sections "Checkpoint 3" and its amendment,
+`portotrace_ck3_log_extract.txt`, `portotrace_ck3_fd_ref1_roload.md`, `portotrace_ck3_fd_ref1_roloadc.md`,
+`portotrace_ck3_words_t299.txt` (ref1 `ckpt204` against the first fault arm's `ckpt04`), `portotrace_ck3_bytecheck_rows.txt`,
+`raw_sha256_PORT-OT-RACE_ck3.txt`, `rltools/plan_64d0.txt`, `rltools/same_source_exe.py`, the generator edits.
+
+Commands:
+- Plan + wrappers: `py -3.12 verify/ro_20261116/rltools/rl_bind_gen.py . 00426e10,004264d0 --write`, then
+  `py -3.12 verify/ro_20261116/rltools/rl_sync.py` (do not run `prune_allowlist.py` until it knows file-local keys).
+- Builds and check: as checkpoint 1.
+- Arms: as checkpoint 1 with `A4_OUT=D:/MashedWT/PORT-OT-RACE_data3c` and arms `RO_ROIMG-pr1 RO_ROLOAD-pr1 RO_ROLOADC-pr1`
+  (fault arms: `_data3` with `RO_ROLOADT-pr1`, `_data3b` with `RO_ROLOAD-pr1`).
+- Words: `py -3.12 verify/ro_20261116/portotrace_words.py D:/MashedWT/RO-REF-NAME_data/ref1/ckpt204.data.bin
+  D:/MashedWT/PORT-OT-RACE_data3/RO_ROLOAD-pr1/ckpt04.data.bin <the 25 clump fields 0x0068b198 + i * 0x50>,0x0067e9fc,0x0067ea74,0x0068b9a8`.
+- First divergence: as checkpoint 1, per arm, into `D:/MashedWT/PORT-OT-RACE_data3c/fd_ref1_<arm>.out`.

@@ -42,6 +42,29 @@
 ],
 []
 ],
+"004264d0": [
+"bind",
+"re/match/s06/004264d0.c",
+"match",
+[
+"0041e980",
+"0042a470",
+"0042a5d0",
+"0042a8d0",
+"0042fe30",
+"00458c70",
+"00458fd0",
+"0047a130",
+"00495280",
+"004952f0",
+"004b3fc0",
+"004b5190",
+"004e6e00"
+],
+[
+"00426460"
+]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -296,6 +319,71 @@
 "RwCore_004c1b10",
 "RwCore/RwCore_004c1b10.cpp"
 ],
+"0042a470": [
+"bind",
+"re/match/s06/0042a470.c",
+"match",
+[
+"004b5350",
+"00550b00"
+],
+[]
+],
+"0042a5d0": [
+"bind",
+"re/match/s06/0042a5d0.c",
+"match",
+[
+"0042a530",
+"004b3bf0"
+],
+[]
+],
+"0042fe30": [
+"reuse",
+"RaceEndFlagIfEndMode",
+"Match/MatchS07_0042fe30.cpp"
+],
+"00458c70": [
+"reuse",
+"PortTop_StandInRL_00458c70",
+"Match/PortTop_StandInsRL.cpp"
+],
+"00458fd0": [
+"bind",
+"re/match/s09/00458fd0.c",
+"match",
+[
+"00458e00",
+"00458fa0"
+],
+[]
+],
+"0047a130": [
+"bind",
+"re/match/s12/0047a130.c",
+"match",
+[
+"00440bc0",
+"0047b9b0"
+],
+[]
+],
+"004b3fc0": [
+"reuse",
+"Orig_004b3fc0",
+"Match/PortTop_004b3fc0.cpp"
+],
+"004b5190": [
+"reuse",
+"RwCore_004b5190",
+"RwCore/RwCore_004b5190.cpp"
+],
+"004e6e00": [
+"reuse",
+"RwCore_004e6e00",
+"RwCore/RwCore_004e6e00.cpp"
+],
 "0047cdc0": [
 "bind",
 "re/match/s13/0047cdc0.c",
@@ -383,16 +471,6 @@
 ],
 []
 ],
-"0042a470": [
-"bind",
-"re/match/s06/0042a470.c",
-"match",
-[
-"004b5350",
-"00550b00"
-],
-[]
-],
 "00496400": [
 "reuse",
 "Orig_00496400",
@@ -440,11 +518,6 @@
 "0047bc90",
 "0047bcc0"
 ]
-],
-"004b3fc0": [
-"reuse",
-"Orig_004b3fc0",
-"Match/PortTop_004b3fc0.cpp"
 ],
 "004c0e50": [
 "reuse",
@@ -622,13 +695,44 @@
 "004b3f50": [
 "stop"
 ],
-"004e6e00": [
-"reuse",
-"RwCore_004e6e00",
-"RwCore/RwCore_004e6e00.cpp"
-],
 "00491590": [
 "stop"
+],
+"004b5350": [
+"bind",
+"re/match/s18/004b5350.c",
+"match",
+[
+"00550b00"
+],
+[]
+],
+"00550b00": [
+"reuse",
+"RwCoreBind_FsFileExists_00550b00",
+"RwCore/RwCore_Bind_00550b00.cpp"
+],
+"004b3bf0": [
+"reuse",
+"Orig_004b3bf0",
+"Match/PortTop_004b3bf0.cpp"
+],
+"00458e00": [
+"bind",
+"re/match/s09/00458e00.c",
+"match",
+[
+"0042fe30",
+"00458d00",
+"00458dd0",
+"004c15c0"
+],
+[]
+],
+"00458fa0": [
+"reuse",
+"TtlSet68b1b0",
+"Match/MatchS09_00458fa0.cpp"
 ],
 "004c0b30": [
 "reuse",
@@ -759,20 +863,6 @@
 "reuse",
 "RwCore_004c5c80",
 "RwCore/RwCore_004c5c80.cpp"
-],
-"004b5350": [
-"bind",
-"re/match/s18/004b5350.c",
-"match",
-[
-"00550b00"
-],
-[]
-],
-"00550b00": [
-"reuse",
-"RwCoreBind_FsFileExists_00550b00",
-"RwCore/RwCore_Bind_00550b00.cpp"
 ],
 "0047b860": [
 "stop",
@@ -995,6 +1085,25 @@
 ],
 []
 ],
+"00458d00": [
+"bind",
+"re/match/s09/00458d00.c",
+"match",
+[
+"004576b0",
+"00472690"
+],
+[]
+],
+"00458dd0": [
+"stop",
+"cpp-unclean: C2664 'int *Orig_004e8090(int *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
+],
+"004c15c0": [
+"reuse",
+"RwCore_004c15c0",
+"RwCore/RwCore_004c15c0.cpp"
+],
 "0055c380": [
 "bind",
 "re/match/rwl05/0055c380.c",
@@ -1119,6 +1228,20 @@
 "RwCore_004c4600",
 "RwCore/RwCore_004c4600.cpp"
 ],
+"004576b0": [
+"reuse",
+"AnyActive4576b0",
+"Match/MatchS09_004576b0.cpp"
+],
+"00472690": [
+"bind",
+"re/match/s11/00472690.c",
+"match",
+[
+"00534870"
+],
+[]
+],
 "0055bad0": [
 "bind",
 "re/match/rwl05/0055bad0.c",
@@ -1142,6 +1265,11 @@
 "0055f450"
 ],
 []
+],
+"00534870": [
+"reuse",
+"RwCore_00534870",
+"RwCore/RwCore_00534870.cpp"
 ],
 "00559b50": [
 "bind",
