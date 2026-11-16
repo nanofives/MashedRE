@@ -1,0 +1,20 @@
+# PORT-OT-RACE checkpoint 2: SHA-256 of every raw file the RESULT cites (not committed) and of both exes
+e4610cf7370a54983b6f53ef867ae7d7d1b1d0b0408e333c1122652a23df77e1 *mashedmod/build/mashed_re.exe
+9b8f1bdc691ae3e1cf8d6f91b098c30b6673c3a41ed4b509cf39442c157c8204 *mashedmod/build/ddkobj/mashed_re_ddk.exe
+7ec8ccbb9d1818e1322f6db3a82692d0cdd94b2d749a40f6dfb71574e0b357bd *mashedmod/build/ddkobj/BYTECHECK.tsv
+ba583a484e34d0d20b65481f57f011ae5873f7f4d30d446c146c1dc49e9ddb8a *D:/MashedWT/PORT-OT-RACE_build_vs2.log
+abcad0d4fec0d1365539bb2a959ded63846a0dc534d1d14cb723b1c81e683b7c *D:/MashedWT/PORT-OT-RACE_build_ddk2.log
+71968aa1a257301a52b9afe7caff264e351a1aecb94f7e207f69619818e11f45 *D:/MashedWT/PORT-OT-RACE_ddkcheck2.log
+64d59b03f8979a5f85dc5a54f4db22e708d360f56d78e071b7b4091b4d038535 *D:/MashedWT/PORT-OT-RACE_data2/arms2.out
+3536b6396aa0cd7243c30c9f6c36ae8109f96f7f8d6245be2ce799944e8c1b86 *D:/MashedWT/PORT-OT-RACE_data2/RO_ROIMG-pr1.log
+c61d5caeb5a7210735925021b4142cced617856dc47dcd4920434291bf99a756 *D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOAD-pr1.log
+2941efea1e72e8f13940482a0f9168c9062ca5a45accbd3ca742792e2887cac2 *D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOADC-pr1.log
+9cea2bd1f0bb633d9c44311ee76e7f6ee8041acc34ba13ea1a82ccee79d0304a *D:/MashedWT/PORT-OT-RACE_data2/fd_ref1_RO_ROIMG-pr1.out
+919a47cbadc08e0ea72c39baa0fb0f31102f7488034dc69ccfdcf03033e51478 *D:/MashedWT/PORT-OT-RACE_data2/fd_ref1_RO_ROLOAD-pr1.out
+1a87bbc2dd357be37b9e68855f52f8891eb2302c7f32fa73a4455b9c0a0524e7 *D:/MashedWT/PORT-OT-RACE_data2/fd_ref1_RO_ROLOADC-pr1.out
+fb996c38e34ab4528eb0dd5cc2d2b68c6a7895279aa6802f7d4321176f1220af *D:/MashedWT/PORT-OT-RACE_data2/RO_ROIMG-pr1/meta.json
+8698e7126b004e65b8a264faa6ce1081d8fba5f6121b8466e6ead35032677ba7 *D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOAD-pr1/meta.json
+5eaac663ad837b1a4eafbed579b183ea3bd802bf94d650fe04ef5ec007099775 *D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOADC-pr1/meta.json
+fa461c4ca19dff54bc8a39a8fef4aef923dd57f746bc0cd10f5cb2d239301c70 *D:/MashedWT/PORT-OT-RACE_data2/RO_ROIMG-pr1/ticks.bin
+db39554e63aa4553f1ddbebbc1dcd00e580c19fb9020842e6379b162682d622a *D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOAD-pr1/ticks.bin
+c7907ca5672b2c7d446131d0f2be38daea608ce52f8526c5131ab1d26b7301fa *D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOADC-pr1/ticks.bin

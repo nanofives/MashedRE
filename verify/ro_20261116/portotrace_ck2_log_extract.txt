@@ -1,0 +1,104 @@
+=== RO_ROIMG-pr1 (D:/MashedWT/PORT-OT-RACE_data2/RO_ROIMG-pr1.log), lines from the warp on
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] frame 300 before 0x004929d0: DAT_00771968 1 -> 2 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] rva 0x0040d270: stand-in (PORT-TOP-05) course load, args table=005F2728 row=0; the hand path loaded the course at the menu launch
+[ORIG_TOP] frame 300 after 0x004929d0: DAT_00771968 2 -> 3 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [REPLAY] pins at anchor (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] normalisation at anchor: 299 PIN dwords written, 1 changed
+[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+[ORIG_TOP] rva 0x004111c0: stand-in (PORT-TOP-05) race tick: the hand session runs the race (counted, not run)
+[ORIG_TOP] [TRACE] checkpoint k 5 at tick 301: N 904 phase 3, ckpt05.data.bin
+[ORIG_TOP] [REPLAY] tick 360: Q 0x43938778, DAT_007f1030 340122583, phase 3, wrapped QPC reads 1082 (boot 4), passed 0
+[ORIG_TOP] [OT_TIMER] call 360: now 340122583, DAT_007f1000 50, DAT_007f0ffc 126, DAT_00771984 -49872, DAT_007f0ff0 3000, DAT_00771978 0; checks 3590 failed 0
+[ORIG_TOP] frame 360: 0x00492d30 (matched) returned 1, phase 3, 0x0043dfd0 stand-in calls 300, 0x004111c0 calls 61
+[ORIG_TOP] frame 360 rendered (1)
+[ORIG_TOP] [REPLAY] tick 480: Q 0x44C4B4A0, DAT_007f1030 346122595, phase 3, wrapped QPC reads 1442 (boot 4), passed 0
+[ORIG_TOP] [OT_TIMER] call 480: now 346122595, DAT_007f1000 50, DAT_007f0ffc 378, DAT_00771984 -49620, DAT_007f0ff0 9000, DAT_00771978 0; checks 4790 failed 0
+[ORIG_TOP] frame 480: 0x00492d30 (matched) returned 1, phase 3, 0x0043dfd0 stand-in calls 300, 0x004111c0 calls 181
+[ORIG_TOP] frame 480 rendered (1)
+[ORIG_TOP] [TRACE] checkpoint k 6 at tick 600: N 1799 phase 3, ckpt06.data.bin
+[ORIG_TOP] [REPLAY] tick 600: Q 0x45F5E1C8, DAT_007f1030 352122607, phase 3, wrapped QPC reads 1800 (boot 4), passed 0
+[ORIG_TOP] [OT_TIMER] call 600: now 352122607, DAT_007f1000 50, DAT_007f0ffc 630, DAT_00771984 -49368, DAT_007f0ff0 15000, DAT_00771978 0; checks 5990 failed 0
+[ORIG_TOP] cfglog: Calling AppDestroy
+[ORIG_TOP] 0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=095747B0 0x006905b4=09574850 0x0067f18c=095748F0 0x0067f190=095742B0, DAT_005f9bd8=9, DAT_00771a04=0, DAT_007f0a30=00000000, DAT_008a94a8=00000000
+[RW_BIND] RwTexDictionaryDestroy(0x0964D170) -> rw::TexDictionary::destroy
+[RW_BIND] 0x004d41e0(0x00000000): shim, null, nothing to destroy
+[RW_BIND] 0x004d41e0(0x00000000): shim, null, nothing to destroy
+[RW_BIND] RwGlobals +0x10c free(00000000) -> rw::Engine::memfuncs.rwfree
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11383FD8) -> rw::Clump::destroy
+[PORT-TOP] rva 0x0041e0d0: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RwTexDictionaryDestroy(0x00000000) -> rw::TexDictionary::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x00000000) -> rw::Clump::destroy
+[PORT-TOP] rva 0x0041b660: stand-in, not run (PORT-TOP-04C)
+[RW_BIND] RpAtomicDestroy(PTank record 10D8E2E8): material texture 04C3BF50 released, record freed
+[RW_BIND] RwTextureDestroy(0x04C3BF50) -> rw::Texture::destroy
+[RW_BIND] RpAtomicDestroy(PTank record 10D8E960): material texture 04C3BF50 released, record freed
+[RW_BIND] RwTextureDestroy(0x04C3BF50) -> rw::Texture::destroy
+[ORIG_TOP] rva 0x00412010: matched body (records built, of 6) (6, 6) (PORT-OT-PICKUPPOOL)
+[RW_BIND] RpClumpDestroy(0x11383F30) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11384208) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11383E18) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11383EC0) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11384080) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11384010) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11383DA8) -> rw::Clump::destroy
+[ORIG_TOP] rva 0x00458880: matched body after the hand pickup code released its binds (released, foreign) (0, 0) (PORT-OT-PICKUPPOOL)
+[ORIG_TOP] rva 0x00458880: POWERUPINIT-A: builder clumps in the pool, entries the hand tick borrowed (clumps, lent) (25, 0) (PORT-OT-PICKUPPOOL)
+[RW_BIND] RpClumpDestroy(0x113840B8) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11384358) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x11384390) -> rw::Clump::destroy
+[RW_BIND] RpClumpDestroy(0x113841D0) -> rw::Clump::destroy
+=== RO_ROLOAD-pr1 (D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOAD-pr1.log), lines from the warp on
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] frame 300 before 0x004929d0: DAT_00771968 1 -> 2 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004ccde0: stand-in (PORT-OT-RACE) skipped: list head 0x007d45cc is 0 (RW resource list not initialised on this path), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: stand-in (PORT-OT-RACE) 351 B, 14 callees, first call arg 0000001E (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("pc/COURSE.LUA") call 1: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("COURSE.LUA") call 2: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] rva 0x0047A020: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC3D, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x0047A020 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0004AC3D
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001BCA30; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+=== RO_ROLOADC-pr1 (D:/MashedWT/PORT-OT-RACE_data2/RO_ROLOADC-pr1.log), lines from the warp on
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] frame 300 before 0x004929d0: DAT_00771968 1 -> 2 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004ccde0: stand-in (PORT-OT-RACE) skipped: list head 0x007d45cc is 0 (RW resource list not initialised on this path), first call arg 00000000 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: stand-in (PORT-OT-RACE) 351 B, 14 callees, first call arg 0000001E (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("pc/COURSE.LUA") call 1: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("COURSE.LUA") call 2: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] rva 0x0047A020: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC3D, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00479330: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC51, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] cfglog: Searching piz for LAPDATA.LUA 
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("pc/LAPDATA.LUA") call 3: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("LAPDATA.LUA") call 4: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] rva 0x0047B860: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B2B6, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00440BC0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047a0f0, return 0004B2BA, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0047B8D0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B2C9, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004B7480: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b880, return 0004B29B, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00478660: race-load stop (PORT-OT-RACE), call 1, callers 0x00426e10, return 0004AC7F, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0057C4B0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047f4c0, return 0004B8FD, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00559560: race-load stop (PORT-OT-RACE), call 1, callers 0x00559b50, return 0004CA1E, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x005595D0: race-load stop (PORT-OT-RACE), call 1, callers 0x00559b50, return 0004CA51, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0055F800: race-load stop (PORT-OT-RACE), call 1, callers 0x0055f450, return 0004CF6A, returns 0 (MASHED_OT_RL_STOPS=count)
