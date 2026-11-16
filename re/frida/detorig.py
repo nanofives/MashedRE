@@ -274,7 +274,7 @@ def run(args):
         if args.crash_catch:
             # PROV-CRASH-12: first-fault catcher (exception handler, no Interceptor) plus a main-thread EIP sampler when
             # the clock-call count N stalls for --crash-catch seconds (detorig.js crashArm). Written to crash.jsonl.
-            cfg["crash"] = {"file": str(out / "crash.jsonl").replace("\\", "/"), "stall": args.crash_catch, "system": args.crash_system, "exit": args.crash_exit}
+            cfg["crash"] = {"file": str(out / "crash.jsonl").replace("\\", "/"), "stall": args.crash_catch, "system": args.crash_system, "exit": args.crash_exit, "fpmask": args.crash_fpmask}
         if args.prov or args.prov_count:
             # PROV-INSITU: DDK bodies (re/tools/prov/provlink.py JSON) behind inline JMPs from the warp on, and/or
             # native call counters only (census). detorig.js provInstall.
@@ -587,6 +587,7 @@ if __name__ == "__main__":
     ap.add_argument("--prov-warm", choices=["", "anchor"], default="", help="PROV-WRITESET-SCENARIO: with --prov-wstride, step no call before the race anchor")
     ap.add_argument("--crash-catch", type=float, default=0, help="PROV-CRASH-12: arm a first-fault exception handler at the install and sample the main thread's EIP once N stalls this many seconds (crash.jsonl)")
     ap.add_argument("--crash-system", action="store_true", help="T2-RACEPATH-CENSUS: with --crash-catch, also log the first 16 exceptions Frida types 'system' (logging only)")
+    ap.add_argument("--crash-fpmask", action="store_true", help="T2-RACEPATH-CENSUS: with --crash-catch, a native first-in-chain VEH masks the x87/SSE precision exception on 0xC000008F / 0xC00002B5 and continues (logged in prov.json fpmask)")
     ap.add_argument("--crash-exit", action="store_true", help="T2-RACEPATH-CENSUS: with --crash-catch, record a backtrace at ExitProcess / TerminateProcess / NtTerminateProcess / RtlExitUserProcess")
     ap.add_argument("--prov-snap", default="", help="T2-RACEPATH-CENSUS: comma list rva[:enter|leave]; with --prov-count, copy every counter at the first enter/leave of each (prov.json snaps)")
     ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")

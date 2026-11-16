@@ -4,6 +4,7 @@
 #     function's extent (entry .. body_end) and contain no ret / jmp / int3 before 5 bytes
 #   - no direct branch or call anywhere in .text, and no jump-table entry, targets a byte
 #     strictly inside that window
+#   - the entry is not the return address of a call (c7: 0x004a338d follows acos 0x004a3384's call of 0x004a70d5)
 # Excluded entries are written with their reason; the census reports them as "not instrumented".
 #   py -3.12 verify/census_20261116/census_list.py <MASHED.exe> <out_list.txt> <out_excluded.tsv>
 import csv, sys
@@ -25,10 +26,12 @@ with open(WT / "re/console/pc_funcs.csv", newline="") as f:
         funcs.append((int(r["entry"], 16), int(r["body_end"], 16), r["name"]))
 
 # direct branch / call targets over every function body (linear sweep per body)
-targets = set()
+targets = set(); retsites = set()
 for e, end, _ in funcs:
     code = img[e - base:end - base + 1]
     for ins in md.disasm(code, e):
+        if ins.group(CS_GRP_CALL):
+            retsites.add(ins.address + ins.size)
         if ins.group(CS_GRP_JUMP) or ins.group(CS_GRP_CALL):
             for op in ins.operands:
                 if op.type == X86_OP_IMM:
@@ -63,6 +66,8 @@ for e, end, name in funcs:
         why = "window not decodable"
     if not why and e + n - 1 > end:
         why = f"window {n} B past body_end 0x{end:08x}"
+    if not why and e in retsites:
+        why = "entry is the return address of a call (a counter would run between the callee's ret and this code)"
     if not why:
         inner = sorted(t for t in targets if e < t < e + n)
         if inner:

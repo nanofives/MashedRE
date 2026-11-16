@@ -735,7 +735,7 @@ function provSnap() { if (PV_ARM) PV_ARM.writeU32(1); if (PV) for (let i = 0; i 
 function provReport(stage) {
   if (!PV) return;
   const rows = PV.names.map((rva, i) => ({ rva, calls_boot: PV.atTick1 ? PV.atTick1[i] : null, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
-  send({ kind: 'prov', stage: stage || 'end', rows, installed: PV.installed, snaps: PV.snaps || null });
+  send({ kind: 'prov', stage: stage || 'end', rows, installed: PV.installed, snaps: PV.snaps || null, fpmask: fpmReport() });
 }
 // T2-RACEPATH-CENSUS (cfg.prov.snap): a copy of every census counter at the FIRST enter (or leave) of each listed RVA,
 // so a run splits the counts at function boundaries too (example: the audio init 0x004669b0 enter / leave). One JS
@@ -763,6 +763,17 @@ function provSnapInstall() {
 // thread's context 40 times when N (main-thread clock calls) has not moved for cfg.crash.stall seconds (a hang).
 // Each record is written to cfg.crash.file synchronously, then sent: the process can die before a send is delivered.
 let CR_FILE = null, CR_HANDLER = null, CR_DONE = 0, CR_SYS = 0;
+let FPM = null;   // --crash-fpmask log (crashArm)
+function fpmReport() {
+  if (!FPM) return null;
+  const n = FPM.readU32(), rows = [];
+  for (let i = 0; i < Math.min(n, 16); i++) {
+    const o = FPM.add(16 + i * 32), d = [];
+    for (let k = 0; k < 8; k++) d.push('0x' + (o.add(k * 4).readU32() >>> 0).toString(16));
+    rows.push({ code: d[0], eip: d[1], fip: d[2], fcw: d[3], fsw: d[4], mxcsr: d[5], tid: d[6], esp: d[7] });
+  }
+  return { count: n, rows };
+}
 function crWrite(rec) {
   try { if (!CR_FILE) CR_FILE = new File(CFG.crash.file, 'a'); CR_FILE.write(JSON.stringify(rec) + String.fromCharCode(10)); CR_FILE.flush(); } catch (e) { }
   try { send(Object.assign({ kind: 'crash' }, rec)); } catch (e) { }
@@ -803,8 +814,47 @@ function crashArm() {
     return false;
   };
   Process.setExceptionHandler(CR_HANDLER);
+  // T2-RACEPATH-CENSUS (--crash-fpmask): a native vectored handler, first in the chain (ahead of Frida's), for
+  // STATUS_FLOAT_INEXACT_RESULT (0xC000008F) and STATUS_FLOAT_MULTIPLE_TRAPS (0xC00002B5). It logs the first 16
+  // (code, eip, x87 FIP, FCW, FSW, MXCSR, tid, esp), masks the precision exception (x87 FCW bit 5 in FloatSave and in the
+  // FXSAVE area, MXCSR PM), clears the pending x87 exception flags, and continues. An inexact x87 / SSE result is stored
+  // whether PE is masked or not, so the values the program computes do not change; only the trap is gone.
+  if (CFG.crash.fpmask) {
+    const fpm = K(Memory.alloc(Process.pageSize));
+    for (let i = 0; i < 1024; i++) fpm.add(i * 4).writeU32(0);
+    const vcm = K(new CModule(`
+extern unsigned int fpm[];
+extern unsigned int __attribute__((stdcall)) gtid(void);
+__attribute__((stdcall)) int veh(unsigned int **p) {
+  unsigned int *rec = p[0]; unsigned char *c = (unsigned char *)p[1];
+  unsigned int code = rec[0];
+  if (code != 0xC000008F && code != 0xC00002B5) return 0;
+  unsigned int n = fpm[0]++;
+  if (n < 16) {
+    unsigned int *o = fpm + 4 + n * 8;
+    o[0] = code; o[1] = *(unsigned int *)(c + 0xB8); o[2] = *(unsigned int *)(c + 0x28);
+    o[3] = *(unsigned int *)(c + 0x1C); o[4] = *(unsigned int *)(c + 0x20); o[5] = *(unsigned int *)(c + 0xCC + 0x18);
+    o[6] = gtid(); o[7] = *(unsigned int *)(c + 0xC4);
+  }
+  *(unsigned int *)(c + 0x1C) |= 0x20;
+  *(unsigned int *)(c + 0x20) &= ~0x80BFu;
+  *(unsigned short *)(c + 0xCC) |= 0x20;
+  *(unsigned short *)(c + 0xCE) &= (unsigned short)~0x80BFu;
+  *(unsigned int *)(c + 0xCC + 0x18) |= 0x1000;
+  *(unsigned int *)(c + 0xCC + 0x18) &= ~0x20u;
+  return -1;
+}
+`, { fpm, gtid: Process.getModuleByName('kernel32.dll').getExportByName('GetCurrentThreadId') }));
+    const AVEH = new NativeFunction(Process.getModuleByName('kernel32.dll').getExportByName('AddVectoredExceptionHandler'), 'pointer', ['uint32', 'pointer'], 'stdcall');
+    const vk = Object.keys(vcm).find((k) => k === 'veh' || k === '_veh@4' || k.indexOf('veh') >= 0);   // stdcall export may be decorated
+    if (!vk) throw new Error('fpmask: no veh export in ' + Object.keys(vcm).join(','));
+    K(AVEH(1, vcm[vk]));
+    FPM = fpm;
+  }
   // T2-RACEPATH-CENSUS (--crash-exit): a process exit with no exception (ExitProcess / TerminateProcess) records who called it
   if (CFG.crash.exit) {
+    // c6: a JS hook on mainCRTStartup's __except filter (0x004a4d4f -> 0x004aba86) killed the process with no exit call,
+    // so the fault is handled natively instead (cfg.crash.fpmask below).
     const ex = [['kernel32.dll', 'ExitProcess'], ['kernel32.dll', 'TerminateProcess'], ['ntdll.dll', 'NtTerminateProcess'], ['ntdll.dll', 'RtlExitUserProcess']];
     for (const [m, f] of ex) {
       let a = null; try { a = Process.getModuleByName(m).getExportByName(f); } catch (e) { }

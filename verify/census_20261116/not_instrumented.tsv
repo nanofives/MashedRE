@@ -14,6 +14,12 @@ rva	name	reason
 0x00496490	FUN_00496490	ret at +2 before 5 bytes
 0x0049c690	FUN_0049c690	ret at +3 before 5 bytes
 0x004a26e0	FUN_004a26e0	ret at +2 before 5 bytes
+0x004a2dcd	FUN_004a2dcd	entry is the return address of a call (a counter would run between the callee's ret and this code)
+0x004a338d	FUN_004a338d	entry is the return address of a call (a counter would run between the callee's ret and this code)
+0x004a3678	FUN_004a3678	entry is the return address of a call (a counter would run between the callee's ret and this code)
+0x004a371d	FUN_004a371d	entry is the return address of a call (a counter would run between the callee's ret and this code)
+0x004a37cd	FUN_004a37cd	entry is the return address of a call (a counter would run between the callee's ret and this code)
+0x004a39dd	FUN_004a39dd	entry is the return address of a call (a counter would run between the callee's ret and this code)
 0x004aca5f	__IsZeroMan	branch target inside window: 0x004aca61
 0x004ae28c	FUN_004ae28c	ret at +2 before 5 bytes
 0x004b1c1c	FUN_004b1c1c	branch target inside window: 0x004b1c1e
@@ -25,4 +31,5 @@ rva	name	reason
 0x0051085a	FUN_0051085a	ret at +0 before 5 bytes
 0x005bc750	FUN_005bc750	ret at +2 before 5 bytes
 0x005c2f58	FUN_005c2f58	branch target inside window: 0x005c2f5c
+0x005c2f8d	FUN_005c2f8d	entry is the return address of a call (a counter would run between the callee's ret and this code)
 0x005c9d00	FUN_005c9d00	ret at +2 before 5 bytes
