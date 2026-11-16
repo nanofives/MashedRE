@@ -13,6 +13,7 @@ Rows parked here on 2026-11-16 (ledger stage blocked, note "parked: UNCERTAIN_RE
 | HB-MASHEDLOCK-LEGACY-MARKER-DUALWRITE | old-code worktrees miss new-dir markers after the 1 h window | only if a long-lived old worktree appears | verify/hb_20261115/ |
 | RO-CTL-FOCUSWORD | 0x0077391c flips at tick 31 in one run | name the writer with --watch | verify/ro_20261115/RESULT_RO-CTL-WARP-N.md |
 | RWC-IMGREAD-DEPTH | frame-route PNG/BMP wrappers build 32-bit images, original depth unknown | original-side read of +0x0c/+0x18 of the returned RwImage | verify/rwcframetitlelogo_20261115/ |
+| HUDINIT-C-FONT-TEARDOWN-STATE | frame-route AppDestroy now frees the font through RwCore_00555830 (matched); not compared with the original's teardown (font entry objs, +0x12c buffer, freelist state after 0x00555830) | original-side write/return watch on 0x00555830 at AppDestroy (handle, entry count +0x130, return) vs the port's vs_frameT/ddk_frameT | verify/hudinit_20261116/RESULT_HUDINIT-C.md |
 | RO-CTL-PAD-68BC (+ -READWATCH) | 10 pad words of the 0x0045a736 copy have no reader | 5 rotated rw-watch runs | verify/ro_20261115/RESULT_RO-MASKS-REGEN.md |
 | MATCH-ARITY-GETTER-ARGS | 5 sites where a zero-arg getter sits between the original's pushes | read each site's VS2022 object | verify/MATCH-ARITY-TRIAGE-1/ |
 | MATCH-ARITY-TAILJMP-PASSTHRU | 1-param bodies tail-jumping into 3/4-param bodies | same | verify/MATCH-ARITY-TRIAGE-1/ |
