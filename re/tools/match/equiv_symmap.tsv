@@ -133,3 +133,9 @@ _printf	0x004a2cbd	32
 _strchr	0x004a2fd0	5
 _strrchr	0x004a3480	2
 _strstr	0x004a3860	1
+# hand rows, PROV-INSITU-REF1 2026-11-21 (verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md): name	address	libid	citation
+__CIpow	0x004a2d70	libid	hooks.csv 004a2d70 libid identical __CIpow (libcmt pow.obj)
+__CIacos	0x004a3370	libid	hooks.csv 004a3370 libid identical __CIacos (libcmt acos.obj); the original 0x00487280 calls 0x004a3384 at 0x00487c2a, not this entry
+@__fload_withFB@0	0x004a70d5	libid	hooks.csv 004a70d5 libid identical __fload_withFB (libcmt common.obj); original call 0x005c2f88 -> 0x004a70d5
+__rand	0x005c229b	libid	hooks.csv 005c229b libid identical _rand (libcmt rand.obj); source name has one more underscore; original call 0x00564317 -> 0x005c229b
+__pow	0x004a2d30	libid	hooks.csv 004a2d30 libid identical _pow (libcmt pow.obj); source name has one more underscore; original call 0x005b91c2 -> 0x004a2d30
