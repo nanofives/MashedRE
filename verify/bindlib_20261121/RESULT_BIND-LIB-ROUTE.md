@@ -1,6 +1,6 @@
 # RESULT BIND-LIB-ROUTE (run 55, section LIB, binder tool row)
 
-Verdict: GREEN. The binder has a `lib` binding kind next to `crt`. No RVA is bound by this row, and every generated
+Verdict: GREEN on the row scope; HANDOFF for one parent condition (section "Pending" at the end). The binder has a `lib` binding kind next to `crt`. No RVA is bound by this row, and every generated
 output is unchanged (shown below).
 
 Base: `orch/integration` @ 39ee297f2. Worker: claude-opus-5-5 medium on claude2.
@@ -111,3 +111,15 @@ Not run, by row kind: G-CTRL, B, 12x4 captures, knob boot (the row binds nothing
   [UNCERTAIN] line above).
 - [UNCERTAIN] line for the register, test in one line: "RACE-LOAD-LUA: for each lua `lib` line, the symbol equals the
   hooks.csv libid note's symbol of that rva, and `porttop_bind.py plan` resolves it against mashedmod/deps/lua-4.0".
+
+## Pending (parent condition, run 55 L0 via the LIB lead)
+
+HB-LOCK-ENFORCE (merge drain 1) adds a 4-line wait at the top of `cmd_selftest` in `re/tools/bind/porttop_bind.py`, the
+file this row edits (this row puts `bad = selftest_libs()` on that same first line). Remaining step, once the lead says
+drain 1 has merged (on claude3, because git merge prompts on claude2): `git -c merge.autoStash=false merge orch/integration`,
+resolve porttop_bind.py by keeping both (the HB-LOCK-ENFORCE wait first, then `bad = selftest_libs()`), re-run the binder
+selftest after `mashed_lock.py status` (RULE 7 bar: failures a subset of the head's), re-run the unit test, and re-run
+both builds + ddkobj check if the merge touched exe sources.
+
+Extra check done here: CRLF copies of the fixture sources (core.autocrlf checkouts) resolve the same way (fix_add :10,
+fix_mul :15, fix_static2 refused, fix_dup refused at fix_api.c:21 and fix_more.c:2).
