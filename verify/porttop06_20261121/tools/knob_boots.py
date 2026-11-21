@@ -9,7 +9,9 @@ LOCK = r'C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\
 SLOT = r'C:\Users\maria\Desktop\Proyectos\.claude\scripts\testslot\proyectos_test_slot.py'
 BASE = ['MASHED_ORIG_TOP=1', 'MASHED_OT_RACELOAD=1', 'MASHED_DET_FRAMES=3000']
 runs = [('knob_vs_off', 'mashed_re_vs5.exe', []), ('knob_vs_on', 'mashed_re_vs5.exe', ['MASHED_OT_RACEFRAME=1']),
-        ('knob_ddk_off', 'mashed_re_ddk2.exe', []), ('knob_ddk_on', 'mashed_re_ddk2.exe', ['MASHED_OT_RACEFRAME=1'])]
+        ('knob_ddk_off', 'mashed_re_ddk2.exe', []), ('knob_ddk_on', 'mashed_re_ddk2.exe', ['MASHED_OT_RACEFRAME=1']),
+        # after the 3 PROVISIONAL.tsv held-copy rows (object build ddk3)
+        ('knob_ddk3_off', 'mashed_re_ddk3.exe', []), ('knob_ddk3_on', 'mashed_re_ddk3.exe', ['MASHED_OT_RACEFRAME=1'])]
 sel = sys.argv[1:] or [r[0] for r in runs]
 for i, (label, exe, extra) in enumerate([r for r in runs if r[0] in sel], 1):
     env = dict(os.environ, KNOB_EXE='%s/%s' % (DATA, exe), PORTTOP_OUT=DATA)

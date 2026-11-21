@@ -5,8 +5,12 @@ cmwpwu26q5v0hnz1cierfryfw. Gates: not run, top-down row (no G-CTRL, no B, no 12x
 
 ## 0. Verdict
 
-GREEN for what this row binds and checks: both builds green, every bound `c4=match` unit IDENTICAL in ddkobj, binder selftest
-unchanged from the head's baseline, all four knob boots (VS2022 and object build, sub-knob OFF and ON) rc 0 with self-test PASS (section 5).
+**HELD (second pass, section 4a).** The 6 held-copy allowlist lines cannot go into the ORIGTOP-ONLY class, so they still raise the D4
+burn-down count (frozen, L-127). The rva-lint refuses the tag: both bodies of each finding are in marked ORIG_TOP TUs (section 4a). Everything
+else is green: both builds, the binder selftest (unchanged from the head's baseline), and six knob boots (VS2022 and object build, sub-knob
+OFF and ON, plus the two object-build arms after the PROVISIONAL rows), all rc 0 with self-test PASS. The 3 held copies are now
+PROVISIONAL.tsv rows (class P3, NOT-PROVEN). As a result 3 bound `c4=match` neighbours fell back to their VS2022 bodies in the object build
+(section 4a). First pass (before the L0 items): GREEN, every bound `c4=match` unit IDENTICAL in ddkobj.
 
 **The bound race-frame closure cannot execute until the top-down race load completes.** 0x004111c0 is called only from
 cases 3 / 6 of the frame machine 0x00492d30 (`re/match/s15/00492d30.c:72`, `FUN_004111c0(0x32)`). On the knob path the
@@ -127,6 +131,61 @@ this tree's list unchanged. This tree adds:
 A 7th line (0x00454170) went stale when 0x00454790 became cpp-unclean and was removed. Same-source groups (3) were resolved instead:
 one wrapper per source.
 
+## 4a. L0 items (second pass, 2026-11-21)
+
+**Item 1: equiv on the 3 static held copies** (`re/tools/match/equiv.py`; this branch's copy is identical to orch/integration 34c823375,
+which contains 1ed7ceb1a). Each got a `re/match/PROVISIONAL.tsv` row whose source column is the caller's source that holds the copy (class
+P3, status provisional, never C4). None is EQUIV, so nothing goes to ADMITTED.
+
+| rva | caller source (holds the copy) | match.py in that source | equiv verdict, first difference |
+|---|---|---|---|
+| 0x0041b7a0 | re/match/s04/0041c090.c | 30.8% | NOT-PROVEN branch-condition: region ours +0x3da / orig 0x0041b8e7 (`sle ... 0x27` against `slt ... 0x28`) |
+| 0x0041c410 | re/match/s04/0041c410.c | 99.4% | NOT-PROVEN x87-region: region ours +0x342 / orig 0x0041c752, x87 instruction 5: `fld m4[esp+0x30]` against `fld m4[esp+0x2c]` |
+| 0x0041ce00 | re/match/s04/0041d830.c | 38.5% | NOT-PROVEN branch-condition: region ours +0x2e / orig 0x0041ce36 (`ult 0x2, ret(0x40b420)` against `ult 0x4, ret(0x40b420)+0x2`) |
+
+Raw verdicts: `equiv_0x0041b7a0.txt`, `equiv_0x0041c410.txt`, `equiv_0x0041ce00.txt` in the data dir.
+
+**Effect on the object build (re-run, ddk3 / chk2).** ddkobj on this base keys the provisional skip by rva only (`ddkobj.py:282`
+`load_provisional`; L-178's (rva, source) key is not on a9e5b4c8a). Each held copy is a static register-convention function, so with the copy
+provisional the whole unit fails `externalized-static-register-convention` (`ddkobj_build.json` units 2084 / 2086 / 2088). Its 100% neighbour
+then loses its DDK object and runs its VS2022 body in the object build:
+
+| provisional / listed unit | 100% neighbour that fell back to VS2022 | cause (`ddkobj_build.json` unit status) |
+|---|---|---|
+| 0x0041b7a0 (re/match/s04/0041c090.c) | 0x0041c090 (bound `c4=match`, was IDENTICAL) | fail:externalized-static-register-convention |
+| 0x0041c410 (re/match/s04/0041c410.c) | 0x0041cc50 (bound `c4=match`, was IDENTICAL) | fail:externalized-static-register-convention |
+| 0x0041ce00 (re/match/s04/0041d830.c) | 0x0041d830 (bound `c4=match`, was IDENTICAL) | fail:externalized-static-register-convention |
+
+No other unit changed status: the 11 earlier `fail:` lines are unchanged and the 3 new ones are these units.
+
+**ddkobj line, second pass:** `IDENTICAL 2041/2123, DIFFERENT 54, not-in-map 28, units linked 2038/2278, refusals 15
+(externalized-static-register-convention=11, wrapper-redefines-globals=4)`. First pass: IDENTICAL 2044/2129, DIFFERENT 57, linked 2041,
+refusals 12. So 210 of the 213 bound `c4=match` bodies are IDENTICAL, and 3 run VS2022 bodies in the object build (table above).
+Object-build exe after the change: sha256 `5568b3a11b1395bc1d65f615eadd2d7f68ee8d87f85fa6315c55135222e0a719`. The run again used the
+uncommitted decode fix of 296c82aca, and the file was restored before commit.
+
+**Dual-body count (rva-lint, branch):** 519 findings (CROSS-TARGET 317, DUP-IN-TARGET 202), all allowlisted, NEW 0. ORIGTOP-ONLY 507. **D4
+burn-down 12, against 6 on the head** (a9e5b4c8a's allowlist has 6 non-ORIGTOP lines). The +6 is the held-copy lines.
+
+**Item 2: the 6 held-copy lines in the ORIGTOP-ONLY class: not possible, so the row is HELD.** Test: the line
+`ORIGTOP-ONLY DUP-IN-TARGET:00485c20:Match/PortTop_00485e50.cpp,Match/PortTop_00485ef0.cpp` (temporary edit, reverted) makes the lint fail:
+`is tagged ORIGTOP-ONLY but is not of the class (needs exactly one body in a TU marked // RVA-LINT: ORIGTOP-ONLY beside an unmarked one)`.
+The concrete reason is the same for all 6. The second body is the other caller's own static copy, in a second ORIG_TOP wrapper of this row.
+It runs on the same path as the first: MASHED_ORIG_TOP + MASHED_OT_RACEFRAME, through that caller.
+
+| rva | body 1 (caller source holding it) | body 2 (caller source holding it) |
+|---|---|---|
+| 0x00421980 | Match/PortTop_004219f0.cpp (s05/004219f0.c:38) | Match/PortTop_004222d0.cpp (s05/004222d0.c:45) |
+| 0x004219a0 | Match/PortTop_004219f0.cpp (s05/004219f0.c:44) | Match/PortTop_004222d0.cpp (s05/004222d0.c:51) |
+| 0x004773f0 (DUP + CROSS) | Match/PortTop_00477730.cpp (s12/00477730.c:42) | Match/PortTop_004777d0.cpp (s12/00477490.c:47); the CROSS line adds the asi-only Match/MatchS12_004773f0.cpp |
+| 0x00485c20 | Match/PortTop_00485e50.cpp (s14/00485c20.c:51) | Match/PortTop_00485ef0.cpp (s14/00485ef0.c:64) |
+| 0x0048d0f0 | Match/PortTop_0048d360.cpp (s15/0048d360.c:71) | Match/PortTop_0048d540.cpp (s15/0048d540.c:71) |
+
+Ways out, each one a decision for L0 / the lead, not taken here: (a) compile one copy out per pair with a source guard and bind the second
+caller to the first copy. That needs the copy non-static under MATCH_PORT, a source edit like `MATCH_PORT_SHARED_0045c4e0`
+(`porttop_bind.py` EXTRA_PRE 0045cbe0). (b) Make one caller of each pair a named stop. (c) A lint class for two ORIG_TOP copies of a static
+held function.
+
 ## 5. Knob boots
 
 Env `MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000` (cp1's env), root `D:/MashedWT/PORT-TOP-06_root`, harness
@@ -138,6 +197,9 @@ Env `MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000` (cp1's env),
 | `knob_vs_on` | VS2022, `MASHED_OT_RACEFRAME=1` | **rc 0**, 3000 frames, the same self-test line (PASS, 0 of 260), phase 1 throughout, `0x004111c0 calls 0`. The dispatcher reads the sub-knob on its first call, which never comes, so its `[ORIG_TOP] PORT-TOP-06 sub-knob` log line is absent (0 lines): ON is not distinguishable from OFF in this boot, as section 0 says |
 | `knob_ddk_off` | object build | **rc 0**, 3000 frames, the same self-test line (PASS, 0 of 260), phase 1 throughout, `0x004111c0 calls 0` |
 | `knob_ddk_on` | object build, `MASHED_OT_RACEFRAME=1` | **rc 0**, 3000 frames, the same self-test line (PASS, 0 of 260), phase 1 throughout, `0x004111c0 calls 0`; sub-knob line absent for the same reason as `knob_vs_on` |
+
+| `knob_ddk3_off` | object build after the 3 PROVISIONAL rows (sha256 5568b3a1...) | **rc 0**, 3000 frames, self-test PASS (0 of 260), `0x004111c0 calls 0` (log sha256 19a9b32faee20e49f396deb196eaf1108b20f49f95bad29e0511830755f91431) |
+| `knob_ddk3_on` | same, `MASHED_OT_RACEFRAME=1` | **rc 0**, 3000 frames, self-test PASS (0 of 260), `0x004111c0 calls 0` (log sha256 fe4d57d3efabfe36f61cc9bb0ce63306a6350cb0af2ba0c4e1dade9e453fcc3b) |
 
 The OFF self-test line is the same as cp1's on its tree (188 / 31 / 157 / 72, PASS 0 of 260). No baseline boot of the bare head was
 run here.
