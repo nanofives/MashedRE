@@ -10,7 +10,8 @@ Worker session cmwq48iuj6n2bnz1ch8hs26zx (claude2, Opus 5.5), lead cmwpwu26q5v0h
 (424 known, NEW=0). `ddkobj.py check`: IDENTICAL 1897/1958, DIFFERENT 37, not-in-map 24. Every byte-matched bound unit is
 IDENTICAL (87 of 87). The 9 DIFFERENT units that are new against the base's 28 are classified in section 4. Binder selftest:
 renderframe IDENTICAL, audio IDENTICAL, BINDINGS IDENTICAL, raceload DIFFERENT 2 = the known PROV4 baseline (section 5).
-Knob boots: section 6. **cp2 (0x0040d110) and cp3 (0x00429290) were not started.** The lead ended run 53 after
+Knob boots (section 6): 7 arms exit 0, 600 frames, every game self-test PASS; the switched callees are not called at
+phase 1, so the walked closure is built and linked but not yet executed. **cp2 (0x0040d110) and cp3 (0x00429290) were not started.** The lead ended run 53 after
 checkpoint 1, so they lead run 54. G-CTRL / B / 12 captures: not run (top-down row, the knob is off for those hashes).
 L-124 holds: no librw binding added. The RW callees of the closure bind to RW core bodies (`RwCore_*`, 43 reuses) or
 to matched `re/match/rwl*` sources.
@@ -129,16 +130,24 @@ before the commit. ddkobj.py is not changed on this branch.
 
 ## 6. Knob boots (`tools/run_arms.py`, root `D:/MashedWT/PORT-TOP-RENDERFRAME-492E90_root`, test-slot outside, mashed_lock inside)
 
-**Not run at commit time: queued.** The arm batch (vs_off, vs_rfoff, vs_frameT, vs_rfT, ddk_off, ddk_frameT, ddk_rfT)
-waited 10 min on test-slot memory (23.8 GB committed + 8 GB per run over the 24.0 GB budget), took slot 2/8, then queued
-on `mashed_machine`, held by PROV-INSITU-REF1 (pid 1736, a game run), for the rest of the session. The lead asked for
-the report within about 30 minutes, so the knob boots and the game self-tests (portstate-image, OT_CODEPTR, OT_TIMER,
-RWC-DEVICE) are **not measured** here. To check in run 54 (`py -3.12 verify/porttoprenderframe_20261121/tools/run_arms.py
-vs_off vs_rfoff vs_frameT vs_rfT ddk_off ddk_frameT ddk_rfT` inside test-slot + mashed_lock): vs_off = vs_rfoff, vs_frameT
-matches the RWC-FRAME-MOVIE-BACKDROP vs_frameT arm (exit 0, 600 frames, self-tests PASS), vs_rfT logs
-`[PORT-TOP-RENDERFRAME-492E90] MASHED_OT_RENDERFRAME on` and its stop hits. [UNCERTAIN] knob-off unchanged rests on
-reading the selector code (each selector calls the TU's previous symbol when the knob is unset); test: the vs_frameT /
-ddk_frameT arms above (registered in re/orchestrator/UNCERTAIN_REGISTER.md).
+The batch waited 10 min on test-slot memory (23.8 GB committed + 8 GB per run over the 24.0 GB budget), took slot 2/8,
+waited on `mashed_machine` behind PROV-INSITU-REF1 (pid 1736), then ran (lock held 06:13:18). Env: `MASHED_ORIG_TOP=1
+MASHED_WIN_POS=primary-bl MASHED_DET_FRAMES=600`; frame arms add `MASHED_RWC_CORE=1 MASHED_RWC_FRAME=1
+MASHED_RWC_FRAME_N=100000 MASHED_OT_TIMER=1`; rf arms add `MASHED_OT_RENDERFRAME=1`.
+
+| arm | exe | exit | lines | result |
+|---|---|---|---|---|
+| vs_off / ddk_off | VS2022 / object | 0 / 0 | 1827 / 1827 | `returned 0 after 600 frames`, portstate-image PASS (0 of 8), OT_CODEPTR PASS (0 of 367) |
+| vs_rfoff | VS2022 | 0 | 1847 | same as vs_off; the diff is the cfglog timestamp and the address-space dump block only (the knob is never read off the core frame route) |
+| vs_frameT / ddk_frameT | VS2022 / object | 0 / 0 | 489 / 489 | 600 frames, `rendered by 0x00492e90 (matched, RW core)` x5 (phase 1), OT_TIMER PASS (0 of 6000), RWC-DEVICE PASS, binding self-tests PASS (0 of 11) x2, portstate-image PASS, OT_CODEPTR PASS |
+| vs_rfT / ddk_rfT | VS2022 / object | 0 / 0 | 489 / 489 | identical to vs_frameT / ddk_frameT apart from OT_TIMER clock values and the cfglog timestamp; same self-tests PASS |
+
+0 `AV at`, 0 `FAIL` lines in all 7 logs. Knob-off on the frame route is unchanged against the frame arms of
+RWC-FRAME-MOVIE-BACKDROP (exit 0, 600 frames, the same self-tests PASS). **The walked closure did not execute in these
+arms:** no `[PORT-TOP-RENDERFRAME-492E90] MASHED_OT_RENDERFRAME` line in vs_rfT / ddk_rfT. That line is printed on the first
+call of any selector, so in 600 frames at phase 1 (menu, `DAT_00771968` = 1) 0x00492e90 called none of its 15 switched
+callees. Executing the closure needs the core frame route past phase 1 (a race frame on the RW core), which the top-down path
+does not reach yet. Stop hits under the knob: 0 (no `PortTop_RRStop_` log line).
 
 ## 7. Stops ranked by census functions gated (`STOPS_RANK.tsv`, `tools/stops_rank.py`)
 
@@ -192,7 +201,7 @@ BINDINGS.tsv, 6 guarded sources.
 Raw (not committed), `D:/MashedWT/PORT-TOP-RENDERFRAME-492E90_data/`:
 
 `raw_sha256.txt` (committed) lists the sha256 of every raw file: vs_cp1a.log, vs_cp1b.log, vs_cp1c.log, ddk_cp1c.log,
-check_cp1c.log, arms_cp1.out, diff_base.txt, diff_mine.txt, diff_rows.tsv, and both exes.
+check_cp1c.log, arms_cp1.out, the 7 arm logs (vs_off, vs_rfoff, vs_frameT, vs_rfT, ddk_off, ddk_frameT, ddk_rfT), diff_base.txt, diff_mine.txt, diff_rows.tsv, and both exes.
 
 Exes: mashed_re.exe sha256 1b6f96d23d82f326..., mashed_re_ddk.exe 436d49a09a800f3a... (full values in the raw list).
 Kills: none (knob_boot.py kills only the PID it spawns, on its own timeout). No `original\` write, no deploy of
