@@ -156,6 +156,16 @@ ALIAS["004a2cbd"] = ("PortTop_Crt_004a2cbd", "Match/PortTop_00493710.cpp")
 # PORT-TOP-AUDIO-5AEF30-KNOB: 0x005c1920 is the import thunk jmp [0x5cc01c] (DSOUND.dll ordinal 11); its exe body resolves the ordinal.
 ALIAS["005c1920"] = ("PortTop_Imp_005c1920", "Match/PortTop_Imp_005c1920.cpp")
 FORCE -= set(ALIAS)
+# RO-AUDIOINIT-45D460-REACH: one caller's callee bound to an existing exe binding instead of the plan's body. 0x0045d460 opens
+# "toastaudio\pc\audio\pcdics\PERMDICT.RWS" with RwStreamOpen type 2; the matched RW core body RwCore_004cc230 opens through
+# RtFSManager file systems the exe does not register and returned 0 (then RwCore_004cbd30 read a NULL stream: AV at
+# RwCore_004cbd30+0xa). The PORT-TOP-04F RW_FS binding (Match/PortTop_RwStream04F.cpp, already used by the 0x00402750
+# loaders and Match/MatchS06_004274e0.cpp) reads the piz mount or the disk file and returns a type-3 memory stream that the
+# matched RwStreamRead / RwStreamFindChunk (case 3) read; its close frees that record. Not a librw binding (L-124).
+CALLER_ALIAS = {
+    ('0045d460', '004cc230'): ('PortTop_RwStreamOpen_004cc230', 'RW_FS binding, Match/PortTop_RwStream04F.cpp (RO-AUDIOINIT-45D460-REACH)'),
+    ('0045d460', '004cc160'): ('PortTop_RwStreamClose_004cc160', 'RW_FS binding, Match/PortTop_RwStream04F.cpp (RO-AUDIOINIT-45D460-REACH)'),
+}
 # PORT-TOP-AUDIO-RWA: 0x004671a0 reuses the RW core body (RWC-FRAME-492E90, same source re/match/s11/004671a0.c): two
 # ORIGTOP-only exe copies of one rva are not a class the lint takes.
 LOCAL_AS_BOUND = {("0045c6b0", "0045c640")}
@@ -244,6 +254,9 @@ for rva, p in sorted(plan.items()):
     L.append('#define MATCH_PORT 1')
     L.append('#define FUN_%s PortTop_Bound_%s' % (rva, rva))
     for c in cs:
+        if (rva, c) in CALLER_ALIAS:
+            L.append('#define FUN_%s %s   // %s' % (c, CALLER_ALIAS[(rva, c)][0], CALLER_ALIAS[(rva, c)][1]))
+            continue
         note = {'reuse': '   // exe body (%s)' % (plan[c][2] if plan[c][0] == 'reuse' else ''), 'bind': '', 'stop': '   // named stop'}[plan[c][0]]
         if c in STOP_FORCE:
             note = '   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)'

@@ -8,8 +8,8 @@
 #define MATCH_PORT 1
 #define FUN_0045d460 PortTop_Bound_0045d460
 #define FUN_004a2cbd PortTop_Crt_004a2cbd   // exe body (Match/PortTop_00493710.cpp)
-#define FUN_004cc160 RwCore_004cc160   // exe body (RwCore/RwCore_004cc160.cpp)
-#define FUN_004cc230 RwCore_004cc230   // exe body (RwCore/RwCore_004cc230.cpp)
+#define FUN_004cc160 PortTop_RwStreamClose_004cc160   // RW_FS binding, Match/PortTop_RwStream04F.cpp (RO-AUDIOINIT-45D460-REACH)
+#define FUN_004cc230 PortTop_RwStreamOpen_004cc230   // RW_FS binding, Match/PortTop_RwStream04F.cpp (RO-AUDIOINIT-45D460-REACH)
 #define FUN_004cc5e0 RwCore_004cc5e0   // exe body (RwCore/RwCore_004cc5e0.cpp)
 #define FUN_005a6280 PortTop_Bound_005a6280
 #define FUN_005a6710 PortTop_Bound_005a6710
