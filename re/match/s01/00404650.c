@@ -1,9 +1,21 @@
 // FLAGS: /O2 /GS /Ob1
 /* a3 MATCH-S01: 0x00404650 (79 B) 100%. g2s 91.7%: the float test written `DAT_005d757c < DAT_007f0fe4`
    gave test ah,5/jp; `DAT_007f0fe4 > 0.0f` gives the original test ah,0x41/jne. Callees cdecl. DAT_005d757c is the .rdata 0.0f literal. */
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f0fd0 (*(int *)0x007f0fd0u)
+#else
 extern int DAT_007f0fd0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636c00 (*(int *)0x00636c00u)
+#else
 extern int DAT_00636c00;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f0fe4 (*(float *)0x007f0fe4u)
+#else
 extern float DAT_007f0fe4;
+#endif
 int FUN_0041f290(int p0, int p1);
 int FUN_004c1480(int p0, int p1, int p2);
 int FUN_004e6680(int p0);

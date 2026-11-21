@@ -1,0 +1,234 @@
+Counter({'bind': 93, 'reuse': 88, 'stop': 52}) Counter({'match': 87, 'admitted': 3, 'replay': 3})
+004011f0 bind re/match/s01/004011f0.c C4 FUN_004011f0
+00401340 reuse CupSpinSpeedAndColor C4 CupSpinSpeedAndColor
+004013f0 bind re/match/s01/004013f0.c C4 FUN_004013f0
+00401f10 bind re/match/s01/00401f10.c C4 FUN_00401f10
+00403050 reuse RwCore_00403050 C4 FUN_00403050
+00403160 reuse RwCore_00403160 C4 Sub00403160_SubMode0BViewport
+00403910 bind re/match/s01/004036a0.c C4 FUN_00403910
+00404320 stop  C4 PerModeRenderMachine
+00404650 bind re/match/s01/00404650.c C4 FUN_00404650
+00405890 reuse Pred405890 C4 Pred405890
+00406130 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 FUN_00406130
+004072e0 bind re/match/s01/004072e0.c C4 FUN_004072e0
+00408a50 reuse PerCarRaceProgressGet C4 FUN_00408a50
+0040bb50 reuse RwCore_0040bb50 C4 FUN_0040bb50
+0040bde0 bind re/match/s02/0040bde0.c C4 FUN_0040bde0
+0040dc80 bind re/match/s02/0040dc80.c C4 UtilFloat63b910Get
+0040dc90 bind re/match/s02/0040dc90.c C4 UtilSlotIndexCondGet
+0040de30 bind re/match/s02/0040de30.c C4 sub_0040de30
+0040df20 stop cpp-unclean: C2664 'int RwCore_004c1c80(int,undefined4 *)': el argumento 2 no puede convertirse de 'undefined1 *' a 'undefined4 * C4 sub_0040df20
+0040df60 bind re/match/s02/0040df60.c C4 ConditionalRenderSubPass
+0040dfc0 bind re/match/s02/0040dfc0.c C4 HudIngameDispatch
+0040e340 reuse GetLiveCarCount C4 GetLiveCarCount
+0040e350 reuse GetRenderSubMode C4 GetRenderSubMode
+0040e4a0 bind re/match/s02/0040e4a0.c C4 ElapsedTimeGet
+00410b30 bind re/match/s02/00410b30.c C4 sub_00410b30
+00411ce0 bind re/match/s02/00411ce0.c C4 Ghost::SetupRender
+00412100 stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'undefined4 *' a 'int *' C4 FUN_00412100
+00412130 stop cpp-unclean: C3861 'GetRaceSubMode': no se encontrÂ¢ el identificador C4 FUN_00412130
+00413a00 stop cpp-unclean: C2065 'DAT_00828320': identificador no declarado C4 FUN_00413a00
+00413a40 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 FUN_00413a40
+00413f50 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 FUN_00413f50
+004173e0 stop cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado C4 FUN_004173e0
+00417730 reuse VehicleRaceAngleGet C4 VehicleRaceAngleGet
+00417740 reuse Float89a870ToInt C4 FUN_00417740
+004189c0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 FUN_004189c0
+0041a3e0 stop cpp-unclean: C3861 'PortTop_Bound_0042a5d0': no se encontrÂ¢ el identificador C4 HudDispatchMode10
+0041a960 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 FUN_0041a960
+0041b630 stop cpp-unclean: C3861 'Orig_004b3fc0': no se encontrÂ¢ el identificador C4 HudSlotLoopB630
+0041c0c0 reuse HudDispatchSlot2 C4 HudDispatchSlot2
+0041c300 reuse HudDispatchMode5 C4 HudDispatchMode5
+0041ccc0 reuse HudSlotLoopCcc0 C4 HudSlotLoopCcc0
+0041d870 bind re/match/s04/0041d410.c C4 sub_0041d870
+0041db80 stop  C4 Sub0041db80_HudThresholdDispatch
+0041ded0 stop  C3 HudModeGuardDispatch
+0041e140 bind re/match/s04/0041e140.c C4 Global63d7e0Get
+0041e850 reuse PortBatch_0041e850 C4 sub_0041e850
+0041e8d0 bind re/match/s04/0041e8d0.c C4 FUN_0041e8d0
+0041e8e0 bind re/match/s04/0041e8e0.c C4 FUN_0041e8e0
+0041e950 bind re/match/s04/0041e950.c C4 FUN_0041e950
+0041e9b0 stop bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound C4 TrackNodeFieldCmp10
+0041e9f0 bind re/match/s04/0041e9f0.c C4 GlobalField63d7e4_1c
+0041ea00 bind re/match/s04/0041ea00.c C4 GlobalField63d7e4_20
+0041ea70 bind re/match/s04/0041ea70.c C4 GlobalField63d7e4_3c
+0041ebb0 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_0041ebb0
+0041f290 stop bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound C4 FUN_0041f290
+00420050 bind re/match/s05/00420050.c C2 PerPlayerViewportRender
+00421560 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_00421560
+004219c0 bind re/match/s05/004216b0.c C4 FUN_004219c0
+00422570 bind re/match/s05/00422570.c C4 FUN_00422570
+004228f0 stop  C2 FUN_004228f0
+00422ac0 bind re/match/s05/00422ac0.c C4 FUN_00422ac0
+00422af0 bind re/match/s05/00422af0.c C4 SlotWordSet
+00425e40 bind re/match/s05/00425e40.c C4 FUN_00425e40
+00426030 stop cpp-unclean: C2660 'PortTop_Bound_0041e8f0': la funciÂ¢n no acepta 1 argumentos C4 FUN_00426030
+00426060 reuse PortTop_Bound_00426060 C4 TrackPhysWorld1Get
+00426070 reuse TrackPhysWorld2Get C4 TrackPhysWorld2Get
+004260c0 bind re/match/s06/004260c0.c C4 TrackPhysWorld3Get
+00426640 bind re/match/s06/00426640.c C4 FUN_00426640
+00426670 bind re/match/s06/00426670.c C4 WorldRenderDispatch_Begin
+004266b0 bind re/match/s06/004266b0.c C4 WorldRenderDispatch_End
+00426ba0 reuse HudDrawEnabled C4 HudDrawEnabled
+00426d20 bind re/match/s06/00426d20.c C4 FUN_00426d20
+00426d90 bind re/match/s06/00426d90.c C4 FUN_00426d90
+00426e00 bind re/match/s06/00426e00.c C4 TrackLoaderFloatGet
+004270f0 bind re/match/s06/004270f0.c C4 CourseRenderFrame
+00427780 reuse RwCore_00427780 C4 FontText_StringTableLookup
+00427e00 reuse RwCore_00427e00 C4 FUN_00427e00
+004282a0 reuse RwCore_004282a0 C4 MenuMenusBA
+004292c0 reuse UtilWritePtr C4 sub_004292c0
+004292d0 reuse FUN_004292d0 C4 sub_004292d0
+00429300 reuse HudOverlayFloatGet C4 HudOverlayFloatGet
+004295a0 reuse HudDualLabelRender C4 HudDualLabelRender
+00429620 bind re/match/s06/00429620.c C4 FUN_00429620
+00429660 bind re/match/s06/00429660.c C4 FUN_00429660
+00429b70 bind re/match/s06/00429b70.c C4 FUN_00429b70
+00429bd0 bind re/match/s06/00429bd0.c C2 FUN_00429bd0
+00429e10 bind re/match/s06/00429e10.c C4 FUN_00429e10
+0042a9f0 bind re/match/s06/0042a9f0.c C4 GetFadeAlpha
+0042aae0 reuse RwCore_0042aae0 C4 MenuIm2DQuad
+0042ac00 reuse MenuGroupCountBody C4 MenuGroupCount
+0042ac50 reuse Calc42ac50 C4 FUN_0042ac50
+0042b8b0 reuse ScreenWidthGet C4 ScreenWidthGet
+0042b8c0 reuse ScreenHeightGet C4 ScreenHeightGet
+0042b8d0 reuse RwCore_0042b8d0 C4 StatePhaseIsIdle
+0042b8f0 reuse StatePhaseIsFinal C4 StatePhaseIsFinal
+0042b930 reuse RwCore_0042b930 C4 MenuAlphaGet
+0042c7c0 bind re/match/s07/0042c7c0.c C4 FUN_0042c7c0
+0042d390 bind re/match/s07/0042d390.c C4 GetRaceStateField
+0042f500 reuse GetDat0067ea64 C4 GetDat0067ea64
+0042f510 reuse Vehicle0HandleGet C4 Vehicle0HandleGet
+0042f520 bind re/match/s07/0042f520.c C4 ViewportBlockPtrGet
+0042f530 reuse Orig_0042f530 C2 sub_0042f530
+0042f6a0 reuse GetRaceSubMode C4 GetRaceSubMode
+00430b90 bind re/match/s07/00430b90.c C4 FUN_00430b90
+00432ad0 bind re/match/s08/00432ad0.c C4 MenuDimOverlayFadeStep
+00433f40 reuse RwCore_00433f40 C3 MenuModalRender
+0043c5b0 reuse RwCore_0043c5b0 C3 MenuDrawLoop
+00443080 stop bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound C4 AiTargetEnableGet
+004430c0 bind re/match/s08/004430c0.c C4 FUN_004430c0
+004430e0 bind re/match/s08/004430e0.c C4 FUN_004430e0
+00443210 bind re/match/s08/00443210.c C4 FUN_00443210
+00444b60 stop  C2 FUN_00444b60
+00444ff0 bind re/match/s08/00444ff0.c C4 FUN_00444ff0
+00448730 bind re/match/s08/00448730.c C4 FUN_00448730
+00450b10 reuse RwCore_00450b10 C3 HudIm2DQuad
+00457610 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_00457610
+0045b350 reuse RwInitNullStub C4 RwInitNullStub
+0045b990 stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **' C4 FUN_0045b990
+004671a0 reuse RwCore_004671a0 C4 BackBuffRasterOpen
+004671c0 reuse GetOverlayCamera C4 GetOverlayCamera
+00467210 stop bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound C4 sub_00467210
+00472500 bind re/match/s11/00472500.c C4 CondGet691500
+004725c0 stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'undefined4 *' a 'int *' C4 FUN_004725c0
+004729b0 bind re/match/s11/004729b0.c C4 FUN_004729b0
+00472ad0 bind re/match/s11/00472ad0.c C4 FUN_00472ad0
+00472c60 reuse RwCore_00472c60 C4 ChromeBaseDraw
+00473870 reuse TextSpriteUVExplicit C4 TextSpriteUVExplicit
+004739f0 bind re/match/s11/004739f0.c C4 TextSpriteScaled
+00475d30 bind re/match/s12/00475d30.c C4 FUN_00475d30
+00475e50 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_00475e50
+004769f0 reuse ParticleEmitter_SetColour C4 ParticleEmitter_SetColour
+00476a10 reuse Copy476a10 C4 FUN_00476a10
+00476d00 reuse MultiArrayScatter476d00 C4 FUN_00476d00
+004770a0 bind re/match/s12/004770a0.c C4 FUN_004770a0
+00477810 bind re/match/s12/00477500.c C4 FUN_00477810
+00477a10 bind re/match/s12/00477a10.c C4 FUN_00477a10
+00477e60 bind re/match/s12/00477e60.c C4 FUN_00477e60
+00477f50 bind re/match/s12/00477f50.c C4 FUN_00477f50
+00478220 bind re/match/s12/00478220.c C4 FUN_00478220
+00478cd0 bind re/match/s12/00478cd0.c C4 FUN_00478cd0
+0047b9e0 bind re/match/s13/0047b9e0.c C4 FUN_0047b9e0
+00482ae0 reuse SplineCubicBlend3 C4 SplineCubicBlend3
+00483a70 bind re/match/s13/00483a70.c C4 FUN_00483a70
+004842b0 bind re/match/s14/004842b0.c C4 Clear4842b0
+00484310 stop static in re/match/s14fu/00484310.c:69 (file-local there): no linkable exe body C4 FUN_00484310
+00484360 stop  - 
+00484580 bind re/match/racepath/004844a0.c C4 FUN_00484580
+00486220 bind re/match/s14/00486220.c C4 FUN_00486220
+00486f50 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_00486f50
+00487de0 stop cpp-unclean: C2660 'PortTop_Bound_00487d70': la funciÂ¢n no acepta 1 argumentos C4 FUN_00487de0
+004891f0 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_004891f0
+00489910 bind re/match/s14/00489910.c C4 FUN_00489910
+0048ad50 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_0048ad50
+0048baf0 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_0048baf0
+0048e7b0 bind re/match/s15/0048e7b0.c C4 FUN_0048e7b0
+0048fce0 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_0048fce0
+0048fd10 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_0048fd10
+0048fd40 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_0048fd40
+0048fd70 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_0048fd70
+00490490 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 FUN_00490490
+004914b0 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 RainRender
+00492440 reuse RwCore_00492440 C4 sub_00492440
+004924e0 bind re/match/s15/004924e0.c C4 FogColorGetter
+00492e60 reuse RwCore_00492e60 C4 sub_00492e60
+00492e90 bind re/match/s15/00492e90.c C4 FUN_00492e90
+004938e0 reuse PortTop_Movie_004938e0 C3 FUN_004938e0
+004950b0 reuse RwCore_004950b0 C4 QpcTimeScaledTo3Mhz
+00496c10 bind re/match/s16/00496c10.c C4 FUN_00496c10
+00498bf0 reuse RwCore_00498bf0 C4 DisplayActiveFlagGet
+004b3f20 reuse Orig_004b3f20 C4 FUN_004b3f20
+004b41b0 bind re/match/s18/004b41b0.c C4 FUN_004b41b0
+004b42c0 stop  C2 FUN_004b42c0
+004b4a80 stop bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound C4 FUN_004b4a80
+004b4ad0 bind re/match/s18/004b4ad0.c C4 FUN_004b4ad0
+004b59c0 bind re/match/s18/004b59c0.c C4 FUN_004b59c0
+004b5af0 stop  C2 FUN_004b5af0
+004b5d90 stop  C2 FUN_004b5d90
+004b60c0 bind re/match/s18/004b60c0.c C4 FUN_004b60c0
+004b61c0 bind re/match/s18/004b61c0.c C2 FUN_004b61c0
+004b6520 reuse Orig_004b6520 C4 ZeroFillWrapper
+004c0e50 reuse RwCore_004c0e50 C4 FUN_004c0e50
+004c0ed0 reuse RwCore_004c0ed0 C4 FUN_004c0ed0
+004c1340 reuse PortTop_Bound_004c1340 C4 FUN_004c1340
+004c13e0 reuse RwCore_004c13e0 C4 FUN_004c13e0
+004c1480 reuse PortTop_Bound_004c1480 C4 FUN_004c1480
+004c1520 reuse PortTop_Bound_004c1520 C4 FUN_004c1520
+004c15c0 reuse RwCore_004c15c0 C4 FUN_004c15c0
+004c1680 bind re/match/s19/004c1680.c C4 FUN_004c1680
+004c19f0 reuse RwCore_004c19f0 C4 RwVtableSlot07Call
+004c1a00 reuse RwCore_004c1a00 C4 IntroSplashVtableSlot6
+004c1b40 stop bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound C4 FUN_004c1b40
+004c1bb0 reuse RwCore_004c1bb0 C4 IntroSplashRenderState
+004c1be0 reuse Orig_004c1be0 C4 sub_004c1be0
+004c1c10 reuse RwCore_004c1c10 C4 Camera::SetProjection
+004c1c80 reuse RwCore_004c1c80 C4 FUN_004c1c80
+004c39b0 reuse RwCore_004c39b0 C2 RwV3dNormalize
+004c3ac0 reuse RwCore_004c3ac0 C4 Vec3Magnitude
+004c3d90 stop owned by RACE rows (run 53, race_owned.txt) C4 FUN_004c3d90
+004c45f0 reuse RwCore_004c45f0 C4 FUN_004c45f0
+004c4670 reuse RwCore_004c4670 C4 thunk_FUN_004c4680
+004c4d20 reuse RwCore_004c4d20 C4 RwMatrixRotate
+004c5010 reuse RwCore_004c5010 C3 RwMatrixScale
+004c51a0 reuse RwCore_004c51a0 C3 RwMatrixTranslate
+004c52f0 stop  C3 RwMatrixCombine
+004c75e0 bind re/match/s19/004c75e0.c C4 ViewportOriginGetter
+004cd070 reuse RwCore_004cd070 C4 RwRenderPrimitiveSubmit
+004cd140 reuse RwCore_004cd140 C4 RwRenderCommandBufferReset
+004cd170 reuse RwCore_004cd170 C4 FUN_004cd170
+004cd2d0 bind re/match/s20/004cd2d0.c C4 RwRenderIndexedSubmit
+004cd430 bind re/match/s20/004cd430.c C4 FUN_004cd430
+004d40c0 reuse GetPipelinePtr C4 GetPipelinePtr
+004d40d0 reuse RwCore_004d40d0 C4 FUN_004d40d0
+004d7ff0 reuse Orig_004d7ff0 C4 RwIdentityPassthrough
+004d8480 reuse RwCore_004d8480 C4 RwErrSlotWrite
+004e12b0 reuse RwCore_004e12b0 C2 FUN_004e12b0
+004e14a0 stop  C2 FUN_004e14a0
+004e4320 bind re/match/s21/004e4320.c C4 RwPluginLinkSet
+004e4350 bind re/match/s21/004e4350.c C4 FUN_004e4350
+004e47b0 bind re/match/rwl02/004e47b0.c C4 FUN_004e47b0
+004e4900 reuse Orig_004e4900 C4 FUN_004e4900
+004e5660 bind re/match/rwl02/004e5660.c C4 RwEngineForAllPlugins
+004e5680 bind re/match/rwl02/004e5680.c C4 RpWorldForAllAtomicsCallback
+004e5820 reuse RwCore_004e5820 C4 FUN_004e5820
+004e5840 bind re/match/rwl02/004e5840.c C4 FUN_004e5840
+004e5c70 reuse RwCore_004e5c70 C4 RpWorldForAllWorldSectors
+004e6100 reuse RwCore_004e6100 C2 RpAtomicGetWorldBoundingSphere
+004e6680 stop bound by RACE-BIND-C4-BULK cp1 (orch/RACE-BIND-C4-BULK @ d4fda5c93, unmerged): listed, not rebound C4 RpClumpRender
+004f0900 bind re/match/s22/004f0900.c C4 FUN_004f0900
+005459c0 stop  C2 FUN_005459c0
+005492a0 bind re/match/rwl04/005492a0.c C4 FUN_005492a0
+005493d0 bind re/match/rwl04/005493d0.c C4 FUN_005493d0
+005586f0 stop  C2 FUN_005586f0
+0055dec0 reuse UtilDeref55dec0 C4 FUN_0055dec0

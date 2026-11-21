@@ -1,0 +1,15 @@
+2026-11-21T05:44:10.680254
+== vs cp1a
+8 test slots on LIVING-PC
+slot 0: pid 19752 since 11-21 05:38 in C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\PROV-INSITU-REF1: bash -c py -3.12 re/tools/prov/prov_bisect.py --bodies D:/MashedWT/PROV-INSITU-REF1_data/bodies309.json --census D:/MashedWT/PROV-INSITU-REF
+slot 1: free (or held by an untracked process)
+slot 2: free (or held by an untracked process)
+slot 3: pid 18696 since 11-21 04:20 in C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\RACE-RWGLOBALS-FRAMELIST: bash -c py -3.12 /c/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/re/orchestrator/mashed_lock.py run --label RACE-RWGLOBA
+slot 4: free (or held by an untracked process)
+slot 5: free (or held by an untracked process)
+slot 6: free (or held by an untracked process)
+slot 7: free (or held by an untracked process)
+memory: 24.0 GB committed of 29.0 GB limit; budget 24.0 GB, per-run cap 8 GB
+
+HELD 'mashed_machine' pid=11656 alive=True label=PROV-INSITU-REF1 since=2026-11-21T05:44:03  (C:\Users\maria\AppData\Local\Temp\mashed_machine.lock)
+

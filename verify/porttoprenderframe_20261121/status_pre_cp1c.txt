@@ -1,0 +1,15 @@
+2026-11-21T05:58:51.592047
+== check cp1c
+8 test slots on LIVING-PC
+slot 0: pid 19752 since 11-21 05:38 in C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\PROV-INSITU-REF1: bash -c py -3.12 re/tools/prov/prov_bisect.py --bodies D:/MashedWT/PROV-INSITU-REF1_data/bodies309.json --census D:/MashedWT/PROV-INSITU-REF
+slot 1: pid 11948 since 11-21 05:52 in C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\PROV-INSITU-REF1: bash -c until [ -f D:/MashedWT/PROV-INSITU-REF1_data/census_x/prov.json ]; do sleep 30; done; py -3.12 re/tools/prov/prov_bisect.py --bodies
+slot 2: pid 11484 since 11-21 05:58 in C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\PORT-TOP-06: py -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py run --label PORT-TOP-06 -- py -3
+slot 3: free (or held by an untracked process)
+slot 4: pid 16112 since 11-21 03:40 in C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\RACE-RWGLOBALS-FRAMELIST: bash -c py -3.12 /c/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/re/orchestrator/mashed_lock.py run --label RACE-RWGLOBA
+slot 5: free (or held by an untracked process)
+slot 6: free (or held by an untracked process)
+slot 7: free (or held by an untracked process)
+memory: 23.8 GB committed of 28.5 GB limit; budget 24.0 GB, per-run cap 8 GB
+
+HELD 'mashed_machine' pid=9392 alive=True label=PROV-INSITU-REF1 since=2026-11-21T05:57:48  (C:\Users\maria\AppData\Local\Temp\mashed_machine.lock)
+
