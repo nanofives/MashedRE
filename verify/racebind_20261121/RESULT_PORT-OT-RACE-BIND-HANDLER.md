@@ -132,3 +132,49 @@ Raw (not committed): `D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data` (cp1 arms at t
 Commands: as RACE-RWCORE-RACELOAD-ENGINE section "Commands", with `A4_OUT=D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data[/cp2|/cp3]`,
 `A4_ROOT=D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_root`, arms `RO_ROLOADRWC-pr1 RO_ROLOADRWCC-pr1`; binder
 `py -3.12 re/tools/bind/porttop_bind.py write --profile raceload --roots-only`, `sync --profile raceload --step PORT-OT-RACE-BIND-HANDLER --date 2026-11-21 --evidence <this RESULT>`, `selftest`.
+
+## 8. LAND merge (lead order after LAND reached the head): bar (c) NOT met, 12 new selftest lines in two profiles this row does not own
+
+Head `5740dcc92` (race = main = orch/integration, LAND = PORT-TOP-LAND-06-RF merged at `95a7fca52`). Merge commit
+**`219dc129b`** (`git -c merge.autoStash=false merge orch/integration`). One conflict, in the generated
+`Match/PortTop_BulkRefs.cpp`: I took the head's copy and regenerated it with the binder. No hand edit of any generated file. Every raceload state
+file merged clean (the head did not change them).
+
+Regenerate (raceload only; audio, bulk, raceframe and renderframe not regenerated or edited):
+`py -3.12 re/tools/bind/porttop_bind.py write --profile raceload --roots-only` (plan bind 182 / reuse 115 / stop 114; 1 file
+changed: BulkRefs), `refs --profile raceload` (129 caller-less bound bodies, 0 files changed), `sync --profile raceload --step
+PORT-OT-RACE-BIND-HANDLER` (rsp +0, allowlist +0). BulkRefs against `5740dcc92`: `+/include:_PortTop_Keep_0040cea0`,
+`-/include:_PortTop_Keep_0041ecc0` (0x0041ecc0 now has a bound caller, 0x0040cea0), the same delta as before the merge.
+
+RULE 4: `lockwait.py` (waits out PRIORITY-HOLD and SOLO) before each build, the check and the selftest; every wait ended at once
+(`free`).
+
+| check | result |
+|---|---|
+| VS2022 build | `=== Build OK ===`, rva-lint 642 known, NEW 0. `mashed_re.exe` `c9de8f69...` |
+| object build | `=== Build OK ===`. `mashed_re_ddk.exe` `88afc397...` |
+| `ddkobj.py check` | IDENTICAL 2336/2435, DIFFERENT 72, not-in-map 27, units linked 2322/2595, refusals 19 (externalized-static-register-convention 13, wrapper-redefines-globals 6), provisional kept VS2022 254 units + 7 fns, dual body 33 (`ddkobj_summary_land.json`) |
+| against the head tree | LAND's `verify/porttopland_20261121/ddkobj_summary_cp3.json` is the object check of the same exe tree as `5740dcc92` (`git diff a79ff004b 5740dcc92 -- mashedmod re/match re/tools/bind` is empty). Delta: DIFFERENT +`0x0040cea0` (replay-C4 body, section 4), dual body +`0x004e89a0` (PROVISIONAL-listed lifted scaffolding, pre-bound class), refusals wrapper-redefines-globals +2 (0x0047b860 / 0x0047b8d0, section 4), IDENTICAL +6 (this row's binds), not-in-map equal. **No other newly DIFFERENT unit, no new fallback pair** |
+| against `log\orch\run54_headcheck\` (77dedfece tree) | DIFFERENT 32 -> 72: the +40 are LAND's 39 (classified in RESULT_PORT-TOP-LAND-06-RF) + 0x0040cea0; not-in-map 27 both (5 in, 5 out, LAND's) |
+
+Merge bar (lead, narrowed):
+
+| bar | result |
+|---|---|
+| (a) every profile this row owns at 0 failures | **met**: raceload `plan IDENTICAL (bind 182 reuse 115 stop 114), wrappers+stops IDENTICAL (183 checked)`, refs IDENTICAL, C emit 39 units + fixture + 20 held compile |
+| (b) audio state + generated outputs byte-identical to `5740dcc92` | **met**: `git diff --stat 5740dcc92 HEAD -- $(cat verify/racebind_20261121/audio_paths_checked.txt)` prints **nothing** (390 paths: `re/tools/bind/state/audio/**`, every `Match/PortTop_<rva>` the audio plan binds, `PortTop_AudioStops.cpp`, `verify/porttop_20261108/BINDINGS.tsv`); working tree clean |
+| (c) selftest failures a subset of the head's audio lines | **NOT met**. `selftest_land.txt`: FAIL 22 (head: FAIL 14, `verify/porttopland_20261121/selftest_cp3.txt`). Line by line (`selftest_subset_land.tsv`): all 28 audio lines are in the head, and **12 lines are new** (below) |
+
+The 12 new lines, with owning row. Both come from this row's new bodies: the bulk and raceframe profiles plan a body another
+profile bound as a reuse (`bound_wins`), and their committed plans still name the old stop. I fixed nothing (not my profiles):
+
+| profile (owner) | new lines |
+|---|---|
+| **bulk** (wrapper `PortTop_0040d110.cpp` = 0x0040d110, PORT-TOP-LAND-06-RF cp2; bulk profile = BIND-BULK-PROFILE / RACE-BIND-C4-BULK) | `bulk roots 362: plan DIFFERENT (bind 97 reuse 204 stop 188), wrappers+stops DIFFERENT 2 (98 checked)`; `plan 0040cea0 ['stop', 'outside the bulk cp1 list ...'] -> ['reuse', 'PortTop_Bound_0040cea0', 'Match/PortTop_0040cea0.cpp']`; `file Match/PortTop_0040d110.cpp`; `file Match/PortTop_BulkStops.cpp`; `moved, not named: 0040cea0 ...`; `moved, not named: totals ...`; `bulk listing vs verify/bindbulk_20261121/tools/last_plan.txt: 59 lines moved, FAIL 2 unnamed, 0 stale` |
+| **raceframe** (PORT-TOP-LAND-06-RF; wrapper `PortTop_004b40f0.cpp`) | `raceframe roots 1: plan DIFFERENT (bind 256 reuse 148 stop 129), wrappers+stops DIFFERENT 2 (257 checked)`; `plan 004e89a0 ['stop', 'owned by RACE rows (run 53, race_owned.txt)'] -> ['reuse', 'PortTop_Bound_004e89a0', 'Match/PortTop_004e89a0.c']`; `file Match/PortTop_004b40f0.cpp`; `file Match/PortTop_RaceFrameStops.cpp` |
+| (total) | `[selftest] FAIL 22` (head FAIL 14) |
+
+What clears them (owner's call, or the lead authorizes this row): `porttop_bind.py write --profile bulk` + `refs --profile raceload` +
+`sync --profile bulk`, and `write --profile raceframe` + `sync --profile raceframe`, on this branch. Then 0x0040d110 calls the bound
+0x0040cea0 (its keep-alive anchor drops out) and 0x004b40f0 calls the bound 0x004e89a0. The bulk listing also needs its
+`last_plan.txt` moved-line names for 0x0040cea0. Both are plan-only follow-ons of bodies this row bound. No body changes.

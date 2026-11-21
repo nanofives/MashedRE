@@ -25,3 +25,10 @@ bc33377e0df055dde92a656e2660e5054f973f199eb2a74bea4c4cb153768c5e  D:/MashedWT/PO
 b94cd62074385dabdbb48764716f3a867ccb3157602e354089fbe1eb91aec50e  <wt>/mashedmod/build/mashed_re.exe
 0322af30b0ed3e17479d925479b3df58d6b3179a1d835233a2e81725508b4091  <wt>/mashedmod/build/ddkobj/mashed_re_ddk.exe
 81cc77758ffe93ac0b681eb1fed3d63912d25e7d059503af6d4f871dea9afcd8  D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_root/original/mashed_image.bin
+# LAND merge (merge commit 219dc129b)
+106950de077eb2d93c04fe8a511e6022ffde33e373940f35f53f63e81c8f6377  D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/build_vs_land.log
+ad097ecad37a7bc36d705a65fda40f02dd159a54915a389af5d77f0f87237794  D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/build_ddk_land.log
+cae84b67acbf79cb9ee85ce94f4c81da86326f4011c32955fe24eff46f981728  D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/ddkcheck_land.log
+5c4196c5fd95bbf6e80329405aea65b30ba2dc2830ede05955bb4cd3979be76f  D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/BYTECHECK_land.tsv
+c9de8f69193f3a61efc7b143f2455a2ab2db96fd1bdd20eca4c2e966c6f1789e  <wt>/mashedmod/build/mashed_re.exe (LAND merge)
+88afc397ac019fd73bcd37b750a3d74d3ecfdcef2c5c9b01cb850823519dede5  <wt>/mashedmod/build/ddkobj/mashed_re_ddk.exe (LAND merge)
