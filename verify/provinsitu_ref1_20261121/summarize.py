@@ -20,10 +20,39 @@ for t in a.tags.split(","):
         for ln in f.read_text().splitlines():
             x = json.loads(ln); st[x["rva"]] = x
 rep = collections.defaultdict(list)
-f = D / "rep_state.jsonl"
+for nm in ("rep_state.jsonl", "rep2_state.jsonl", "xrep_state.jsonl"):
+    f = D / nm
+    if f.exists():
+        for ln in f.read_text().splitlines():
+            x = json.loads(ln); rep[x["rva"]].append(x)
+# NOT-WIRED leg: bodies wired after the symmap additions (bodies_nw.json, tag nw) replace the NOT-WIRED rows
+nwb = {x["rva"]: x for x in json.load(open(D / "bodies_nw.json"))["bodies"]} if (D / "bodies_nw.json").exists() else {}
+f = D / "nw_state.jsonl"
 if f.exists():
     for ln in f.read_text().splitlines():
-        x = json.loads(ln); rep[x["rva"]].append(x)
+        x = json.loads(ln); st.setdefault(x["rva"], x)
+for k, x in nwb.items():
+    if x.get("status") == "OK" and bodies.get(k, {}).get("status") != "OK":
+        bodies[k] = dict(x, nw=True)
+
+
+def crash_site(rva, runs):
+    """first fault from the newest run of this body that has a crash.jsonl (--crash-catch)"""
+    for run in reversed(runs):
+        cf = D / run / "crash.jsonl"
+        if not cf.exists():
+            continue
+        f = next((json.loads(x) for x in cf.read_text().splitlines() if '"fault"' in x), None)
+        if not f:
+            return f"{run}: no fault record"
+        e = f.get("eip_in") or {}
+        mem = f.get("memory") or {}
+        ret = next((x[1] for x in f.get("stack", []) if isinstance(x, list) and "rva" in x[1]), None)
+        where = f"in body {e['rva']}+{e['off']}" if "rva" in e else (f"ret into body {ret['rva']}+{ret['off']} on the stack" if ret else "no body address on the stack")
+        return f"{run}: {mem.get('op', '')} {mem.get('address', '')} at eip {f.get('eip') or f['ctx']['eip']} ({where}), n={f.get('n')}"
+    return ""
+
+
 xtra = {}
 f = H / "extra_verdicts.json"   # crash addresses etc. written by hand from cited run logs
 if f.exists():
@@ -46,7 +75,7 @@ for r in sweep:
     rva = r["rva"]; b = bodies.get(rva, {}); s = st.get(rva)
     c = cen.get(rva, {})
     if b.get("status") != "OK":
-        v, det = "NOT-WIRED", ",".join(b.get("unresolved", []))[:120]
+        v, det = "NOT-WIRED", ",".join(nwb.get(rva, b).get("unresolved", []))[:120]
     elif not s:
         v, det = "UNTESTED", ""
     else:
@@ -63,7 +92,11 @@ for r in sweep:
         if v.startswith(("DIVERGED", "CRASH")):
             same = [x for x in rp if x["verdict"] == s["verdict"] and (s["verdict"] != "DIVERGED" or x["n"] == s["n"])]
             det = (f"confirmed {1 + len(same)} of {1 + len(rp)}; " if rp else "unconfirmed; ") + det
-        if rva in xtra:
+            if s["verdict"] == "CRASH":
+                det += "; " + crash_site(rva, [s["run"]] + [x["run"] for x in rp])
+        if b.get("nw"):
+            det = "wired after the symmap additions (NOT-WIRED leg); " + det
+        if rva in xtra and "rep_" not in det:
             det += "; " + xtra[rva]
     calls = s.get("calls_total") if s else None
     rows.append({"rva": rva, "name": r["name"], "level": r["level"], "class": r["class"], "subsystem": r["subsystem"],
