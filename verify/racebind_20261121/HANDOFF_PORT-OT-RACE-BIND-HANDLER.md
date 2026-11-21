@@ -16,8 +16,8 @@ PREREG committed `1888ba5ca`. Checkpoint 1 commit = the commit that adds this fi
   (sha256 81CC7775...). New stack `verify/savelink_20261023/stacks/ROLOADRWCC.txt` (count mode on the RW core).
 
 ## In flight at the pause
-- Object build (`MASHED_DDKOBJ=1`) was running into `D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/build_ddk1.log`;
-  treat its result as unknown after the reboot: re-run it.
+- Object build (`MASHED_DDKOBJ=1`) finished `=== Build OK ===` before the reboot (`D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/build_ddk1.log`);
+  only `ddkobj.py check` is left of step 1 (re-run the object build only if the build dir was cleaned).
 
 ## Next (in order)
 1. `py -3.12 re/orchestrator/mashed_lock.py status` (wait on PRIORITY-HOLD / SOLO), object build, then
