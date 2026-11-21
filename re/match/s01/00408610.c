@@ -57,10 +57,26 @@ typedef struct {
 } Ctx;
 void *memset(void *, int, unsigned int);
 #pragma intrinsic(memset)
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_008a9620 (*(Rec30c (*)[1])0x008a9620u)
+#else
 extern Rec30c DAT_008a9620[];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_008a95c0 (*(Out28 (*)[2])0x008a95c0u)
+#else
 extern Out28 DAT_008a95c0[2];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5e8 (*(int *)0x0063a5e8u)
+#else
 extern int DAT_0063a5e8;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f1010 (*(float *)0x007f1010u)
+#else
 extern float DAT_007f1010;
+#endif
 int FUN_00407a90();
 int FUN_00407b00(int a);
 int FUN_00407b70(int a, int b);

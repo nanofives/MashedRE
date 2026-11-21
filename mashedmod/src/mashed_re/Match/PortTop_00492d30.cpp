@@ -27,7 +27,9 @@
 #define FUN_005c9d00 GetRaceEndTrigger
 #define FUN_0042b930 MenuAlphaGet
 #define FUN_004030d0 Orig_004030d0
-#define FUN_004111c0 PortTop_StandIn05_004111c0
+// PORT-TOP-06: sub-knob dispatcher (Match/PortTop_RaceFrameKnob.cpp): the stand-in below by default, the matched race
+// frame PortTop_Bound_004111c0 under MASHED_OT_RACEFRAME=1.
+#define FUN_004111c0 PortTop_RaceFrame_004111c0
 #define FUN_0043dfd0 PortTop_StandIn05_0043dfd0
 #define FUN_0043d7c0 Orig_0043d7c0
 #define FUN_00496920 TimerTable772ffcGet

@@ -6,7 +6,11 @@
    Residual: none. 0x43960000 = 300.0f pushed as the second arg of FUN_00472650 (cdecl, float
    return, converted by _ftol 0x004a2c48). Stride 0x138 = Rec[] at 0x008995bc. */
 typedef struct { int v; int pad[0x4d]; } Rec;   /* stride 0x138 at 0x008995bc */
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_008995bc (*(Rec (*)[1])0x008995bcu)
+#else
 extern Rec DAT_008995bc[];
+#endif
 int FUN_0040e470(int i);
 float FUN_00472650(int a, float b);
 
