@@ -154,7 +154,21 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
     # the second exe body of 0x0040e370 (AiTargetClosest_naked.inc) from the lint.
     # Bodies are anchored at the include line; nested .inc includes are followed.
     _scan_inc(p, lines, bodies, set())
+
+    # FIFTH PASS (L-178, BIND-CUNCLEAN-AS-C 2026-11-21): the RW core's generated hand bodies carry their rva only in a
+    # `// HAND-LIFT 0x<rva> <symbol>` (RwCore/RwCore_Lifted_NN.cpp, L-137 lifted naked asm) or `// HAND 0x<rva>
+    # <symbol>` (RwCore/RwCore_Hand.cpp) line, the binding line gen_rwcore_tus.py reads. Before this pass they were
+    # invisible, so a matched C unit of the same rva (a dual body, ddkobj "dual body") never reached the lint.
+    for i, ln in enumerate(lines):
+        mh = RE_HAND_LINE.match(ln)
+        if mh:
+            rva = int(mh.group(1), 16)
+            if TEXT_BEG <= rva < TEXT_END:
+                bodies.setdefault(rva, (mh.group(2), i + 1))
     return bodies, installs
+
+
+RE_HAND_LINE = re.compile(r"^//\s*HAND(?:-LIFT)?\s+0x([0-9a-fA-F]{8})\s+([A-Za-z_]\w*)")
 
 
 def _scan_inc(p: pathlib.Path, lines: list[str], bodies: dict, seen: set,
