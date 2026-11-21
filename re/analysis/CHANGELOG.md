@@ -26,6 +26,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-21  0x005bf670  FUN_005bf670  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005bf670.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5BA1D0-STOPS.md
+2026-11-21  0x005a7b40  AudioCtxSwap5a7b40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a7b40.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5BA1D0-STOPS.md
+2026-11-21  0x005a73a0  FUN_005a73a0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a73a0.c; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5BA1D0-STOPS.md
 2026-11-21  0x005bba30  FUN_005bba30  (none)->C1  added (PORT-TOP-AUDIO-5BA1D0-STOPS): code pointer, no Ghidra function: 0x005bb850 stores its address at +0x10 (mov at 0x005bb894); dispatcher on device flag 8 (listing 0x005bba30..0x005bba57); evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5BA1D0-STOPS.md
 2026-11-21  0x005bb910  FUN_005bb910  (none)->C1  added (PORT-TOP-AUDIO-5BA1D0-STOPS): code pointer, no Ghidra function: 0x005bb850 stores its address at +0xc (mov at 0x005bb88d); reached on the RO-AUDIOINIT-45D460-REACH init arms through 0x005aba20 (exe stop at _PortTop_Bound_005aba20+0x278); evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5BA1D0-STOPS.md
 2026-11-21  0x005a73a0  FUN_005a73a0  (none)->C1  added (PORT-TOP-AUDIO-5BA1D0-STOPS): code pointer, no Ghidra function: 0x005a71f0 stores its address in the 0x005a6b70 parameter block (0x005a7293, re/match/s25/005a71f0.c s6.fn); reached on the RO-AUDIOINIT-45D460-REACH init arms inside 0x0045d460; evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-5BA1D0-STOPS.md
