@@ -6,7 +6,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_0040d110 PortTop_Bound_0040d110
-#define FUN_0040cea0 PortTop_BulkStop_0040cea0   // named stop
+#define FUN_0040cea0 PortTop_Bound_0040cea0   // exe body (Match/PortTop_0040cea0.cpp)
 #define FUN_0041a8d0 PortTop_BulkStop_0041a8d0   // named stop
 #define FUN_00420230 PortTop_Bound_00420230
 #define FUN_00420420 PortTop_BulkStop_00420420   // named stop

@@ -476,10 +476,6 @@ int PortTop_RFStop_004c3d90(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RFStop_004c52f0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004c52f0u, "0x0047d180", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004c52f0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004e89a0: declared int by 0x004b40f0; owned by RACE rows (run 53, race_owned.txt)
-int PortTop_RFStop_004e89a0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004e89a0u, "0x004b40f0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004e89a0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00532b80: declared void by 0x004b47e0; no matched or admitted source
 int PortTop_RFStop_00532b80(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00532b80u, "0x004b47e0", n, _ReturnAddress(), ex);

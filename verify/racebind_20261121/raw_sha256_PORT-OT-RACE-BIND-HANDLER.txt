@@ -32,3 +32,11 @@ cae84b67acbf79cb9ee85ce94f4c81da86326f4011c32955fe24eff46f981728  D:/MashedWT/PO
 5c4196c5fd95bbf6e80329405aea65b30ba2dc2830ede05955bb4cd3979be76f  D:/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/BYTECHECK_land.tsv
 c9de8f69193f3a61efc7b143f2455a2ab2db96fd1bdd20eca4c2e966c6f1789e  <wt>/mashedmod/build/mashed_re.exe (LAND merge)
 88afc397ac019fd73bcd37b750a3d74d3ecfdcef2c5c9b01cb850823519dede5  <wt>/mashedmod/build/ddkobj/mashed_re_ddk.exe (LAND merge)
+# bulk + raceframe regeneration
+7a9551ea64bfe36f4d17044952710dbc634573ca1e1aab5ce70292691fff119b /d/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/build_vs_regen.log
+ad097ecad37a7bc36d705a65fda40f02dd159a54915a389af5d77f0f87237794 /d/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/build_ddk_regen.log
+cae84b67acbf79cb9ee85ce94f4c81da86326f4011c32955fe24eff46f981728 /d/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/ddkcheck_regen.log
+5c4196c5fd95bbf6e80329405aea65b30ba2dc2830ede05955bb4cd3979be76f /d/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/BYTECHECK_regen.tsv
+a278a5c8d75857839d283c30de2e1962895486898954dcc6d28aa9d1a39d7c0a /d/MashedWT/PORT-OT-RACE-BIND-HANDLER_data/ddkobj_summary_regen.json
+bbad7250ea5a56ab7b404df1ed2bc1d8a9ce5f3ac70b3e24e6506203a1b6890b  <wt>/mashedmod/build/mashed_re.exe
+2e574341a647e93b6b12f82295465a67f6d8c5025853a6ae8d578b9eb01f8461  <wt>/mashedmod/build/ddkobj/mashed_re_ddk.exe

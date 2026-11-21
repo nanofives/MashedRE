@@ -3614,8 +3614,9 @@
 "RwCore/RwCore_004b4070.cpp"
 ],
 "004e89a0": [
-"stop",
-"owned by RACE rows (run 53, race_owned.txt)"
+"reuse",
+"PortTop_Bound_004e89a0",
+"Match/PortTop_004e89a0.c"
 ],
 "0041f100": [
 "bind",

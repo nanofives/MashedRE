@@ -178,3 +178,30 @@ What clears them (owner's call, or the lead authorizes this row): `porttop_bind.
 `sync --profile bulk`, and `write --profile raceframe` + `sync --profile raceframe`, on this branch. Then 0x0040d110 calls the bound
 0x0040cea0 (its keep-alive anchor drops out) and 0x004b40f0 calls the bound 0x004e89a0. The bulk listing also needs its
 `last_plan.txt` moved-line names for 0x0040cea0. Both are plan-only follow-ons of bodies this row bound. No body changes.
+
+## 9. bulk + raceframe regeneration (authorized by the parent via L0, option 1): condition 4 NOT met, 2 bulk listing lines need a `state/bulk/moved.tsv` edit that condition 2 forbids
+
+Branch at `63139442c` before this step. Regenerate commands, all through the tool: `porttop_bind.py write --profile bulk` (2 files
+changed), `refs --profile raceload` (0 changed), `sync --profile bulk --step PORT-OT-RACE-BIND-HANDLER` (rsp +0, allowlist +0),
+`write --profile raceframe` (2 files changed), `sync --profile raceframe ...` (rsp +0, allowlist +0). `lockwait.py` before
+each build, the check and the selftest (every wait cleared at once, `free`).
+
+What moved (the whole diff of this step):
+- `Match/PortTop_0040d110.cpp`: `#define FUN_0040cea0 PortTop_BulkStop_0040cea0   // named stop` -> `PortTop_Bound_0040cea0   // exe body (Match/PortTop_0040cea0.cpp)`
+- `Match/PortTop_004b40f0.cpp`: `#define FUN_004e89a0 PortTop_RFStop_004e89a0   // named stop` -> `PortTop_Bound_004e89a0   // exe body (Match/PortTop_004e89a0.c)`
+- `Match/PortTop_BulkStops.cpp` -4 lines (stop 0x0040cea0), `Match/PortTop_RaceFrameStops.cpp` -4 lines (stop 0x004e89a0)
+- `state/bulk/plan.json` key `0040cea0`: `['stop', 'outside the bulk cp1 list ...']` -> `['reuse', 'PortTop_Bound_0040cea0', 'Match/PortTop_0040cea0.cpp']`;
+  `state/raceframe/plan.json` key `004e89a0`: `['stop', 'owned by RACE rows ...']` -> `['reuse', 'PortTop_Bound_004e89a0', 'Match/PortTop_004e89a0.c']`
+  (`write` output; no other key differs from `5740dcc92`)
+
+| condition | result |
+|---|---|
+| 1. generated outputs only | **met**: the six files above, all written by `write` (no hand edit) |
+| 2. `state/bulk/` + `state/raceframe/` byte-identical to `5740dcc92` | **met for every data file**: `git diff --stat 5740dcc92 -- re/tools/bind/state/bulk re/tools/bind/state/raceframe ':!*/plan.json'` prints **nothing** (profile.json, rules.tsv, roots.txt, cpp_unclean.txt, stop_reasons.tsv, moved.tsv, disposition.json, newfiles.txt). **Deviation, stated:** the two `plan.json` files are `write` outputs and each differs by the one key above. `write` always rewrites its plan, so the two orders (write the plan, keep it byte-identical) conflict on that file |
+| 3. audio untouched | **met**: `git diff --stat 5740dcc92 -- $(cat verify/racebind_20261121/audio_paths_checked.txt)` prints **nothing** (390 paths) |
+| 4. selftest failures a subset of the head's 14 audio lines | **NOT met**: FAIL 16 (`selftest_regen.txt`, `selftest_subset_regen.tsv`). All 28 audio lines are in the head. bulk and raceframe plans + wrappers are now **IDENTICAL**. **2 new failure lines** remain, both in the bulk listing check (`bulk listing vs verify/bindbulk_20261121/tools/last_plan.txt: 59 lines moved, FAIL 2 unnamed, 0 stale`): `moved, not named: 0040cea0 \| 0040cea0 stop  C2 FUN_0040cea0 -> 0040cea0 reuse PortTop_Bound_0040cea0 C4 FUN_0040cea0` and `moved, not named: totals \| ... 'reuse': 203, 'stop': 189 ... -> 'reuse': 204, 'stop': 188 ...`. Clearing them takes two lines in `state/bulk/moved.tsv` (a `0040cea0` row with its cause, and the `totals` row's head column), the same kind of edit LAND made for its 5 moved lines. That is a `state/bulk` data edit, forbidden by condition 2, so it is **not done**. Owner: the bulk profile (BIND-BULK-PROFILE / RACE-BIND-C4-BULK), or this row on the lead's word |
+| 5. ddkobj re-checked | IDENTICAL 2336/2435, DIFFERENT 72, not-in-map 27, units linked 2322/2595, refusals 19, provisional kept VS2022 254 + 7, dual body 33: the **same sets** as the LAND-merge check (section 8; `sumdiff`: different / dual / not-in-map +0 -0). Against the head tree: DIFFERENT +0x0040cea0 (replay-C4 body), dual +0x004e89a0 (pre-bound), refusals +2 (0x0047b860 / 0x0047b8d0). No newly DIFFERENT unit, no new fallback pair. Builds: VS2022 OK (rva-lint 642, NEW 0, `mashed_re.exe` `bbad7250...`), object OK (`mashed_re_ddk.exe` `2e574341...`) |
+| 6. LAND's numbers, equal or better | **met**: raceframe plan bind 256 (+ 31 file-local members) = **287** reachable, equal to LAND; reuse 147 -> 148 (+0x004e89a0, a stop name that now resolves); stop 130 -> 129. bulk: bind 97 equal, reuse 203 -> 204 (+0x0040cea0), stop 189 -> 188. Keep-alive anchors in `Match/PortTop_BulkRefs.cpp`: **129**, equal (versus the head: +0x0040cea0, -0x0041ecc0). The refs step still anchors 0x0040cea0 although 0x0040d110 now calls it. [UNCERTAIN] `refs --profile raceload` reads callers from the raceload plan and not from the bulk wrappers (not read in the tool): the extra anchor is harmless (an /include of a symbol that is also called) |
+
+Stopped here: the bulk `moved.tsv` edit is the only remaining failure and it needs the lead's word (it conflicts with condition 2).
+Committed with the ledger set to blocked, not review.

@@ -30,10 +30,6 @@ unsigned PortTop_Bulk_StopHits(void) { return g_bulkStopHits; }
 int PortTop_BulkStop_00401da0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x00401da0u, "", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00401da0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0040cea0: declared void by 0x0040d110; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s02/0040cea0.c
-int PortTop_BulkStop_0040cea0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0040cea0u, "0x0040d110", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0040cea0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0041a8d0: declared void by 0x0040d110; cpp-unclean: C2065 'DAT_0063c630': identificador no declarado
 int PortTop_BulkStop_0041a8d0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0041a8d0u, "0x0040d110", n, _ReturnAddress(), ex);
