@@ -205,3 +205,27 @@ What moved (the whole diff of this step):
 
 Stopped here: the bulk `moved.tsv` edit is the only remaining failure and it needs the lead's word (it conflicts with condition 2).
 Committed with the ledger set to blocked, not review.
+
+## 10. bulk moved.tsv, 2 lines (authorized by the parent via L0): selftest equals the head, FAIL 14, 0 new
+
+`re/tools/bind/state/bulk/moved.tsv` +2 lines, appended (written from the selftest's own "moved, not named" strings), nothing
+else in `state/bulk/` or `state/raceframe/` changed:
+
+```
++0040cea0	0040cea0 stop  C2 FUN_0040cea0	0040cea0 reuse PortTop_Bound_0040cea0 C4 FUN_0040cea0	bound_wins: the raceload profile binds the c4=frida-replay source re/match/s02/0040cea0.c (PORT-OT-RACE-BIND-HANDLER, L-175), Match/PortTop_0040cea0.cpp; 0x0040d110 now binds PortTop_Bound_0040cea0
++totals	Counter({'stop': 227, 'reuse': 181, 'bind': 97}) Counter({'match': 96, 'replay': 1})	Counter({'reuse': 204, 'stop': 188, 'bind': 97}) Counter({'match': 96, 'replay': 1})	plan totals after the moves (PORT-OT-RACE-BIND-HANDLER: +1 reuse 0x0040cea0; supersedes the totals row above, the reader keeps the last row of a key)
+```
+
+The earlier `totals` row stays in place: `selftest_history` (porttop_bind.py:1480) reads the file into a dict, so the last row
+for a key wins.
+
+| check | result |
+|---|---|
+| `git diff --stat 5740dcc92 -- state/bulk/{profile.json,rules.tsv,roots.txt} state/raceframe/{profile.json,rules.tsv,roots.txt}` | **empty** |
+| `git diff --stat 5740dcc92 -- re/tools/bind/state/bulk re/tools/bind/state/raceframe` | `bulk/moved.tsv +2`, `bulk/plan.json` and `raceframe/plan.json` one key each (write output, accepted) |
+| audio paths (390) vs `5740dcc92` | **empty** |
+| full selftest (`selftest_moved.txt`, lock wait first: `free`) | **FAIL 14**: raceload, bulk, raceframe, renderframe IDENTICAL; `bulk listing ...: 59 lines moved, all named in state/bulk/moved.tsv`; BINDINGS.tsv IDENTICAL |
+| line by line vs the head (`verify/porttopland_20261121/selftest_cp3.txt`) | `selftest_subset_moved.tsv`: 29 failure lines, **29 in the head, 0 new** (the 28 audio lines + `[selftest] FAIL 14`) |
+
+No build or ddkobj re-run for this step: moved.tsv is selftest data only, and no exe source changed since section 9 (builds OK,
+ddkobj sets equal to section 8).
