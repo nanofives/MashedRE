@@ -23,7 +23,7 @@
 #define FUN_004c1680 PortTop_Bound_004c1680
 #define FUN_004c19f0 RwCore_004c19f0   // exe body (RwCore/RwCore_004c19f0.cpp)
 #define FUN_004c1a00 RwCore_004c1a00   // exe body (RwCore/RwCore_004c1a00.cpp)
-#define FUN_004c1b40 PortTop_RRStop_004c1b40   // named stop
+#define FUN_004c1b40 PortTop_Bound_004c1b40   // exe body (Match/PortTop_004c1b40.cpp)
 #define FUN_004c1bb0 RwCore_004c1bb0   // exe body (RwCore/RwCore_004c1bb0.cpp)
 #define FUN_004c45f0 RwCore_004c45f0   // exe body (RwCore/RwCore_004c45f0.cpp)
 #define FUN_004c4d20 RwCore_004c4d20   // exe body (RwCore/RwCore_004c4d20.cpp)
@@ -33,7 +33,7 @@
 #define FUN_004e4320 PortTop_Bound_004e4320
 #define FUN_004e4350 PortTop_Bound_004e4350
 #define FUN_004e4900 Orig_004e4900   // exe body (Match/PortTop_004e4900.cpp)
-#define FUN_004e6680 PortTop_RRStop_004e6680   // named stop
+#define FUN_004e6680 PortTop_Bound_004e6680   // exe body (Match/PortTop_004e6680.cpp)
 #define FUN_0041f8f0 PortTop_Local_00420050_0041f8f0   // file-local in this source
 #define FUN_0041faf0 PortTop_Local_00420050_0041faf0   // file-local in this source
 #define FUN_0041fcc0 PortTop_Local_00420050_0041fcc0   // file-local in this source

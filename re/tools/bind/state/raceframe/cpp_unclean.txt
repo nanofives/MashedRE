@@ -40,3 +40,5 @@
 0045bed0	C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
 00476880	C2660 'PortTop_Bound_00476710': la funciÂ¢n no acepta 5 argumentos
 00419760	C3861 'Orig_004b6520': no se encontrÂ¢ el identificador
+0047cd50	C2664 'void PortTop_Bound_00486460(undefined4 *,undefined4)': el argumento 1 no puede convertirse de 'int' a 'undefi
+00487d60	C2664 'void PortTop_Bound_00476df0(int)': el argumento 1 no puede convertirse de 'undefined1 *' a 'int'

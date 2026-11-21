@@ -745,8 +745,9 @@
 "cpp-unclean: C3861 'GetRaceSubMode': no se encontr\u00c2\u00a2 el identificador"
 ],
 "004e6680": [
-"stop",
-"bound by RACE-BIND-C4-BULK cp1 (orch/RACE-BIND-C4-BULK @ d4fda5c93, unmerged): listed, not rebound"
+"reuse",
+"PortTop_Bound_004e6680",
+"Match/PortTop_004e6680.cpp"
 ],
 "004938e0": [
 "reuse",
@@ -761,8 +762,9 @@
 []
 ],
 "0041f290": [
-"stop",
-"bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound"
+"reuse",
+"PortTop_Bound_0041f290",
+"Match/PortTop_0041f290.cpp"
 ],
 "00406130": [
 "stop",
@@ -948,8 +950,9 @@
 []
 ],
 "004c1b40": [
-"stop",
-"bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound"
+"reuse",
+"PortTop_Bound_004c1b40",
+"Match/PortTop_004c1b40.cpp"
 ],
 "004c45f0": [
 "reuse",
@@ -992,8 +995,9 @@
 []
 ],
 "0041e9b0": [
-"stop",
-"bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound"
+"reuse",
+"PortTop_Bound_0041e9b0",
+"Match/PortTop_0041e9b0.cpp"
 ],
 "0041ea70": [
 "bind",
@@ -1066,8 +1070,9 @@
 "RwCore/RwCore_00450b10.cpp"
 ],
 "00467210": [
-"stop",
-"bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound"
+"reuse",
+"PortTop_Bound_00467210",
+"Match/PortTop_00467210.cpp"
 ],
 "00472ad0": [
 "bind",
@@ -1198,8 +1203,9 @@
 []
 ],
 "00443080": [
-"stop",
-"bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound"
+"reuse",
+"PortTop_Bound_00443080",
+"Match/PortTop_00443080.cpp"
 ],
 "00432ad0": [
 "bind",
@@ -1574,8 +1580,9 @@
 "RwCore/RwCore_004c3ac0.cpp"
 ],
 "004b4a80": [
-"stop",
-"bound by PORT-TOP-06 (0x004111c0 closure, orch/PORT-TOP-06, unmerged): listed, not rebound"
+"reuse",
+"PortTop_Bound_004b4a80",
+"Match/PortTop_004b4a80.cpp"
 ],
 "005459c0": [
 "stop"

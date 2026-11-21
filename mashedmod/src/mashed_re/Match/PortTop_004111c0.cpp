@@ -30,7 +30,7 @@
 #define FUN_0040e460 Flag63b908Set   // exe body (Match/MatchS02_0040e460.cpp)
 #define FUN_0040e480 CarSlotStateSet   // exe body (Match/MatchS02_0040e480.cpp)
 #define FUN_0040e560 PortTop_Bound_0040e560
-#define FUN_0040e590 PortTop_RFStop_0040e590   // named stop
+#define FUN_0040e590 PortTop_Bound_0040e590
 #define FUN_0040feb0 PortTop_RFStop_0040feb0   // named stop
 #define FUN_00410130 PortTop_RFStop_00410130   // named stop
 #define FUN_004103a0 PortTop_RFStop_004103a0   // named stop

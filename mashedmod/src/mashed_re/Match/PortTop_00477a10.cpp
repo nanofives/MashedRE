@@ -7,7 +7,7 @@
 #define MATCH_PORT 1
 #define FUN_00477a10 PortTop_Bound_00477a10
 #define FUN_004b6520 Orig_004b6520   // exe body (Match/PortTop_004b6520.cpp)
-#define FUN_004c1b40 PortTop_RRStop_004c1b40   // named stop
+#define FUN_004c1b40 PortTop_Bound_004c1b40   // exe body (Match/PortTop_004c1b40.cpp)
 #define FUN_004cd070 RwCore_004cd070   // exe body (RwCore/RwCore_004cd070.cpp)
 #define FUN_004cd140 RwCore_004cd140   // exe body (RwCore/RwCore_004cd140.cpp)
 #define FUN_004cd2d0 PortTop_Bound_004cd2d0

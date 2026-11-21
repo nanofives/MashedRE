@@ -7,7 +7,7 @@
 #define MATCH_PORT 1
 #define FUN_00401570 PortTop_Bound_00401570
 #define FUN_00401da0 PortTop_RFStop_00401da0   // named stop
-#define FUN_004e6680 PortTop_RFStop_004e6680   // named stop
+#define FUN_004e6680 PortTop_Bound_004e6680   // exe body (Match/PortTop_004e6680.cpp)
 #define FUN_00401ee0 PortTop_Local_00401570_00401ee0   // file-local in this source
 // PORT-TOP-06: MASHED_RE_PORT drops the source extern block (same as Match/MatchS01.cpp:42 / :77-78); the table and
 // the current-entry pointer are read at their original addresses.

@@ -8,7 +8,7 @@
 #define FUN_004270f0 PortTop_Bound_004270f0
 #define FUN_0041e8d0 PortTop_Bound_0041e8d0
 #define FUN_0041e8e0 PortTop_Bound_0041e8e0
-#define FUN_0041e9b0 PortTop_RRStop_0041e9b0   // named stop
+#define FUN_0041e9b0 PortTop_Bound_0041e9b0   // exe body (Match/PortTop_0041e9b0.cpp)
 #define FUN_0041e9f0 PortTop_Bound_0041e9f0
 #define FUN_0041ea00 PortTop_Bound_0041ea00
 #define FUN_00426d20 PortTop_Bound_00426d20
@@ -17,7 +17,7 @@
 #define FUN_004292d0 FUN_004292d0   // exe body (Match/MatchS06_004292d0.cpp)
 #define FUN_00450b10 RwCore_00450b10   // exe body (RwCore/RwCore_00450b10.cpp)
 #define FUN_004671a0 RwCore_004671a0   // exe body (RwCore/RwCore_004671a0.cpp)
-#define FUN_00467210 PortTop_RRStop_00467210   // named stop
+#define FUN_00467210 PortTop_Bound_00467210   // exe body (Match/PortTop_00467210.cpp)
 #define FUN_00472ad0 PortTop_Bound_00472ad0
 #define FUN_00478220 PortTop_Bound_00478220
 #define FUN_00478cd0 PortTop_Bound_00478cd0

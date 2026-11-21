@@ -6,9 +6,9 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_00404650 PortTop_Bound_00404650
-#define FUN_0041f290 PortTop_RRStop_0041f290   // named stop
+#define FUN_0041f290 PortTop_Bound_0041f290   // exe body (Match/PortTop_0041f290.cpp)
 #define FUN_004c1480 PortTop_Bound_004c1480   // exe body (Match/PortTop_004c1480.cpp)
-#define FUN_004e6680 PortTop_RRStop_004e6680   // named stop
+#define FUN_004e6680 PortTop_Bound_004e6680   // exe body (Match/PortTop_004e6680.cpp)
 extern "C" {
 #include "../../../../re/match/s01/00404650.c"
 }

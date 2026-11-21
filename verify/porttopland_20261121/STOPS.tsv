@@ -1,0 +1,176 @@
+profile	rva	reason
+raceframe	0x004019d0	no matched / admitted source
+raceframe	0x00401da0	no matched / admitted source
+raceframe	0x004039f0	no matched / admitted source
+raceframe	0x004046a0	no matched / admitted source
+raceframe	0x00404fa0	no matched / admitted source
+raceframe	0x00405430	no matched / admitted source
+raceframe	0x00406370	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+raceframe	0x00406ce0	no matched / admitted source
+raceframe	0x00407670	no matched / admitted source
+raceframe	0x00407a40	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+raceframe	0x00407a90	no matched / admitted source
+raceframe	0x00407e20	no matched / admitted source
+raceframe	0x00408b00	no matched / admitted source
+raceframe	0x0040aef0	no matched / admitted source
+raceframe	0x0040dd80	no matched / admitted source
+raceframe	0x0040ddb0	cpp-unclean: C2660 'PortTop_Bound_00426c50': la funciÂ¢n no acepta 1 argumentos
+raceframe	0x0040ddf0	no matched / admitted source
+raceframe	0x0040e180	no matched / admitted source
+raceframe	0x0040eee0	no matched / admitted source
+raceframe	0x0040feb0	no matched / admitted source
+raceframe	0x00410130	no matched / admitted source
+raceframe	0x004103a0	static in re/match/s02/004103a0.c:59 (file-local there): no linkable exe body
+raceframe	0x00410ab0	no matched / admitted source
+raceframe	0x00411580	cpp-unclean: C2664 'void PortTop_Bound_00411530(int,int,undefined4 *,undefined4 *,undefined4)': el argumento 3 no puede convertir
+raceframe	0x004117b0	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+raceframe	0x00411870	no matched / admitted source
+raceframe	0x00412190	no matched / admitted source
+raceframe	0x00412620	no matched / admitted source
+raceframe	0x00412f30	no matched / admitted source
+raceframe	0x00413cb0	no matched / admitted source
+raceframe	0x00413f20	cpp-unclean: C2065 'DAT_0063bc60': identificador no declarado
+raceframe	0x00414060	cpp-unclean: C2065 'DAT_0089a384': identificador no declarado
+raceframe	0x00414180	cpp-unclean: C2065 'DAT_0089a368': identificador no declarado
+raceframe	0x00414220	cpp-unclean: C3861 'PortTop_Bound_0040e4b0': no se encontrÂ¢ el identificador
+raceframe	0x00415860	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+raceframe	0x00417370	cpp-unclean: C2065 'DAT_0089a4fc': identificador no declarado
+raceframe	0x00417450	cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado
+raceframe	0x00417530	cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado
+raceframe	0x00418860	cpp-unclean: C2065 'DAT_00801ca0': identificador no declarado
+raceframe	0x00418990	cpp-unclean: C3861 'PortTop_Bound_004194f0': no se encontrÂ¢ el identificador
+raceframe	0x004189a0	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+raceframe	0x004194f0	cpp-unclean: C3861 'Orig_004b6520': no se encontrÂ¢ el identificador
+raceframe	0x00419760	cpp-unclean: C3861 'Orig_004b6520': no se encontrÂ¢ el identificador
+raceframe	0x0041a250	no matched / admitted source
+raceframe	0x0041a9b0	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+raceframe	0x0041ad00	cpp-unclean: C2065 'DAT_0063c630': identificador no declarado
+raceframe	0x0041b4d0	cpp-unclean: C3861 'Orig_004b3fc0': no se encontrÂ¢ el identificador
+raceframe	0x0041b510	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+raceframe	0x0041b540	link: re/match/s04/0041b540.c calls FUN_0041af50_body (:48), which has no exe body (LNK2019)
+raceframe	0x0041c180	no matched / admitted source
+raceframe	0x0041dca0	no matched / admitted source
+raceframe	0x0041e6c0	no matched / admitted source
+raceframe	0x00420870	no matched / admitted source
+raceframe	0x00421980	static in re/match/s05/004219f0.c:38 (file-local there): no linkable exe body
+raceframe	0x00423540	cpp-unclean: C2664 'undefined4 *RwCore_004cc230(undefined4,int,undefined4 *)': el argumento 3 no puede convertirse de 'undefined1
+raceframe	0x00424eb0	no matched / admitted source
+raceframe	0x00426810	no matched / admitted source
+raceframe	0x00430290	no matched / admitted source
+raceframe	0x004307a0	no matched / admitted source
+raceframe	0x004414b0	no matched / admitted source
+raceframe	0x004464c0	no matched / admitted source
+raceframe	0x00448220	no matched / admitted source
+raceframe	0x00452140	cpp-unclean: C2664 'undefined4 PortTop_Bound_00451990(int,undefined4 *,undefined4 *)': el argumento 1 no puede convertirse de 'un
+raceframe	0x0045b9d0	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+raceframe	0x0045be90	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+raceframe	0x0045bed0	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+raceframe	0x0046b1c0	no matched / admitted source
+raceframe	0x0046b540	no matched / admitted source
+raceframe	0x0046c7b0	no matched / admitted source
+raceframe	0x0046cbb0	no matched / admitted source
+raceframe	0x0046d3a0	no matched / admitted source
+raceframe	0x0046f6c0	no matched / admitted source
+raceframe	0x00470c70	no matched / admitted source
+raceframe	0x00471ec0	no matched / admitted source
+raceframe	0x00474f50	no matched / admitted source
+raceframe	0x004752f0	no matched / admitted source
+raceframe	0x00475f90	no matched / admitted source
+raceframe	0x00476880	cpp-unclean: C2660 'PortTop_Bound_00476710': la funciÂ¢n no acepta 5 argumentos
+raceframe	0x00477be0	no matched / admitted source
+raceframe	0x0047bb10	no matched / admitted source
+raceframe	0x0047cd50	cpp-unclean: C2664 'void PortTop_Bound_00486460(undefined4 *,undefined4)': el argumento 1 no puede convertirse de 'int' a 'undefi
+raceframe	0x00480d60	no matched / admitted source
+raceframe	0x00482c10	no matched / admitted source
+raceframe	0x004847d0	no matched / admitted source
+raceframe	0x00484ac0	no matched / admitted source
+raceframe	0x00486630	no matched / admitted source
+raceframe	0x00487280	no matched / admitted source
+raceframe	0x00487d00	no matched / admitted source
+raceframe	0x00487d60	cpp-unclean: C2664 'void PortTop_Bound_00476df0(int)': el argumento 1 no puede convertirse de 'undefined1 *' a 'int'
+raceframe	0x00487df0	no matched / admitted source
+raceframe	0x00488e70	no matched / admitted source
+raceframe	0x00489500	no matched / admitted source
+raceframe	0x0048a780	no matched / admitted source
+raceframe	0x0048d140	no matched / admitted source
+raceframe	0x0048d720	no matched / admitted source
+raceframe	0x0048d900	no matched / admitted source
+raceframe	0x0048db20	no matched / admitted source
+raceframe	0x0048dd40	no matched / admitted source
+raceframe	0x0048df60	no matched / admitted source
+raceframe	0x0048e180	no matched / admitted source
+raceframe	0x0048e360	no matched / admitted source
+raceframe	0x0048ebf0	no matched / admitted source
+raceframe	0x0048fe30	no matched / admitted source
+raceframe	0x00490020	no matched / admitted source
+raceframe	0x004910c0	no matched / admitted source
+raceframe	0x00491340	no matched / admitted source
+raceframe	0x004a332b	no matched / admitted source
+raceframe	0x004a3384	no matched / admitted source
+raceframe	0x004b4550	no matched / admitted source
+raceframe	0x004b49b0	no matched / admitted source
+raceframe	0x004b5080	no matched / admitted source
+raceframe	0x004c3d90	owned by RACE rows (run 53, race_owned.txt)
+raceframe	0x004c52f0	no matched / admitted source
+raceframe	0x004e89a0	owned by RACE rows (run 53, race_owned.txt)
+raceframe	0x00532b80	no matched / admitted source
+raceframe	0x00535700	no matched / admitted source
+raceframe	0x00538c80	owned by RACE rows (run 53, race_owned.txt)
+raceframe	0x00544bf0	no matched / admitted source
+raceframe	0x00546b10	owned by RACE rows (run 53, race_owned.txt)
+raceframe	0x00547230	no matched / admitted source
+raceframe	0x00557b70	no matched / admitted source
+raceframe	0x00559c40	no matched / admitted source
+raceframe	0x00559ee0	no matched / admitted source
+raceframe	0x0055ab30	no matched / admitted source
+raceframe	0x0055ac00	no matched / admitted source
+raceframe	0x0055dff0	no matched / admitted source
+raceframe	0x00564c80	no matched / admitted source
+raceframe	0x00565200	no matched / admitted source
+raceframe	0x00565260	no matched / admitted source
+raceframe	0x0057c210	no matched / admitted source
+renderframe	0x00404320	no matched / admitted source
+renderframe	0x00406130	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+renderframe	0x0040df20	cpp-unclean: C2664 'int RwCore_004c1c80(int,undefined4 *)': el argumento 2 no puede convertirse de 'undefined1 *' a 'undefined4 *
+renderframe	0x00412100	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'undefined4 *' a 'int *'
+renderframe	0x00412130	cpp-unclean: C3861 'GetRaceSubMode': no se encontrÂ¢ el identificador
+renderframe	0x00413a00	cpp-unclean: C2065 'DAT_00828320': identificador no declarado
+renderframe	0x00413a40	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+renderframe	0x00413f50	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+renderframe	0x004173e0	cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado
+renderframe	0x004189c0	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+renderframe	0x0041a3e0	cpp-unclean: C3861 'PortTop_Bound_0042a5d0': no se encontrÂ¢ el identificador
+renderframe	0x0041a960	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+renderframe	0x0041b630	cpp-unclean: C3861 'Orig_004b3fc0': no se encontrÂ¢ el identificador
+renderframe	0x0041db80	no matched / admitted source
+renderframe	0x0041ded0	no matched / admitted source
+renderframe	0x0041ebb0	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x00421560	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x004228f0	no matched / admitted source
+renderframe	0x00426030	cpp-unclean: C2660 'PortTop_Bound_0041e8f0': la funciÂ¢n no acepta 1 argumentos
+renderframe	0x00444b60	no matched / admitted source
+renderframe	0x00457610	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x0045b990	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+renderframe	0x004725c0	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'undefined4 *' a 'int *'
+renderframe	0x00475e50	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x00484310	static in re/match/s14fu/00484310.c:69 (file-local there): no linkable exe body
+renderframe	0x00484360	no matched / admitted source
+renderframe	0x00486f50	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x00487de0	cpp-unclean: C2660 'PortTop_Bound_00487d70': la funciÂ¢n no acepta 1 argumentos
+renderframe	0x004891f0	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x0048ad50	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x0048baf0	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x0048fce0	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x0048fd10	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x0048fd40	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x0048fd70	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x00490490	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x004914b0	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+renderframe	0x004b42c0	no matched / admitted source
+renderframe	0x004b5af0	no matched / admitted source
+renderframe	0x004b5d90	no matched / admitted source
+renderframe	0x004c3d90	owned by RACE rows (run 53, race_owned.txt)
+renderframe	0x004c52f0	no matched / admitted source
+renderframe	0x004e14a0	no matched / admitted source
+renderframe	0x005459c0	no matched / admitted source
+renderframe	0x005586f0	no matched / admitted source

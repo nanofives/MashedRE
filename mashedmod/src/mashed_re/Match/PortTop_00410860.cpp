@@ -10,7 +10,7 @@
 #define FUN_0040b6d0 UtilArrayGet8a94e0   // exe body (Match/MatchS02_0040b6d0.cpp)
 #define FUN_0040e460 Flag63b908Set   // exe body (Match/MatchS02_0040e460.cpp)
 #define FUN_0041eda0 TimerBitFieldSet   // exe body (Match/MatchS04_0041eda0.cpp)
-#define FUN_00424b80 PortTop_RFStop_00424b80   // named stop
+#define FUN_00424b80 PortTop_Bound_00424b80
 #define FUN_00429860 PortTop_Bound_00429860
 #define FUN_00429b30 PortTop_Bound_00429b30
 #define FUN_0042aab0 UtilInit898a90   // exe body (Match/MatchS06_0042aab0.cpp)

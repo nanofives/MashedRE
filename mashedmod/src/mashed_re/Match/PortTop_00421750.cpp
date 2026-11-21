@@ -8,7 +8,7 @@
 #define FUN_00421750 PortTop_Bound_00421750
 #define FUN_0055ac00 PortTop_RFStop_0055ac00   // named stop
 #define FUN_0055ad30 PortTop_Bound_0055ad30
-#define FUN_0055b650 PortTop_RFStop_0055b650   // named stop
+#define FUN_0055b650 PortTop_Bound_0055b650
 #define FUN_0057c210 PortTop_RFStop_0057c210   // named stop
 #define FUN_00421800 PortTop_Bound_00421800   // bound rva of the same source: this TU carries its only exe copy
 extern "C" {

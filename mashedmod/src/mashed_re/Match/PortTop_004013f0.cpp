@@ -12,7 +12,7 @@
 #define FUN_004c1a00 RwCore_004c1a00   // exe body (RwCore/RwCore_004c1a00.cpp)
 #define FUN_004e4320 PortTop_Bound_004e4320
 #define FUN_004e4350 PortTop_Bound_004e4350
-#define FUN_004e6680 PortTop_RRStop_004e6680   // named stop
+#define FUN_004e6680 PortTop_Bound_004e6680   // exe body (Match/PortTop_004e6680.cpp)
 extern "C" {
 #include "../../../../re/match/s01/004013f0.c"
 }

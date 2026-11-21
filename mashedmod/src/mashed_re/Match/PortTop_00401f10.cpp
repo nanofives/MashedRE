@@ -8,7 +8,7 @@
 #define FUN_00401f10 PortTop_Bound_00401f10
 #define FUN_0040e340 GetLiveCarCount   // exe body (Match/MatchS02_0040e340.cpp)
 #define FUN_00412130 PortTop_RRStop_00412130   // named stop
-#define FUN_004e6680 PortTop_RRStop_004e6680   // named stop
+#define FUN_004e6680 PortTop_Bound_004e6680   // exe body (Match/PortTop_004e6680.cpp)
 extern "C" {
 #include "../../../../re/match/s01/00401f10.c"
 }

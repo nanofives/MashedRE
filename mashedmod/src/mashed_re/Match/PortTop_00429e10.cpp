@@ -18,7 +18,7 @@
 #define FUN_00429660 PortTop_Bound_00429660
 #define FUN_00429bd0 PortTop_Bound_00429bd0
 #define FUN_0042f6a0 GetRaceSubMode   // exe body (Match/MatchS07_0042f6a0.cpp)
-#define FUN_00443080 PortTop_RRStop_00443080   // named stop
+#define FUN_00443080 PortTop_Bound_00443080   // exe body (Match/PortTop_00443080.cpp)
 #define FUN_004671a0 RwCore_004671a0   // exe body (RwCore/RwCore_004671a0.cpp)
 #define FUN_00472c60 RwCore_00472c60   // exe body (RwCore/RwCore_00472c60.cpp)
 #define FUN_004c19f0 RwCore_004c19f0   // exe body (RwCore/RwCore_004c19f0.cpp)
