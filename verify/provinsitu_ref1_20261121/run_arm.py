@@ -12,7 +12,7 @@ ROOT = r"D:\MashedWT\PROV-INSITU-REF1_root"
 RAW = ("0x00603400-0x00603800,0x00614400-0x00614800,0x00618000-0x00618400,0x006dcc00-0x006dd400,"
        "0x00773800-0x00773c00,0x007dd000-0x007dd400,0x007f0c00-0x007f1400")
 
-L, extra = sys.argv[1], sys.argv[2:]
+L, extra = sys.argv[1], sys.argv[2:] + os.environ.get("ARM_EXTRA", "").split()   # ARM_EXTRA: e.g. --crash-catch on repeats
 D.mkdir(parents=True, exist_ok=True)
 out = D / L
 if out.exists():
