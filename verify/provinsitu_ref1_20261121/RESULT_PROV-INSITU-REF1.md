@@ -5,7 +5,7 @@ Branch `orch/PROV-INSITU-REF1` from `orch/integration` `b24bba46c`. Row kind: ra
 the original and binds nothing into the exe: no build, no ddkobj check, no G-CTRL, no B, no 12x4 captures. Method fixed
 in `PREREG_PROV-INSITU-REF1.md` (committed before the first body run, `3372456f3`).
 
-STATUS: IN PROGRESS (batch 1 of 3 landed). Sections below are appended per batch.
+STATUS: IN PROGRESS (batches 1 and 2 of 3 landed). Sections below are appended per batch.
 
 ## Scenario, reference, controls
 
@@ -49,6 +49,41 @@ Groups of 6 (`prov_bisect.py --group 6 --any-segment`), the 6 bodies that were w
 - The 6 bodies wrong on 2026-11-11 are IDENTICAL-FOR-600 here (window caveat above): `0x00468d80` (21,556 calls),
   `0x0046e9e0` (21,556), `0x00448220` (2,722), `0x00424eb0` (2,719), `0x005aba20` (118, 11-11 HANG), `0x00481e00` (4).
 - Static write-set of the 75 IDENTICAL: 9 empty, 1 covered, 65 not-covered.
+- `0x005af690` CRASH **confirmed 2 of 2** (`rep_032759_001_1`, `--crash-catch 20`): access violation, read of
+  `0xa74e7d04` at eip `0x005b10ad` (MASHED.exe code, not the blob), clock call n=7935; the stack holds a return
+  address into the body at `0x005af690`+0x48 and `0x005af5b1` / `0x005af025` / `0x005a8572` in MASHED.exe.
+
+## Batch 2: score 50-80 (102 bodies)
+
+Groups of 3, the 18 bodies wrong on 2026-11-11 as singles. 74 runs (18 singles + 56 bisect runs). c1 (second no-body
+run, same boot class as the body runs) is IDENTICAL-FOR-600 against ref1/ref2 and against c0.
+
+| class | tested | IDENTICAL-FOR-600 | DIVERGED | CRASH | NOT-EXECUTED |
+|---|---|---|---|---|---|
+| game | 71 | 62 | 4 | 5 | 0 |
+| RW-Physics | 16 | 14 | 0 | 2 | 0 |
+| RW core | 15 | 14 | 0 | 1 | 0 |
+| all | 102 | 90 | 4 | 8 | 0 |
+
+88% of batch 2 is IDENTICAL. Single-body verdicts, confirmation runs queued (rep tag):
+
+| rva | class | link % | verdict | first tick (segment), blocks | 11-11 |
+|---|---|---|---|---|---|
+| `0x00441d40` | game | 69.2 | DIVERGED@302 | 302 (race), `0x00896400`, `0x00896800` | DIVERGED@2 |
+| `0x00467650` | game | 56.1 | DIVERGED@417 | 417 (race), `0x00881400`, `0x00884000` | - |
+| `0x00443440` | game | 58.4 | DIVERGED@496 | 496 (race), `0x00803000`, `0x0089a400` | DIVERGED@196 |
+| `0x0045de80` | game | 52.9 | DIVERGED@300 | 300 (race, the warp tick), 6 blocks `0x0068d400`..`0x0068e800`; 1 call | - |
+| `0x00470c70` | game | 69.8 | CRASH | rc `0xC0000005` | CRASH |
+| `0x005ac210` | game | 57.1 | CRASH | rc `0xC0000005` | CRASH |
+| `0x005b2190` | game | 61.0 | CRASH | rc `0xC0000005` | - |
+| `0x00420420` | game | 79.8 | CRASH | rc `0xC0000005` | - |
+| `0x005b1260` | game | 63.0 | CRASH | rc `0xC0000005` | - |
+| `0x004e8a10` | RW core | 58.6 | CRASH | rc `0xC0000005` | - |
+| `0x0055b4a0` | RW-Physics | 50.8 | CRASH | rc `0xC0000005` | - |
+| `0x0055f800` | RW-Physics | 65.3 | CRASH | rc `0xC0000005` | - |
+
+Static write-set of the 90 IDENTICAL: 15 empty, 3 covered, 72 not-covered. Of the 18 bodies wrong on 2026-11-11, 14
+are IDENTICAL-FOR-600 here (window caveat).
 
 ## NOT-WIRED (9)
 
@@ -77,6 +112,15 @@ Batch 1 rows: `0x004c3c60` Vec2Normalize (empty), `0x0055c2d0` (empty), `0x00578
 `0x0040cea0` (covered), `0x004783f0` (empty).
 Thin rows (fewer than 10 calls in the verdict run, the verdict covers only those calls): `0x005b73b0` 8, `0x005b03e0` 4,
 `0x005b6710` 2, `0x0040cea0` 1, `0x004783f0` 1.
+
+Batch 2 rows: `0x00547450` (empty), `0x004c39b0` RwV3dNormalize (empty), `0x004a2be9` __security_check_cookie (empty,
+CRT: outside the P-DoD port count, L-67 / L-70), `0x004dc8a0` (covered), `0x00481a30` (covered), `0x0053e5d0` (empty),
+`0x00577be0` (empty), `0x005bba60` (empty), `0x005a9f10` (empty), `0x005abfa0` (empty), `0x004c4360`
+MatrixIdentityResidual4c4360 (empty), `0x005b3020` (empty), `0x005ae170` (empty), `0x005b09c0` (empty), `0x0053d820`
+(empty), `0x00558cb0` (empty), `0x00559560` (empty), `0x005a7b60` (covered).
+Thin rows: `0x005b3020` 5, `0x005ae170` 4, `0x005b09c0` 4, `0x0053d820` 3, `0x00558cb0` 1, `0x00559560` 1, `0x005a7b60` 2.
+Bodies that were CRASH on 2026-11-11 and are IDENTICAL here: `0x00481a30`, `0x005a9f10`, `0x005abfa0`, `0x005a7b60`
+(the 11-11 crashes came after the race anchor in a longer race, or before it; window caveat).
 
 ## Evidence
 
