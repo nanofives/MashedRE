@@ -143,6 +143,34 @@ Those six words that now match are the 6 VALUE dwords fewer at tick 1 (5275 -> 5
 3. RW core list 0x007d45cc: initialising it needs 0x004cce20 (C4 match), which also installs RwGlobals +0x108..+0x114 and
    the freelist of freelists. That would let 0x004ccde0 run, but 0x004ccde0 is another row's RVA (bulk_cp1).
 
+## 7. Record layout and who owns +0xbc / +0xc0 / +0x164 (added after review, L0 condition)
+
+The record at 0x007d3ff8 on this path is not a librw object. It is the port's own `MashedRwGlobals s_rwGlobals`
+(`mashedmod/src/mashed_re/LibRw/RwApiBind.cpp:1782`..`:1807`, size 0x440, `static_assert` at `:1806`). librw's engine keeps
+its state in its own globals and never reads this record. The record's fields:
+
+| range | field (source line) | written by |
+|---|---|---|
+| +0x00..+0x33 | `dev[0x34]` (`:1783`) | `memcpy` from the B15 device (`:2134`) |
+| +0x34..+0xcb | `pad34` (`:1784`), no named field | `Put(0x34)`, `Put(0x60)` under RWMOD (`:2001`, `:2002`). Nothing else |
+| +0xcc / +0xd4 | `rwstrcpy` / `rwstrcat` (`:1785`..) | the installer, every install |
+| +0xc4, +0xd0, +0xdc, +0xe8, +0xf4, +0xf8, +0xfc | string slots | `Put` under RWMOD (`:1977`..`:1983`) |
+| +0x108..+0x11c | memory and freelist functions | the installer; +0x118 / +0x11c under RWMOD |
+| +0x120..+0x43f | `mod[]` (`:1797`) | `Put(kMod... )` under RWMOD: vector +0x134..+0x148, matrix +0x14c..+0x160, image +0x388 / +0x38c, texture +0x3f4..+0x410 (`:2006`..`:2037`) |
+
+- **+0xbc and +0xc0** lie in `pad34`. No binding code writes them: the only `Put` offsets inside `pad34` are 0x34 and 0x60.
+  Owner: the RW core frame module (0x004c07b0 writes them).
+- **+0x164** = matrix module + 0x18, inside `mod[]`. `RegisterRwModules` leaves it 0 on purpose (`:2014`: "+0x18 0x007d3e78 / +0x1c
+  0x007d45a0 / +0x20 0x007d3e9c stay 0: no reader of them on the knob path found"). The original holds 0x007d3e78 there
+  (`ORIG_RWG.json`), the frame freelist 0x004c07b0 stores. Owner: the RW core frame module.
+- Readers, by source search: of `0x007d3ff8` + 0xbc / + 0xc0 / + 0x164 in `mashedmod/src` outside `RwCore/`, only this row's log
+  lines and one comment (`Gameplay/PickupPoolSpawn.cpp:91`). Of `DAT_007d3ff8 + 0xbc`, `+ 0xc0` or `+ DAT_007d3e70` in `re/match`,
+  only RW core sources (re/match/s19, rwl01, rwl03 and 004d80d0): 004c07b0, 004c0830, 004c0870, 004c0910, 004c0b30, 004c0c20, 004c0d70, 004c0de0, 004c0e50,
+  004c0f00, 004c1040, 004c1210, 004c1340, 004c13e0, 004c1480, 004c1520, 004c15c0, 004c1680, 004d80d0, 00533ec0.
+- [UNCERTAIN] A text search cannot exclude a reader that reaches these offsets through a computed pointer. Test (register line
+  FRAMELIST-LIBRW-RECORD-OVERLAP): read back the whole record before and after the open, and again at the end of a knob-on arm,
+  and diff the words other than +0xbc / +0xc0 / +0x164.
+
 ## Evidence
 
 Committed (`verify/ro_20261116/`): this RESULT, the PREREG with amendment 1, `framelist_log_extract.txt` (frame-open,
