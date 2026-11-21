@@ -17,7 +17,7 @@
 //   0x0040cfd0  Orig_0040cfd0                matched, Match/PortTop_0040cfd0.cpp
 //   0x0040d020  Orig_0040d020                matched, Match/PortTop_0040d020.cpp (this row); its 0x00426e10 is a stand-in
 //   0x0040d110  PortTop_StandInRL_0040d110   stand-in
-//   0x00458c70  PortTop_StandInRL_00458c70   stand-in
+//   0x00458c70  PortTop_RL_00458c70          matched, Match/PortTop_00458c70.cpp via Match/PortTop_StandInsRL.cpp (RACE-RWGLOBALS-FRAMELIST)
 //   0x00426340  PortTop_StandInRL_00426340   stand-in
 //   0x00426020  GlobalDat00646e58Get         matched exe body (Match/MatchS05_00426020.cpp)
 //   0x00407800  PortTop_StandInRL_00407800   stand-in (C2)
@@ -46,7 +46,7 @@
 #define FUN_0040cfd0 Orig_0040cfd0
 #define FUN_0040d020 Orig_0040d020
 #define FUN_0040d110 PortTop_StandInRL_0040d110
-#define FUN_00458c70 PortTop_StandInRL_00458c70
+#define FUN_00458c70 PortTop_RL_00458c70   // Match/PortTop_StandInsRL.cpp: the matched body when the RW core frame list exists (RACE-RWGLOBALS-FRAMELIST)
 #define FUN_00426340 PortTop_StandInRL_00426340
 #define FUN_00426020 GlobalDat00646e58Get
 #define FUN_00407800 PortTop_StandInRL_00407800

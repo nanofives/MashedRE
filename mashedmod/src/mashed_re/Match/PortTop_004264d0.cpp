@@ -11,7 +11,7 @@
 #define FUN_0042a5d0 PortTop_Bound_0042a5d0
 #define FUN_0042a8d0 PortTop_Bound_0042a8d0
 #define FUN_0042fe30 RaceEndFlagIfEndMode   // exe body (Match/MatchS07_0042fe30.cpp)
-#define FUN_00458c70 PortTop_StandInRL_00458c70   // exe body (Match/PortTop_StandInsRL.cpp)
+#define FUN_00458c70 PortTop_RL_00458c70   // exe body (Match/PortTop_StandInsRL.cpp)
 #define FUN_00458fd0 PortTop_Bound_00458fd0
 #define FUN_0047a130 PortTop_Bound_0047a130
 #define FUN_00495280 PortTop_PizFs_Mount_00495280   // exe body (Match/PortTop_00402750_Pieces.cpp)

@@ -96,6 +96,7 @@ bool RwCore_Enabled(void);
 bool RwCore_FrameRoute(void);   // [RWC-FRAME]
 extern "C" { void RwCoreLift_004b3eb0(void); void RwCoreLift_004c2b80(void); void RwCoreLift_004c2bb0(void); void RwCoreLift_004e5850(void); void RwCoreLift_004e89a0(void); void RwCoreLift_0054f8d0(void); void RwCoreMissing_00513f90(void); void RwCore_004b3f90(void); void RwCore_004b5190(void); void RwCore_004b52f0(void); void RwCore_004b5300(void); void RwCore_004c0740(void); void RwCore_004c0b30(void); void RwCore_004c0e50(void); void RwCore_004c0ed0(void); void RwCore_004c1040(void); void RwCore_004c1210(void); void RwCore_004c13e0(void); void RwCore_004c15c0(void); void RwCore_004c1a40(void); void RwCore_004c1b10(void); void RwCore_004c1bb0(void); void RwCore_004c1c80(void); void RwCore_004c1d30(void); void RwCore_004c2bf0(void); void RwCore_004c2ed0(void); void RwCore_004c2f00(void); void RwCore_004c39b0(void); void RwCore_004c5bc0(void); void RwCore_004c5c00(void); void RwCore_004c5c80(void); void RwCore_004c7760(void); void RwCore_004c77c0(void); void RwCore_004cbc60(void); void RwCore_004cbc70(void); void RwCore_004cbc80(void); void RwCore_004cbc90(void); void RwCore_004ce2d0(void); void RwCore_004d52d0(void); void RwCore_004de1b0(void); void RwCore_004e43b0(void); void RwCore_004e4440(void); void RwCore_004e4450(void); void RwCore_004e45b0(void); void RwCore_004e4800(void); void RwCore_004e4810(void); void RwCore_004e4860(void); void RwCore_004e4dd0(void); void RwCore_004e66d0(void); void RwCore_004e69a0(void); void RwCore_004e6ab0(void); void RwCore_004e7420(void); void RwCore_004e7e30(void); void RwCore_00534b60(void); void RwCore_0053fb70(void); void RwCore_0053fbb0(void); void RwCore_0053fd30(void); void RwCore_00550350(void); void RwCore_00550390(void); void RwCore_00558470(void); void RwCore_005584c0(void); void RwCore_FrameDestroy0_004c0c20(void); void RwCore_FrameDestroy0_004c1cf0(void); void RwCore_FrameDestroy0_004c5930(void); void RwCore_FrameDestroy0_004c5a60(void); void RwCore_FrameDestroy0_004c7650(void); void RwCore_FrameDestroy0_004d41e0(void); void RwCore_FrameDestroy0_004e4d90(void); void RwCore_FrameDestroy0_004e5700(void); void RwCore_FrameDestroy0_004e6920(void); void RwCore_FrameDestroy0_004e6e00(void); void RwCore_FrameImageRead_00514330(void); void RwCore_FrameImageRead_0052cb00(void); void RwCore_FrameShowRaster(void); void RwCore_FrameTextureRead_004c5cb0(void); }   // [RWC-FRAME]
 void* RwCore_GlobalsAtInit(void);   // RWC-FRAME-492E90
+extern "C" void* RwCore_004c07b0(void* instance, int offset, int size);   // [RACE-RWGLOBALS-FRAMELIST] RwCore/RwCore_004c07b0.cpp
 int  RwCore_EngineInit(int memFuncs, int initFlags);
 int  RwCore_EngineOpen(int* params);
 int  RwCore_EngineStart(void);
@@ -2068,6 +2069,39 @@ void RegisterRwModules() {
             "+0xfc, device slots +0x24 +0x34, record %p size 0x%X",
             static_cast<void*>(&s_rwGlobals), static_cast<unsigned>(sizeof(s_rwGlobals)));
 }
+
+// [RACE-RWGLOBALS-FRAMELIST] MASHED_OT_RACELOAD=1 (default OFF; PREREG verify/ro_20261116/PREREG_RACE-RWGLOBALS-FRAMELIST.md).
+// The RW core's frame-module open 0x004c07b0 (re/match/s19/004c07b0.c, C4 c4=match; exe body RwCore/RwCore_004c07b0.cpp)
+// runs once on this record, so the core's dirty-frame list head at +0xbc / +0xc0 exists (self-linked) for the RW core
+// bodies the race load calls (0x004c15c0 under the matched 0x00458c70 wrote [[+0xbc]+4] with +0xbc = 0, RESULT_PORT-OT-RACE.md
+// 7.2). Offset 0x164: the original's record holds the frame freelist 0x007d3e78 at +0x164 and +0xbc = +0xc0 = record + 0xbc
+// (original-side probe verify/portorigtop_20261109/ORIG_RWG.json, rwg_block_0x200). An RW core body, not a librw call (L-124).
+bool RaceLoadKnobRw() {
+    static const bool s = [] {
+        const char* const e = std::getenv("MASHED_OT_RACELOAD");
+        return e && e[0] == '1';
+    }();
+    return s;
+}
+void RaceLoadFrameOpen() {
+    static bool done = false;
+    if (done || !RaceLoadKnobRw()) return;
+    done = true;
+    std::uint8_t* const rec = reinterpret_cast<std::uint8_t*>(&s_rwGlobals);
+    const auto W = [](std::uint32_t va) { return *reinterpret_cast<const volatile std::uint32_t*>(static_cast<std::uintptr_t>(va)); };
+    BindLog("RwGlobals [MASHED_OT_RACELOAD]: before 0x004c07b0: +0xbc %08X +0xc0 %08X +0x164 %08X, DAT_007d3e70 %08X, "
+            "DAT_007d3e74 %08X, inputs DAT_00617f78 %08X DAT_00617f90 %08X DAT_00617f94 %08X DAT_006182b0 %08X",
+            U(*reinterpret_cast<void**>(rec + 0xbc)), U(*reinterpret_cast<void**>(rec + 0xc0)),
+            U(*reinterpret_cast<void**>(rec + 0x164)), W(0x007d3e70u), W(0x007d3e74u), W(0x00617f78u), W(0x00617f90u),
+            W(0x00617f94u), W(0x006182b0u));
+    void* const r = RwCore_004c07b0(rec, 0x164, 4);
+    BindLog("RwGlobals [MASHED_OT_RACELOAD]: RW core frame-module open 0x004c07b0(record %p, 0x164, 4) -> %p; +0xbc %08X "
+            "+0xc0 %08X (record + 0xbc = %08X), +0x164 %08X, DAT_007d3e70 %08X, DAT_007d3e74 %08X, header 0x007d3e78 "
+            "+0x0 %08X +0x4 %08X +0x8 %08X +0xc %08X +0x10 %08X +0x14 %08X +0x18 %08X",
+            static_cast<void*>(rec), r, U(*reinterpret_cast<void**>(rec + 0xbc)), U(*reinterpret_cast<void**>(rec + 0xc0)),
+            U(rec + 0xbc), U(*reinterpret_cast<void**>(rec + 0x164)), W(0x007d3e70u), W(0x007d3e74u), W(0x007d3e78u),
+            W(0x007d3e7cu), W(0x007d3e80u), W(0x007d3e84u), W(0x007d3e88u), W(0x007d3e8cu), W(0x007d3e90u));
+}
 }  // namespace
 
 extern "C" {
@@ -2105,6 +2139,7 @@ int MashedRw_InstallRwGlobals(void) {
     s_rwGlobals.rwrealloc = reinterpret_cast<void*>(&RwGlobalsRealloc);
     s_rwGlobals.rwcalloc = reinterpret_cast<void*>(&RwGlobalsCalloc);
     *slot = &s_rwGlobals;
+    RaceLoadFrameOpen();                       // [RACE-RWGLOBALS-FRAMELIST] MASHED_OT_RACELOAD=1 only, once
     if (RwModKnob()) RegisterRwEarlySlots();   // [HUDINIT-A] record slots from the first install on
     // [PORT-OT-RWG-MODULES] only once the B15 device has been seen (the install after piece 4): before that, piece 4
     // points 0x007d3ff8 at the 0x34-byte B15 device for a while, and registered offsets would index past it.
