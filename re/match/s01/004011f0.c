@@ -8,11 +8,31 @@
 typedef struct { float x, y, z; } V3;
 typedef struct RwFrame RwFrame;
 typedef struct RwObj { int type; RwFrame *frame; } RwObj;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636564 (*(RwObj * *)0x00636564u)
+#else
 extern RwObj *DAT_00636564;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636568 (*(RwObj * *)0x00636568u)
+#else
 extern RwObj *DAT_00636568;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063656c (*(RwObj * *)0x0063656cu)
+#else
 extern RwObj *DAT_0063656c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636574 (*(float *)0x00636574u)
+#else
 extern float DAT_00636574;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_006146fc (*(V3 *)0x006146fcu)
+#else
 extern V3 DAT_006146fc;
+#endif
 float FUN_00429300(void);
 void FUN_004b42c0(RwFrame *f, void *m, V3 *v);
 void FUN_004c0e50(RwFrame *f);

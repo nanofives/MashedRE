@@ -1,0 +1,37 @@
+rva	class	reason
+0x00406370	cpp-unclean	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+0x00407a40	cpp-unclean	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+0x0040ddb0	cpp-unclean	cpp-unclean: C2660 'PortTop_Bound_00426c50': la funciÂ¢n no acepta 1 argumentos
+0x004103a0	static in its source	static in re/match/s02/004103a0.c:59 (file-local there): no linkable exe body
+0x00411580	cpp-unclean	cpp-unclean: C2664 'void PortTop_Bound_00411530(int,int,undefined4 *,undefined4 *,undefined4)': el argumento 3 no puede convertir
+0x004117b0	cpp-unclean	cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0x00413f20	cpp-unclean	cpp-unclean: C2065 'DAT_0063bc60': identificador no declarado
+0x00414060	cpp-unclean	cpp-unclean: C2065 'DAT_0089a384': identificador no declarado
+0x00414180	cpp-unclean	cpp-unclean: C2065 'DAT_0089a368': identificador no declarado
+0x00414220	cpp-unclean	cpp-unclean: C3861 'PortTop_Bound_0040e4b0': no se encontrÂ¢ el identificador
+0x00415860	cpp-unclean	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+0x00417370	cpp-unclean	cpp-unclean: C2065 'DAT_0089a4fc': identificador no declarado
+0x00417450	cpp-unclean	cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado
+0x00417530	cpp-unclean	cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado
+0x00418860	cpp-unclean	cpp-unclean: C2065 'DAT_00801ca0': identificador no declarado
+0x00418990	cpp-unclean	cpp-unclean: C3861 'PortTop_Bound_004194f0': no se encontrÂ¢ el identificador
+0x004189a0	cpp-unclean	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+0x004194f0	cpp-unclean	cpp-unclean: C3861 'Orig_004b6520': no se encontrÂ¢ el identificador
+0x00419760	cpp-unclean	cpp-unclean: C3861 'Orig_004b6520': no se encontrÂ¢ el identificador
+0x0041a9b0	cpp-unclean	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+0x0041ad00	cpp-unclean	cpp-unclean: C2065 'DAT_0063c630': identificador no declarado
+0x0041b4d0	cpp-unclean	cpp-unclean: C3861 'Orig_004b3fc0': no se encontrÂ¢ el identificador
+0x0041b510	cpp-unclean	cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido
+0x0041b540	link	link: re/match/s04/0041b540.c calls FUN_0041af50_body (:48), which has no exe body (LNK2019)
+0x00421980	static in its source	static in re/match/s05/004219f0.c:38 (file-local there): no linkable exe body
+0x00423540	cpp-unclean	cpp-unclean: C2664 'undefined4 *RwCore_004cc230(undefined4,int,undefined4 *)': el argumento 3 no puede convertirse de 'undefined1
+0x00452140	cpp-unclean	cpp-unclean: C2664 'undefined4 PortTop_Bound_00451990(int,undefined4 *,undefined4 *)': el argumento 1 no puede convertirse de 'un
+0x0045b9d0	cpp-unclean	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+0x0045be90	cpp-unclean	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+0x0045bed0	cpp-unclean	cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+0x00476880	cpp-unclean	cpp-unclean: C2660 'PortTop_Bound_00476710': la funciÂ¢n no acepta 5 argumentos
+0x004c3d90	owned by another row	owned by RACE rows (run 53, race_owned.txt)
+0x004e6680	bound by cp1 (unmerged)	bound by RACE-BIND-C4-BULK cp1 (orch/RACE-BIND-C4-BULK @ d4fda5c93, unmerged): listed, not rebound
+0x004e89a0	owned by another row	owned by RACE rows (run 53, race_owned.txt)
+0x00538c80	owned by another row	owned by RACE rows (run 53, race_owned.txt)
+0x00546b10	owned by another row	owned by RACE rows (run 53, race_owned.txt)

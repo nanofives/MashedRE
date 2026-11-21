@@ -1,0 +1,9 @@
+mashedmod/src/mashed_re/Match/PortTop_00411d90.cpp: FUN_00430820 PortTop_BulkStop_00430820 -> PortTop_Bound_00430820
+mashedmod/src/mashed_re/Match/PortTop_0041a8d0.c: FUN_0041f260 PortTop_RLStop_0041f260 -> PortTop_Bound_0041f260
+mashedmod/src/mashed_re/Match/PortTop_00421a90.cpp: FUN_0055dff0 PortTop_RLStop_0055dff0 -> PortTop_RFStop_0055dff0
+mashedmod/src/mashed_re/Match/PortTop_00462950.cpp: FUN_005a7b60 PortTop_RLStop_005a7b60 -> PortTop_Bound_005a7b60
+mashedmod/src/mashed_re/Match/PortTop_00478660.cpp: comments / text only
+mashedmod/src/mashed_re/Match/PortTop_0047a020.cpp: comments / text only
+mashedmod/src/mashed_re/Match/PortTop_00487e20.cpp: FUN_00535700 PortTop_BulkStop_00535700 -> PortTop_RFStop_00535700
+mashedmod/src/mashed_re/Match/PortTop_BulkStops.cpp: stop file, 192 -> 191 stop definitions
+mashedmod/src/mashed_re/Match/PortTop_RaceLoadStops.cpp: stop file, 52 -> 50 stop definitions

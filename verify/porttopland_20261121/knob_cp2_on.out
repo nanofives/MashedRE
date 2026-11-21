@@ -1,0 +1,73 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 3/8 after 600s
+[mashed-lock] HELD 'mashed_machine' pid=21092 (PORT-TOP-LAND-06-RF)
+spawned pid 1420
+knob_cp2_on: exited rc=0 (0x00000000) after 31.4 s, log -> D:/MashedWT/PORT-TOP-LAND-06-RF_data\knob_cp2_on.log
+  [ORIG_TOP] MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over
+  [ORIG_TOP] rdata seed: 46/46 strings written
+  [ORIG_TOP] [BIND-CRT-STDIO] fopen("mashed.log", "wt") write -> overlay
+  [ORIG_TOP] cfglog: Sat Nov 21 14:22:51
+  [ORIG_TOP] cfglog: Operating System:
+  [ORIG_TOP] cfglog: Professional
+  [ORIG_TOP] cfglog:  (Build 9200)
+  [ORIG_TOP] cfglog:
+  [ORIG_TOP] dinput seed: 3/3 written; c_dfDIKeyboard header equals the original's (0x18 0x10 2 0x100 0x100)
+  [ORIG_TOP] cfglog: Attempting to load controller config contcfg0.bin
+  [ORIG_TOP] cfglog: 	Unable to load controller config contcfg0.bin
+  [ORIG_TOP] cfglog: Attempting to load controller config contcfg1.bin
+  [ORIG_TOP] cfglog: 	Unable to load controller config contcfg1.bin
+  [ORIG_TOP] cfglog: Attempting to load controller config contcfg2.bin
+  [ORIG_TOP] cfglog: 	Unable to load controller config contcfg2.bin
+  [ORIG_TOP] cfglog: Attempting to load controller config contcfg3.bin
+  [ORIG_TOP] cfglog: 	Unable to load controller config contcfg3.bin
+  [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+  [ORIG_TOP] 0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1 or MASHED_OT_RACELOAD=1) returned 1
+  [ORIG_TOP] cfglog: Calling RwEngineInit
+  [RW_BIND] RwEngineInit -> rw::Engine::init ok
+  [ORIG_TOP] cfglog: Calling RtFSManagerOpen
+  [RW_BIND] RtFSManagerOpen(-1): shim, librw has no RtFSManager
+  [ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
+  [ORIG_TOP] 0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)
+  [ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
+  [RW_BIND] 0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in); [0x007dc57c] = 0x70 (PTank record)
+  [ORIG_TOP] cfglog: Calling RwEngineOpen
+  [RW_BIND] RwEngineOpen(hwnd=00D7052E) -> rw::Engine::open ok
+  [ORIG_TOP] cfglog: Calling HardwareSetVideoMode
+  [ORIG_TOP] 0x004951f0 HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)
+  [ORIG_TOP] cfglog: Calling RwEngineStart
+  [RW_BIND] RwEngineStart -> exe device 08DB7F00 adopted, rw::Engine::start ok
+  [ORIG_TOP] printf: 	Using video mode 0 : 3840x2160
+  [ORIG_TOP] printf: At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 99532800 = -78749696 bytes of video memory free
+  [ORIG_TOP] 0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+  [RW_BIND] 0x005584c0: shim, no librw counterpart (two RW-heap buffers, no exe reader)
+  [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 04B68E10, librw camera 08E9F7B0
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x2) -> rw::Raster::create 0187EC58
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x1) -> rw::Raster::create 08EB9E30
+  [RW_BIND] RwCameraClone(04B68E10) -> rw::Camera::clone: record 04B694F0
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 04B68F50, librw camera 01844028
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 08EB96F0
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 08EB9438
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 04B68690, librw camera 01844250
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 08EBAAE0
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 08EB9520
+  [RW_BIND] 0x004b3eb0: TXD (33932 bytes) -> rw::TexDictionary 08DDD3F8 with 1 of 1 textures
+  [RW_BIND] RwCameraClear(04B68E10, 000000ff, 3) -> rw::Camera::clear
+  [RW_BIND] camera begin update 04B68E10 -> rw::Camera::beginUpdate, BeginScene ok
+  [ORIG_TOP] 0x00428450 loading-disc draw (32, -32): missing body, not drawn
+  [RW_BIND] camera end update 04B68E10 -> EndScene, rw::Camera::endUpdate
+  [RW_BIND] RwRasterShowRaster(0187EC58, flags 1) -> Present on the adopted device: 0x00000000
+  [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+  [ORIG_TOP] cfglog: Calling AppInitialiseOnBootup
+  [RW_BIND] RwGlobals [MASHED_OT_RACELOAD]: before 0x004c07b0: +0xbc 00000000 +0xc0 00000000 +0x164 00000000, DAT_007d3e70 00000000, DAT_007d3e74 00000000, inputs DAT_00617f78 00000000 DAT_00617f90 00000000 DAT_00617f94 00000000 DAT_006182b0 00000000
+  [ORIG_TOP] rva 0x004cc820 RwFreeListCreate(0x0, 0x0, align 4): header 007D3E78 = {0x0, 0x0, 0x0, 0x4, ..., flags 3} (HUDINIT-A)
+  [RW_BIND] RwGlobals [MASHED_OT_RACELOAD]: RW core frame-module open 0x004c07b0(record 01143A30, 0x164, 4) -> 01143A30; +0xbc 01143AEC +0xc0 01143AEC (record + 0xbc = 01143AEC), +0x164 007D3E78, DAT_007d3e70 00000164, DAT_007d3e74 00000001, header 0x007d3e78 +0x0 00000000 +0x4 00000000 +0x8 00000000 +0xc 00000004 +0x10 007D3E88 +0x14 007D3E88 +0x18 00000003
+  [RW_BIND] RwGlobals: 0x007d3ff8 is 0 (no B15 device yet) -> record 01143A30 with Im2D fields zero; strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+  ... 1143 more; last:
+  [RW_BIND] RwEngineStop -> rw::Engine::stop, exe device released
+  [RW_BIND] RwEngineClose -> rw::Engine::close
+  [RW_BIND] RwEngineTerm -> rw::Engine::term
+  [ORIG_TOP] cfglog: Calling HardwareExitApplication
+  [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+  [ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames
+[mashed-lock] released 'mashed_machine' pid=21092

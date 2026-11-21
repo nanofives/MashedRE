@@ -5,3 +5,9 @@ alias	0045bf30	Orig_0045bf30	Match/PortTop_0045bae0.cpp
 # re/match/s01/00401340.c needs MASHED_RE_PORT and its prototypes (Match/MatchS01.cpp:42-99): the exe's one body of it
 # there is reused, not a second copy (PortTop_00401340.cpp failed LNK2019 on its 4 externs)
 alias	00401340	CupSpinSpeedAndColor	Match/MatchS01.cpp
+# PORT-TOP-LAND-06-RF cp3: 0x00401ee0 is a file-local of re/match/s01/00401570.c, which raceframe binds as 0x00401570
+# (Match/PortTop_00401570.cpp); a second wrapper of that source would be a second ORIG_TOP body of both rvas
+alias	00401ee0	PortTop_Local_00401570_00401ee0	Match/PortTop_00401570.cpp
+# PORT-TOP-LAND-06-RF cp3: re/match/s06/00428320.c holds a static copy of 0x00427840 for the DDK (:35-36) and declares it
+# external on the port (:44); the port call binds to the exe body
+not_local	00428320	00427840

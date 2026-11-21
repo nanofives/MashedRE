@@ -11,7 +11,7 @@
 #define FUN_00426c00 GameStateFlagGet   // exe body (Match/MatchS06_00426c00.cpp)
 #define FUN_004299d0 PortTop_BulkStop_004299d0   // named stop
 #define FUN_0042f6a0 GetRaceSubMode   // exe body (Match/MatchS07_0042f6a0.cpp)
-#define FUN_00430820 PortTop_BulkStop_00430820   // named stop
+#define FUN_00430820 PortTop_Bound_00430820   // exe body (Match/PortTop_00430820.cpp)
 #define FUN_00482900 PortTop_BulkStop_00482900   // named stop
 #define FUN_00482930 PortTop_BulkStop_00482930   // named stop
 #define FUN_00483d10 PortTop_BulkStop_00483d10   // named stop

@@ -1,0 +1,3 @@
+rva	calls_stepped	steps	stores	frame	image	image_masked	caller_stack	blob	other	verdict	static_leg	detail
+0x00401690	10	52561	855	0	855	0	0	0	0	covered	frame 0 abs_in 0 abs_out 0 indirect 60	undecoded 0; image targets: 0x00636588x11;0x0063658cx4;0x00636590x37;0x00636594x16;0x00636598x1;0x0063659cx17;0x006365f0x13;0x006365f4x3;0x006365f8x14;0x006365fcx14;0x00636600x27;0x00636604x10;+48 more; outside targets: -
+0x0041c410	10	5665	520	210	310	0	0	0	0	covered	frame 23 abs_in 0 abs_out 1 indirect 31	undecoded 0; image targets: 0x0063ce20x3;0x0063ce24x3;0x0063ce28x3;0x0063ce2cx3;0x0063ce30x3;0x0063ce34x3;0x0063ce38x3;0x0063ce3cx3;0x0063ce40x3;0x0063ce44x3;0x0063ce48x3;0x0063ce4cx3;+88 more; outside targets: -

@@ -958,8 +958,9 @@
 "not bound here (--roots-only): matched source re/match/s03/h3_0041a5d0.c"
 ],
 "0041f260": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s04/0041f260.c"
+"reuse",
+"PortTop_Bound_0041f260",
+"Match/PortTop_0041f260.cpp"
 ],
 "004b51d0": [
 "reuse",

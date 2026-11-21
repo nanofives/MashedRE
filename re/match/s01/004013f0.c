@@ -5,9 +5,21 @@
    FUN_00426060() world argument; the bottom pair flushes its pending pops before the nested call because an
    outer argument is already pushed. Ghidra's arity for 0x00426060 (1) and 0x004e4320/0x004e4350 (varies) is wrong. */
 typedef int (*Fn2)(int, int);
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d3ff8 (*(int ** *)0x007d3ff8u)
+#else
 extern int **DAT_007d3ff8;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636560 (*(int *)0x00636560u)
+#else
 extern int DAT_00636560;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636564 (*(int *)0x00636564u)
+#else
 extern int DAT_00636564;
+#endif
 void FUN_004011f0(void);
 int FUN_00426060(void);
 void FUN_004c19f0(int p0);

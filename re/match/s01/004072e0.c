@@ -14,10 +14,26 @@ struct Rec {
     char pad94[0xec - 0x94];
 };
 struct RwGlobals { char pad[0x20]; int (*renderStateSet)(int, int); };
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00639d80 (*(struct Rec (*)[1])0x00639d80u)
+#else
 extern struct Rec DAT_00639d80[];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d0 (*(int *)0x0063a5d0u)
+#else
 extern int DAT_0063a5d0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d8 (*(int *)0x0063a5d8u)
+#else
 extern int DAT_0063a5d8;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d3ff8 (*(struct RwGlobals * *)0x007d3ff8u)
+#else
 extern struct RwGlobals *DAT_007d3ff8;
+#endif
 void FUN_00406130(void);
 void FUN_004b59c0(V3 *a, V3 *b, RGBA *c);
 
