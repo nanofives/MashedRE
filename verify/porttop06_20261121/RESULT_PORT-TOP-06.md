@@ -6,8 +6,7 @@ cmwpwu26q5v0hnz1cierfryfw. Gates: not run, top-down row (no G-CTRL, no B, no 12x
 ## 0. Verdict
 
 GREEN for what this row binds and checks: both builds green, every bound `c4=match` unit IDENTICAL in ddkobj, binder selftest
-unchanged from the head's baseline, knob boot with the sub-knob OFF passes its self-test. Knob boots with the sub-knob ON:
-section 5.
+unchanged from the head's baseline, all four knob boots (VS2022 and object build, sub-knob OFF and ON) rc 0 with self-test PASS (section 5).
 
 **The bound race-frame closure cannot execute until the top-down race load completes.** 0x004111c0 is called only from
 cases 3 / 6 of the frame machine 0x00492d30 (`re/match/s15/00492d30.c:72`, `FUN_004111c0(0x32)`). On the knob path the
@@ -97,7 +96,7 @@ top-down bodies `Orig_0045bba0` / `Orig_0045bf30` (`Match/PortTop_0045bae0.cpp`)
 | object build (`MASHED_DDKOBJ=1`) | **OK** (`=== Build OK ===`, 589 s), exe sha256 `2895fe61...a446cd`. **ddkobj run with the uncommitted decode fix of 296c82aca (cl output decode defect, HB-DDKOBJ-UTF8-DECODE), file restored before commit.** The first object build without it died at `ddkobj.py:1323` (`r.stdout` None, input = cl's Spanish output under PYTHONUTF8=1) |
 | `ddkobj.py check` | IDENTICAL 2044/2129, DIFFERENT 57, not-in-map 28, linked 2041/2278, refusals 12 (section 4) |
 | `match.py --bytes` + `relocheck.py` on every bound source (`match_bound.tsv`) | all 213 bound `c4=match` rvas BYTE-IDENTICAL, relocheck OK. 3 sources also carry a static held copy that is not byte-identical (0x0041b7a0 in `s04/0041c090.c`, 0x0041c410 in `s04/0041c410.c`, 0x0041ce00 in `s04/0041d830.c`): the bound rva's own symbol is BYTE-IDENTICAL in each |
-| knob boot, VS2022 exe, sub-knob OFF | section 5 |
+| knob boots (4: VS2022 / object build x sub-knob OFF / ON) | all rc 0, 3000 frames, self-test PASS 0 of 260 (section 5) |
 
 Build etiquette: test-slot and lock status printed before every build and the check (`status_pre_vs1..5.txt`, `status_pre_ddk1/2.txt`,
 `status_pre_chk1.txt`, `status_pre_knob.txt` in the data dir). Every build waited while another Mashed build ran (vs1 waited on
@@ -137,8 +136,8 @@ Env `MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000` (cp1's env),
 |---|---|---|
 | `knob_vs_off` | VS2022 | **rc 0**, `WinMain 0x00492370 returned 0 after 3000 frames`, **self-test `[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad; self-test PASS (0 of 260 checks failed)`**, phase 1 throughout, `0x004111c0 calls 0` |
 | `knob_vs_on` | VS2022, `MASHED_OT_RACEFRAME=1` | **rc 0**, 3000 frames, the same self-test line (PASS, 0 of 260), phase 1 throughout, `0x004111c0 calls 0`. The dispatcher reads the sub-knob on its first call, which never comes, so its `[ORIG_TOP] PORT-TOP-06 sub-knob` log line is absent (0 lines): ON is not distinguishable from OFF in this boot, as section 0 says |
-| `knob_ddk_off` | object build | BOOTS_DDK_OFF |
-| `knob_ddk_on` | object build, `MASHED_OT_RACEFRAME=1` | BOOTS_DDK_ON |
+| `knob_ddk_off` | object build | **rc 0**, 3000 frames, the same self-test line (PASS, 0 of 260), phase 1 throughout, `0x004111c0 calls 0` |
+| `knob_ddk_on` | object build, `MASHED_OT_RACEFRAME=1` | **rc 0**, 3000 frames, the same self-test line (PASS, 0 of 260), phase 1 throughout, `0x004111c0 calls 0`; sub-knob line absent for the same reason as `knob_vs_on` |
 
 The OFF self-test line is the same as cp1's on its tree (188 / 31 / 157 / 72, PASS 0 of 260). No baseline boot of the bare head was
 run here.
@@ -191,6 +190,7 @@ plan keys ("graph edge only").
 | BYTECHECK_chk1.tsv | ed184b5abbee989956901c3d5b83236925b7c6d8afc76d843d5760a851313461 |
 | mashed_re_vs5.exe | 0733de404d562476d53eee57461267385fc5096170855849f6b32d1309f45da1 |
 | mashed_re_ddk2.exe | 2895fe61f1e84e7f47b82d8b12887775c481981658ce96687f9a6f1ecba446cd |
+| knob_vs_on.log / knob_ddk_off.log / knob_ddk_on.log | 015075da66c9d4c77e1040bc0cd458e5a99bac447f8f795d4c0fda71dcd28448 / 876fc8add04b47ed028b0d1775c01187ab1a22e88597e4f43a09e3d1e90deb0b / d887c2ef07b76bf45a66ea11d7d203d07725ce471b8c32414f439dba95232717 |
 | knob_vs_off.log / .out | 61a3cd04bd764b0131ae3354a60f7bc4183d2dc3effe905f2bd4f0f0dec29353 / 119cfe869614effac2a5d6aec69a7457ebc38c68f54273cdc57ef02b5d27351d |
 | externs_apply.log | d0407ffcfff7c33245d649185e49bb751ff916009298ccb46d53f1eac14275a3 |
 | fail_base.txt = fail_mine.txt | 79dd48b3c56ba86d98b5f74091de08d4dc4cfdb2e7d3af8690202cff977b7a05 |
