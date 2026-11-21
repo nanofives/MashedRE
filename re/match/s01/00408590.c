@@ -11,7 +11,11 @@
    Class (a) candidate: x87/integer interleave scheduling around the first and last call. */
 typedef struct { float x, y, z; } V3;
 typedef struct { char pad[0x20]; V3 v; } O2;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005d757c (*(float *)0x005d757cu)
+#else
 extern float DAT_005d757c;
+#endif
 V3 *FUN_00426cc0(int h);
 // MATCH: 0x00408590 FUN_00408590
 void FUN_00408590(char *obj, O2 *o)

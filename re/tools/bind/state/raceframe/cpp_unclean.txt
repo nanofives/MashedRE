@@ -1,0 +1,42 @@
+# matched sources that fail to compile as C++ (MATCH_PORT, VS2022) in the exe build; first error.
+00406370	C2632 'char' seguido de 'bool' no es vÂ lido
+00407a40	C2632 'char' seguido de 'bool' no es vÂ lido
+0040ddb0	C2660 'PortTop_Bound_00426c50': la funciÂ¢n no acepta 1 argumentos
+00411580	C2664 'void PortTop_Bound_00411530(int,int,undefined4 *,undefined4 *,undefined4)': el argumento 3 no puede convertir
+004117b0	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00413c70	C2065 'DAT_0063bc60': identificador no declarado
+00413f20	C2065 'DAT_0063bc60': identificador no declarado
+00413fa0	C3861 'GetDat0067f17c': no se encontrÂ¢ el identificador
+00413fe0	C2065 'DAT_0089a36c': identificador no declarado
+00414060	C2065 'DAT_0089a384': identificador no declarado
+00414180	C2065 'DAT_0089a368': identificador no declarado
+00414220	C3861 'PortTop_Bound_0040e4b0': no se encontrÂ¢ el identificador
+00415860	C2632 'char' seguido de 'bool' no es vÂ lido
+00417180	C2065 'DAT_008032d4': identificador no declarado
+00417370	C2065 'DAT_0089a4fc': identificador no declarado
+00417450	C2065 'DAT_007f1a9c': identificador no declarado
+00417530	C2065 'DAT_007f1a9c': identificador no declarado
+00417640	C3861 'GameStateFlagGet': no se encontrÂ¢ el identificador
+00417750	C3861 'PortTop_Bound_00414220': no se encontrÂ¢ el identificador
+00418860	C2065 'DAT_00801ca0': identificador no declarado
+00418990	C3861 'PortTop_Bound_004194f0': no se encontrÂ¢ el identificador
+004189a0	C2632 'char' seguido de 'bool' no es vÂ lido
+00418e50	C2632 'char' seguido de 'bool' no es vÂ lido
+00418e70	C2065 'DAT_0063c508': identificador no declarado
+004194f0	C3861 'Orig_004b6520': no se encontrÂ¢ el identificador
+00419fd0	C2632 'char' seguido de 'bool' no es vÂ lido
+00419ff0	C2065 'DAT_0063c1c8': identificador no declarado
+0041a5b0	C2632 'char' seguido de 'bool' no es vÂ lido
+0041a5d0	C2065 'DAT_0063c630': identificador no declarado
+0041a8b0	C2632 'char' seguido de 'bool' no es vÂ lido
+0041a9b0	C2632 'char' seguido de 'bool' no es vÂ lido
+0041ad00	C2065 'DAT_0063c630': identificador no declarado
+0041b4d0	C3861 'Orig_004b3fc0': no se encontrÂ¢ el identificador
+0041b510	C2632 'char' seguido de 'bool' no es vÂ lido
+00423540	C2664 'undefined4 *RwCore_004cc230(undefined4,int,undefined4 *)': el argumento 3 no puede convertirse de 'undefined1
+00452140	C2664 'undefined4 PortTop_Bound_00451990(int,undefined4 *,undefined4 *)': el argumento 1 no puede convertirse de 'un
+0045b9d0	C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+0045be90	C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+0045bed0	C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+00476880	C2660 'PortTop_Bound_00476710': la funciÂ¢n no acepta 5 argumentos
+00419760	C3861 'Orig_004b6520': no se encontrÂ¢ el identificador

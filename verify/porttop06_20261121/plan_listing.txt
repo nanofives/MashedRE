@@ -1,0 +1,507 @@
+Counter({'bind': 240, 'reuse': 137, 'stop': 129}) Counter({'match': 213, 'replay': 26, 'admitted': 1})
+00401570 bind re/match/s01/00401570.c C4 EntryTableScanByKey
+004019d0 stop  C2 FUN_004019d0
+00401da0 stop  C2 FUN_00401da0
+00402f80 reuse CupFloatInit C4 CupFloatInit
+00403250 bind re/match/s01/00403250.c C4 FUN_00403250
+004039f0 stop  C2 FUN_004039f0
+004046a0 stop  C2 FUN_004046a0
+00404fa0 stop  C2 FUN_00404fa0
+00405430 stop  C4 Pred405430
+00405460 bind re/match/s01/00405460.c C4 FUN_00405460
+00405890 reuse Pred405890 C4 Pred405890
+00406370 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 Clear10x3_63a494
+00406ce0 stop  C2 FUN_00406ce0
+004073b0 bind re/match/s01/004073b0.c C4 FUN_004073b0
+00407a00 reuse ReadAiCheckpointField C4 ReadAiCheckpointField
+00407a20 reuse GetAiLapCounter C4 GetAiLapCounter
+00407a40 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 Table8a9640Get
+00407a60 reuse UtilTableInit8a9620 C4 FUN_00407a60
+00407a90 stop  - 
+00407b00 bind re/match/s01/00407b00.c C4 FUN_00407b00
+00407b70 bind re/match/s01/00407b70.c C4 FUN_00407b70
+00407e20 stop  C2 FUN_00407e20
+00408590 bind re/match/s01/00408590.c C4 FUN_00408590
+00408610 bind re/match/s01/00408610.c C4 FUN_00408610
+00408a50 reuse PerCarRaceProgressGet C4 FUN_00408a50
+00408a70 bind re/match/s01/00408a70.c C4 FrontendC2RoundI
+00408ad0 reuse RaceScoreFloatGetBySlot C4 RaceScoreFloatGetBySlot
+00408b00 stop  C2 FUN_00408b00
+0040ad40 bind re/match/s02/0040ad40.c C4 FUN_0040ad40
+0040ad90 bind re/match/s02/0040ad90.c C4 FUN_0040ad90
+0040ae30 bind re/match/s02/0040ae30.c C4 FUN_0040ae30
+0040aef0 stop  C2 FUN_0040aef0
+0040b090 bind re/match/s02/0040b090.c C4 sub_0040b090
+0040b180 bind re/match/s02/0040b180.c C4 FUN_0040b180
+0040b420 bind re/match/s02/0040b420.c C4 IndexedTableLookup
+0040b540 bind re/match/s02/0040b540.c C4 PlayerScoreRankOrder
+0040b6d0 reuse UtilArrayGet8a94e0 C4 FUN_0040b6d0
+0040b890 bind re/match/s02/0040b890.c C4 FUN_0040b890
+0040b8e0 bind re/match/s02/0040b8e0.c C4 FUN_0040b8e0
+0040b930 bind re/match/s02/0040b930.c C4 PlayerScoreThresholdMask
+0040b970 bind re/match/s02/0040b970.c C4 Bool0Out8a94e0
+0040b9a0 bind re/match/s02/0040b9a0.c C4 MaxScoreFlags40b9a0
+0040ba00 bind re/match/s02/0040ba00.c C4 BoolMinOut8a94e0
+0040bd80 bind re/match/s02/0040bd80.c C4 FUN_0040bd80
+0040c5b0 bind re/match/s02/0040c5b0.c C4 FUN_0040c5b0
+0040c690 bind re/match/racepath/0040c690.c C4 FUN_0040c690
+0040ca00 bind re/match/racepath/0040ca00.c C4 FUN_0040ca00
+0040ce00 bind re/match/s02/0040ce00.c C4 FUN_0040ce00
+0040d470 bind re/match/s02/0040d470.c C4 FUN_0040d470
+0040d8f0 bind re/match/racepath/0040d8f0.c C4 FUN_0040d8f0
+0040da50 bind re/match/s02/0040da50.c C4 FUN_0040da50
+0040dba0 bind re/match/s02/0040dba0.c C4 FUN_0040dba0
+0040dbd0 bind re/match/s02/0040dbd0.c C4 SubStateEnter4
+0040dc70 bind re/match/s02/0040dc70.c C4 FUN_0040dc70
+0040dcb0 bind re/match/s02/0040dcb0.c C4 FUN_0040dcb0
+0040dd80 stop  - 
+0040ddb0 stop cpp-unclean: C2660 'PortTop_Bound_00426c50': la funciÂ¢n no acepta 1 argumentos C4 FUN_0040ddb0
+0040ddf0 stop  - 
+0040de00 bind re/match/s02/0040de00.c C4 thunk_FUN_004117b0
+0040e180 stop  C4 MostSeparatedPair
+0040e340 reuse GetLiveCarCount C4 GetLiveCarCount
+0040e350 reuse GetRenderSubMode C4 GetRenderSubMode
+0040e360 bind re/match/s02/0040e360.c C4 RaceMode::Set
+0040e370 reuse IsCarSlotActive C4 FUN_0040e370
+0040e460 reuse Flag63b908Set C4 Flag63b908Set
+0040e470 reuse CarSlotStateGet C4 CarSlotStateGet
+0040e480 reuse CarSlotStateSet C4 CarSlotStateSet
+0040e560 bind re/match/s02/0040e560.c C4 FUN_0040e560
+0040e590 stop  C2 FUN_0040e590
+0040eee0 stop  C2 FUN_0040eee0
+0040feb0 stop  - 
+00410130 stop  - 
+004103a0 stop static in re/match/s02/004103a0.c:59 (file-local there): no linkable exe body C4 SubStateHeldCountdown5
+00410510 bind re/match/pilot/a5_00410510.c C4 Race::EvaluateResult
+00410860 bind re/match/racepath/00410860.c C4 FUN_00410860
+00410ab0 stop  - 
+00410d10 bind re/match/s02/00410d10.c C4 FUN_00410d10
+00411170 bind re/match/s02/00411170.c C4 TimeTrialRecordPlayback
+004111c0 bind re/match/t01g/004111c0.c C4 FUN_004111c0
+00411350 reuse PortTop_Bound_00411350 C4 Replay::TimeFormat
+00411580 stop cpp-unclean: C2664 'void PortTop_Bound_00411530(int,int,undefined4 *,undefined4 *,undefined4)': el argumento 3 no puede convertir C4 ReplayGetBestTime
+004115c0 reuse PortTop_Bound_004115c0 C4 ReplayGetCurrentTime
+00411600 bind re/match/s02/00411600.c C4 ReplayRecordFrame
+004117b0 stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada C4 ReplaySave
+00411870 stop  C2 Replay::LapFinish
+00411ae0 bind re/match/racepath/00411ae0.c C4 Ghost::PlaybackTick
+00411d60 bind re/match/s02/00411d60.c C4 ReplayCheckTimer
+00412190 stop  C2 FUN_00412190
+00412620 stop  C2 FUN_00412620
+00412f30 stop  C4 FUN_00412f30
+00413cb0 stop  C4 FUN_00413cb0
+00413f20 stop cpp-unclean: C2065 'DAT_0063bc60': identificador no declarado C4 ZeroFill60_63bc60
+00414060 stop cpp-unclean: C2065 'DAT_0089a384': identificador no declarado C4 FUN_00414060
+00414180 stop cpp-unclean: C2065 'DAT_0089a368': identificador no declarado C4 SubStateRollCountdown414180
+00414220 stop cpp-unclean: C3861 'PortTop_Bound_0040e4b0': no se encontrÂ¢ el identificador C4 FUN_00414220
+00415860 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 InteractionCooldownSet
+00417370 stop cpp-unclean: C2065 'DAT_0089a4fc': identificador no declarado C4 FUN_00417370
+00417450 stop cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado C3 FUN_00417450
+00417530 stop cpp-unclean: C2065 'DAT_007f1a9c': identificador no declarado C4 FUN_00417530
+00417730 reuse VehicleRaceAngleGet C4 VehicleRaceAngleGet
+00417740 reuse Float89a870ToInt C4 FUN_00417740
+00418860 stop cpp-unclean: C2065 'DAT_00801ca0': identificador no declarado C4 FUN_00418860
+00418990 stop cpp-unclean: C3861 'PortTop_Bound_004194f0': no se encontrÂ¢ el identificador C4 thunk_FUN_004194f0
+004189a0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 FUN_004189a0
+004194f0 stop cpp-unclean: C3861 'Orig_004b6520': no se encontrÂ¢ el identificador C4 FUN_004194f0
+00419760 stop cpp-unclean: C3861 'Orig_004b6520': no se encontrÂ¢ el identificador C4 FUN_00419760
+0041a250 stop  C2 FUN_0041a250
+0041a9b0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 FUN_0041a9b0
+0041ad00 stop cpp-unclean: C2065 'DAT_0063c630': identificador no declarado C4 FUN_0041ad00
+0041b4d0 stop cpp-unclean: C3861 'Orig_004b3fc0': no se encontrÂ¢ el identificador C4 FUN_0041b4d0
+0041b510 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido C4 HudCounterReset
+0041b520 reuse Update41b520 C4 FUN_0041b520
+0041b540 stop link: re/match/s04/0041b540.c calls FUN_0041af50_body (:48), which has no exe body (LNK2019) C4 FUN_0041b540
+0041bf20 bind re/match/s04/0041b720.c C4 FUN_0041bf20
+0041c010 reuse HudConstTableInitAndSweep C4 HudConstTableInitAndSweep
+0041c090 bind re/match/s04/0041c090.c C4 FUN_0041c090
+0041c180 stop  C2 FUN_0041c180
+0041cb80 bind re/match/s04/0041c380.c C4 sub_0041cb80
+0041cbc0 reuse FloatTableInit C4 FloatTableInit
+0041cc50 bind re/match/s04/0041c410.c C4 HudSlotUpdateCc50
+0041d730 bind re/match/s04/0041cdb0.c C4 sub_0041d730
+0041d820 reuse TimerSlotClear C4 TimerFlagClear
+0041d830 bind re/match/s04/0041d830.c C4 FUN_0041d830
+0041d910 reuse Clear63d584Pair C4 Clear63d584Pair
+0041d930 bind re/match/s04/0041d930.c C4 HudSlideBillboardTick
+0041da90 reuse DeltaTimeOutGet C4 DeltaTimeOutGet
+0041dca0 stop  C2 FUN_0041dca0
+0041e080 reuse ScoreboardStateZeroInit C4 ScoreboardStateZeroInit
+0041e130 reuse TimerTrackSetter C4 TimerStateSet
+0041e6c0 stop  C2 FUN_0041e6c0
+0041e8c0 bind re/match/s04/0041e8c0.c C4 TrackNodeDispatch18
+0041e910 bind re/match/s04/0041e910.c C4 FUN_0041e910
+0041e920 bind re/match/s04/0041e920.c C4 FUN_0041e920
+0041e930 bind re/match/s04/0041e930.c C4 FUN_0041e930
+0041e960 bind re/match/s04/0041e960.c C4 FUN_0041e960
+0041e9b0 bind re/match/s04/0041e9b0.c C4 TrackNodeFieldCmp10
+0041e9e0 bind re/match/s04/0041e9e0.c C4 TrackNodeFnPtrGet18
+0041ea30 bind re/match/s04/0041ea30.c C4 GlobalField63d7e4_2c
+0041ea40 bind re/match/s04/0041ea40.c C4 GlobalField63d7e4_30
+0041ea50 bind re/match/s04/0041ea50.c C4 GlobalField63d7e4_34
+0041ea80 bind re/match/s04/0041ea80.c C4 GlobalField63d7e4_40
+0041eda0 reuse TimerBitFieldSet C4 TimerBitFieldSet
+0041ede0 bind re/match/s04/0041ede0.c C4 Flag0041ede0
+0041ee50 bind re/match/s04/0041ee50.c C4 Flag41ee50
+0041eeb0 bind re/match/s04/0041eeb0.c C4 Flag0041eeb0
+0041efe0 bind re/match/s04/0041efe0.c C4 BitExtract63dc74
+0041f000 reuse TimerSlotDataCopy C4 TimerSlotDataCopy
+0041f100 bind re/match/s04/0041f100.c C4 FloatTable63dc64Get
+0041f1c0 reuse GetEventFlag C4 GetEventFlag
+0041f1e0 bind re/match/s04/0041f1e0.c C4 FUN_0041f1e0
+0041f260 bind re/match/s04/0041f260.c C4 WorldMatrixCopy
+0041f290 bind re/match/s04/0041f290.c C4 FUN_0041f290
+00420870 stop  C2 FUN_00420870
+00420d40 bind re/match/s05/00420d40.c C4 TimerStructArrayClear
+00420da0 bind re/match/s05/00420da0.c C4 TblRetPtrout63e4b8_0
+00420dc0 bind re/match/s05/00420dc0.c C4 TblRetPtrout63e4b8_4
+00421080 reuse Orig_00421080 C4 Fill63e5a4
+00421160 bind re/match/s05/00421100.c C4 FUN_00421160
+004212b0 bind re/match/s05/004212b0.c C4 FUN_004212b0
+004215a0 bind re/match/s05/00420e00.c C4 FUN_004215a0
+004215c0 bind re/match/s05/00420de0.c C4 FUN_004215c0
+00421750 bind re/match/s05/00421750.c C4 FUN_00421750
+00421800 reuse PortTop_Bound_00421800 C4 FUN_00421800
+00421980 stop static in re/match/s05/004219f0.c:38 (file-local there): no linkable exe body C4 FUN_00421980
+004219f0 bind re/match/s05/004219f0.c C4 FUN_004219f0
+00421c10 bind re/match/s05/00421c10.c C4 FUN_00421c10
+00421d20 bind re/match/s05/00421d20.c C4 FUN_00421d20
+00422120 bind re/match/s05/00422120.c C4 TimerInitLoop
+004222c0 bind re/match/s05/004222c0.c C4 TimerInitThunk
+004222d0 bind re/match/s05/004222d0.c C4 FUN_004222d0
+00422b10 reuse TimerDwordClear C4 TimerArrayZero
+00422b50 bind re/match/pilot/a5_00422b50.c C4 VehicleDamageAccum
+00422ba0 bind re/match/s05/00422ba0.c C4 FUN_00422ba0
+00422fd0 bind re/match/s05/00422fd0.c C4 FrontendRaceResultsDispatch
+00423040 bind re/match/pilot/a6_00423040.c C4 FrontendDirInput
+00423270 reuse TabCycler C4 TabCycler
+00423320 reuse CursorMover C4 CursorMover
+004233e0 reuse HeadingAtan2ToGameAngle C4 HeadingAtan2ToGameAngle
+00423540 stop cpp-unclean: C2664 'undefined4 *RwCore_004cc230(undefined4,int,undefined4 *)': el argumento 3 no puede convertirse de 'undefined1 C4 FUN_00423540
+00423630 reuse PortTop_Bound_00423630 C4 AiDataBufInit
+00423670 bind re/match/s05/00423670.c C4 FUN_00423670
+00423b00 bind re/match/s05/00423b00.c C4 FUN_00423b00
+00423b20 bind re/match/s05/00423b20.c C4 CarSnapshotDwordGet
+00424b80 stop  C2 FUN_00424b80
+00424eb0 stop  C2 FUN_00424eb0
+004252c0 bind re/match/s05/004252c0.c C4 FUN_004252c0
+00425a40 bind re/match/s05/00425a40.c C4 FUN_00425a40
+00425b10 reuse TimerGlobalZero C4 PlayerSlotZero
+00425ca0 bind re/match/s05/00425ca0.c C4 FUN_00425ca0
+00425d50 bind re/match/s05/00425d50.c C4 FUN_00425d50
+00425ef0 reuse ActiveSlotCount C4 ActiveSlotCount
+00426020 reuse GlobalDat00646e58Get C4 GlobalDat00646e58Get
+00426080 reuse GlobalDat00656ed8Get C4 GlobalDat00656ed8Get
+00426090 reuse GlobalDat0066ce58Get C4 GlobalDat0066ce58Get
+00426630 reuse PitchParamSet C4 PitchParamSet
+004266f0 reuse PitchParam2Set C4 PitchParam2Set
+00426700 bind re/match/s06/00426700.c C4 FUN_00426700
+00426780 bind re/match/s06/00426780.c C4 FUN_00426780
+00426810 stop  C2 sub_00426810
+00426ab0 bind re/match/s06/00426ab0.c C4 sub_00426ab0
+00426ba0 reuse HudDrawEnabled C4 HudDrawEnabled
+00426bb0 reuse Global66d6d8Get C4 CameraPath::GetCount
+00426c00 reuse GameStateFlagGet C4 FUN_00426c00
+00426c10 bind re/match/s06/00426c10.c C4 TimerDispatch10
+00426c30 bind re/match/s06/00426c30.c C4 TimerDispatch30
+00426c70 bind re/match/s06/00426c70.c C4 TimerDispatch70
+00426c90 bind re/match/s06/00426c90.c C4 FUN_00426c90
+00426cc0 reuse VehicleTable4cPtrGet C4 VehicleTable4cPtrGet
+00426cf0 reuse GetDat0066d6e4 C4 GetDat0066d6e4
+004292c0 reuse UtilWritePtr C4 sub_004292c0
+004292d0 reuse FUN_004292d0 C4 sub_004292d0
+00429310 bind re/match/s06/00429310.c C4 TimeTrial::Tick
+00429840 reuse RaceStateLatchSet C4 RaceStateLatchSet
+00429860 bind re/match/s06/00429860.c C4 RaceStateFlagGet
+004298e0 bind re/match/s06/004298e0.c C4 TimeDisplay::InitForLap
+00429b30 bind re/match/s06/00429b30.c C4 FUN_00429b30
+0042aab0 reuse UtilInit898a90 C4 sub_0042aab0
+0042b8c0 reuse ScreenHeightGet C4 ScreenHeightGet
+0042b920 reuse ConstantGetter22 C4 ConstantGetter22
+0042b930 reuse RwCore_0042b930 C4 MenuAlphaGet
+0042d3a0 reuse RaceTransitionBufZero C4 RaceTransitionBufZero
+0042f500 reuse GetDat0067ea64 C4 GetDat0067ea64
+0042f510 reuse Vehicle0HandleGet C4 Vehicle0HandleGet
+0042f6a0 reuse GetRaceSubMode C4 GetRaceSubMode
+00430290 stop  C4 Championship::Complete
+004307a0 stop  C3 ElapsedVsThresholdCheck
+00430820 bind re/match/s07/00430820.c C4 Global67ed6cGet
+00430b00 reuse TimeDisplaySetEntry C4 TimeDisplay::SetEntry
+00433240 bind re/match/s08/00433240.c C4 FUN_00433240
+0043aee0 bind re/match/s08/0043aee0.c C4 MenuSlotFlagSetCurrent
+004414b0 stop  C2 FUN_004414b0
+004417e0 reuse PortTop_Bound_004417e0 C4 FUN_004417e0
+004425d0 reuse UtilZeroTable8964c0 C4 FUN_004425d0
+00442df0 bind re/match/s08/00442df0.c C4 RaceFloat898980Get
+00443080 bind re/match/s08/00443080.c C4 AiTargetEnableGet
+004430a0 bind re/match/s08/004430a0.c C4 Util897fe0Set
+004430b0 bind re/match/s08/004430b0.c C4 Util897fe0Get
+004464c0 stop  C4 CameraEntry::DispatchAll
+00448220 stop  C2 Frontend::PostRaceResultCamera
+00448700 bind re/match/s08/00448700.c C4 VehicleSeedWritePair
+0044d5e0 bind re/match/s08/0044d5e0.c C4 DepthChargePathSafetyCheck
+0044df80 bind re/match/s08/0044df80.c C4 FUN_0044df80
+0044e0a0 bind re/match/s08/0044e0a0.c C4 FUN_0044e0a0
+00452140 stop cpp-unclean: C2664 'undefined4 PortTop_Bound_00451990(int,undefined4 *,undefined4 *)': el argumento 1 no puede convertirse de 'un C4 FUN_00452140
+00458bf0 bind re/match/s09/00458bf0.c C4 FUN_00458bf0
+00458f20 bind re/match/s09/00458f20.c C4 FUN_00458f20
+00458f80 bind re/match/s09/00458f80.c C4 FUN_00458f80
+00459560 bind re/match/s09/00459560.c C4 FUN_00459560
+0045b350 reuse RwInitNullStub C4 RwInitNullStub
+0045b9d0 stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **' C4 FUN_0045b9d0
+0045ba00 reuse RaceResultIndexedStore C4 RaceResultIndexedStore
+0045bba0 reuse Orig_0045bba0 C4 FUN_0045bba0
+0045be90 stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **' C4 FUN_0045be90
+0045bed0 stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **' C4 PowerupRoundCleanup
+0045bf30 reuse Orig_0045bf30 C4 PowerupTeardownAll
+0045bfe0 bind re/match/s10/0045bfe0.c C4 Bezier::GetLocate
+0045c110 bind re/match/s10/0045c110.c C4 FUN_0045c110
+0045c350 bind re/match/s10/0045c350.c C4 Bezier::Interpolate
+0045daf0 reuse PortTop_Bound_0045daf0 C4 FUN_0045daf0
+0045dd50 bind re/match/s10/0045dd50.c C4 Table8aa300Get
+0045e0f0 reuse PortTop_Bound_0045e0f0 C4 FUN_0045e0f0
+00465c10 bind re/match/s10/00465c10.c C4 FUN_00465c10
+00465ca0 bind re/match/s10/00465ca0.c C4 FUN_00465ca0
+00466000 bind re/match/s10/00466000.c C4 FUN_00466000
+00466100 bind re/match/s10/00466100.c C4 FUN_00466100
+004671a0 reuse RwCore_004671a0 C4 BackBuffRasterOpen
+004671d0 bind re/match/s11/004671d0.c C4 FUN_004671d0
+00467210 bind re/match/s11/00467210.c C4 sub_00467210
+0046b1c0 stop  C4 VehicleSlotAabbExpand
+0046b540 stop  C3 VehicleSpawnInit
+0046baa0 reuse VehiclePhysicsStateReset C4 FUN_0046baa0
+0046be50 bind re/match/s11/0046be50.c C4 FUN_0046be50
+0046bf50 bind re/match/s11/0046bf50.c C4 FUN_0046bf50
+0046c5c0 reuse VehicleSlotInit C4 VehicleSlotInit
+0046c730 reuse EntityDamageStateGet C4 Table882198Get
+0046c750 reuse EntityVelocityCounterGet C4 Table882194Get
+0046c770 reuse VehicleDestructionStateGetter C4 VehicleDestructionStateGetter
+0046c790 reuse VehicleSlotFieldSet C4 VehicleSlotFieldSet
+0046c7b0 stop  C4 VehicleSlotGetter
+0046cb30 bind re/match/s11/0046cb30.c C4 Player::GetOffset3D
+0046cbb0 stop  C4 VehicleCarStateRead
+0046cbe0 reuse VehicleCarStateSet C4 VehicleCarStateSet
+0046cc10 reuse VehicleFloatFieldAsInt C4 VehicleFloatFieldAsInt
+0046d2e0 reuse PortTop_Bound_0046d2e0 C4 WheelGet46d2e0
+0046d320 bind re/match/s11/0046d320.c C4 Idx2Wheel881790Get
+0046d360 bind re/match/s11/0046d360.c C4 Idx2Wheel881738Get
+0046d3a0 stop  - 
+0046d400 bind re/match/s11/0046d400.c C4 FUN_0046d400
+0046d4a0 reuse PtrCompute881ec8 C4 PtrCompute881ec8
+0046d510 bind re/match/s11/0046d510.c C4 VehicleVelocityWorldGet
+0046d570 bind re/match/s11/0046d570.c C4 FUN_0046d570
+0046d660 bind re/match/s11/0046d660.c C4 VehTbl881f50Get3
+0046d6a0 reuse PortTop_Bound_0046d6a0 C4 VehTbl8820acGet1
+0046d780 bind re/match/s11/0046d780.c C4 LaunchRevRelease
+0046d7f0 reuse BoundedTableSignClamp46d7f0 C4 LaunchRevChargeTick
+0046f6c0 stop  C2 VehicleWheelContactSolver
+004704c0 bind re/match/s11/004704c0.c C4 FUN_004704c0
+00470c70 stop  C2 FUN_00470c70
+00471ac0 bind re/match/s11/00471ac0.c C4 FUN_00471ac0
+00471cf0 bind re/match/s11/00471cf0.c C4 FUN_00471cf0
+00471ec0 stop  C2 sub_00471ec0
+00472550 bind re/match/s11/00472550.c C4 Table691508Get
+00472650 reuse PortTop_Bound_00472650 C4 FUN_00472650
+00472690 reuse PortTop_Bound_00472690 C4 FUN_00472690
+00472740 bind re/match/s11/00472740.c C4 FUN_00472740
+00474d60 reuse Orig_00474d60 C4 FUN_00474d60
+00474d80 bind re/match/s11/00474d80.c C4 ByteFlag474d80
+00474de0 bind re/match/s11/00474de0.c C4 FUN_00474de0
+00474f50 stop  - 
+00474fb0 reuse PortTop_Bound_00474fb0 C4 FUN_00474fb0
+00475010 bind re/match/s12/00475010.c C4 FUN_00475010
+004752f0 stop  C2 FUN_004752f0
+004756e0 bind re/match/s12/004756e0.c C4 FUN_004756e0
+00475a60 bind re/match/s12/00475a60.c C4 PendingOpQueueFlush
+00475c10 bind re/match/s12/00475c10.c C4 FUN_00475c10
+00475ef0 reuse Orig_00475ef0 C4 FUN_00475ef0
+00475f90 stop  C2 FUN_00475f90
+004762c0 bind re/match/s12/004762c0.c C4 FUN_004762c0
+00476320 bind re/match/s12/00476320.c C4 FUN_00476320
+00476430 bind re/match/s12/00476430.c C4 thunk_FUN_00475ef0
+00476440 bind re/match/s12/00476440.c C4 FUN_00476440
+00476880 stop cpp-unclean: C2660 'PortTop_Bound_00476710': la funciÂ¢n no acepta 5 argumentos C4 FUN_00476880
+004769a0 reuse ParticleEmitter_SetPosition C4 ParticleEmitter_SetPosition
+004769d0 reuse ParticleEmitter_SetVelocity C4 ParticleEmitter_SetVelocity
+004769f0 reuse ParticleEmitter_SetColour C4 ParticleEmitter_SetColour
+00476a10 reuse Copy476a10 C4 FUN_00476a10
+00476a30 reuse ParticleEmitter_SetScalar C4 ParticleEmitter_SetScalar
+00476a40 reuse ParticleEmitter_SetRGBA C4 ParticleEmitter_SetRGBA
+00476d00 reuse MultiArrayScatter476d00 C4 FUN_00476d00
+00476df0 bind re/match/s12/00476df0.c C4 FUN_00476df0
+00477730 bind re/match/s12/00477730.c C4 FUN_00477730
+004777d0 bind re/match/s12/00477490.c C4 FUN_004777d0
+00477920 bind re/match/s12/00477920.c C4 FUN_00477920
+00477b40 reuse Orig_00477b40 C4 FUN_00477b40
+00477b60 bind re/match/s12/00477b60.c C4 FUN_00477b60
+00477be0 stop  C2 FUN_00477be0
+00477e00 bind re/match/s12/00477e00.c C4 Table69318cSet
+0047bb10 stop  C2 FUN_0047bb10
+0047c160 bind re/match/s13/0047c160.c C4 sub_0047c160
+0047ce40 reuse PortTop_Bound_0047ce40 C4 Search47ce40
+0047cea0 bind re/match/s13/0047cea0.c C4 FUN_0047cea0
+0047d080 reuse PortTop_Bound_0047d080 C4 FUN_0047d080
+0047d100 reuse PortTop_Bound_0047d100 C4 FUN_0047d100
+0047d150 reuse PortTop_Bound_0047d150 C4 SlotObjectField8
+0047d180 bind re/match/s13/0047d180.c C4 FUN_0047d180
+0047ea60 bind re/match/s13/0047ea60.c C4 FUN_0047ea60
+0047f1e0 bind re/match/s13/0047f1e0.c C4 FUN_0047f1e0
+00480100 reuse PortTop_Bound_00480100 C4 FUN_00480100
+00480720 bind re/match/s13/00480720.c C4 VehicleRespawnPlace
+00480d60 stop  C2 FUN_00480d60
+00481750 bind re/match/s13/00481750.c C4 FUN_00481750
+00481780 bind re/match/s13/00481780.c C4 FUN_00481780
+00481a30 stop  C2 FUN_00481a30
+004829d0 bind re/match/s13/004829d0.c C4 Replay::WriteFrame
+00482c10 stop  C2 Replay::ReadFrame
+004847d0 stop  C2 FUN_004847d0
+00484ac0 stop  C2 FUN_00484ac0
+00484c90 reuse Zero484c90 C4 FUN_00484c90
+00484cf0 bind re/match/s14/00484cf0.c C4 FUN_00484cf0
+00484de0 bind re/match/s14/00484de0.c C2 FUN_00484de0
+00484f70 bind re/match/s14/00484f70.c C4 FUN_00484f70
+00485070 bind re/match/s14/00485070.c C4 FUN_00485070
+00485e50 bind re/match/s14/00485c20.c C4 FUN_00485e50
+00485ef0 bind re/match/s14/00485ef0.c C4 FUN_00485ef0
+00486270 bind re/match/s14/00486270.c C4 FUN_00486270
+00486460 bind re/match/s14/00486460.c C4 FUN_00486460
+004864f0 bind re/match/s14/004864f0.c C4 FUN_004864f0
+00486610 bind re/match/s14/00486610.c C4 FUN_00486610
+00486630 stop  - 
+00486830 bind re/match/racepath/00486830.c C4 FUN_00486830
+00486f90 bind re/match/s14/00486f90.c C4 FUN_00486f90
+00487020 bind re/match/s14/00487020.c C4 FUN_00487020
+00487df0 stop  C4 Set703058_0
+00488e70 stop  C2 FUN_00488e70
+004893b0 bind re/match/s14/004893b0.c C4 FUN_004893b0
+004893d0 bind re/match/s14/004893d0.c C4 FUN_004893d0
+00489450 bind re/match/s14/00489450.c C4 ContRecSet450
+00489480 bind re/match/s14/00489480.c C4 ContRecSet480
+004894a0 bind re/match/s14/004894a0.c C4 ContRecSet4a0
+004894f0 bind re/match/s14/004894f0.c C4 Clear894f0
+00489500 stop  C2 FUN_00489500
+00489890 bind re/match/s14/00489890.c C4 FUN_00489890
+0048a5d0 bind re/match/s14/0048a490.c C4 FUN_0048a5d0
+0048a780 stop  C2 FUN_0048a780
+0048a850 bind re/match/s14/0048a850.c C4 FUN_0048a850
+0048aa20 bind re/match/s14/0048aa20.c C4 FUN_0048aa20
+0048ab70 bind re/match/racepath/0048ab70.c C4 FUN_0048ab70
+0048ade0 bind re/match/s14/0048ade0.c C4 FUN_0048ade0
+0048b440 bind re/match/racepath/0048aff0.c C4 FUN_0048b440
+0048b650 bind re/match/s14/0048b650.c C4 FUN_0048b650
+0048b7c0 bind re/match/s14/0048b7c0.c C4 FUN_0048b7c0
+0048b960 bind re/match/s14/0048b960.c C4 FUN_0048b960
+0048bb70 bind re/match/s14/0048bb70.c C4 FUN_0048bb70
+0048cf90 bind re/match/s15/0048cf90.c C4 FUN_0048cf90
+0048d140 stop  C2 FUN_0048d140
+0048d360 bind re/match/s15/0048d360.c C4 FUN_0048d360
+0048d540 bind re/match/s15/0048d540.c C4 FUN_0048d540
+0048d720 stop  C2 FUN_0048d720
+0048d900 stop  C2 FUN_0048d900
+0048db20 stop  C2 FUN_0048db20
+0048dd40 stop  C2 FUN_0048dd40
+0048df60 stop  C2 FUN_0048df60
+0048e180 stop  C2 FUN_0048e180
+0048e360 stop  C2 FUN_0048e360
+0048e5f0 bind re/match/s15/0048e5f0.c C4 FUN_0048e5f0
+0048ebc0 bind re/match/s15/0048ebc0.c C4 FUN_0048ebc0
+0048ebf0 stop  C2 FUN_0048ebf0
+0048f260 bind re/match/s15/0048f260.c C4 Clear48f260
+0048f290 bind re/match/s15/0048f290.c C4 FUN_0048f290
+0048f420 bind re/match/s15/0048f420.c C4 FUN_0048f420
+0048f590 bind re/match/s15/0048f590.c C4 FUN_0048f590
+0048f680 bind re/match/s15/0048f680.c C4 StridedClear76a100
+0048f6b0 bind re/match/s15/0048f6b0.c C4 StridedClear766a00
+0048f6e0 bind re/match/s15/0048f6e0.c C4 StridedClear770718
+0048f710 bind re/match/s15/0048f710.c C4 StridedClear769f50
+0048f740 bind re/match/s15/0048f740.c C4 FUN_0048f740
+0048f8a0 bind re/match/s15/0048f8a0.c C4 FUN_0048f8a0
+0048f9f0 bind re/match/s15/0048f9f0.c C4 FUN_0048f9f0
+0048fb10 bind re/match/s15/0048fb10.c C4 FUN_0048fb10
+0048fe30 stop  - 
+0048fe70 bind re/match/s15/0048fe70.c C4 FUN_0048fe70
+00490020 stop  C2 FUN_00490020
+00490380 bind re/match/s15/00490380.c C4 FUN_00490380
+004904d0 reuse UtilZeroTable86a4a0 C4 FUN_004904d0
+00490500 bind re/match/s15/00490500.c C4 FUN_00490500
+004910c0 stop  C2 FUN_004910c0
+00491340 stop  C2 FUN_00491340
+00491490 bind re/match/s15/00491490.c C4 FUN_00491490
+004922e0 bind re/match/s15/004922e0.c C4 CarEventTrigger
+00492d10 reuse PortTop_Bound_00492d10 C4 Global771968Get
+00493590 bind re/match/s15/00493590.c C4 Set771968_1
+00496930 reuse Table773030Get C4 Table773030Get
+004987b0 reuse DbgPrintf_004987b0 C4 FUN_004987b0
+004a2c48 reuse MashedCrt_ftol2_004a2c48 C4 FUN_004a2c48
+004a2cbd reuse PortTop_Crt_004a2cbd C4 printf
+004a3384 stop  C2 CRT::acos
+004b4070 reuse RwCore_004b4070 - 
+004b40f0 bind re/match/s18/004b40f0.c C4 FUN_004b40f0
+004b4510 bind re/match/s18/004b4510.c C4 FUN_004b4510
+004b4550 stop  C3 Vec3Centroid
+004b47e0 bind re/match/s18/004b47e0.c C4 FUN_004b47e0
+004b49b0 stop  - 
+004b4a80 bind re/match/s18/004b4a80.c C4 FUN_004b4a80
+004b4b60 bind re/match/s18/004b4b60.c C4 FUN_004b4b60
+004b5080 stop  C2 FUN_004b5080
+004b5240 reuse Orig_004b5240 C4 FUN_004b5240
+004b5320 reuse Orig_004b5320 C4 FUN_004b5320
+004b6480 reuse Orig_004b6480 C4 BitArrayClear
+004b6520 reuse Orig_004b6520 C4 ZeroFillWrapper
+004c0e50 reuse RwCore_004c0e50 C4 FUN_004c0e50
+004c0ed0 reuse RwCore_004c0ed0 C4 FUN_004c0ed0
+004c1340 reuse PortTop_Bound_004c1340 C4 FUN_004c1340
+004c13e0 reuse RwCore_004c13e0 C4 FUN_004c13e0
+004c1480 reuse PortTop_Bound_004c1480 C4 FUN_004c1480
+004c1520 reuse PortTop_Bound_004c1520 C4 FUN_004c1520
+004c18c0 bind re/match/s19/004c18c0.c C4 FUN_004c18c0
+004c1b40 bind re/match/s19/004c1b40.c C4 FUN_004c1b40
+004c1c80 reuse RwCore_004c1c80 C4 FUN_004c1c80
+004c39b0 reuse RwCore_004c39b0 C2 RwV3dNormalize
+004c3ac0 reuse RwCore_004c3ac0 C4 Vec3Magnitude
+004c3b30 reuse RwCore_004c3b30 C4 FastSqrt
+004c3bf0 reuse RwCore_004c3bf0 C4 Vec2Length
+004c3d90 stop owned by RACE rows (run 53, race_owned.txt) C4 FUN_004c3d90
+004c3df0 reuse RwV3dTransformPoints C4 RwV3dTransformPoints
+004c45f0 reuse RwCore_004c45f0 C4 FUN_004c45f0
+004c4d20 reuse RwCore_004c4d20 C4 RwMatrixRotate
+004c5010 reuse RwCore_004c5010 C3 RwMatrixScale
+004c51a0 reuse RwCore_004c51a0 C3 RwMatrixTranslate
+004c52f0 stop  C3 RwMatrixCombine
+004e5f90 reuse RwCore_004e5f90 C4 FUN_004e5f90
+004e6680 stop bound by RACE-BIND-C4-BULK cp1 (orch/RACE-BIND-C4-BULK @ d4fda5c93, unmerged): listed, not rebound C4 RpClumpRender
+004e68a0 reuse RwCore_004e68a0 C4 FUN_004e68a0
+004e89a0 stop owned by RACE rows (run 53, race_owned.txt) C4 FUN_004e89a0
+00532a60 reuse RwCore_00532a60 C2 FUN_00532a60
+00532b80 stop  C3 RpHAnimStdKeyFrameInterpolate
+00534870 reuse RwCore_00534870 C4 FUN_00534870
+00535700 stop  C2 FUN_00535700
+00535910 bind re/match/rwl03/00535910.c C4 FUN_00535910
+00538c80 stop owned by RACE rows (run 53, race_owned.txt) C4 FUN_00538c80
+00544bf0 stop  C2 FUN_00544bf0
+00546b10 stop owned by RACE rows (run 53, race_owned.txt) C4 FUN_00546b10
+00547230 stop  C2 FUN_00547230
+00557b70 stop  C1 FUN_00557b70
+00557fb0 bind re/match/rwl05/00557fb0.c C4 FUN_00557fb0
+00558100 bind re/match/s24/00558100.c C4 FUN_00558100
+00558140 bind re/match/s24/00558140.c C4 FUN_00558140
+00559c40 stop  C3 PhysicsSceneBodyRegister
+00559ee0 stop  C3 FUN_00559ee0
+0055ab30 stop  C4 FUN_0055ab30
+0055ac00 stop  C4 RwpShapeActiveBitSet
+0055ac50 bind re/match/rwl05/0055ac50.c C4 FUN_0055ac50
+0055ad30 bind re/match/rwl05/0055ad30.c C4 FUN_0055ad30
+0055ade0 reuse PortTop_Bound_0055ade0 C4 FUN_0055ade0
+0055ae70 bind re/match/rwl05/0055ae70.c C4 PhysicsSceneBodySetShapeFlags
+0055b650 stop  C3 FUN_0055b650
+0055dec0 reuse UtilDeref55dec0 C4 FUN_0055dec0
+0055dff0 stop  C4 RwpBodyRefreshGate
+00564c80 stop  C4 FUN_00564c80
+00565200 stop  C4 FUN_00565200
+00565260 stop  C4 FUN_00565260
+00565570 bind re/match/rwl05/00565570.c C4 FUN_00565570
+0057c210 stop  C4 RwpBodyTableLookup
+0057c420 reuse PortTop_Bound_0057c420 C4 FUN_0057c420
+005a66d0 reuse PortTop_Bound_005a66d0 C4 FUN_005a66d0
+005a6d60 reuse PortTop_Bound_005a6d60 C4 FUN_005a6d60
+005a6dc0 reuse PortTop_Bound_005a6dc0 C4 FUN_005a6dc0

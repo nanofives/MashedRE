@@ -13,7 +13,11 @@ typedef struct {
     int d;          /* +0x0b4 */
     char pad0b8[0x30c - 0xb8];
 } Rec30c;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_008a9640 (*(Rec30c (*)[1])0x008a9640u)
+#else
 extern Rec30c DAT_008a9640[];
+#endif
 int FUN_004a2cbd(const char *fmt, ...);
 // MATCH: 0x00408a70 FUN_00408a70
 int FUN_00408a70(int i, float pos)

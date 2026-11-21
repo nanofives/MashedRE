@@ -1,0 +1,50 @@
+define layer: 1733 rvas aliased, 130 added (not in plans/BINDINGS), 154 alias conflicts across TUs (highest kept)
+race-frame closure RF (from 0x004111c0, run nodes): 161 functions, T2 census 161; gates under it 43
+graph: executed functions 3377, T2 census 2450 (calls 54357823), reloc tables 78
+route states at head: {'stand': 60, 'run': 943, 'unbound': 2082, 'hand': 70, 'stop': 161, 'lib': 61}
+executed path R: 873 functions, T2 census in R 616 (calls 13808717)
+T2 census reachable from top in the full-follow graph: 1310; not attached to the top: 1140
+gates on R: 43 (stop 33, stand 0, unbound 10); with census behind or released: 43
+T2 census reachable only through hand exe bodies (BINDINGS port / define to a named exe body), not ranked: 533
+hand exe bodies on R: 0x0040fc00 0x004102f0 0x0041c380 0x00420de0 0x00421c50 0x00426460 0x0042ae10 0x0042c1c0 0x0042c1d0 0x0042c220 0x0042c2e0 0x0042f7a0 0x00432080 0x0045c4e0 0x0045c510 0x0045c550 0x00462500 0x00462510 0x00472640 0x00476ae0 0x00476be0 0x00476c10 0x00476cb0 0x004773f0 0x0047bcc0 0x004927c0 0x004935a0 0x004935d0 0x004951e0 0x004a2be9 0x004a3ac9 0x004b302f 0x004b3eb0 0x004b64e0
+class tally of ranked gates: {'C2 with a source': 3, 'no source': 4, 'c4=match bindable': 5, 'C4 no bindable source': 15, 'c4=match cpp-unclean': 12, 'C3 with a source': 4}
+  1 0x00448220 Frontend::PostRaceResultCame C2 with a source (97.0%, in-situ DIVERGED@1116)  tool=52/2024208 alone=13 behind=17/117110
+  2 0x0040e590 FUN_0040e590                 C2 with a source (84.6%, in-situ IDENTICAL-FOR-2 tool=34/1101325 alone=18 behind=18/322218
+  3 0x00487280 FUN_00487280                 no source (C2)                                   tool=15/3102578 alone=10 behind=4/732
+  4 0x0040eee0 FUN_0040eee0                 no source (C2)                                   tool=11/25886 alone=1 behind=2/18
+  5 0x004a504f FUN_004a504f                 c4=match bindable                                tool=10/25876 alone=9 behind=5/7000
+  6 0x004103a0 SubStateHeldCountdown5       c4=match bindable                                tool=8/6487 alone=8 behind=41/940740
+  7 0x004a5f4a FUN_004a5f4a                 C4 no bindable source (libid)                    tool=5/16965 alone=1 behind=1/86
+  8 0x0041b4d0 FUN_0041b4d0                 c4=match cpp-unclean                             tool=5/3136 alone=1 behind=2/5
+  9 0x0045be90 FUN_0045be90                 c4=match cpp-unclean                             tool=5/180 alone=1 behind=2/2
+ 10 0x0046b540 VehicleSpawnInit             C3 with a source (59.2%)                         tool=4/146309 alone=4 behind=2/40
+ 11 0x00419760 FUN_00419760                 c4=match cpp-unclean                             tool=4/11058 alone=2 behind=5/11060
+ 12 0x004a5fbf FUN_004a5fbf                 C4 no bindable source (libid)                    tool=3/13644 alone=3 behind=1/86
+ 13 0x004464c0 CameraEntry::DispatchAll     C4 no bindable source (untagged)                 tool=3/3252 alone=3 behind=7/7148
+ 14 0x0045bed0 PowerupRoundCleanup          c4=match cpp-unclean                             tool=3/32 alone=2 behind=3/10
+ 15 0x0055ab30 FUN_0055ab30                 C4 no bindable source (untagged)                 tool=2/24226 alone=2 behind=1/11934
+ 16 0x00414060 FUN_00414060                 c4=match cpp-unclean                             tool=2/2 alone=2 behind=3/3
+ 17 0x00559c40 PhysicsSceneBodyRegister     C3 with a source (42.4%)                         tool=1/12127 alone=1 behind=1/124
+ 18 0x00559ee0 FUN_00559ee0                 C3 with a source (43.9%)                         tool=1/12099 alone=1 behind=1/96
+ 19 0x0055dff0 RwpBodyRefreshGate           C4 no bindable source (untagged)                 tool=1/11870 alone=1 behind=2/24004
+ 20 0x004a2d18 FUN_004a2d18                 no source (C2)                                   tool=1/86 alone=1 behind=2/172
+ 21 0x00405430 Pred405430                   C4 no bindable source (untagged)                 tool=0/0 alone=0 behind=1/1
+ 22 0x00406370 Clear10x3_63a494             c4=match cpp-unclean                             tool=0/0 alone=0 behind=1/3
+ 23 0x0040e180 MostSeparatedPair            C4 no bindable source (untagged)                 tool=0/0 alone=0 behind=1/9941
+ 24 0x00412880 thunk_FUN_00412190           c4=match bindable                                tool=0/0 alone=0 behind=1/4
+ 25 0x00413f20 ZeroFill60_63bc60            c4=match cpp-unclean                             tool=0/0 alone=0 behind=1/204
+ 26 0x00414180 SubStateRollCountdown414180  c4=match cpp-unclean                             tool=0/0 alone=0 behind=1/3
+ 27 0x00414220 FUN_00414220                 c4=match cpp-unclean                             tool=0/0 alone=0 behind=1/2
+ 28 0x00418990 thunk_FUN_004194f0           c4=match cpp-unclean                             tool=0/0 alone=0 behind=1/6
+ 29 0x004189f0 thunk_FUN_00419760           c4=match bindable                                tool=0/0 alone=0 behind=1/2
+ 30 0x0041ae20 FUN_0041ae20                 c4=match bindable                                tool=0/0 alone=0 behind=1/12
+ 31 0x0041b510 HudCounterReset              c4=match cpp-unclean                             tool=0/0 alone=0 behind=1/3
+ 32 0x00424b80 FUN_00424b80                 C2 with a source (88.7%, in-situ IDENTICAL-FOR-2 tool=0/0 alone=0 behind=1/2
+ 33 0x0045b9d0 FUN_0045b9d0                 c4=match cpp-unclean                             tool=0/0 alone=0 behind=1/3
+ 34 0x0046b1c0 VehicleSlotAabbExpand        C4 no bindable source (untagged)                 tool=0/0 alone=0 behind=1/20
+ 35 0x0046c7b0 VehicleSlotGetter            C4 no bindable source (untagged)                 tool=0/0 alone=0 behind=1/377385
+ 36 0x0046cbb0 VehicleCarStateRead          C4 no bindable source (untagged)                 tool=0/0 alone=0 behind=1/273243
+ 37 0x00487df0 Set703058_0                  C4 no bindable source (untagged)                 tool=0/0 alone=0 behind=1/2723
+ 38 0x004a5984 CrtSehProlog                 no source (C2)                                   tool=0/0 alone=0 behind=1/10721
+ 39 0x004a59bf CrtSehEpilog                 C4 no bindable source (libid)                    tool=0/0 alone=0 behind=1/10721
+ 40 0x004a6047 FUN_004a6047                 C4 no bindable source (libid)                    tool=0/0 alone=0 behind=1/86

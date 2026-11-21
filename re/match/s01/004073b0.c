@@ -33,10 +33,26 @@ struct Rec {
     int fe8;                    /* 0xe8 */
 };
 struct Smoke { int obj; int f4, f8, fc; int fx; int f14, f18, f1c; };
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00639d80 (*(struct Rec (*)[1])0x00639d80u)
+#else
 extern struct Rec DAT_00639d80[];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d0 (*(int *)0x0063a5d0u)
+#else
 extern int DAT_0063a5d0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d4 (*(int *)0x0063a5d4u)
+#else
 extern int DAT_0063a5d4;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d8 (*(int *)0x0063a5d8u)
+#else
 extern int DAT_0063a5d8;
+#endif
 void FUN_00406370(void);
 void FUN_004b47e0(Mat *m, int a, int b);
 void FUN_004c1480(struct Frame *f, Mat *m, int b);
