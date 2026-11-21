@@ -6,9 +6,14 @@ One tool for what three per-row generators did before:
   verify/ro_20261116/rltools/rl_bind_gen.py                 -> profile `raceload` (race-load closure of 0x0040d270)
   verify/portorigtop_20261113/tools/bindings_update.py      -> subcommand `bindings`
 and their helpers (exe_body_index.py, sync_rsp_allowlist.py / rl_sync.py, guard_externs.py, unclean_from_log.py,
-same_source_exe.py, prune_allowlist.py). The rule tables of both generators are carried over unchanged (PROFILES below),
-so a re-run on the same tree writes the same files. State (plan.json, cpp_unclean.txt, newfiles.txt) lives in
+same_source_exe.py, prune_allowlist.py). The rule tables of both generators are carried over unchanged, so a re-run on
+the same tree writes the same files. State (plan.json, cpp_unclean.txt, newfiles.txt) lives in
 re/tools/bind/state/<profile>/ (copied from the old verify/ folders at BIND-TOOL).
+
+BIND-PROFILE-DATA (2026-11-21): profiles and rule tables are data, not code. A profile is state/<profile>/profile.json
+(settings) + rules.tsv (per-rva rules) + roots.txt (roots); state/_shared/rules.tsv holds the rules every profile reads.
+A binding row adds lines there and never edits this file (KICKOFF_run54 rule 1). Profiles: raceload, audio, raceframe
+(PORT-TOP-06), renderframe (PORT-TOP-RENDERFRAME-492E90).
 
 Run from the worktree root. Usage (full walk-through: .claude/skills/roadmap-loop/SKILL.md, "Binding checkpoints"):
   py -3.12 re/tools/bind/porttop_bind.py plan    --profile raceload --roots 00426e10,004264d0      # dry run, listing
@@ -20,7 +25,8 @@ Run from the worktree root. Usage (full walk-through: .claude/skills/roadmap-loo
   py -3.12 re/tools/bind/porttop_bind.py samesrc --profile raceload            # planned binds another TU already compiles
   py -3.12 re/tools/bind/porttop_bind.py prune   --profile raceload [--apply]   # allowlist lines of rvas no longer bound
   py -3.12 re/tools/bind/porttop_bind.py index   [--out <json>]                 # rva -> exe body index (debug)
-  py -3.12 re/tools/bind/porttop_bind.py selftest                               # rebind both profiles, expect no change
+  py -3.12 re/tools/bind/porttop_bind.py selftest                               # rebind every profile, expect no change
+(--roots may be left out of plan / write: the profile's roots.txt is used.)
 """
 import argparse, csv, glob, json, os, re, subprocess, sys
 from collections import Counter
@@ -47,138 +53,103 @@ def write_if_changed(fn, text):
 
 
 # --------------------------------------------------------------------------------------------------------------------
-# Shared rule tables (from audiotick_bind_gen.py; the raceload profile inherits every one of them, as rl_bind_gen.py
-# did by exec-ing that generator's prefix).
+# Profiles and rule tables are data (BIND-PROFILE-DATA, 2026-11-21): a binding row adds lines to
+#   re/tools/bind/state/_shared/rules.tsv        rules every profile reads (prov_bind, extra_pre, extra_in, alias, ...)
+#   re/tools/bind/state/<profile>/profile.json   the profile's settings (marks, stop file, header and stop text, flags)
+#   re/tools/bind/state/<profile>/rules.tsv      its per-rva rules (force, stop_force, knob, alias, not_local, ...)
+#   re/tools/bind/state/<profile>/roots.txt      its roots (plan / write default, selftest)
+# and never edits this file (KICKOFF_run54 rule 1). The rule kinds are listed in state/_shared/rules.tsv. A profile is a
+# folder under state/ with a profile.json; keys a profile.json leaves out take the defaults in PROFILE_DEFAULTS.
 # --------------------------------------------------------------------------------------------------------------------
-# L-126 provisional bodies bind on the knob path only for the rvas named here (kept narrow so the closure grows one
-# reached stop at a time); c4=frida-replay rows (L-128) bind from their one re/match source.
-PROV_BIND = {'005a6ea0', '005a6f30', '004627f0', '005aa0c0'}   # 004627f0 + its reached callee 005aa0c0: PORT-TOP-AUDIO-HWINIT-4627F0
-PROV_BIND |= {'005a5e70'}   # PORT-TOP-RWAUDIO-TABLE-632BA8: table slot 0x00632ba8 (tail-merge layout, PROVISIONAL.tsv)
-PROV_BIND |= {'005ae650'}   # PORT-TOP-AUDIOPOOL-5AE650: AudioPoolConstruct (prologue placement, PROVISIONAL.tsv)
-PROV_BIND |= {'005adc10'}   # PORT-TOP-AUDIOSTOP-5ADC10: 0x005add60's callee, register-only residual 92.2% (PROVISIONAL.tsv)
-PROV_BIND |= {'0045d460'}   # PORT-TOP-AUDIO-BODY-45D460: 0x004669b0's permdict loader, register-only residual 94.2% (PROVISIONAL.tsv)
-PROV_BIND |= {'005a61b0', '005b35a0', '005ae800'}   # PORT-TOP-AUDIOSTOP-5A61B0: 0x005ad770's stops (PROVISIONAL.tsv)
-PROV_BIND |= {'005a9ab0'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: 0x005a9970's stop (67.9%, EQUIV-IF-CALLERS-IGNORE(ECX), callers read)
-PROV_BIND |= {'005aa560'}   # PORT-TOP-AUDIOINIT-SPLIT-5A9970: table entry 7 0x005aa480's stop (79.8%, NOT-PROVEN call-args at 0x005aa593)
-PROV_BIND |= {'005aa330'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: 0x005a9c50's other stop (54.7%, NOT-PROVEN call-args at 0x005aa350)
-PROV_BIND |= {'005ad420'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: shared callee of the 0x00632c2c entries (74.5%, NOT-PROVEN at 0x005ad4e5)
-PROV_BIND |= {'005a8ea0'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: table 0x00632c28 entry (77.6%, EQUIV-IF-CALLERS-IGNORE(EAX), caller 0x005ad080 reads)
-PROV_BIND |= {'005aa200'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: census order 5, 0x005a62b0's callee (66.1%, NOT-PROVEN at 0x005aa271)
-PROV_BIND |= {'005a9f10'}   # PORT-TOP-AUDIO-5AEF30-KNOB: census 69, existing PROVISIONAL.tsv row (81.0%, NOT-PROVEN, PROV-FIX-9)
-PROV_BIND |= {'005bad30'}   # PORT-TOP-AUDIO-5AEF30-KNOB: census 58, source from the listing 94.4%, NOT-PROVEN
-PROV_BIND |= {'005b9ea0', '005b85e0', '005c7a00', '005c6c20', '005a7fe0', '005c80a0', '005b7440', '005b6b80', '005bce20'}   # PORT-TOP-AUDIO-5A8F30-STOPS: table 0x00635194 entries walked by 0x005bbb20 (L-171 class)
+STATE = os.path.join(HERE, 'state')
+SHARED_RULES = os.path.join(STATE, '_shared', 'rules.tsv')
 
-EXTRA_PRE = {
-    '004645c0': ['// The source declares its globals extern under #ifndef MATCH_PORT; the port reads them at their original addresses.',
-                 '#define DAT_00604a10 (*(int *)0x00604a10u)', '#define DAT_0068f640 ((Slot *)0x0068f640u)'],
-    '0045d250': ['// The source declares its globals extern under #ifndef MATCH_PORT; the port reads them at their original addresses.',
-                 '#define DAT_007f0fd0 (*(int *)0x007f0fd0u)', '#define DAT_0088fbc0 (*(int *)0x0088fbc0u)'],
-    '00407600': ['// MASHED_RE_PORT drops the source extern block (same as Match/MatchS01.cpp); the table is read at its original address.',
-                 '#define MASHED_RE_PORT 1', '#define DAT_00639d80 ((Rec639d80 *)0x00639d80u)'],
-}
-EXTRA_PRE['005ab040'] = ['#pragma comment(lib, "winmm.lib")   // timeGetTime (the original imports it from WINMM.dll)']
-EXTRA_PRE['005aafe0'] = ['#define thunk_FUN_005ab010 PortTop_Bound_005aafe0   // re/match/s30/005aafe0.c names its body after the jump target (Ghidra thunk name)']
-EXTRA_PRE['005ac590'] = ['// LAB_005ac5c0 is a code address the body stores, not called here: the port stores the original address (no exe body;',
-                         '// a later call through it is reported by MASHED_CODE_TRAP, image design (b)).',
-                         '#define LAB_005ac5c0 (*(undefined1 *)0x005ac5c0u)']
-EXTRA_PRE['005ae330'] = ['#define thunk_FUN_004522d0 RwCore_004522d0   // Ghidra thunk_ name of the jump to 0x004522d0 (re/match/s26/005ae330.c)']
-EXTRA_PRE['005ab180'] = ['#define thunk_FUN_005ab620 PortTop_Bound_005ab180   // PORT-TOP-AUDIO-5A8F30-STOPS: re/match/s25/005ab180.c names its body after the jump target (Ghidra thunk name)']
-EXTRA_PRE['005b7880'] = ['#define thunk_FUN_005b1500 PortTop_Bound_005b1500   // PORT-TOP-AUDIO-5A8F30-STOPS: Ghidra thunk_ name of 0x005b15d0 (jmp 0x005b1500, called at 0x005b789a); the port calls the target body']
-# BIND-CUNCLEAN-AS-C: C units whose sources call a callee by an RW API name or a site alias (relocheck leaves these
-# names unchecked); the target is read from the original listing (capstone on original/MASHED.exe.unpatched).
-EXTRA_PRE['004e3e70'] = ['#define RwFrameAddChild RwCore_004e4450   // the one call, 0x004e3e88: call 0x004e4450']
-EXTRA_PRE['005386b0'] = ['#define RpWorldForAllWorldSectors RwCore_004e5c70   // 0x00538762: call 0x004e5c70 (as RwCore/RwCore_00538bd0.cpp:12)']
-EXTRA_PRE['005444a0'] = ['#define FUN_004cc790_site2 RwCore_004cc790   // the case-2 read: the 9 direct calls of 0x005444a0 target 0x004cc790 (7) and 0x004cbd30 (2)']
-# re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 under #ifndef MATCH_PORT_SHARED_0045c4e0: the port binds
-# the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
-EXTRA_PRE['0045cbe0'] = ['#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp']
-EXTRA_IN = {'00407600': ['char *FUN_0047d150(int h);   // declared here: the source declares it only outside MASHED_RE_PORT']}
-LOCAL_SHARED = {('0045cbe0', '0045c4e0'): 'PortTop_Local_0045cb20_0045c4e0'}
-LOCAL_AS_BOUND = {('0045c6b0', '0045c640')}   # re/match/s10/0045c6b0.c carries the only exe copy of 0x0045c640
-ALIAS = {'0045c640': ('PortTop_Bound_0045c640', 'Match/PortTop_0045c6b0.cpp'),
-         '004671a0': ('RwCore_004671a0', 'RwCore/RwCore_004671a0.cpp'),   # one ORIGTOP-only exe copy per rva (RWC-FRAME-492E90)
-         '004a2cbd': ('PortTop_Crt_004a2cbd', 'Match/PortTop_00493710.cpp'),   # printf (CRT, L-67), PORT-TOP-AUDIO-BODY-45D460
-         '005c1920': ('PortTop_Imp_005c1920', 'Match/PortTop_Imp_005c1920.cpp')}   # DSOUND ordinal 11 import thunk
+# rule kind -> number of fields after the kind (the last field takes the rest of the line, tabs included)
+RULE_KINDS = {'prov_bind': 1, 'force': 1, 'stop_force': 1, 'extra_pre': 2, 'extra_in': 2, 'extra_def': 2,
+              'alias': 3, 'knob': 3, 'stop_reason': 2, 'stop_why': 2, 'name_def': 2, 'not_local': 2,
+              'local_shared': 3, 'local_as_bound': 2, 'callee_override': 4}
+RVA_PAIR_KINDS = {'not_local', 'local_shared', 'local_as_bound', 'callee_override'}   # <caller> <callee> first
 
-# --------------------------------------------------------------------------------------------------------------------
-# Profiles. A profile is one closure's rule set: its extra aliases, forced stops, header text and stop file.
-# --------------------------------------------------------------------------------------------------------------------
-RL_MARK = '// PORT-OT-RACE (2026-11-16): exe-only port body'
-PROFILES = {
-    'audio': dict(
-        force={'00466b50', '0045d3f0', '0045d430'},
-        alias={},
-        stop_force={'005bf610',   # its callee 0x005bf670 is __stdcall with no body: the cdecl stop thunk does not link (LNK2019)
-                    '005aef30'},  # PORT-TOP-AUDIO-5A8F30-STOPS: calls __beginthread (0x005c2e79), census order 42
-        knob={'005aef30': ('PortTop_Knob_005aef30', 'Match/PortTop_Knob_005aef30.cpp')},   # L-174 (c)
-        callee_override={}, not_local=set(), own_mark=None, prune_stale=False, rwcore_fallback=False,
-        reuse_any=False, force_old_binds=True, stop_prefix='PortTop_AStop_',
-        stop_file='Match/PortTop_AudioStops.cpp',
-        local_shared_note='   // the one exe copy (Match/PortTop_0045cb20.cpp); this source compiles its copy out',
-        local_bound_note='   // the exe body of 0x%s: this source carries its only exe copy',
-        bindings_roots=[('00466b50', 2, '0x004926c0'), ('0045d3f0', 2, '0x004926c0'), ('0045d430', 2, '0x004926c0')],
-        bindings_tag='PORT-TOP-AUDIOTICK-STOPS',
-        allow_text='%(step)s (L-111 (a), L-126), %(date)s: the matched / replay-C4 / provisional body runs only on MASHED_ORIG_TOP + '
-                   'MASHED_OT_AUDIOTICK / MASHED_OT_AUDIOINIT (audio closure of 0x00466b50 / 0x0045d3f0 / 0x0045d430 / 0x004627f0); '
-                   'deleted at the ORIG_TOP flip. Evidence: %(evidence)s.',
-        allow_default=dict(step='PORT-TOP-AUDIO-RWA', date='2026-11-13', evidence=None)),
-    'raceload': dict(
-        force=set(),   # the roots are forced (always planned, never reused)
-        alias={
-            # The exe's file layer on the top-down route (no RtFSManager): the piz mount stack and the RW stream open /
-            # close bindings over it (PORT-TOP-04F).
-            '00495280': ('PortTop_PizFs_Mount_00495280', 'Match/PortTop_00402750_Pieces.cpp'),
-            '004952f0': ('PortTop_PizFs_Unmount_004952f0', 'Match/PortTop_00402750_Pieces.cpp'),
-            '004cc230': ('PortTop_RwStreamOpen_004cc230', 'Match/PortTop_RwStream04F.cpp'),
-            '004cc160': ('PortTop_RwStreamClose_004cc160', 'Match/PortTop_RwStream04F.cpp'),
-            '00550b00': ('RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_00550b00.cpp'),
-            # 0x0042fe30: one exe body already compiled from re/match/s07/0042fe30.c (MATCH-S07 TU); a second copy would be
-            # a dual copy of the rva in the exe.
-            '0042fe30': ('RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp'),
-            # 0x00458c70: checkpoint 3 (lead decision (b), 2026-11-16) kept the named counting stand-in, its bound body
-            # faulted in RwCore_004c15c0+0x85 (original 0x004c1645), [RwGlobals+0xbc] = 0 on the librw RwGlobals record.
-            # RACE-RWGLOBALS-FRAMELIST (run 53): the RW core frame list now exists on the record under MASHED_OT_RACELOAD
-            # (RwApiBind.cpp RaceLoadFrameOpen, 0x004c07b0). Callers bind PortTop_RL_00458c70, which runs the hand-written
-            # bound TU Match/PortTop_00458c70.cpp when [RwGlobals+0xbc] != 0 (rl_bind_gen.py at integration 34c823375).
-            '00458c70': ('PortTop_RL_00458c70', 'Match/PortTop_StandInsRL.cpp')},
-        stop_force=set(), knob={},
-        # PORT-OT-RACE-BIND-PROV4 (run 53, carried from rl_bind_gen.py at integration 34c823375): the four COURSE.LUA-path
-        # stops of checkpoint 2 bind their L-126 provisional sources (PROVISIONAL.tsv rows of RACE-COURSELUA-BODIES, all
-        # NOT-PROVEN), knob path only, never C4. Profile-local: the audio plan is not changed.
-        prov_bind={'0047a020', '00479330', '00478660', '00462950'},
-        # PORT-OT-RACE-BIND-PROV4: rvas kept as named stops although a matched source exists, with the reason.
-        stop_reason={'004790e0': 'register-arg: world pointer in EAX (re/match/s12/004790e0.c header; caller 0x00479330 loads '
-                                 '[ebx+0x105d4] into EAX at 0x00479e2e), declared void(void) by re/match/s12/00479330.c under '
-                                 'MATCH_PORT and static in its own source; no exe body takes EAX'},
-        # PORT-OT-RACE-BIND-PROV4: a source that defines its function under a name other than FUN_<rva>
-        name_def={'004e5c30': 'RpWorldForAllAtomics'},   # re/match/rwl02/004e5c30.c line 34
-        # PORT-OT-RACE-BIND-PROV4: non-FUN_ callee names in a source, bound to the exe body of that rva
-        extra_def={'0042a740': ['#define _strchr MashedCrt_strchr_004a2fd0   // the original CRT strchr 0x004a2fd0 '
-                                '(Match/PortTop_CrtString.cpp, BIND-CRT-STRING)']},
-        # a callee whose exe body takes another argument list than the caller's source declares binds to the forwarder
-        callee_override={('0042a5d0', '004b3bf0'): ('MatchS06_0042a5d0_Call004b3bf0',
-                         'Match/MatchS06_0042a5d0.cpp: the source passes 1 argument, Orig_004b3bf0 takes 3; '
-                         'declared deviation there, 2nd / 3rd passed as 0')},
-        not_local={('0047bf70', '0047be80'),   # re/match/s13/0047bf70.c: 0x0047be80 HELD (86.4%), its copy is #ifndef MATCH_PORT
-                   # PORT-OT-RACE-BIND-PROV4: re/match/s12/00478660.c holds a HELD static copy of 0x004785e0 (C2) under
-                   # #ifndef MATCH_PORT (source lines 55-77); on the port it is an external callee
-                   ('00478660', '004785e0')},
-        own_mark=RL_MARK, prune_stale=True, rwcore_fallback=True, reuse_any=True, force_old_binds=False,
-        stop_prefix='PortTop_RLStop_', stop_file='Match/PortTop_RaceLoadStops.cpp',
-        refs_file='Match/PortTop_BulkRefs.cpp',   # `refs` step (BIND-CUNCLEAN-AS-C): keeps caller-less bound bodies linked
-        # wrappers another generator wrote whose PortTop_Keep_<rva> anchors this refs file also carries:
-        # RACE-BIND-C4-BULK checkpoint 1 (verify/bindbulk_20261121, 100 anchors; its refs_gen.py is history only)
-        foreign_keep_marks=('// RACE-BIND-C4-BULK (2026-11-21): exe-only port body',),
-        local_shared_note='   // the one exe copy', local_bound_note='   // this source carries its only exe copy',
-        bindings_roots=None,   # roots of the plan, caller 0x0040d270 (see cmd_bindings)
-        bindings_root_caller='0x0040d270',
-        bindings_tag='PORT-OT-RACE',
-        allow_text='%(step)s (L-111 (a), L-126), %(date)s: the matched / replay-C4 body runs only on MASHED_ORIG_TOP + '
-                   'MASHED_OT_RACELOAD (race-load closure of 0x0040d270, %(tool)s); deleted at the ORIG_TOP flip. '
-                   'Evidence: %(evidence)s.',
-        allow_default=dict(step='PORT-OT-RACE', date='2026-11-16', evidence='verify/ro_20261116/RESULT_PORT-OT-RACE.md',
-                           tool='verify/ro_20261116/rltools/rl_bind_gen.py')),
-}
+PROFILE_DEFAULTS = dict(
+    own_mark=None, own_tag=None, prune_stale=False, rwcore_fallback=False, reuse_any=False, force_old_binds=False,
+    c_emit=True, listing='full', stops={'style': 'count'}, stops_subst=[], hdr=None, header=None, stop_force_note=None,
+    refs_file=None, foreign_keep_marks=[], stop_reasons=None, static_stop=False, group_same_source=False,
+    held_external=False, thunk_names=False, bindings_keep_missing=False, root_external={},
+    local_shared_note='', local_bound_note='', bindings_roots=None, bindings_root_caller=None,
+    selftest_order=99, selftest_roots_only=False, selftest_bindings=False)
+
+
+def read_rules(path):
+    """rules.tsv -> {kind: [fields tuple, ...]} in file order. '#' at column 0 is a comment line."""
+    out = {}
+    if not os.path.exists(path):
+        return out
+    for n, l in enumerate(open(path, encoding='utf-8'), 1):
+        l = l.rstrip('\r\n')
+        if not l.strip() or l.startswith('#'):
+            continue
+        kind, _, rest = l.partition('\t')
+        if kind not in RULE_KINDS:
+            sys.exit('%s:%d: unknown rule kind %r' % (path, n, kind))
+        f = rest.split('\t', RULE_KINDS[kind] - 1)
+        if len(f) != RULE_KINDS[kind]:
+            sys.exit('%s:%d: %s takes %d fields' % (path, n, kind, RULE_KINDS[kind]))
+        nrva = 2 if kind in RVA_PAIR_KINDS else 1   # leading rva fields, lower case
+        out.setdefault(kind, []).append(tuple(x.strip().lower() if i < nrva else x for i, x in enumerate(f)))
+    return out
+
+
+def rule_tables(rules):
+    """the planner's tables from one rules dict (state/_shared/rules.tsv or a profile's rules.tsv)."""
+    r = lambda k: rules.get(k, [])
+    t = dict(prov_bind={x[0] for x in r('prov_bind')}, force={x[0] for x in r('force')},
+             stop_force={x[0] for x in r('stop_force')},
+             alias={x[0]: (x[1], x[2]) for x in r('alias')}, knob={x[0]: (x[1], x[2]) for x in r('knob')},
+             stop_reason={x[0]: x[1] for x in r('stop_reason')}, stop_why={x[0]: x[1] for x in r('stop_why')},
+             name_def={x[0]: x[1] for x in r('name_def')},
+             not_local={(x[0], x[1]) for x in r('not_local')},
+             local_shared={(x[0], x[1]): x[2] for x in r('local_shared')},
+             local_as_bound={(x[0], x[1]) for x in r('local_as_bound')},
+             callee_override={(x[0], x[1]): (x[2], x[3]) for x in r('callee_override')})
+    for k in ('extra_pre', 'extra_in', 'extra_def'):
+        t[k] = {}
+        for x in r(k):
+            t[k].setdefault(x[0], []).append(x[1])
+    return t
+
+
+def load_profiles():
+    profs = {}
+    for d in sorted(glob.glob(os.path.join(STATE, '*', 'profile.json'))):
+        name = os.path.basename(os.path.dirname(d))
+        P = dict(PROFILE_DEFAULTS)
+        P.update({k: v for k, v in json.load(open(d, encoding='utf-8')).items() if not k.startswith('_')})
+        P.update(rule_tables(read_rules(os.path.join(os.path.dirname(d), 'rules.tsv'))))
+        if P['bindings_roots'] is not None:
+            P['bindings_roots'] = [tuple(x) for x in P['bindings_roots']]
+        P['stops_subst'] = [tuple(x) for x in P['stops_subst']]
+        profs[name] = P
+    return profs
+
+
+SHARED = rule_tables(read_rules(SHARED_RULES))
+PROV_BIND = SHARED['prov_bind']
+EXTRA_PRE = SHARED['extra_pre']
+EXTRA_IN = SHARED['extra_in']
+LOCAL_SHARED = SHARED['local_shared']
+LOCAL_AS_BOUND = SHARED['local_as_bound']
+ALIAS = SHARED['alias']
+PROFILES = load_profiles()
+
+
+def profile_roots(profile):
+    """state/<profile>/roots.txt (one rva per line, # comments); else the plan keys no bound plan entry calls."""
+    p = os.path.join(STATE, profile, 'roots.txt')
+    if os.path.exists(p):
+        return ','.join(l.split('#')[0].strip().lower() for l in open(p, encoding='utf-8') if l.split('#')[0].strip())
+    pl = json.load(open(os.path.join(state_dir(profile), 'plan.json')))
+    called = {c for v in pl.values() if v[0] == 'bind' for c in v[3] + v[4]}
+    return ','.join(sorted(k for k in pl if k not in called))
 
 
 def state_dir(profile):
@@ -239,7 +210,8 @@ def build_index(exclude_mark=None):
         t = rd(p)
         if exclude_mark and t.startswith(exclude_mark):
             continue
-        incs = set(m.lower() for m in re.findall(r'#include\s+"[^"]*re/match/[^/"]+/([0-9a-fA-F]{8})\.c"', t))
+        incs = set(m.lower() for m in re.findall(r'#include\s+"[^"]*re/match/[^"]*?/(?:[A-Za-z0-9]+_)?([0-9a-fA-F]{8})\.c"', t))
+        # (PORT-TOP-06: the pattern also takes nested folders, re/match/s01/raw/<rva>.c, and prefixed names, h2_<rva>.c)
         for m in re.finditer(r'#define\s+FUN_([0-9a-fA-F]{8})\s+(\w+)', t):
             r = m.group(1).lower()
             if r in incs:
@@ -299,7 +271,23 @@ class Binder:
                 if l.strip() and not l.startswith('#'):
                     k, _, why = l.rstrip('\r\n').partition('\t')
                     self.hold[k.strip().lower()] = why.strip()
-        self.cemit = set(self.unclean) - set(self.hold)
+        # profile.json c_emit false (raceframe / renderframe, written before BIND-CUNCLEAN-AS-C): cpp-unclean rvas stay stops
+        self.cemit = (set(self.unclean) - set(self.hold)) if self.P['c_emit'] else set()
+        # stop_reasons file (rvas other rows own) + stop_why rules: a planned bind of them becomes a named stop
+        self.reasons = {}
+        if self.P['stop_reasons']:
+            rp = os.path.join(self.sd, self.P['stop_reasons'])
+            for l in (open(rp, encoding='utf-8') if os.path.exists(rp) else []):
+                if l.strip() and not l.startswith('#'):
+                    k, _, why = l.rstrip('\r\n').partition('\t')
+                    self.reasons.setdefault(k.strip().lower().replace('0x', ''), why.strip())
+        self.group_bound = set()
+        for k, why in self.P['stop_why'].items():
+            self.reasons[k] = why
+        self.extra_pre = {k: EXTRA_PRE.get(k, []) + self.P['extra_pre'].get(k, []) for k in set(EXTRA_PRE) | set(self.P['extra_pre'])}
+        self.extra_in = {k: EXTRA_IN.get(k, []) + self.P['extra_in'].get(k, []) for k in set(EXTRA_IN) | set(self.P['extra_in'])}
+        self.local_shared = dict(LOCAL_SHARED); self.local_shared.update(self.P['local_shared'])
+        self.local_as_bound = set(LOCAL_AS_BOUND) | self.P['local_as_bound']
 
     # matched / replay / provisional / admitted source of an rva, with its kind
     def msrc(self, rva):
@@ -312,7 +300,7 @@ class Binder:
             hits = glob.glob('re/match/*/%s.c' % rva)
             if len(hits) == 1:
                 return hits[0].replace(os.sep, '/'), 'replay'
-        if (rva in PROV_BIND or rva in self.P.get('prov_bind', ())) and rva in self.prov and os.path.exists(self.prov[rva][2]):
+        if (rva in PROV_BIND or rva in self.P['prov_bind']) and rva in self.prov and os.path.exists(self.prov[rva][2]):
             return self.prov[rva][2], 'provisional'
         if 'c4=match' in r[8] and ('BYTE-IDENTICAL' in r[8] or 'match evidence: identical' in r[8]
                                    or ('100.0%' in r[8] and 'relocheck OK' in r[8])):
@@ -367,7 +355,7 @@ class Binder:
                 continue
             if rva in P['stop_force']:
                 plan[rva] = ('stop',); continue
-            if rva in P.get('stop_reason', {}):
+            if rva in P['stop_reason']:
                 plan[rva] = ('stop', P['stop_reason'][rva]); continue
             if rva in self.unclean and rva not in self.cemit:
                 plan[rva] = ('stop', 'cpp-unclean: ' + self.unclean[rva]); continue
@@ -381,11 +369,20 @@ class Binder:
             s, kind = self.msrc(rva)
             if s and self.roots_only and rva not in self.roots and (self.old_plan.get(rva) or ['x'])[0] != 'bind':
                 plan[rva] = ('stop', 'not bound here (--roots-only): matched source %s' % s); continue
+            if s and rva in self.reasons and rva not in self.force:
+                plan[rva] = ('stop', self.reasons[rva]); continue
+            if s and P['static_stop']:
+                m_ = self.static_line(s, rva)
+                if m_:
+                    plan[rva] = ('stop', 'static in %s:%d (file-local there): no linkable exe body' % (s, m_)); continue
             if s:
                 cs, local, _ = self.callees(s, rva)
                 # a callee defined only under #ifndef MATCH_PORT (a HELD copy the DDK needs) is external on the port
                 for c in [c for c in local if (rva, c) in P['not_local']]:
                     local = [x for x in local if x != c]; cs = sorted(set(cs) | {c})
+                if P['held_external']:   # the same, found from the source's #ifndef MATCH_PORT branches
+                    for c in self.held_defs(s, local):
+                        local = [x for x in local if x != c]; cs = sorted(set(cs) | {c})
                 plan[rva] = ('bind', s, kind, cs, local)
                 q.extend(cs)
                 continue
@@ -395,14 +392,60 @@ class Binder:
                         plan[rva] = ('reuse', sym, f); break
                 continue
             plan[rva] = ('stop',)
+        if P['group_same_source']:
+            groups = {}
+            for k, v in plan.items():
+                if v[0] == 'bind':
+                    groups.setdefault(v[1], []).append(k)
+            for s, ks in sorted(groups.items()):
+                if len(ks) < 2:
+                    continue
+                own = [k for k in ks if re.search(r'[/_]%s\.c$' % k, s)] or sorted(ks)
+                o = own[0]
+                for m_ in sorted(ks):
+                    if m_ != o and m_ not in self.force:
+                        plan[m_] = ('reuse', 'PortTop_Bound_%s' % m_, 'Match/PortTop_%s.cpp' % o)
+                        self.group_bound.add((o, m_))
         self.plan = plan
         return plan
+
+    @staticmethod
+    def held_defs(src, local):
+        """locals whose every definition sits in the `#ifndef MATCH_PORT` branch (before its #else / #endif): the port
+        does not compile them, so the port's call goes to an external body (PORT-TOP-06)."""
+        lines = rd(src).splitlines()
+        held, stk = [False] * len(lines), []
+        for i, l in enumerate(lines):
+            s = l.strip()
+            if re.match(r'#\s*if', s):
+                stk.append(bool(re.match(r'#\s*ifndef\s+MATCH_PORT\b', s)))
+            elif re.match(r'#\s*el', s) and stk:
+                stk[-1] = False
+            elif re.match(r'#\s*endif', s) and stk:
+                stk.pop()
+            held[i] = any(stk)
+        out = []
+        for c in local:
+            defs = [i for i, l in enumerate(lines)
+                    if re.match(r'^[A-Za-z_][^;=(]*\bFUN_%s\s*\([^;{]*\)\s*\{?\s*$' % c, l, re.I)
+                    and ('{' in l or (i + 1 < len(lines) and lines[i + 1].strip().startswith('{')))]
+            if defs and all(held[i] for i in defs):
+                out.append(c)
+        return out
+
+    @staticmethod
+    def static_line(src, rva):
+        t = rd(src)
+        m = re.search(r'^[ \t]*static\b[^\n;]*\bFUN_%s\s*\([^;{]*\)\s*\{' % rva, t, re.M | re.I)
+        return t[:m.start()].count('\n') + 1 if m else 0
 
     def sym(self, rva):
         p = self.plan[rva]
         if p[0] == 'reuse':
             return p[1]
         if p[0] == 'bind':
+            if rva in self.P['root_external']:
+                return self.P['root_external'][rva]['sym']
             return 'PortTop_Bound_%s' % rva
         return self.P['stop_prefix'] + rva
 
@@ -412,7 +455,7 @@ class Binder:
         for rva in sorted(plan):
             p = plan[rva]
             r = self.rows.get(rva) or ['', '', '', '-']
-            if self.name == 'raceload':
+            if self.P['listing'] == 'full':
                 extra = p[1] if len(p) > 1 else ''
                 out.append('%s %s %s %s %s' % (rva, p[0], extra, r[3], (r[1] if len(r) > 1 else '')))
             else:
@@ -435,12 +478,12 @@ class Binder:
 
     def header(self, rva, src, kind, fn):
         ev = self.evidence_text(rva, kind)
-        if self.name == 'raceload':
-            return ['%s of rva 0x%s = %s' % (RL_MARK, rva, src),
-                    '// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_RACELOAD' % ev,
-                    '// through the race-load closure of 0x0040d270 (verify/ro_20261116/rltools/rl_bind_gen.py). Callees bind to exe bodies',
-                    '// by name; a callee with no matched or admitted body is a named stop (Match/PortTop_RaceLoadStops.cpp).']
-        # audio: an existing wrapper keeps the header its row wrote; new ones say which root closure reached them
+        fill = dict(mark=self.P['own_mark'], rva=rva, src=src, ev=ev)
+        if self.P['hdr']:   # profile.json hdr: one template for every wrapper
+            return [l % fill for l in self.P['hdr']]
+        # profile.json header, style keep (audio): an existing wrapper keeps the header its row wrote; new ones say which
+        # root closure reached them
+        H = self.P['header']
         keep_hdr = None
         if os.path.exists(fn):
             keep_hdr = []
@@ -451,30 +494,18 @@ class Binder:
         old_binds = {k for k, v in self.old_plan.items() if v and v[0] == 'bind'}
         table_new = rva not in old_binds
         L = []
-        if keep_hdr and rva in ('00466b50', '0045d3f0', '0045d430'):
+        if keep_hdr and rva in H['keep_roots']:
             L += [l for l in keep_hdr if not l.startswith('// RVA-LINT')]
-            for x in ('// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops',
-                      '// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).'):
+            for x in H['keep_roots_add']:
                 if x not in L:
                     L.append(x)
         elif keep_hdr and not table_new:
             L += [l for l in keep_hdr if not l.startswith('// RVA-LINT')]
-        elif table_new:
-            L.append('// PORT-TOP-RWAUDIO-TABLE-632BA8 (2026-11-13): exe-only port body of rva 0x%s = %s' % (rva, src))
-            L.append('// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOINIT' % ev)
-            L.append('// through the RW-audio init/shutdown table 0x00632ba8 that 0x005a5f60 walks for 0x005a5f00 (slots bound by the')
-            L.append('// image code-pointer fix-up, Compat/PortTopCodePtrImage.inc). Callees bind to exe bodies by name;')
-            L.append('// a callee with no matched or admitted body is a named stop (Match/PortTop_AudioStops.cpp).')
-        elif rva not in self.old_plan:   # unreachable while table_new covers every new bind; kept from the old generator
-            L.append('// PORT-TOP-AUDIO-HWINIT-4627F0 (2026-11-13): exe-only port body of rva 0x%s = %s' % (rva, src))
-            L.append('// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOINIT' % ev)
-            L.append('// through the closure of 0x004627f0 (sound engine HW init, called by 0x004669b0). Callees bind to exe bodies by name;')
-            L.append('// a callee with no matched or admitted body is a named stop (Match/PortTop_AudioStops.cpp).')
+        elif table_new:   # a new bind
+            L += [l % fill for l in H['new']]
         else:   # an earlier bind whose wrapper file is missing
-            L.append('// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): exe-only port body of rva 0x%s = %s' % (rva, src))
-            L.append('// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOTICK' % ev)
-            L.append('// through the audio-tick closure of 0x00466b50 / 0x0045d3f0 / 0x0045d430. Callees bind to exe bodies by name;')
-            L.append('// a callee with no matched or admitted body is a named stop (Match/PortTop_AudioStops.cpp).')
+            # (the old generator's third branch, `rva not in old_plan`, could not be reached: table_new covers it)
+            L += [l % fill for l in H['missing']]
         return L
 
     def wrapper_text(self, rva):
@@ -492,17 +523,17 @@ class Binder:
             L.append('// with %s (state/%s/cpp_unclean.txt); cl compiles a .c as C, same exe symbol, C-linkage callees.'
                      % (self.unclean[rva].split()[0], self.name))
         L += ['// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#define MATCH_PORT 1', '#define FUN_%s PortTop_Bound_%s' % (rva, rva)]
-        if rva in P.get('name_def', {}):
+        if rva in P['name_def']:
             L.append('#define %s PortTop_Bound_%s   // the source names 0x%s %s' % (P['name_def'][rva], rva, rva, P['name_def'][rva]))
-        L += P.get('extra_def', {}).get(rva, [])
+        L += P['extra_def'].get(rva, [])
         for c in cs:
             if (rva, c) in P['callee_override']:
                 L.append('#define FUN_%s %s   // %s' % ((c,) + P['callee_override'][(rva, c)]))
                 continue
             pc = self.plan[c]
             note = {'reuse': '   // exe body (%s)' % (pc[2] if pc[0] == 'reuse' else ''), 'bind': '', 'stop': '   // named stop'}[pc[0]]
-            if c in P['stop_force']:
-                note = '   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)'
+            if c in P['stop_force'] and P['stop_force_note'] is not None:
+                note = P['stop_force_note']
             if c in P['knob'] and pc[0] == 'stop':
                 L.append('#define FUN_%s %s   // knob stand-in, default off = the named stop (%s)' % (c, P['knob'][c][0], P['knob'][c][1]))
                 continue
@@ -519,16 +550,24 @@ class Binder:
                 continue
             L.append('#define FUN_%s %s%s' % (c, self.sym(c), note))
         for c in local:
-            if (rva, c) in LOCAL_SHARED:
-                L.append('#define FUN_%s %s%s' % (c, LOCAL_SHARED[(rva, c)], P['local_shared_note']))
-            elif (rva, c) in LOCAL_AS_BOUND:
+            if (rva, c) in self.local_shared:
+                L.append('#define FUN_%s %s%s' % (c, self.local_shared[(rva, c)], P['local_shared_note']))
+            elif (rva, c) in self.group_bound:
+                L.append('#define FUN_%s PortTop_Bound_%s   // bound rva of the same source: this TU carries its only exe copy' % (c, c))
+            elif (rva, c) in self.local_as_bound:
                 n = P['local_bound_note'] % c if '%s' in P['local_bound_note'] else P['local_bound_note']
                 L.append('#define FUN_%s PortTop_Bound_%s%s' % (c, c, n))
             else:
                 L.append('#define FUN_%s PortTop_Local_%s_%s   // file-local in this source' % (c, rva, c))
+        if P['thunk_names']:
+            # Ghidra `thunk_FUN_<x>` names a thunk that jumps to x; the port calls x's exe body (as extra_pre 005aafe0 does)
+            st = rd(src)
+            for c in cs:
+                if re.search(r'\bthunk_FUN_%s\b' % c, st) and not re.search(r'^[A-Za-z_][^;=(\n]*\bthunk_FUN_%s\s*\([^;{]*\)\s*\{' % c, st, re.M):
+                    L.append('#define thunk_FUN_%s %s   // Ghidra thunk name of the jump to 0x%s: the port calls its exe body' % (c, self.sym(c), c))
         if 'FID_conflict__wprintf' in rd(src):
             L.append('#define FID_conflict__wprintf PortTop_Printf04G   // printf -> log (Match/PortTop_0040bbb0.cpp)')
-        L += EXTRA_PRE.get(rva, [])
+        L += self.extra_pre.get(rva, [])
         keep = []
         if rva in self.refs() and rva in self._refs_own:
             # `refs` step: no bound caller references this body yet, so /OPT:REF would drop it (ddkobj.py check: not-in-map).
@@ -537,11 +576,11 @@ class Binder:
             keep = [(a if is_c else 'extern "C" { %s }' % a) + '   // anchor: %s /include (no bound caller yet)'
                     % self.P['refs_file']]
         if is_c:
-            L += EXTRA_IN.get(rva, [])
+            L += self.extra_in.get(rva, [])
             L += ['#include "../../../../%s"' % src] + keep + ['#endif // MASHED_STANDALONE']
             return fn, NL.join(L) + NL
         L.append('extern "C" {')
-        L += EXTRA_IN.get(rva, [])
+        L += self.extra_in.get(rva, [])
         L += ['#include "../../../../%s"' % src, '}'] + keep + ['#endif // MASHED_STANDALONE']
         return fn, NL.join(L) + NL
 
@@ -598,14 +637,12 @@ class Binder:
 
     def stops_text(self):
         stops = sorted(r for r, p in self.plan.items() if p[0] == 'stop')
-        if self.name == 'audio':
-            S = ['// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): named stops of the audio-tick closure (0x00466b50 / 0x0045d3f0 / 0x0045d430).',
-                 '// Each is a callee with no matched (c4=match) or L-126 admitted body yet. A stop logs and exits with code = rva',
-                 '// (PortTop_AudioCalleeStop, Match/PortTop_00492370.cpp), so a reached stop names the next body to bind.',
+        if self.P['stops']['style'] == 'exit':   # profile.json stops.style exit (audio): every stop logs and exits
+            S = list(self.P['stops']['head']) + [
                  '// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#include <intrin.h>', 'extern "C" {',
                  'void PortTop_AudioCalleeStop(unsigned rva, unsigned caller, void* ret);   // Match/PortTop_00492370.cpp']
             for s in stops:
-                S.append('void PortTop_AStop_%s(void) { PortTop_AudioCalleeStop(0x%su, 0u, _ReturnAddress()); }' % (s, s))
+                S.append('void %s%s(void) { PortTop_AudioCalleeStop(0x%su, 0u, _ReturnAddress()); }' % (self.P['stop_prefix'], s, s))
             S += ['}', '#endif // MASHED_STANDALONE']
             return stops, NL.join(S) + NL
         plan = self.plan
@@ -644,13 +681,98 @@ class Binder:
             S.append('// stop rva %s: declared %s by %s%s' % (s_, ' / '.join(sorted(rt)) or '(none found)', cl,
                      ('; ' + plan[s_][1]) if len(plan[s_]) > 1 else '; no matched or admitted source'))
             if fl:
-                S.append('int PortTop_RLStop_%s(void) { RlStopLog(0x%su, "%s", 1u, _ReturnAddress(), 1); PortTop_AudioCalleeStop(0x%su, 0u, _ReturnAddress()); return 0; }' % (s_, s_, cl, s_))
+                S.append('int %s%s(void) { RlStopLog(0x%su, "%s", 1u, _ReturnAddress(), 1); PortTop_AudioCalleeStop(0x%su, 0u, _ReturnAddress()); return 0; }' % (self.P['stop_prefix'], s_, s_, cl, s_))
             else:
-                S.append('int PortTop_RLStop_%s(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();' % s_)
+                S.append('int %s%s(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();' % (self.P['stop_prefix'], s_))
                 S.append('    if (n == 1 || ex) RlStopLog(0x%su, "%s", n, _ReturnAddress(), ex);' % (s_, cl))
                 S.append('    if (ex) PortTop_AudioCalleeStop(0x%su, 0u, _ReturnAddress()); return 0; }' % s_)
         S += ['}', '#endif // MASHED_STANDALONE']
-        return stops, NL.join(S) + NL
+        text = NL.join(S) + NL
+        for a_, b_ in self.P['stops_subst']:   # profile.json stops_subst: the count text of another closure
+            text = text.replace(a_, b_)
+        return stops, text
+
+    def write_selectors(self, rva, cfg, changed):
+        """root_external (PORT-TOP-RENDERFRAME-492E90): the root already has one ORIGTOP-only exe body (cfg['tu'], the
+        RW core TU of the same matched source), and a second wrapper would be a dual copy of the rva (rva-lint
+        DUP-IN-TARGET, untaggable). So the TU stays the only body and each of its direct callees whose walked symbol
+        differs from the TU's symbol is routed through a selector (cfg['sel_file']): the walked symbol when the sub-knob
+        cfg['knob'] is set, the TU's own symbol otherwise (knob off = unchanged). Returns the files to list in newfiles."""
+        p = self.plan[rva]
+        src, cs = p[1], sorted(set(p[3]) | set(p[4]))
+        tu = '%s/%s' % (SRC, cfg['tu'])
+        raw = open(tu, 'rb').read()
+        tl = raw.decode('utf-8').replace('\r\n', '\n').split('\n')
+        st = rd(src)
+        pre, tag = cfg['sel_prefix'], self.P['own_tag']
+        on = pre.rstrip('_') + 'On'   # PortTop_RRSel_ -> PortTop_RRSelOn
+        clo = cfg.get('closure', 'frame-render')
+        sels = []
+        for i, l in enumerate(tl):
+            m = re.match(r'#define FUN_([0-9a-f]{8}) (\w+)(.*)$', l)
+            if not m or m.group(1) not in cs:
+                continue
+            c, cur, rest = m.group(1), m.group(2), m.group(3)
+            old = cur
+            if cur == pre + c:
+                mo = re.search(r'// was (\w+)', rest)
+                old = mo.group(1) if mo else cur
+            new = self.sym(c)
+            # a callee the RW core TU already binds to an RW core body keeps it (L-124: RW on the top-down path is the
+            # matched RW core); only RwCoreMissing_ stops get a selector
+            if new == old or (old.startswith('RwCore_') and not old.startswith('RwCoreMissing_')):
+                tl[i] = '#define FUN_%s %s' % (c, old)
+                continue
+            mp = re.search(r'^[ \t]*([A-Za-z_][\w \t\*]*?)[ \t\*]*\bFUN_%s\s*\(([^)]*)\)\s*;' % c, st, re.M)
+            if not mp:
+                print('SELECTOR no prototype for FUN_%s in %s: kept %s' % (c, src, old)); continue
+            ret = re.search(r'^[ \t]*(.*?)\bFUN_%s\s*\(' % c, mp.group(0)).group(1).strip()
+            params = mp.group(2).strip()
+            args = '' if params in ('', 'void') else ', '.join(re.findall(r'(\w+)\s*(?:,|$)', params))
+            tl[i] = '#define FUN_%s %s%s   // was %s; %s: %s=1 calls %s' % (c, pre, c, old, tag, cfg['knob'], new)
+            sels.append((c, ret, params or 'void', args, old, new))
+        tt = '\n'.join(tl)
+        if write_if_changed(tu, tt):
+            changed.append(tu)
+        S = ['%s: selectors of the direct callees of 0x%s (re/tools/bind/porttop_bind.py --profile %s).' % (self.P['own_mark'], rva, self.name),
+             '// %s is the one exe body of 0x%s (%s). Each callee below whose walked binding' % (cfg['tu'], rva, src),
+             '// differs from that TU\'s own symbol goes through a selector: %s=1 calls the walked body (the %s' % (cfg['knob'], clo),
+             '// closure of 0x%s, Match/PortTop_<rva>.cpp, or its named stop in %s); unset or 0 calls the TU\'s' % (rva, self.P['stop_file']),
+             '// own symbol, so the knob-off path is unchanged. The TU runs only on the RW core frame route (%s).' % cfg['gate'],
+             '// RVA-LINT: ORIGTOP-ONLY',
+             '#ifdef MASHED_STANDALONE',
+             '#include <windows.h>',
+             'extern "C" void RwCore_Log(const char* fmt, ...);   // C linkage (RwCore/RwCore_Knob.cpp:28-53)',
+             'static int s_knob = -1;',
+             'static bool %s(void) {' % on,
+             '    if (s_knob < 0) {',
+             '        char v[8] = {};',
+             '        s_knob = (GetEnvironmentVariableA("%s", v, sizeof(v)) > 0 && v[0] && v[0] != \'0\') ? 1 : 0;' % cfg['knob'],
+             '        RwCore_Log("[%s] %s %%s: the direct callees of 0x%s %%s", s_knob ? "on" : "off",' % (tag, cfg['knob'], rva),
+             '                   s_knob ? "call the walked %s closure" : "keep the RW core TU\'s own symbols");' % clo,
+             '    }',
+             '    return s_knob == 1;',
+             '}',
+             'extern "C" {']
+        seen = set()
+        for c, ret, params, args, old, new in sels:
+            for s_ in (old, new):
+                if s_ not in seen:
+                    seen.add(s_); S.append('%s %s(%s);' % (ret, s_, params))
+        for c, ret, params, args, old, new in sels:
+            if ret == 'void':
+                S.append('void %s%s(%s) { if (%s()) { %s(%s); return; } %s(%s); }   // 0x%s' % (
+                    pre, c, params, on, new, args, old, args, c))
+            else:
+                S.append('%s %s%s(%s) { if (%s()) return %s(%s); return %s(%s); }   // 0x%s' % (
+                    ret, pre, c, params, on, new, args, old, args, c))
+        S += ['}', '#endif // MASHED_STANDALONE']
+        sf = '%s/%s' % (SRC, cfg['sel_file'])
+        if write_if_changed(sf, NL.join(S) + NL):
+            changed.append(sf)
+        print('selectors', len(sels), 'of', len(cs), 'callees of 0x%s' % rva)
+        return [sf]
+
 
     def write(self):
         changed, out = [], []
@@ -663,7 +785,7 @@ class Binder:
                 if not m or not rd(f).startswith(self.P['own_mark']):
                     continue
                 # BIND-CUNCLEAN-AS-C: a wrapper of the other language (.cpp <-> .c) is stale too
-                if (self.plan.get(m.group(1), ('x',))[0] != 'bind'
+                if (self.plan.get(m.group(1), ('x',))[0] != 'bind' or m.group(1) in self.P['root_external']
                         or os.path.normcase(f) != os.path.normcase(self.wrapper_path(m.group(1)))):
                     os.remove(f)
                     rl = [l for l in rl if l.strip() != '"Match\\PortTop_%s.%s"' % (m.group(1), m.group(2))]
@@ -673,8 +795,12 @@ class Binder:
         for rva, p in sorted(self.plan.items()):
             if p[0] != 'bind':
                 continue
+            if rva in self.P['root_external']:   # the root's one exe body is an existing TU: selectors instead
+                for fn in self.write_selectors(rva, self.P['root_external'][rva], changed):
+                    out.append(fn)
+                continue
             fn, text = self.wrapper_text(rva)
-            if self.P['own_mark'] and os.path.exists(fn) and 'PORT-OT-RACE' not in rd(fn):
+            if self.P['own_mark'] and os.path.exists(fn) and self.P['own_tag'] not in rd(fn):
                 print('REFUSE existing wrapper of another closure', fn); sys.exit(2)
             if write_if_changed(fn, text):
                 changed.append(fn)
@@ -950,7 +1076,9 @@ def cmd_bindings(a):
         key = '0x' + r
         if key in idx:
             f = lines[idx[key]].split('\t')
-            if f[2] == 'missing':   # only a missing row is updated; a row another row wrote keeps its text
+            if f[2] == 'missing' and kind == 'missing' and P['bindings_keep_missing']:
+                pass   # PORT-TOP-06: a stop of this closure does not overwrite another closure's missing row
+            elif f[2] == 'missing':   # only a missing row is updated; a row another row wrote keeps its text
                 if kind == 'missing':
                     f[3], f[4] = sym, note
                 else:
@@ -1078,7 +1206,7 @@ def cmd_index(a):
 
 
 def cmd_plan(a, write):
-    b = Binder(a.profile, a.roots.split(','), roots_only=a.roots_only)
+    b = Binder(a.profile, (a.roots or profile_roots(a.profile)).split(','), roots_only=a.roots_only)
     b.build_plan()
     lst = b.listing()
     if a.listing:
@@ -1090,19 +1218,11 @@ def cmd_plan(a, write):
 
 
 # --------------------------------------------------------------------------------------------------------------------
-# selftest: rebind both profiles on the current tree and require no change in the generated files, the plan and
+# selftest: rebind every profile (state/<profile>/profile.json) on the current tree and require no change in the generated files, the plan and
 # BINDINGS.tsv. Wrappers / stop file / BINDINGS.tsv are compared modulo CRLF (core.autocrlf working copies).
 # --------------------------------------------------------------------------------------------------------------------
-SELFTEST = {'raceload': '00426e10,004264d0'}   # PORT-OT-RACE checkpoint 3 (verify/ro_20261116/RESULT_PORT-OT-RACE.md 7.1)
-# BIND-CUNCLEAN-AS-C (2026-11-21): the 34 cpp-unclean rvas of RACE-BIND-C4-BULK checkpoint 1, bound as C units with
-# --roots-only (verify/bindcunclean_20261121/RESULT_BIND-CUNCLEAN-AS-C.md). A later raceload `write` must pass them as roots
-# too (roots are cumulative), or prune removes their wrappers.
-CUNCLEAN_ROOTS = ('0041a8d0,00472330,004cac10,004d3450,004d34d0,004e3bd0,004e3e70,004e3ea0,004eb320,004f4540,005142d0,'
-                  '005142f0,0052e4e0,0052e500,00533840,00534ad0,00534af0,005386b0,00538c30,0053d3e0,0053ec40,0053ec60,'
-                  '0053f9b0,0053fa90,005444a0,00544e00,00544f10,005492d0,00549310,0054a000,0054a0f0,005518f0,00557d90,'
-                  '0057c2e0')
-SELFTEST['raceload'] += ',' + CUNCLEAN_ROOTS
-SELFTEST_ROOTS_ONLY = {'raceload'}
+# Roots come from state/<profile>/roots.txt (raceload: PORT-OT-RACE checkpoint 3 plus the 34 BIND-CUNCLEAN-AS-C C units,
+# rebound with --roots-only, profile.json selftest_roots_only), else the plan keys no bound plan entry calls (audio).
 
 VCVARS = r'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat'
 
@@ -1200,24 +1320,34 @@ def selftest_cemit(b):
     return bad
 
 
-def audio_roots():
-    p = json.load(open(os.path.join(state_dir('audio'), 'plan.json')))
-    called = {c for v in p.values() if v[0] == 'bind' for c in v[3] + v[4]}
-    return ','.join(sorted(k for k in p if k not in called))
-
-
 def cmd_selftest(a):
     bad = 0
-    for prof in ('raceload', 'audio'):
-        roots = SELFTEST.get(prof) or audio_roots()
+    for prof in sorted(PROFILES, key=lambda p: (PROFILES[p]['selftest_order'], p)):
+        if not os.path.exists(os.path.join(state_dir(prof), 'plan.json')):
+            print('[selftest] %s: no plan.json, skipped' % prof)
+            continue
+        roots = profile_roots(prof)
         pp = os.path.join(state_dir(prof), 'plan.json')
         before = json.load(open(pp))
-        b = Binder(prof, roots.split(','), roots_only=prof in SELFTEST_ROOTS_ONLY)
+        b = Binder(prof, roots.split(','), roots_only=PROFILES[prof]['selftest_roots_only'])
         plan = {k: list(v) for k, v in b.build_plan().items()}
         same_plan = plan == before
         diffs = []
         for rva, p in sorted(b.plan.items()):
             if p[0] != 'bind':
+                continue
+            if rva in b.P['root_external']:
+                # root kept in its existing TU: regenerate the selectors and the TU's define lines, compare, restore
+                cfg = b.P['root_external'][rva]
+                keep = {f: open(f, 'rb').read() for f in ('%s/%s' % (SRC, cfg['tu']), '%s/%s' % (SRC, cfg['sel_file']))
+                        if os.path.exists(f)}
+                ch = []
+                import io, contextlib
+                with contextlib.redirect_stdout(io.StringIO()):
+                    b.write_selectors(rva, cfg, ch)
+                for f, raw_ in keep.items():
+                    open(f, 'wb').write(raw_)
+                diffs.extend(ch)
                 continue
             fn, text = b.wrapper_text(rva)
             if not os.path.exists(fn) or open(fn, 'rb').read().replace(b'\r\n', b'\n') != text.encode():
@@ -1265,19 +1395,23 @@ def cmd_selftest(a):
             bad += not same
         if b.unclean:
             bad += selftest_cemit(b)
-    # BINDINGS.tsv: the audio plan's rows rebuilt in memory must equal the committed file
-    raw = open(BINDINGS, 'rb').read()
-    bak = raw
-    ns = argparse.Namespace(profile='audio', step=None, dry=False)
-    try:
-        import io, contextlib
-        with contextlib.redirect_stdout(io.StringIO()) as o:
-            cmd_bindings(ns)
-        same = open(BINDINGS, 'rb').read().replace(b'\r\n', b'\n') == bak.replace(b'\r\n', b'\n')
-    finally:
-        open(BINDINGS, 'wb').write(bak)
-    print('[selftest] BINDINGS.tsv from the audio plan: %s (%s)' % ('IDENTICAL' if same else 'DIFFERENT', o.getvalue().strip()))
-    bad += not same
+    # BINDINGS.tsv: the rows of each profile with profile.json selftest_bindings (audio), rebuilt in memory, must equal
+    # the committed file
+    for prof in sorted(PROFILES, key=lambda p: (PROFILES[p]['selftest_order'], p)):
+        if not PROFILES[prof]['selftest_bindings']:
+            continue
+        raw = open(BINDINGS, 'rb').read()
+        bak = raw
+        ns = argparse.Namespace(profile=prof, step=None, dry=False)
+        try:
+            import io, contextlib
+            with contextlib.redirect_stdout(io.StringIO()) as o:
+                cmd_bindings(ns)
+            same = open(BINDINGS, 'rb').read().replace(b'\r\n', b'\n') == bak.replace(b'\r\n', b'\n')
+        finally:
+            open(BINDINGS, 'wb').write(bak)
+        print('[selftest] BINDINGS.tsv from the %s plan: %s (%s)' % (prof, 'IDENTICAL' if same else 'DIFFERENT', o.getvalue().strip()))
+        bad += not same
     print('[selftest] %s' % ('PASS' if not bad else 'FAIL %d' % bad))
     return 1 if bad else 0
 
@@ -1288,7 +1422,8 @@ def main():
     for n in ('plan', 'write'):
         s = sp.add_parser(n)
         s.add_argument('--profile', required=True, choices=sorted(PROFILES))
-        s.add_argument('--roots', required=True, help='comma-separated rvas (cumulative: pass every root of the closure)')
+        s.add_argument('--roots', help='comma-separated rvas (cumulative: pass every root of the closure); '
+                                       'default: state/<profile>/roots.txt')
         s.add_argument('--listing', help='also write the listing to this file')
         s.add_argument('-v', '--verbose', action='store_true')
         s.add_argument('--roots-only', action='store_true',

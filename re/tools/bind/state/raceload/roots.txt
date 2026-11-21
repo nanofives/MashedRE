@@ -1,0 +1,42 @@
+# Roots of the raceload closure, one rva per line (# = comment). `plan` / `write` use this list when --roots is not
+# given, and the selftest rebinds it. Roots are cumulative: a row that adds a root appends a line here.
+# PORT-OT-RACE checkpoint 3 (verify/ro_20261116/RESULT_PORT-OT-RACE.md 7.1)
+00426e10
+004264d0
+# BIND-CUNCLEAN-AS-C (2026-11-21): the 34 cpp-unclean rvas of RACE-BIND-C4-BULK checkpoint 1, bound as C units with
+# --roots-only (verify/bindcunclean_20261121/RESULT_BIND-CUNCLEAN-AS-C.md). A later raceload `write` must pass them as
+# roots too, or prune removes their wrappers.
+0041a8d0
+00472330
+004cac10
+004d3450
+004d34d0
+004e3bd0
+004e3e70
+004e3ea0
+004eb320
+004f4540
+005142d0
+005142f0
+0052e4e0
+0052e500
+00533840
+00534ad0
+00534af0
+005386b0
+00538c30
+0053d3e0
+0053ec40
+0053ec60
+0053f9b0
+0053fa90
+005444a0
+00544e00
+00544f10
+005492d0
+00549310
+0054a000
+0054a0f0
+005518f0
+00557d90
+0057c2e0

@@ -1,0 +1,32 @@
+PROVISIONAL.tsv                          1 different appends        union  exit 0, dup keys none, EDIT lines 0
+PROVISIONAL.tsv                          1 different appends        keyed  exit 0, dup keys none, EDIT lines 0
+PROVISIONAL.tsv                          2 same append              union  exit 0, dup keys none, EDIT lines 0
+PROVISIONAL.tsv                          2 same append              keyed  exit 0, dup keys none, EDIT lines 0
+PROVISIONAL.tsv                          3 edit vs append           union  exit 0, dup keys ['0x00495870'], EDIT lines 1
+PROVISIONAL.tsv                          3 edit vs append           keyed  exit 0, dup keys none, EDIT lines 1
+PROVISIONAL.tsv                          4 edit vs edit             union  exit 0, dup keys ['0x00495870'], EDIT lines 2
+PROVISIONAL.tsv                          4 edit vs edit             keyed  exit 1, dup keys none, EDIT lines 1
+exe_sources.rsp                          1 different appends        union  exit 0, dup keys none, EDIT lines 0
+exe_sources.rsp                          1 different appends        keyed  exit 0, dup keys none, EDIT lines 0
+exe_sources.rsp                          2 same append              union  exit 0, dup keys none, EDIT lines 0
+exe_sources.rsp                          2 same append              keyed  exit 0, dup keys none, EDIT lines 0
+exe_sources.rsp                          3 edit vs append           union  exit 0, dup keys none, EDIT lines 1
+exe_sources.rsp                          3 edit vs append           keyed  exit 0, dup keys none, EDIT lines 1
+exe_sources.rsp                          4 edit vs edit             union  exit 0, dup keys ['"Match\\PortTop_00426e10.cpp"'], EDIT lines 2
+exe_sources.rsp                          4 edit vs edit             keyed  exit 1, dup keys none, EDIT lines 1
+dual_copy_allowlist.txt                  1 different appends        union  exit 0, dup keys ['ORIGTOP-ONLY'], EDIT lines 0
+dual_copy_allowlist.txt                  1 different appends        keyed  exit 2, dup keys ['ORIGTOP-ONLY'], EDIT lines 0
+dual_copy_allowlist.txt                  2 same append              union  exit 0, dup keys ['ORIGTOP-ONLY'], EDIT lines 0
+dual_copy_allowlist.txt                  2 same append              keyed  exit 2, dup keys ['ORIGTOP-ONLY'], EDIT lines 0
+dual_copy_allowlist.txt                  3 edit vs append           union  exit 0, dup keys ['ORIGTOP-ONLY'], EDIT lines 1
+dual_copy_allowlist.txt                  3 edit vs append           keyed  exit 2, dup keys ['ORIGTOP-ONLY'], EDIT lines 1
+dual_copy_allowlist.txt                  4 edit vs edit             union  exit 0, dup keys ['ORIGTOP-ONLY'], EDIT lines 2
+dual_copy_allowlist.txt                  4 edit vs edit             keyed  exit 2, dup keys ['ORIGTOP-ONLY'], EDIT lines 1
+rules.tsv                                1 different appends        union  exit 0, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 0
+rules.tsv                                1 different appends        keyed  exit 2, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 0
+rules.tsv                                2 same append              union  exit 0, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 0
+rules.tsv                                2 same append              keyed  exit 2, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 0
+rules.tsv                                3 edit vs append           union  exit 0, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 1
+rules.tsv                                3 edit vs append           keyed  exit 2, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 1
+rules.tsv                                4 edit vs edit             union  exit 0, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 2
+rules.tsv                                4 edit vs edit             keyed  exit 2, dup keys ['alias', 'extra_in', 'extra_pre', 'prov_bind'], EDIT lines 1

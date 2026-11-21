@@ -1,0 +1,52 @@
+{
+  "_doc": "Profile audio: audio-tick / audio-init closure (was verify/portorigtop_20261113/tools/audiotick_bind_gen.py). Settings here, per-rva rules in rules.tsv (BIND-PROFILE-DATA 2026-11-21). Re-runs regenerate every wrapper written before (force_old_binds).",
+  "selftest_order": 2,
+  "selftest_bindings": true,
+  "own_mark": null,
+  "own_tag": null,
+  "prune_stale": false,
+  "rwcore_fallback": false,
+  "reuse_any": false,
+  "force_old_binds": true,
+  "c_emit": true,
+  "listing": "short",
+  "stop_prefix": "PortTop_AStop_",
+  "stop_file": "Match/PortTop_AudioStops.cpp",
+  "stop_force_note": "   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)",
+  "stops": {
+    "style": "exit",
+    "head": [
+      "// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): named stops of the audio-tick closure (0x00466b50 / 0x0045d3f0 / 0x0045d430).",
+      "// Each is a callee with no matched (c4=match) or L-126 admitted body yet. A stop logs and exits with code = rva",
+      "// (PortTop_AudioCalleeStop, Match/PortTop_00492370.cpp), so a reached stop names the next body to bind."
+    ]
+  },
+  "header": {
+    "_doc": "an existing wrapper keeps the header its row wrote; new ones say which root closure reached them",
+    "style": "keep",
+    "keep_roots": ["00466b50", "0045d3f0", "0045d430"],
+    "keep_roots_add": [
+      "// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops",
+      "// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp)."
+    ],
+    "new": [
+      "// PORT-TOP-RWAUDIO-TABLE-632BA8 (2026-11-13): exe-only port body of rva 0x%(rva)s = %(src)s",
+      "// (%(ev)s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOINIT",
+      "// through the RW-audio init/shutdown table 0x00632ba8 that 0x005a5f60 walks for 0x005a5f00 (slots bound by the",
+      "// image code-pointer fix-up, Compat/PortTopCodePtrImage.inc). Callees bind to exe bodies by name;",
+      "// a callee with no matched or admitted body is a named stop (Match/PortTop_AudioStops.cpp)."
+    ],
+    "missing": [
+      "// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): exe-only port body of rva 0x%(rva)s = %(src)s",
+      "// (%(ev)s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOTICK",
+      "// through the audio-tick closure of 0x00466b50 / 0x0045d3f0 / 0x0045d430. Callees bind to exe bodies by name;",
+      "// a callee with no matched or admitted body is a named stop (Match/PortTop_AudioStops.cpp)."
+    ]
+  },
+  "local_shared_note": "   // the one exe copy (Match/PortTop_0045cb20.cpp); this source compiles its copy out",
+  "local_bound_note": "   // the exe body of 0x%s: this source carries its only exe copy",
+  "bindings_roots": [["00466b50", 2, "0x004926c0"], ["0045d3f0", 2, "0x004926c0"], ["0045d430", 2, "0x004926c0"]],
+  "bindings_tag": "PORT-TOP-AUDIOTICK-STOPS",
+  "allow_text": "%(step)s (L-111 (a), L-126), %(date)s: the matched / replay-C4 / provisional body runs only on MASHED_ORIG_TOP + MASHED_OT_AUDIOTICK / MASHED_OT_AUDIOINIT (audio closure of 0x00466b50 / 0x0045d3f0 / 0x0045d430 / 0x004627f0); deleted at the ORIG_TOP flip. Evidence: %(evidence)s.",
+  "allow_default": {"step": "PORT-TOP-AUDIO-RWA", "date": "2026-11-13", "evidence": null}
+}

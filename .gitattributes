@@ -38,3 +38,21 @@ re/orchestrator/INTEGRATION_LOG.md text eol=lf
 
 # Append-only register (run policy 2026-11-16): every branch adds lines at the end; keep both sides on merge.
 re/orchestrator/UNCERTAIN_REGISTER.md merge=union
+
+# BIND-PROFILE-DATA (run 54): binder data tables are one record per line, read into sets / dicts (a duplicate line is
+# harmless, a line one side deleted stays deleted), so two binding rows that both append keep both sides.
+# verify/bindprofile_20261121/RESULT_BIND-PROFILE-DATA.md, merge_probe.txt.
+re/tools/bind/state/*/rules.tsv merge=union
+re/tools/bind/state/*/roots.txt merge=union
+re/tools/bind/state/*/stop_reasons.tsv merge=union
+re/tools/bind/state/*/c_hold.txt merge=union
+re/tools/bind/state/*/cpp_unclean.txt merge=union
+# exe_sources.rsp: the train already unions it (merge_train.json conflict_union); this makes restacks do the same.
+mashedmod/exe_sources.rsp merge=union
+# dual_copy_allowlist.txt: lint_rva_bodies.py reads it into a dict by entry (parse_allowlist), every entry line is
+# unique. The train's keyed merge (tracker_merge3.py allow) exits 2 on this file since the ORIGTOP-ONLY lines
+# (463 lines share the first token, duplicate key ORIGTOP-ONLY), so union is the working path.
+re/tools/dual_copy_allowlist.txt merge=union
+# NOT union (see the RESULT): re/match/PROVISIONAL.tsv (an edited row next to an append is kept twice; key-merge it),
+# the generated Match/PortTop_BulkRefs.cpp, Match/PortTop_*Stops.cpp, state/*/plan.json, state/*/newfiles.txt
+# (regenerate with porttop_bind.py write / refs on the merged head).
