@@ -558,7 +558,7 @@
 "00478660": [
 "bind",
 "re/match/s12/00478660.c",
-"provisional",
+"replay",
 [
 "004783f0",
 "004785e0",
@@ -625,7 +625,7 @@
 "0047a020": [
 "bind",
 "re/match/s12/0047a020.c",
-"provisional",
+"replay",
 [
 "00440bc0",
 "00478cb0",
@@ -795,8 +795,9 @@
 "not bound here (--roots-only): matched source re/match/s03/h3_0041a5d0.c"
 ],
 "0041f260": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s04/0041f260.c"
+"reuse",
+"PortTop_Bound_0041f260",
+"Match/PortTop_0041f260.cpp"
 ],
 "004b51d0": [
 "reuse",
@@ -972,7 +973,8 @@
 "RwCore/RwCore_00551fd0.cpp"
 ],
 "00558cb0": [
-"stop"
+"stop",
+"not bound here (--roots-only): matched source re/match/rwl05/00558cb0.c"
 ],
 "00562560": [
 "reuse",
@@ -1121,7 +1123,9 @@
 "Match/PortTop_005a7af0.cpp"
 ],
 "005a7b60": [
-"stop"
+"reuse",
+"PortTop_Bound_005a7b60",
+"Match/PortTop_005a7b60.cpp"
 ],
 "0047ce40": [
 "bind",
@@ -1131,10 +1135,12 @@
 []
 ],
 "004783f0": [
-"stop"
+"stop",
+"not bound here (--roots-only): matched source re/match/s12/004783f0.c"
 ],
 "004785e0": [
-"stop"
+"stop",
+"not bound here (--roots-only): matched source re/match/s12/004785e0.c"
 ],
 "004b4550": [
 "stop"
@@ -1902,7 +1908,8 @@
 "stop"
 ],
 "004b53b0": [
-"stop"
+"stop",
+"not bound here (--roots-only): matched source re/match/s18/004b53b0.c"
 ],
 "00543da0": [
 "bind",
@@ -2468,7 +2475,8 @@
 []
 ],
 "00559560": [
-"stop"
+"stop",
+"not bound here (--roots-only): matched source re/match/rwl05/00559560.c"
 ],
 "005595d0": [
 "stop"

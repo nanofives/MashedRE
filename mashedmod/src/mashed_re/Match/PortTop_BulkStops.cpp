@@ -62,10 +62,6 @@ int PortTop_BulkStop_00428bf0(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_004299d0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x004299d0u, "0x00411d90", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004299d0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00430820: declared int by 0x00411d90; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s07/00430820.c
-int PortTop_BulkStop_00430820(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00430820u, "0x00411d90", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00430820u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0047f290: declared void by 0x004074a0; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s13/0047f290.c
 int PortTop_BulkStop_0047f290(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0047f290u, "0x004074a0", n, _ReturnAddress(), ex);

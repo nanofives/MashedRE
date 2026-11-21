@@ -524,8 +524,8 @@
 ],
 "00467210": [
 "reuse",
-"FollowTargetField10_impl",
-"Match/MatchS11_00467210.cpp"
+"PortTop_Bound_00467210",
+"Match/PortTop_00467210.cpp"
 ],
 "004cb330": [
 "reuse",
@@ -675,8 +675,8 @@
 ],
 "00401570": [
 "reuse",
-"EntryTableScanByKey",
-"Match/MatchS01.cpp"
+"PortTop_Bound_00401570",
+"Match/PortTop_00401570.cpp"
 ],
 "00401ee0": [
 "reuse",
@@ -2178,16 +2178,6 @@
 "Orig_004b6520",
 "Match/PortTop_004b6520.cpp"
 ],
-"0042b930": [
-"reuse",
-"RwCore_0042b930",
-"RwCore/RwCore_0042b930.cpp"
-],
-"0042f510": [
-"reuse",
-"Vehicle0HandleGet",
-"Match/MatchS07_0042f510.cpp"
-],
 "004b7ff0": [
 "stop"
 ],
@@ -2614,8 +2604,9 @@
 "outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s06/004299d0.c"
 ],
 "00430820": [
-"stop",
-"outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s07/00430820.c"
+"reuse",
+"PortTop_Bound_00430820",
+"Match/PortTop_00430820.cpp"
 ],
 "00482900": [
 "stop"
