@@ -1,6 +1,6 @@
 # RESULT BIND-CUNCLEAN-AS-C (run 53, 2026-11-21)
 
-Verdict: **RED, with a decision for L0 (section 4).** The C emit, the build path and the `refs` step all work. All 34 of cp1's units bind,
+Verdict: **DECISION for L0 (section 4).** The C emit, the build path and the `refs` step all work. All 34 of cp1's units bind,
 compile as C and link, and the self-test passes. But only 2 of the 34 come out IDENTICAL in `ddkobj.py check` on this branch. The other 32 are
 `skip:provisional`, because `re/match/PROVISIONAL.tsv` lists their rvas for a different exe body: the L-137 lifted naked-asm scaffolding,
 `RwCore/RwCore_Lifted_NN.cpp`. I ran a scratch experiment, not merged, that drops those rows. In it all 34 are IDENTICAL, and no other
