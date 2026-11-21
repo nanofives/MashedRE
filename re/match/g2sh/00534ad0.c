@@ -32,7 +32,11 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
 
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007dc57c (*(int *)0x007dc57cu)
+#else
 extern int DAT_007dc57c;
+#endif
 // MATCH: 0x00534ad0 FUN_00534ad0
 
 void FUN_00534ad0(int param_1)

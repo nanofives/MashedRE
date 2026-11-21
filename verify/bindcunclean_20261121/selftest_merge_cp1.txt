@@ -1,0 +1,8 @@
+[selftest] raceload roots 36: plan IDENTICAL (bind 173 reuse 103 stop 52), wrappers+stops IDENTICAL (174 checked)
+[selftest] raceload refs: 132 caller-less bound bodies, Match/PortTop_BulkRefs.cpp IDENTICAL, 0x0041a8d0 (own) drops out with a bound caller 0x00412050; 0x004074a0 (foreign) drops out with a bound caller 0x00412050 (own 34, foreign 98)
+[selftest] C emit: 34 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit of the 25 held rvas (c_hold.txt, not bound): 25 compile, 0 fail
+[selftest] audio roots 63: plan IDENTICAL (bind 384 reuse 71 stop 88), wrappers+stops IDENTICAL (385 checked)
+[selftest] BINDINGS.tsv from the audio plan: IDENTICAL (updated 0 added 0)
+[selftest] PASS

@@ -127,6 +127,15 @@ def active_lines(txt: str, defined: set):
             yield line
 
 
+def wrapper_lang_defs(wpath: pathlib.Path, extra=()):
+    """Macros the default VS2022 build defines for an exe TU: cl compiles a .c by its extension as C, so a C unit
+    (BIND-CUNCLEAN-AS-C, Match/PortTop_<rva>.c) and the source it includes are read without __cplusplus."""
+    d = {"MASHED_STANDALONE", "_MSC_VER", "_WIN32"} | set(extra)
+    if wpath.suffix.lower() != ".c":
+        d.add("__cplusplus")
+    return d
+
+
 def exe_wrappers():
     """[(wrapper path, [(source path, defines-in-effect dict)])] for every exe TU that includes a re/match source."""
     rsp = [l.strip().strip('"') for l in (MOD / "exe_sources.rsp").read_text().splitlines() if l.strip()]
@@ -141,7 +150,7 @@ def exe_wrappers():
         if "re/match/" not in txt and "re\\match\\" not in txt:
             continue
         defs, incs, ptrabs, kconst = {}, [], {}, {}
-        for line in active_lines(txt, {"MASHED_STANDALONE", "__cplusplus", "_MSC_VER", "_WIN32"}):
+        for line in active_lines(txt, wrapper_lang_defs(p)):
             if re.match(r"^\s*#\s*define\s+MGLOBALA?\s*\(", line):
                 # DDKOBJ-CELLS: a wrapper MGLOBAL / MGLOBALA in the preamble's own original-address form binds every
                 # global where the DDK object's absolute symbols put it, so it is accepted. Any other form (a cell
@@ -241,7 +250,7 @@ _WSTATIC_RE = re.compile(r"^static[^=;(]*?[\s*&]([A-Za-z_]\w*)\s*\(")
 def wrapper_statics(wpath: pathlib.Path):
     """Names of static functions the wrapper defines (exe view): DDK objects may bind to them (promoted later)."""
     txt = wpath.read_text(encoding="utf-8", errors="replace")
-    return {m.group(1) for line in active_lines(txt, {"MASHED_STANDALONE", "__cplusplus", "_MSC_VER", "_WIN32"})
+    return {m.group(1) for line in active_lines(txt, wrapper_lang_defs(wpath))
             for m in [_WSTATIC_RE.match(line)] if m}
 
 
@@ -283,14 +292,22 @@ def load_provisional():
     """L-126 (6a): RVAs listed in re/match/PROVISIONAL.tsv (status provisional or refused). A provisional body is not
     byte-matched, so it never joins the object build and never counts in the byte-check (a whole unit is skipped; in a
     unit with a linked function the provisional function alone keeps its VS2022 body, DDKOBJ-PROV-MIXED-UNIT).
-    DDKOBJ_EXTRA_PROVISIONAL (comma-separated RVAs) adds rows, for the selftest fixtures only."""
-    out = {int(x, 16) for x in os.environ.get("DDKOBJ_EXTRA_PROVISIONAL", "").split(",") if x.strip()}
+    DDKOBJ_EXTRA_PROVISIONAL (comma-separated RVAs, or `rva=source`) adds rows, for the selftest fixtures only.
+    L-178 (BIND-CUNCLEAN-AS-C, 2026-11-21): keyed by (rva, listed source). Returns {rva: set of keys}. A row whose
+    listed source is a re/match/ file keys as "*" and skips every unit of that rva, as before. A row whose listed source is
+    anything else (the L-137 lifted scaffolding RwCore/RwCore_Lifted_NN.cpp, RwCore/RwCore_Hand.cpp) keys as that source
+    and skips only a unit compiling that source: a re/match unit of the same rva is checked on its own (a dual body)."""
+    out = {}
+    for x in os.environ.get("DDKOBJ_EXTRA_PROVISIONAL", "").split(","):
+        if x.strip():
+            a, _, s = x.strip().partition("=")
+            out.setdefault(int(a, 16), set()).add(_prov_key(s))
     try:
         with open(PROVISIONAL, newline="", encoding="utf-8") as fh:
             rows = [l for l in fh if not l.startswith("#")]
         for r in csv.DictReader(rows, delimiter="	"):
             try:
-                out.add(int(r["rva"], 16))
+                out.setdefault(int(r["rva"], 16), set()).add(_prov_key(r.get("source") or ""))
             except (ValueError, KeyError):
                 pass
     except OSError:
@@ -298,8 +315,26 @@ def load_provisional():
     return out
 
 
-def parse_source(path: pathlib.Path):
+def _prov_key(source):
+    s = (source or "").strip().replace("\\", "/").lower()
+    return "*" if (not s or s in ("-", "n/a") or s.startswith("re/match/")) else s
+
+
+def prov_applies(prov, r, src=None):
+    """True when a PROVISIONAL row of rva r applies to a unit compiling src (L-178 key, see load_provisional)."""
+    keys = prov.get(r)
+    if not keys:
+        return False
+    if "*" in keys or src is None:
+        return "*" in keys or src is None
+    s = str(src).replace("\\", "/").lower()
+    return any(s == k or s.endswith("/" + k) for k in keys)
+
+
+def parse_source(path: pathlib.Path, cxx: bool = True):
+    """cxx: the including exe TU is C++ (a .cpp wrapper); False for a C unit (BIND-CUNCLEAN-AS-C)."""
     t = path.read_text(encoding="utf-8", errors="replace")
+    pdefs = {"MATCH_PORT", "MASHED_STANDALONE", "_MSC_VER", "_WIN32"} | ({"__cplusplus"} if cxx else set())
     m = FLAGS_RE.search(t)
     flags = m.group(1) if m else M.DEFAULT_FLAGS
     lang = (LANG_RE.search(t).group(1) if LANG_RE.search(t) else "c")
@@ -307,13 +342,13 @@ def parse_source(path: pathlib.Path):
     matches = [(int(a, 16), n) for a, n in MATCH_RE.findall(t)]
     # the MATCH functions the port compiles: those outside `#ifndef MATCH_PORT` blocks (C++ + MATCH_PORT + exe)
     ported = {CE.undecorate(n) for _a, n in MATCH_RE.findall(chr(10).join(
-        active_lines(t, {"MATCH_PORT", "__cplusplus", "MASHED_STANDALONE", "_MSC_VER", "_WIN32"})))}
+        active_lines(t, pdefs)))}
     glob = {}
     for rx in (MGLOBAL_RE, MGLOBALA_RE):
         for _T, n, a in rx.findall(t):
             glob[n] = int(a, 16)
     cview = list(active_lines(t, {"_MSC_VER", "_WIN32"}))
-    pview = list(active_lines(t, {"MATCH_PORT", "__cplusplus", "MASHED_STANDALONE", "_MSC_VER", "_WIN32"}))
+    pview = list(active_lines(t, pdefs))
     excluded = func_defs(cview) - func_defs(pview)
     # data the port defines itself with an initializer (0x0048ff20: `static char s_Tri_dff_005cf4f8[8] = "Tri.dff";`
     # under MATCH_PORT, MGLOBALA in C). The exe arena is zero there, so the DDK object reads a copy of the original bytes.
@@ -436,8 +471,8 @@ def main_build(a):
     B = load_bindings()
     PROV = load_provisional()
 
-    def is_prov(r):
-        return r in PROV or B.get(r, {}).get("kind") == "provisional"
+    def is_prov(r, src=None):   # L-178: keyed by (rva, the unit's source)
+        return prov_applies(PROV, r, src) or B.get(r, {}).get("kind") == "provisional"
     crt = vs_crt_symbols()
     # every external the default link can resolve: defined in a default object, or in a library on the link line
     defmap = default_link_symbols() | crt
@@ -502,7 +537,7 @@ def main_build(a):
     units = []
     seen_src = set()
     for src, wpath, wrel, defs in cand:
-        info = parse_source(src)
+        info = parse_source(src, cxx=wpath.suffix.lower() != ".c")
         rvas = [r for r, _ in info["matches"]]
         if not rvas:
             continue
@@ -532,7 +567,7 @@ def main_build(a):
     for u in units:
         for r, mname in u["info"]["matches"]:
             plain = CE.undecorate(mname)
-            if plain in u["info"]["ported"] and not is_prov(r):   # a provisional body stays the VS2022 copy
+            if plain in u["info"]["ported"] and not is_prov(r, u["src"]):   # a provisional body stays the VS2022 copy
                 exe_names[u["defs"].get(plain, plain)] = u
     wrapper_edits = collections.defaultdict(list)   # wrapper obj path -> [(exe plain name, rva)]
     # PORT-TOP-08: `__ddkreg_<rva>` -> the source that took it. A second source that holds the same static
@@ -553,7 +588,7 @@ def main_build(a):
         # linked function keeps its VS2022 body. Its DDK copy is treated like a port-excluded helper below: renamed to
         # a dead local, and every in-object reference repointed to the exe name, so the DDK functions of the unit call
         # the VS2022 body and the byte check never sees it.
-        prov_plain = {p for p, r in match_plain.items() if is_prov(r)}
+        prov_plain = {p for p, r in match_plain.items() if is_prov(r, u["src"])}
         ported = info["ported"] - prov_plain
         excluded = info["port_excluded"]
         regconv = u.get("regconv") or {}     # DDKOBJ-REGCONV: static MATCH name -> adapter cc (None: no VS2022 copy)
@@ -763,7 +798,7 @@ def main_build(a):
             rec["status"] = "skip:lang-" + info["lang"]
             report["units"].append(rec)
             continue
-        if all(is_prov(r) for r in u["rvas"]):
+        if all(is_prov(r, u["src"]) for r in u["rvas"]):
             rec["status"] = "skip:provisional"      # L-126 (6a): VS2022 body on the knob path, no byte-check
             report["units"].append(rec)
             continue
@@ -1319,10 +1354,14 @@ def recompile_wrappers(wrappers, vsdir: pathlib.Path, out: pathlib.Path):
     body += "popd" + NL + "exit /b 0" + NL
     bat = out / "vsrc_compile.bat"
     bat.write_text(body)
-    r = subprocess.run(["cmd", "/c", str(bat)], capture_output=True, text=True)
-    (out / "vsrc_compile.log").write_text(r.stdout + r.stderr)
+    # cl output read as bytes and decoded with replace. With text=True under PYTHONUTF8=1 a non-UTF-8 cl message
+    # (the Spanish cl, OEM codepage) raised in the reader thread, r.stdout stayed None and the log write raised TypeError.
+    r = subprocess.run(["cmd", "/c", str(bat)], capture_output=True)
+    so = (r.stdout or b"").decode("mbcs", errors="replace")
+    se = (r.stderr or b"").decode("mbcs", errors="replace")
+    (out / "vsrc_compile.log").write_text(so + se, encoding="utf-8")
     if r.returncode != 0:
-        raise SystemExit("wrapper recompile failed:" + NL + r.stdout[-3000:] + r.stderr[-2000:])
+        raise SystemExit("wrapper recompile failed:" + NL + so[-3000:] + se[-2000:])
 
 
 def do_link(out: pathlib.Path):
@@ -1422,6 +1461,7 @@ def main_check(a):
     print(f"[ddkobj check] {dict(c)} -> {out / 'BYTECHECK.tsv'}")
     # DDKOBJ-TRAIN: one summary the merge train reports (IDENTICAL count, refusals, differences)
     st = collections.Counter(u["status"] for u in rep["units"])
+    PROV = load_provisional()
     summ = {"identical": c.get("IDENTICAL", 0), "different": c.get("DIFFERENT", 0),
             "not_in_map": c.get("not-in-map", 0), "functions": len(rows),
             "provisional_units_skipped": st.get("skip:provisional", 0),
@@ -1431,6 +1471,9 @@ def main_check(a):
             "units": len(rep["units"]), "units_linked": st.get("ok", 0),
             "refusals": {k: v for k, v in sorted(st.items()) if k.startswith("fail:")},
             "skips": {k: v for k, v in sorted(st.items()) if k.startswith("skip:")},
+            # L-178: IDENTICAL functions whose rva also has a listed provisional body (another exe body, not this unit's
+            # source). They are pre-bound: never report them as "the path runs matched bytes".
+            "dual_body_rvas": sorted(r["rva"] for r in rows if r["result"] == "IDENTICAL" and _dual(PROV, r)),
             "different_rvas": sorted(r["rva"] for r in rows if r["result"] == "DIFFERENT"),
             "not_in_map_rvas": sorted(r["rva"] for r in rows if r["result"] == "not-in-map")}
     (out / "ddkobj_summary.json").write_text(json.dumps(summ, indent=1))
@@ -1439,8 +1482,14 @@ def main_check(a):
           f"[{' '.join(summ['different_rvas'])}]  not-in-map {summ['not_in_map']}  units linked "
           f"{summ['units_linked']}/{summ['units']}  refusals {sum(summ['refusals'].values())} ({ref})  "
           f"provisional kept VS2022 {summ['provisional_units_skipped']} units + "
-          f"{len(summ['provisional_functions_vs2022_in_linked_units'])} fns in linked units")
+          f"{len(summ['provisional_functions_vs2022_in_linked_units'])} fns in linked units  "
+          f"dual body {len(summ['dual_body_rvas'])} (IDENTICAL, rva also has a listed provisional body: pre-bound)")
     return 0
+
+
+def _dual(prov, row):
+    r = int(row["rva"], 16)
+    return r in prov and not prov_applies(prov, r, row.get("src"))
 
 
 # ------------------------------------------------------------------ selftest (DDKOBJ-TRAIN)
@@ -1649,6 +1698,30 @@ def main_selftest(a):
             os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
         check(by.get("provmix", {}).get("status") == "skip:provisional",
               f"every function provisional -> skip:provisional ({by.get('provmix', {}).get('status')})")
+        # L-178 (BIND-CUNCLEAN-AS-C): provisional rows keyed by (rva, listed source). A row whose listed source is not a
+        # re/match file (the L-137 lifted scaffolding) is another exe body: the matched unit of the same rva is checked.
+        os.environ["DDKOBJ_EXTRA_PROVISIONAL"] = ("0x004000b0=RwCore/RwCore_Lifted_NN.cpp,"
+                                                  "0x004000c0=RwCore/RwCore_Lifted_NN.cpp")
+        try:
+            rc, rep, by = run(["provmix"], "provlift")
+        finally:
+            os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
+        check(by.get("provmix", {}).get("status") == "ok",
+              f"lifted rows (listed source RwCore/RwCore_Lifted_NN.cpp) + matched unit -> checked "
+              f"({by.get('provmix', {}).get('status')})")
+        # a row whose listed source is the re/match file still skips every unit of that rva, as before
+        os.environ["DDKOBJ_EXTRA_PROVISIONAL"] = ("0x004000b0=re/match/ddkst_provmix.c,"
+                                                  "0x004000c0=re/match/ddkst_provmix.c")
+        try:
+            rc, rep, by = run(["provmix"], "provsrc")
+        finally:
+            os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
+        check(by.get("provmix", {}).get("status") == "skip:provisional",
+              f"row listing the re/match source -> still skip:provisional ({by.get('provmix', {}).get('status')})")
+        pv = {0x1: {"rwcore/rwcore_lifted_nn.cpp"}, 0x2: {"*"}}
+        check(not prov_applies(pv, 0x1, "C:/w/re/match/g2sh/x.c") and prov_applies(pv, 0x2, "C:/w/re/match/g2sh/x.c")
+              and _dual(pv, {"rva": "0x00000001", "src": "re/match/g2sh/x.c"}),
+              "prov_applies / dual body: lifted row -> not applied, dual body; re/match row -> applied")
     finally:
         os.environ.pop("DDKOBJ_EXTRA_WRAPPERS", None)
         if not a.keep:

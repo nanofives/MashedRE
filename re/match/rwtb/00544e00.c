@@ -33,10 +33,22 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
 
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007dc66c (*(int *)0x007dc66cu)
+#else
 extern int DAT_007dc66c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005cc320 (*(undefined1 *)0x005cc320u)
+#else
 extern undefined1 DAT_005cc320;
+#endif
 void FUN_004c0e50(int p0);
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define _DAT_005cc320 (*(int *)0x005cc320u)
+#else
 extern int _DAT_005cc320;
+#endif
 // MATCH: 0x00544e00 FUN_00544e00
 
 typedef struct { char *data; float f4; int i8; } Ext4e00;

@@ -34,16 +34,56 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
 
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d4140 (*(int *)0x007d4140u)
+#else
 extern int DAT_007d4140;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d4110 (*(int * *)0x007d4110u)
+#else
 extern int * DAT_007d4110;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00912114 (*(int *)0x00912114u)
+#else
 extern int DAT_00912114;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d4118 (*(int * *)0x007d4118u)
+#else
 extern int *DAT_007d4118;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d4114 (*(int * *)0x007d4114u)
+#else
 extern int *DAT_007d4114;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d456c (*(int *)0x007d456cu)
+#else
 extern int DAT_007d456c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d4570 (*(int *)0x007d4570u)
+#else
 extern int DAT_007d4570;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d459c (*(code * *)0x007d459cu)
+#else
 extern code *DAT_007d459c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00911ae4 (*(int *)0x00911ae4u)
+#else
 extern int DAT_00911ae4;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_009120e0 (*(undefined4 *)0x009120e0u)
+#else
 extern undefined4 DAT_009120e0;
+#endif
 undefined4 FUN_004c9ad0(void);
 undefined4 FUN_004d1e30(void);
 void FUN_004d6200(void);
