@@ -49,3 +49,23 @@ Committed alone, before any build or arm. Row kind: top-down / race path. Branch
 The frames 0x004c15c0 marks dirty are librw frames (the pool clumps come from `MashedRw_ClumpStreamRead_004e7420`).
 They go into the RW core's dirty list on the record, which no sync on the librw route walks. Not measured by the
 oracle; register line in the RESULT.
+
+## Amendment 1 (after the first two knob boots, before any arm)
+
+Knob boots `knob_rl_on` and `knob_rl_on2` (VS2022 exe, `D:/MashedWT/RACE-RWGLOBALS-FRAMELIST_data`) both ended
+`0xC0000005` inside the frame open, before the menu. The SEH log of `knob_rl_on2`: write to `0x00000004` at exe+0x1F2F0C,
+eax 0, ecx `0x007D45CC`, edi `0x007D3E78`. That is the tail of the freelist create `RwCore_004cc820`
+(`re/match/rwl01/004cc820.c`: `*(DAT_007d45cc + 4) = param_5 + 7`), which links the new freelist into the RW core list
+at 0x007d45cc. On this path that head is 0: its writer is the RW core freelist-module open 0x004cce20 (C4 match), which
+does not run here. Also `RwCore_004cc820` is a 74.5% source listed provisional only for `MASHED_RWC_CORE`
+(`verify/rwccorerun_20261111/PROVISIONAL_RWC.tsv`), so it may not run on this knob path; 0x004ccde0 (the list walker) is
+another row's RVA (`bulk_cp1.tsv`).
+
+Change: a race-path TU `Match/PortTop_004c07b0.cpp` compiles the same matched source as `PortTop_Bound_004c07b0` with
+its callee 0x004cc9e0 bound to the exe's existing thunk body `Orig_004cc9e0` -> `PortTop_RwFreeListCreate_004cc820`
+(HUDINIT-A binding, L0 ruling 2026-11-10; no prealloc, not linked into 0x007d45cc). The frame open calls it instead of
+`RwCore_004c07b0` (that copy stays for `MASHED_RWC_CORE`; dual copy allowlisted ORIGTOP-ONLY).
+
+Prediction 1 amended: header 0x007d3e78 words +0x0 0xa4, +0x4 0x32, +0x8 7, +0xc 4, +0x10 = +0x14 = 0x007d3e88, +0x18 3,
++0x1c = +0x20 = 0 (the original links +0x1c / +0x20 into 0x007d45cc: a declared deviation, no reader on this path).
+The other predictions stand. Object build: unit 0x004c07b0 IDENTICAL for both copies.
