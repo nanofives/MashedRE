@@ -132,7 +132,7 @@ static void RlCall004264d0(int param_1) {
 // matched body runs (Match/PortTop_00458c70.cpp); with it 0 the counting stand-in above runs, logged (the RwCore_004c15c0
 // write [[+0xbc]+4] would fault, RESULT_PORT-OT-RACE.md 7.2).
 void PortTop_Bound_00458c70(void);
-void* RwCore_004c07b0(void* instance, int offset, int size);   // RwCore/RwCore_004c07b0.cpp
+void* PortTop_Bound_004c07b0(void* instance, int offset, int size);   // Match/PortTop_004c07b0.cpp (callee 0x004cc9e0 = Orig_004cc9e0)
 static unsigned s_8c70Bound = 0;
 // LibRw/RwApiBind.cpp (RaceLoadFrameOpen, MASHED_OT_RACELOAD only): the RW core frame-module open on the librw RwGlobals
 // record, offset 0x164. A fault inside it is logged with its exe-relative address and passed on (that TU has no windows.h).
@@ -151,7 +151,7 @@ static int RlFrameOpenFilter(EXCEPTION_POINTERS* ep) {
 }
 void* PortTop_RL_FrameOpenSeh(void* record) {
     __try {
-        return RwCore_004c07b0(record, 0x164, 4);
+        return PortTop_Bound_004c07b0(record, 0x164, 4);
     } __except (RlFrameOpenFilter(GetExceptionInformation())) {
         return nullptr;
     }
