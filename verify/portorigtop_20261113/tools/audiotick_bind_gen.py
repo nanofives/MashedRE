@@ -151,7 +151,9 @@ STOP_FORCE = set()
 # 0x005bf610 binds with it and leaves STOP_FORCE. Previous line, kept as history:
 # STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
 STOP_FORCE |= {'005aef30'}   # PORT-TOP-AUDIO-5A8F30-STOPS: reached now through 0x005a8060 (0x005a8328); it calls __beginthread (0x005c2e79, no exe body; the census bulk bind left it out for the LNK2019) and starts the second thread, census order 42: a stop until the init stops are done
-STOP_FORCE |= {'005c91f0'}   # RO-AUDIOINIT-45D460-REACH: C4 match, but listed in run53_bindlists/bulk_cp1.tsv (BIND lane owns it, one owner per RVA): kept a named stop here; reached only on 0x005bb910's device-flag-8 path
+# RO-AUDIOINIT-45D460-REACH-2: RACE-BIND-C4-BULK cp1 bound 0x005c91f0 on orch/integration (Match/PortTop_005c91f0.cpp), so
+# 0x005bb910 reuses that body and the line below no longer applies. Previous line, kept as history:
+# STOP_FORCE |= {'005c91f0'}   # RO-AUDIOINIT-45D460-REACH: C4 match, but listed in run53_bindlists/bulk_cp1.tsv (BIND lane owns it, one owner per RVA): kept a named stop here; reached only on 0x005bb910's device-flag-8 path
 # PORT-TOP-AUDIO-5AEF30-KNOB (L-174 (c)): a caller of a KNOB rva calls this exe function instead of the stop thunk. Knob off
 # it calls the stop thunk (unchanged stop); knob on it is the stand-in (Match/PortTop_Knob_005aef30.cpp, MASHED_OT_AUDIOTHREAD_STANDIN).
 KNOB = {'005aef30': ('PortTop_Knob_005aef30', 'Match/PortTop_Knob_005aef30.cpp')}

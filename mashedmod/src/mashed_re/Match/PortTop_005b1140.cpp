@@ -7,7 +7,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_005b1140 PortTop_Bound_005b1140
-#define FUN_005b10a0 PortTop_AStop_005b10a0   // named stop
+#define FUN_005b10a0 AudioTableDispatchAt4   // exe body (Audio/AudioTableDispatch.cpp)
 extern "C" {
 #include "../../../../re/match/s26/005b1140.c"
 }
