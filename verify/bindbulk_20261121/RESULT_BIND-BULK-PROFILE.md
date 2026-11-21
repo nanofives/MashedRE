@@ -141,7 +141,10 @@ Handoff for the LIVING-PC reboot (2026-11-21 11:50). Row not yet in review; verd
 - **VS2022 build**: Build OK, rva-lint 465 allowlisted NEW=0, `mashed_re.exe` sha256
   e95c6397c6a6f8610ba18c8b9fc08010fa32e8c7d9e44d31838183a24c4b742b (log `D:/MashedWT/BIND-BULK-PROFILE_data/build_vs2022.log`).
 - **Running at the warning**: the object build (`MASHED_DDKOBJ=1`, log `D:/MashedWT/BIND-BULK-PROFILE_data/build_ddkobj.log`),
-  left to finish. The VS2022 knob boot was queued in the test slot memory wait and was stopped before it started (no
+  left to finish: **Build OK** (`mashedmod/build/ddkobj/mashed_re_ddk.exe` sha256
+  c669ffc3757af9c60ca61fa52d61553ca7fa20868b6f454b3d7ade73790fa9f0, log sha256
+  f1367b58a8519a2d0f878464f4435f79a96b34c2f2b2bc21e97722b096b500e1), so next step (1) is done unless the reboot cleared
+  `mashedmod/build/ddkobj/`. The VS2022 knob boot was queued in the test slot memory wait and was stopped before it started (no
   game process launched). Private root ready: `D:/MashedWT/BIND-BULK-PROFILE_root`.
 - **Next**: (1) if `build_ddkobj.log` does not end in `Build OK`, rerun the object build
   (`py -3.12 re/orchestrator/mashed_lock.py status` first; `cmd /c "set MASHED_NO_DEPLOY=1&& set MASHED_DDKOBJ=1&& set PYTHONUTF8=1&& mashedmod\build.bat"`);
