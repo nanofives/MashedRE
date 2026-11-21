@@ -23,3 +23,4 @@
 0047b8d0	C2664 'void Orig_004b6520(undefined4,undefined4)': el argumento 1 no puede convertirse de 'undefined1 [32768]' a 'un
 004c3d90	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
 004e89a0	C2440 'inicializando': no se puede realizar la conversi¢n de 'int' a 'void *'
+00451730	C2664 'float *RwCore_004c1740(float *,float *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'float *'
