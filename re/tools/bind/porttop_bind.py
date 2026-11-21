@@ -17,6 +17,13 @@ A binding row adds lines there and never edits this file (KICKOFF_run54 rule 1).
 verify/bindbulk_20261121/tools/bulk_bind_gen.py; after `write --profile bulk` run `refs --profile raceload`, which owns
 Match/PortTop_BulkRefs.cpp, and `sync --profile bulk`).
 
+BIND-LIB-ROUTE (2026-11-21): binding kind `lib` next to `crt`. A vendored library (Lua 4.0 first, then libpng, zlib,
+qhull) binds by name: `lib_root <lib> <root> <globs>` declares the library tree and its source globs, `lib <rva> <lib>
+<symbol>` maps an rva to the library's own symbol (rules.tsv, shared or per profile). The planner gives that rva
+('reuse', <symbol>, 'lib:<lib>:<file>:<line>'), so caller wrappers #define FUN_<rva> <symbol>; the symbol must have
+exactly one non-static definition in the globs, else the tool refuses. The library objects are linked by the library's
+own build step (mashedmod/deps/<lib>), not by this tool. Unit test: re/tools/bind/test_porttop_bind_lib.py.
+
 Run from the worktree root. Usage (full walk-through: .claude/skills/roadmap-loop/SKILL.md, "Binding checkpoints"):
   py -3.12 re/tools/bind/porttop_bind.py plan    --profile raceload --roots 00426e10,004264d0      # dry run, listing
   py -3.12 re/tools/bind/porttop_bind.py write   --profile raceload --roots 00426e10,004264d0      # wrappers + stops + plan
@@ -69,8 +76,14 @@ SHARED_RULES = os.path.join(STATE, '_shared', 'rules.tsv')
 # rule kind -> number of fields after the kind (the last field takes the rest of the line, tabs included)
 RULE_KINDS = {'prov_bind': 1, 'force': 1, 'stop_force': 1, 'extra_pre': 2, 'extra_in': 2, 'extra_def': 2,
               'alias': 3, 'knob': 3, 'stop_reason': 2, 'stop_why': 2, 'name_def': 2, 'not_local': 2,
-              'local_shared': 3, 'local_as_bound': 2, 'callee_override': 4}
+              'local_shared': 3, 'local_as_bound': 2, 'callee_override': 4,
+              # BIND-LIB-ROUTE (2026-11-21): vendored library route (Lua 4.0 first, then libpng / zlib / qhull)
+              #   lib_root <lib> <root> <globs>   library <lib>: its tree under the worktree root and the source globs
+              #                                   (space-separated, relative to <root>) that define its symbols
+              #   lib      <rva> <lib> <symbol>   callers of rva bind the vendored library's own symbol by name
+              'lib_root': 3, 'lib': 3}
 RVA_PAIR_KINDS = {'not_local', 'local_shared', 'local_as_bound', 'callee_override'}   # <caller> <callee> first
+NO_RVA_KINDS = {'lib_root'}   # first field is a name, not an rva: kept as written
 
 PROFILE_DEFAULTS = dict(
     own_mark=None, own_tag=None, prune_stale=False, rwcore_fallback=False, reuse_any=False, force_old_binds=False,
@@ -109,7 +122,7 @@ def read_rules(path):
         f = rest.split('\t', RULE_KINDS[kind] - 1)
         if len(f) != RULE_KINDS[kind]:
             sys.exit('%s:%d: %s takes %d fields' % (path, n, kind, RULE_KINDS[kind]))
-        nrva = 2 if kind in RVA_PAIR_KINDS else 1   # leading rva fields, lower case
+        nrva = 2 if kind in RVA_PAIR_KINDS else 0 if kind in NO_RVA_KINDS else 1   # leading rva fields, lower case
         out.setdefault(kind, []).append(tuple(x.strip().lower() if i < nrva else x for i, x in enumerate(f)))
     return out
 
@@ -125,7 +138,9 @@ def rule_tables(rules):
              not_local={(x[0], x[1]) for x in r('not_local')},
              local_shared={(x[0], x[1]): x[2] for x in r('local_shared')},
              local_as_bound={(x[0], x[1]) for x in r('local_as_bound')},
-             callee_override={(x[0], x[1]): (x[2], x[3]) for x in r('callee_override')})
+             callee_override={(x[0], x[1]): (x[2], x[3]) for x in r('callee_override')},
+             lib_root={x[0].strip(): (x[1].strip(), x[2].split()) for x in r('lib_root')},
+             lib={x[0].replace('0x', ''): (x[1].strip(), x[2].strip()) for x in r('lib')})
     for k in ('extra_pre', 'extra_in', 'extra_def'):
         t[k] = {}
         for x in r(k):
@@ -245,6 +260,63 @@ def crt_bodies():
 
 
 # --------------------------------------------------------------------------------------------------------------------
+# lib binding kind (BIND-LIB-ROUTE, 2026-11-21). The `crt` route reuses hand-named MashedCrt_<name>_<rva> bodies found by
+# file name; a vendored library (Lua 4.0 at mashedmod/deps/lua-4.0, later libpng / zlib / qhull) keeps its own symbol
+# names, so the rva -> symbol map is data: `lib_root` names the library tree, `lib` maps an rva to one of its symbols.
+# The planner gives such an rva ('reuse', <symbol>, 'lib:<lib>:<file>'), so every caller wrapper #defines
+# FUN_<rva> <symbol> (C linkage: the wrapper includes the matched source inside extern "C", and a C library defines
+# <symbol> with C linkage). The library objects themselves are linked by the library's own build step, not by this tool.
+# --------------------------------------------------------------------------------------------------------------------
+def lib_symbol_defs(root, globs, sym):
+    """every non-static function definition of sym in the library sources: [(file relative to root, line)]."""
+    # the return type may sit on the line before (`int` / `fix_mul (int a,` / `{`): then that line is the prefix
+    pat = re.compile(r'^((?:[A-Za-z_][^;{}#\n]*?)?)\b%s\s*\([^;{}]*\)\s*\{' % re.escape(sym), re.M)
+    out = []
+    seen = set()
+    for g in globs:
+        for p in sorted(glob.glob(os.path.join(root, g))):
+            k = os.path.normcase(os.path.abspath(p))
+            if k in seen:
+                continue
+            seen.add(k)
+            t = rd(p)
+            for m in pat.finditer(t):
+                pre = m.group(1)
+                if not pre.strip():
+                    prev = t[:m.start()].rstrip('\r\n').rsplit('\n', 1)[-1]
+                    if not re.fullmatch(r'\s*[A-Za-z_][\w \t\*]*', prev):
+                        continue   # no return type: a call or a macro use at column 0, not a definition
+                    pre = prev
+                if re.match(r'\s*static\b', pre):
+                    continue
+                out.append((os.path.relpath(p, root).replace(os.sep, '/'), t[:m.start()].count('\n') + 1))
+    return out
+
+
+def resolve_libs(lib_root, lib):
+    """lib rules -> ({rva: (symbol, 'lib:<lib>:<file>:<line>')}, [error lines]). An rva resolves only when its library
+    is declared, the library root exists, and the symbol has exactly one non-static definition in the source globs."""
+    out, errs = {}, []
+    for rva, (name, sym) in sorted(lib.items()):
+        if not re.fullmatch(r'[0-9a-f]{8}', rva):
+            errs.append('lib %s: not an rva' % rva); continue
+        if name not in lib_root:
+            errs.append('lib %s: library %r has no lib_root line' % (rva, name)); continue
+        root, globs = lib_root[name]
+        if not os.path.isdir(root):
+            errs.append('lib %s: library %s root %s does not exist' % (rva, name, root)); continue
+        if not re.fullmatch(r'[A-Za-z_]\w*', sym):
+            errs.append('lib %s: %r is not a C symbol' % (rva, sym)); continue
+        defs = lib_symbol_defs(root, globs, sym)
+        if len(defs) != 1:
+            errs.append('lib %s: %s defined %d times (non-static) in %s %s%s' % (
+                rva, sym, len(defs), root, ' '.join(globs), (': ' + ', '.join('%s:%d' % d for d in defs)) if defs else ''))
+            continue
+        out[rva] = (sym, 'lib:%s:%s:%d' % (name, defs[0][0], defs[0][1]))
+    return out, errs
+
+
+# --------------------------------------------------------------------------------------------------------------------
 # Planner
 # --------------------------------------------------------------------------------------------------------------------
 class Binder:
@@ -258,6 +330,12 @@ class Binder:
         self.rows, self.adm, self.prov, self.pend = load_trackers()
         self.idx = build_index(self.P['own_mark'])
         self.crt = crt_bodies()
+        # BIND-LIB-ROUTE: lib_root / lib rules of state/_shared/rules.tsv, then the profile's own (a profile line wins)
+        self.lib_root = dict(SHARED['lib_root']); self.lib_root.update(self.P['lib_root'])
+        lib = dict(SHARED['lib']); lib.update(self.P['lib'])
+        self.lib, errs = resolve_libs(self.lib_root, lib)
+        if errs:
+            sys.exit('lib rules (profile %s):\n  %s' % (profile, '\n  '.join(errs)))
         self.sd = state_dir(profile)
         self.plan_path = os.path.join(self.sd, 'plan.json')
         self.old_plan = json.load(open(self.plan_path)) if os.path.exists(self.plan_path) else {}
@@ -371,6 +449,10 @@ class Binder:
                 continue
             if rva in P['stop_force']:
                 plan[rva] = ('stop',); continue
+            if rva in self.lib:
+                # BIND-LIB-ROUTE: the vendored library's own symbol is the rva's one exe body; it wins over every rule
+                # below (a library rva never gets a PortTop wrapper, a matched source bind or a named stop)
+                plan[rva] = ('reuse',) + self.lib[rva]; continue
             if P['bound_wins'] and rva not in self.force and rva not in self.alias:
                 # BIND-BULK-PROFILE: a body another profile bound wins over every stop rule below (the audio profile's
                 # PortTop_Bound_005aba20 under the bulk 0x005c91f0 wrapper; raceload's C units of cpp-unclean rvas)
@@ -1208,6 +1290,10 @@ def cmd_bindings(a):
             else:
                 kind, why = 'near-match', 'L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only'
             note = '%s: %s (%s), Match/PortTop_%s.cpp' % (tag, pr[1], why, r)
+        elif pr[0] == 'reuse' and pr[2].startswith('lib:'):
+            # BIND-LIB-ROUTE: a vendored library body (L-97 / L-177: outside the port count, like the crt rows)
+            kind, sym = 'library', pr[1]
+            note = '%s: vendored library symbol %s (%s)' % (tag, pr[1], pr[2])
         elif pr[0] == 'reuse':
             kind, sym = 'matched', pr[1]
             note = '%s: existing exe body %s' % (tag, pr[2])
@@ -1501,8 +1587,24 @@ def selftest_history(b):
     return len(unnamed) + len(stale)
 
 
+def selftest_libs():
+    """BIND-LIB-ROUTE: every lib rule (shared and per profile) resolves to one non-static definition in its library."""
+    bad, n = 0, 0
+    for prof in sorted(PROFILES):
+        roots_ = dict(SHARED['lib_root']); roots_.update(PROFILES[prof]['lib_root'])
+        lib = dict(SHARED['lib']); lib.update(PROFILES[prof]['lib'])
+        ok, errs = resolve_libs(roots_, lib)
+        n += len(ok)
+        for e in errs:
+            print('   %s: %s' % (prof, e))
+        bad += len(errs)
+    print('[selftest] lib kind: %d lib roots, %d profile x rva lib bindings resolve, %d fail (unit test: '
+          're/tools/bind/test_porttop_bind_lib.py)' % (len(SHARED['lib_root']) + sum(len(P['lib_root']) for P in PROFILES.values()), n, bad))
+    return bad
+
+
 def cmd_selftest(a):
-    bad = 0
+    bad = selftest_libs()
     for prof in sorted(PROFILES, key=lambda p: (PROFILES[p]['selftest_order'], p)):
         if not os.path.exists(os.path.join(state_dir(prof), 'plan.json')):
             print('[selftest] %s: no plan.json, skipped' % prof)
