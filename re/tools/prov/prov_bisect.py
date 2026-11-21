@@ -26,7 +26,9 @@ ARM_LOCKS = False
 def run_arm(label, bodies, rvas, extra=()):
     # RO-MENU-REPLAY: --arm / --data / --arm-locks; an arm script that takes the game lock itself runs without LOCK
     pre = [] if ARM_LOCKS else ["py", "-3.12", str(LOCK), "run", "--label", "PROV-INSITU", "--"]
-    cmd = pre + ["bash", str(ARM).replace("\\", "/"), label,
+    # PROV-INSITU-REF1: a .py arm runs under py -3.12 (claude2 cannot write .sh files)
+    runner = ["py", "-3.12"] if str(ARM).endswith(".py") else ["bash"]
+    cmd = pre + [*runner, str(ARM).replace("\\", "/"), label,
            "--prov", str(bodies).replace("\\", "/"), "--prov-rvas", ",".join(rvas), *extra]
     t = time.time()
     r = subprocess.run(cmd, capture_output=True, text=True)
