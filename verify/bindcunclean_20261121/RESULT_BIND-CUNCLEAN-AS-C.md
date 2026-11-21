@@ -389,3 +389,77 @@ Raw files (`D:/MashedWT/BIND-CUNCLEAN-AS-C_data`, SHA-256):
 | selftest_merge_cp1.txt (committed) | e5ff383492b863b0e7b626fd7b12415becf220a8ad1ad0102629a9e33649e8b5 |
 
 Scratch scripts (session scratchpad, not committed): `rspcheck.py`, `bcgroups.py`, `reach.py`.
+
+### 11.1 Parent conditions on the lint commit cc0b0d2db
+
+**(a) `scripts/test_rva_body_scan.py`: OK, 13/13** (was 9/9). Output: `D:/MashedWT/BIND-CUNCLEAN-AS-C_data/test_rva_body_scan.txt`.
+Four cases are new, all for the fifth pass (`RE_HAND_LINE`, `scripts/rva_body_scan.py`):
+1. HAND-LIFT lines anchor at their own line. Two bodies in one TU: `(RwCore_004d8090, 3)` and `(RwCore_004dcf90, 5)`.
+2. A HAND line anchors at its own line: `(RwCore_00532b80, 2)`.
+3. NEG 5: three lookalikes anchor nothing. They are `// HANDLE 0x...`, a data-range rva (0x005d8b41), and the marker after code on
+   the same line.
+4. A HAND line does not replace a body of the same rva that the first pass already anchored in the TU (`setdefault`).
+
+Falsification: with `RE_HAND_LINE` replaced by a pattern that never matches, cases 1 and 2 FAIL. Cases 3 and 4 still pass, which is
+what a negative control and a precedence check should do.
+
+**(b) The 8 dual copies the fifth pass made visible.** Both bodies of each, from `rva_body_scan.scan_all()` on this head:
+
+| rva | class | body 1 | body 2 | re/match source, `match.py` score now |
+|---|---|---|---|---|
+| 0x00532b80 | DUP-IN-TARGET exe | `D3d9Render/TrackRenderer.cpp:4883` LinearAnimMatrix | `RwCore/RwCore_Lifted_07.cpp:7142` RwCoreLift_00532b80 | `re/match/rwl03/00532b80.c`, 27.5% (hooks.csv C3) |
+| 0x0053d2b0 | DUP-IN-TARGET exe | `Collision/CollisionWorld.cpp:90` ReadCollTree | `RwCore/RwCore_Lifted_09.cpp:223` RwCoreLift_0053d2b0 | none (C1) |
+| 0x00557a60 | DUP-IN-TARGET exe | `Render/TrackHookSlots.cpp:155` HookLodIndex | `RwCore/RwCore_Lifted_10.cpp:2294` RwCoreLift_00557a60 | none (C1) |
+| 0x005cb2a0 | DUP-IN-TARGET exe | `Math/RwMatrixMultiplyCpu.cpp:63` RwMatrixMultiplyCPU (in the asi too) | `RwCore/RwCore_Hand.cpp:192` RwCoreHand_005cb2a0 | `re/match/s28/005cb2a0.c`, 15.6% (C3) |
+| 0x004d8090 | CROSS-TARGET | exe `RwCore/RwCore_Lifted_00.cpp:4884` RwCoreLift_004d8090 | asi `Render/PromoLoop_round253.cpp:94` RwPluginListCopyDispatch | **`re/match/s21/004d8090.c`, 100.0%** (C4 c4=match, BYTE-IDENTICAL) |
+| 0x004dcf90 | CROSS-TARGET | exe `RwCore/RwCore_Hand.cpp:92` RwCoreHand_004dcf90 | asi `Render/D3D9Helpers_p4.cpp:144` rwD3D9CheckMMX | `re/match/s21/004dcf90.c`, 2.4% (C3) |
+| 0x004dcff0 | CROSS-TARGET | exe `RwCore/RwCore_Hand.cpp:96` RwCoreHand_004dcff0 | asi `Render/D3D9Helpers_p4.cpp:189` rwD3D9CheckSSE_SSE2 | `re/match/s21/004dcff0.c`, 7.0% (C3) |
+| 0x004dd050 | CROSS-TARGET | exe `RwCore/RwCore_Hand.cpp:100` RwCoreHand_004dd050 | asi `Render/D3D9Helpers_p4.cpp:233` rwD3D9CheckSSE2 | `re/match/s21/004dd050.c`, 4.8% (C3) |
+
+- **Only 0x004d8090 has a 100% re/match source.** It is the one candidate here for run 54's RWC-LIFT-RETIRE-MATCHED.
+- Scores are from `py -3.12 re/tools/match/match.py <source>` on this head, output in `D:/MashedWT/BIND-CUNCLEAN-AS-C_data/eight_match.txt`.
+  The three CPUID-check sources (0x004dcf90 / 0x004dcff0 / 0x004dd050) score 2.4 to 7.0% under the recorded `/O2 /Ob1 /G5` flags.
+  I did not investigate why.
+- No dual copy is burned down here. The hand-path freeze stands, and all 8 stay allowlisted with their own citations.
+
+**(c) ddkobj line before and after, plus the dual-body count.** cp1's RESULT stays its own file
+(`verify/bindbulk_20261121/RESULT_RACE-BIND-C4-BULK.md`, unchanged by this merge).
+
+| head | IDENTICAL | DIFFERENT | not-in-map | units linked | dual body |
+|---|---|---|---|---|---|
+| before the merge: 6f38cb9b5 (section 10, object build 05:24-05:29) | 1801/1854 | 28 | 25 | 1793/2025 | 32 |
+| after the merge: b74d1000d (object build 06:04-06:08) | **1944/2005** | **30** | **31** | **1935/2171** | **32** |
+
+- No exe source changed after b74d1000d: e00db505a and this commit touch only the RESULT, the register, the selftest output and
+  `scripts/test_rva_body_scan.py`. So the "after" line holds for the final head.
+- "Same head" is read here as this branch's head before and after the merge. A before/after on the merged head itself (for example
+  without the L-178 keying) was not run.
+- The dual body count stays 32: the 32 C units. The merge added no dual body.
+
+**(d) Lock status before every build or ddkobj step of this follow-up.** `py -3.12 re/orchestrator/mashed_lock.py status` was run
+before each one:
+
+| step | status line |
+|---|---|
+| VS2022 build, 06:03 | HELD by PROV-INSITU-REF1 (pid 13288, game run). No PRIORITY-HOLD, no SOLO |
+| object build + ddkobj check, 06:04 | HELD by PROV-INSITU-REF1 (pid 14604). No PRIORITY-HOLD, no SOLO |
+| knob boot (a game run, not a build) | no separate status call. `mashed_lock.py run` queued it behind PROV-INSITU-REF1, then held the lock for this row (pid 1956) |
+| match.py scores for (b), 06:28 | HELD by PROV-INSITU-REF1 (pid 14856). No PRIORITY-HOLD, no SOLO. Compile only, no build |
+
+No HOLD or SOLO was showing at any step, so no wait was needed and this follow-up adds no slip.
+
+### 11.2 porttop_bind.py hunks this branch owns (for L0's hand merge with PORT-TOP-06 / RENDERFRAME)
+
+Diff base: BIND-TOOL 9ea96aca3 (in orch/integration). Line ranges are in `re/tools/bind/porttop_bind.py` at this head. There are 36
+hunks, and every one belongs to this branch.
+
+| owner | lines |
+|---|---|
+| **C emit (cemit + c_hold)** | 87-91 (EXTRA_PRE named callees of 3 C units); 293-302 (`self.hold` from c_hold.txt, `self.cemit`); 483-484 and 486-493 (`is_c`, C-unit header in `wrapper_text`); 509-519 (`call_excess` use, function-like macro); 596-597 (`wrapper_path` .c / .cpp); 661-662, 665-667, 669 (prune handles .c and a language change); 704 (`EXTERN_PAT` + PTR_); 708-785 (`_call_args`, `call_excess` :729, `unwrap_hidden` :761); 786 and 793-796 (`guard_externs(cunit=)`); 827-829, 838 (`cmd_externs` passes cunit) |
+| **--roots-only** | 264, 268-270 (`Binder.__init__` arg + attribute); 382-383 (named stop `not bound here (--roots-only)`); 1081 (`cmd_plan`); 1294-1295 (argparse flag) |
+| **refs step, own** | 168-169 (`refs_file`); 532-542, 545 (keep anchor in `wrapper_text`, `_refs_own` test at 533); 548-563, 566-572, 578-580, 584-595 (`refs` and `refs_text`); 686-692, 694 (newfiles lists stop + refs file); 1048-1071 (`cmd_refs`); 1307-1308, 1316 (subparser + dispatch) |
+| **refs step, foreign (RACE-BIND-C4-BULK anchors, this follow-up)** | 170-171 (`foreign_keep_marks`); 554 (`_refs_own` reset); 564-565, 573-577 (foreign group scan); 581-583 (own set, union with foreign minus callers) |
+| **raceload profile, PROV4 / FRAMELIST port (this follow-up)** | 138-143 (alias 0x00458c70 -> PortTop_RL_00458c70); 145-157 (`prov_bind`, `stop_reason`, `name_def`, `extra_def`); 162-165 (`not_local` + (00478660, 004785e0)); 315 (`msrc` reads `prov_bind`); 370-372 (`stop_reason` in `build_plan`); 495-497 (`name_def` / `extra_def` in `wrapper_text`) |
+| **selftest additions** | 1097-1105 (CUNCLEAN_ROOTS, SELFTEST raceload += the 34, SELFTEST_ROOTS_ONLY); 1107-1200 (VCVARS, `cl_compile` :1110, `selftest_cemit` :1130); 1215 (`roots_only=` in the selftest Binder); 1240-1267 (refs leg: file IDENTICAL + drop-out for one own and one foreign rva, lines 1248-1262) |
+
+The audio profile, BINDINGS and the rest of `build_plan` / `callees` / `reuse` are unchanged from BIND-TOOL.
