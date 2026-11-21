@@ -1,0 +1,2280 @@
+{
+ "exe": "original/MASHED.exe.unpatched",
+ "bodies": {
+  "0x00463640": {
+   "slots": [
+    "+0x4/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x00466d04",
+     "caller": "0x00466b50 FUN_00466b50",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "UNRESOLVED",
+         "0x00466d0a",
+         "call while slot bytes above esp, callee arg reach unknown: 0x00466d0a call 0x4645c0"
+        ]
+       ]
+      }
+     ],
+     "result": "UNRESOLVED"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "FAIL: a caller reads the slot or a site is unresolved"
+  },
+  "0x00420290": {
+   "slots": [
+    "+0x4/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x00420354",
+     "caller": "0x00420340 FUN_00420340",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "RELEASED",
+         "0x0042036c",
+         "0x00420369 add esp, 8"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0042055d",
+     "caller": "0x00420420 FUN_00420420",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "UNRESOLVED",
+         "0x00420577",
+         "indirect call while slot bytes above esp: 0x00420577 call dword ptr [eax + 0xf4]"
+        ]
+       ]
+      }
+     ],
+     "result": "UNRESOLVED"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "FAIL: a caller reads the slot or a site is unresolved"
+  },
+  "0x00420870": {
+   "slots": [
+    "+0x4/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x0040dad0",
+     "caller": "0x0040da50 FUN_0040da50",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "PASSED_OVER",
+         "0x0040dad6",
+         "slot at callee entry+0x8, callee touches below entry+0x8: 0x0040dad6 call 0x40d8f0"
+        ],
+        [
+         "RELEASED",
+         "0x0040daeb",
+         "0x0040dae8 add esp, 0x18"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "PASS: no caller reads the slot after the call"
+  },
+  "0x00407e20": {
+   "slots": [
+    "+0x10/4",
+    "+0x14/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x004087c5",
+     "caller": "0x00408610 FUN_00408610",
+     "slots": [
+      {
+       "slot": "+0x10",
+       "events": [
+        [
+         "RELEASED",
+         "0x004087d3",
+         "0x004087d0 add esp, 0x18"
+        ]
+       ]
+      },
+      {
+       "slot": "+0x14",
+       "events": [
+        [
+         "RELEASED",
+         "0x004087d3",
+         "0x004087d0 add esp, 0x18"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x004087ec",
+     "caller": "0x00408610 FUN_00408610",
+     "slots": [
+      {
+       "slot": "+0x10",
+       "events": [
+        [
+         "RELEASED",
+         "0x004087f4",
+         "0x004087f1 add esp, 0x18"
+        ]
+       ]
+      },
+      {
+       "slot": "+0x14",
+       "events": [
+        [
+         "RELEASED",
+         "0x004087f4",
+         "0x004087f1 add esp, 0x18"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "PASS: no caller reads the slot after the call"
+  },
+  "0x00470670": {
+   "slots": [
+    "+0xc/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x00471076",
+     "caller": "0x00470c70 FUN_00470c70",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0047107e",
+         "0x0047107b add esp, 0x10"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "PASS: no caller reads the slot after the call"
+  },
+  "0x0047bb10": {
+   "slots": [
+    "+0x4/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x0047c1c6",
+     "caller": "0x0047c160 FUN_0047c160",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "RELEASED",
+         "0x0047c1ce",
+         "0x0047c1cb add esp, 0x10"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "PASS: no caller reads the slot after the call"
+  },
+  "0x00450b10": {
+   "slots": [
+    "+0x1c/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x004271e8",
+     "caller": "0x004270f0 FUN_004270f0",
+     "slots": [
+      {
+       "slot": "+0x1c",
+       "events": [
+        [
+         "UNRESOLVED",
+         "0x004271f7",
+         "indirect call while slot bytes above esp: 0x004271f7 call dword ptr [edx + 0x20]"
+        ]
+       ]
+      }
+     ],
+     "result": "UNRESOLVED"
+    },
+    {
+     "site": "0x00428563",
+     "caller": "0x00428450 FUN_00428450",
+     "slots": [
+      {
+       "slot": "+0x1c",
+       "events": [
+        [
+         "RELEASED",
+         "0x00428577",
+         "0x00428574 add esp, 0x1c"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0042874b",
+     "caller": "0x00428610 FUN_00428610",
+     "slots": [
+      {
+       "slot": "+0x1c",
+       "events": [
+        [
+         "RELEASED",
+         "0x00428753",
+         "0x00428750 add esp, 0x48"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x00428888",
+     "caller": "0x00428790 FUN_00428790 (not in inventory)",
+     "slots": [
+      {
+       "slot": "+0x1c",
+       "events": [
+        [
+         "RELEASED",
+         "0x00428890",
+         "0x0042888d add esp, 0x40"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "FAIL: a caller reads the slot or a site is unresolved"
+  },
+  "0x005c2300": {
+   "slots": [
+    "+0xc/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x00589fdb",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x00589fe3",
+         "0x00589fe0 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a0c0",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a0c8",
+         "0x0058a0c5 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a0d6",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a0de",
+         "0x0058a0db add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a152",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a15a",
+         "0x0058a157 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a168",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a170",
+         "0x0058a16d add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a206",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a20e",
+         "0x0058a20b add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a21c",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a224",
+         "0x0058a221 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a2ba",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a2c2",
+         "0x0058a2bf add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a2d0",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a2d8",
+         "0x0058a2d5 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a36e",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a376",
+         "0x0058a373 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a384",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a38c",
+         "0x0058a389 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a422",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a42a",
+         "0x0058a427 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a438",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a440",
+         "0x0058a43d add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a4d6",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a4de",
+         "0x0058a4db add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a4ec",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a4f4",
+         "0x0058a4f1 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a58a",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a592",
+         "0x0058a58f add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a5a0",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a5a8",
+         "0x0058a5a5 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a61c",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a624",
+         "0x0058a621 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a632",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a63f",
+         "0x0058a63c add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a736",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a73e",
+         "0x0058a73b add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a749",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a756",
+         "0x0058a753 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a824",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a82c",
+         "0x0058a829 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a92c",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058a934",
+         "0x0058a931 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058a9ff",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058aa07",
+         "0x0058aa04 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058aa15",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058aa22",
+         "0x0058aa1f add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058ab1f",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ab27",
+         "0x0058ab24 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058ab35",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ab3d",
+         "0x0058ab3a add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058acbd",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058acc5",
+         "0x0058acc2 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058acd3",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "UNRESOLVED",
+         "0x0058acec",
+         "call while slot bytes above esp, callee arg reach unknown: 0x0058acec call 0x4a2b60"
+        ]
+       ]
+      }
+     ],
+     "result": "UNRESOLVED"
+    },
+    {
+     "site": "0x0058ad3e",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ad46",
+         "0x0058ad43 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058ad54",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ad5c",
+         "0x0058ad59 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058adc6",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058adce",
+         "0x0058adcb add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058addc",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ade4",
+         "0x0058ade1 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058aeba",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058aec2",
+         "0x0058aebf add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058aed0",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058aed8",
+         "0x0058aed5 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058afe6",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058afee",
+         "0x0058afeb add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058affc",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b004",
+         "0x0058b001 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b0ef",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b0f7",
+         "0x0058b0f4 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b105",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b10d",
+         "0x0058b10a add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b1ff",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b207",
+         "0x0058b204 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b215",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b21d",
+         "0x0058b21a add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b2df",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b2e7",
+         "0x0058b2e4 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b2f5",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b2fd",
+         "0x0058b2fa add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b39b",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b3a3",
+         "0x0058b3a0 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b3b1",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b3b9",
+         "0x0058b3b6 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b42d",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b435",
+         "0x0058b432 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b443",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b44b",
+         "0x0058b448 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b4e1",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b4e9",
+         "0x0058b4e6 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b4f7",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b4ff",
+         "0x0058b4fc add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b595",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b59d",
+         "0x0058b59a add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b5ab",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b5b3",
+         "0x0058b5b0 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b627",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b62f",
+         "0x0058b62c add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b63d",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b645",
+         "0x0058b642 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b6b9",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b6c1",
+         "0x0058b6be add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b6cf",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b6d7",
+         "0x0058b6d4 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b76d",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b775",
+         "0x0058b772 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b783",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b78b",
+         "0x0058b788 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b821",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b829",
+         "0x0058b826 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b837",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b83f",
+         "0x0058b83c add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b8d5",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b8dd",
+         "0x0058b8da add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b8eb",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b8f3",
+         "0x0058b8f0 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b989",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b991",
+         "0x0058b98e add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058b99f",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058b9a7",
+         "0x0058b9a4 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058ba3d",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ba45",
+         "0x0058ba42 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058ba53",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ba5b",
+         "0x0058ba58 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058baf1",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058baf9",
+         "0x0058baf6 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bb07",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bb0f",
+         "0x0058bb0c add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bbb2",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bbba",
+         "0x0058bbb7 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bbc8",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bbd0",
+         "0x0058bbcd add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bc75",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bc7d",
+         "0x0058bc7a add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bc8b",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bc93",
+         "0x0058bc90 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bd29",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bd31",
+         "0x0058bd2e add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bd3f",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bd47",
+         "0x0058bd44 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bddd",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bde5",
+         "0x0058bde2 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bdf3",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bdfb",
+         "0x0058bdf8 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058be88",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058be90",
+         "0x0058be8d add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058be9e",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bea6",
+         "0x0058bea3 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bf3c",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bf44",
+         "0x0058bf41 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058bf52",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058bf5a",
+         "0x0058bf57 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058c000",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058c008",
+         "0x0058c005 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058c016",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058c01e",
+         "0x0058c01b add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058c0e5",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058c0ed",
+         "0x0058c0ea add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058c0fb",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058c103",
+         "0x0058c100 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058c199",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058c1a1",
+         "0x0058c19e add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058c1af",
+     "caller": "0x00589fa0 FUN_00589fa0",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058c1b7",
+         "0x0058c1b4 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058d943",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058d94b",
+         "0x0058d948 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058d956",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058d95e",
+         "0x0058d95b add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058d9c8",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058d9d0",
+         "0x0058d9cd add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058d9db",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058d9e3",
+         "0x0058d9e0 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058daca",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dad2",
+         "0x0058dacf add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058dadd",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dae5",
+         "0x0058dae2 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058db98",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dba0",
+         "0x0058db9d add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058dbab",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dbb3",
+         "0x0058dbb0 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058dcb4",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dcbc",
+         "0x0058dcb9 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058dcc7",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dccf",
+         "0x0058dccc add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058dd58",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dd60",
+         "0x0058dd5d add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058dd6b",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058dd73",
+         "0x0058dd70 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e010",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e018",
+         "0x0058e015 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e023",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e02b",
+         "0x0058e028 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e15f",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e167",
+         "0x0058e164 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e172",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e17a",
+         "0x0058e177 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e445",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e44d",
+         "0x0058e44a add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e4ba",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e4c2",
+         "0x0058e4bf add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e4d0",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e4d8",
+         "0x0058e4d5 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e5d0",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e5d8",
+         "0x0058e5d5 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058e5e6",
+     "caller": "0x0058d810 FUN_0058d810",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058e5ee",
+         "0x0058e5eb add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058edc8",
+     "caller": "0x0058ed00 FUN_0058ed00",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058edd0",
+         "0x0058edcd add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0058eddb",
+     "caller": "0x0058ed00 FUN_0058ed00",
+     "slots": [
+      {
+       "slot": "+0xc",
+       "events": [
+        [
+         "RELEASED",
+         "0x0058ede3",
+         "0x0058ede0 add esp, 0xc"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [
+    "0x004d85ca .text"
+   ],
+   "verdict": "FAIL: indirect or unknown caller (address taken)"
+  },
+  "0x0046b540": {
+   "slots": [
+    "+0x4/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x0040ed68",
+     "caller": "0x0040e590 FUN_0040e590",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "PASSED_OVER",
+         "0x0040ed6e",
+         "slot at callee entry+0x8, callee touches below entry+0x8: 0x0040ed6e call 0x46baa0"
+        ],
+        [
+         "RELEASED",
+         "0x0040ed7b",
+         "0x0040ed78 add esp, 0x18"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    },
+    {
+     "site": "0x0040ff8c",
+     "caller": "0x0040feb0 FUN_0040feb0 (not in inventory)",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "PASSED_OVER",
+         "0x0040ff94",
+         "slot at callee entry+0xc, callee touches below entry+0xc: 0x0040ff94 call 0x41eda0"
+        ],
+        [
+         "PASSED_OVER",
+         "0x0040ff9c",
+         "slot at callee entry+0x14, callee touches below entry+0xc: 0x0040ff9c call 0x45ba00"
+        ],
+        [
+         "RELEASED",
+         "0x0040ffa9",
+         "0x0040ffa6 add esp, 0x24"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "PASS: no caller reads the slot after the call"
+  },
+  "0x00441b30": {
+   "slots": [
+    "+0x8/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x004426cd",
+     "caller": "0x00442600 FUN_00442600",
+     "slots": [
+      {
+       "slot": "+0x8",
+       "events": [
+        [
+         "RELEASED",
+         "0x004426d7",
+         "0x004426d4 add esp, 8"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "PASS: no caller reads the slot after the call"
+  },
+  "0x0041a400": {
+   "slots": [
+    "+0x4/4"
+   ],
+   "body_pop": 0,
+   "direct": [
+    {
+     "site": "0x0041a906",
+     "caller": "0x0041a8d0 FUN_0041a8d0",
+     "slots": [
+      {
+       "slot": "+0x4",
+       "events": [
+        [
+         "RELEASED",
+         "0x0041a91c",
+         "0x0041a919 add esp, 0x18"
+        ]
+       ]
+      }
+     ],
+     "result": "NO READ"
+    }
+   ],
+   "tail_jumps": [],
+   "dword_refs": [],
+   "verdict": "PASS: no caller reads the slot after the call",
+   "straddles": [
+    "0x005cc9e5 .rdata: spans x87 constants 0x005cc9e4=0x41a40000 (0x00406b71 fcomp dword ptr [0x5cc9e4]) and 0x005cc9e8=0x41d80000 (0x00406b59 fcomp dword ptr [0x5cc9e8]; 0x004654b2 fadd dword ptr [0x5cc9e8]); not a pointer"
+   ]
+  }
+ }
+}
