@@ -1,0 +1,10 @@
+class                         n  >=80  50-80   <50  nosrc  calls%  in-situ(11-11)
+game code                   213    70     74    52     17   68.9%  {'untested': 113, 'IDENTICAL-FOR-2724': 70, 'DIVERGED': 18, 'CRASH': 10, 'NOT-WIRED': 1, 'HANG': 1}
+library (Lua/qhull/CRT)     203     0      0     0    203    1.7%  {'untested': 203}
+RenderWare core              92     1     15    38     38   20.0%  {'untested': 92}
+RW-Physics                   62     6     16    37      3    3.1%  {'untested': 62}
+no hooks.csv row             48     0      0     0     48    6.3%  {'untested': 48}
+
+game code by subsystem: {'audio': 69, 'render': 43, 'vehicle': 22, 'gameplay': 17, 'util': 17, 'boot': 13, 'ai': 7, 'track': 6, 'frontend': 6, 'hud': 5, 'particle': 3, 'camera': 2, 'input': 1, 'physics': 1, 'sky': 1}
+game code by level: {'C3': 40, 'C2': 170, 'C1': 3}
+game code, no source, by level: {'C2': 17}
