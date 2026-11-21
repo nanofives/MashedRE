@@ -282,3 +282,11 @@ Other checks on the head:
 | ddkobj_selftest2.txt | cab6301a762a6551a5751d68c7460bbdf25a4104a64a2bf3c6525e2a82088d53 |
 | lint_selftest.txt | 1eecf6a3b337d84104eccccec932a7cf04b5680c2194456aacd4b90087c2e8e9 |
 | build_vs2022_l178.log | 733a5f181a417ce24af7eff8708ee74d7a36512c73f390b6a5dbc3256c7579c0 |
+
+**Separate item for L0 (drop or take at merge): lint commit cc0b0d2db only.**
+- Files: scripts/lint_rva_bodies.py, scripts/rva_body_scan.py, re/tools/dual_copy_allowlist.txt.
+- New ORIGTOP-ONLY allowlist lines: 40. 32 are from this row's C units, and 8 are dual copies that already existed and were hidden (0x00532b80, 0x0053d2b0, 0x00557a60, 0x005cb2a0, 0x004d8090, 0x004dcf90, 0x004dcff0, 0x004dd050).
+- D4 burn-down: 6 before, 6 after.
+- lint selftest: OK (0 failing).
+- It is separate from the ddkobj commit 5aa004f5d, the PROVISIONAL row 75ad5cacb, the decode fix 296c82aca and the RESULT.
+- If L0 drops cc0b0d2db, rva-lint stays blind to the HAND-LIFT bodies, and the ddkobj dual-body count (32) is the only record of them.
