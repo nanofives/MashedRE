@@ -127,6 +127,15 @@ def active_lines(txt: str, defined: set):
             yield line
 
 
+def wrapper_lang_defs(wpath: pathlib.Path, extra=()):
+    """Macros the default VS2022 build defines for an exe TU: cl compiles a .c by its extension as C, so a C unit
+    (BIND-CUNCLEAN-AS-C, Match/PortTop_<rva>.c) and the source it includes are read without __cplusplus."""
+    d = {"MASHED_STANDALONE", "_MSC_VER", "_WIN32"} | set(extra)
+    if wpath.suffix.lower() != ".c":
+        d.add("__cplusplus")
+    return d
+
+
 def exe_wrappers():
     """[(wrapper path, [(source path, defines-in-effect dict)])] for every exe TU that includes a re/match source."""
     rsp = [l.strip().strip('"') for l in (MOD / "exe_sources.rsp").read_text().splitlines() if l.strip()]
@@ -141,7 +150,7 @@ def exe_wrappers():
         if "re/match/" not in txt and "re\\match\\" not in txt:
             continue
         defs, incs, ptrabs, kconst = {}, [], {}, {}
-        for line in active_lines(txt, {"MASHED_STANDALONE", "__cplusplus", "_MSC_VER", "_WIN32"}):
+        for line in active_lines(txt, wrapper_lang_defs(p)):
             if re.match(r"^\s*#\s*define\s+MGLOBALA?\s*\(", line):
                 # DDKOBJ-CELLS: a wrapper MGLOBAL / MGLOBALA in the preamble's own original-address form binds every
                 # global where the DDK object's absolute symbols put it, so it is accepted. Any other form (a cell
@@ -241,7 +250,7 @@ _WSTATIC_RE = re.compile(r"^static[^=;(]*?[\s*&]([A-Za-z_]\w*)\s*\(")
 def wrapper_statics(wpath: pathlib.Path):
     """Names of static functions the wrapper defines (exe view): DDK objects may bind to them (promoted later)."""
     txt = wpath.read_text(encoding="utf-8", errors="replace")
-    return {m.group(1) for line in active_lines(txt, {"MASHED_STANDALONE", "__cplusplus", "_MSC_VER", "_WIN32"})
+    return {m.group(1) for line in active_lines(txt, wrapper_lang_defs(wpath))
             for m in [_WSTATIC_RE.match(line)] if m}
 
 
@@ -298,8 +307,10 @@ def load_provisional():
     return out
 
 
-def parse_source(path: pathlib.Path):
+def parse_source(path: pathlib.Path, cxx: bool = True):
+    """cxx: the including exe TU is C++ (a .cpp wrapper); False for a C unit (BIND-CUNCLEAN-AS-C)."""
     t = path.read_text(encoding="utf-8", errors="replace")
+    pdefs = {"MATCH_PORT", "MASHED_STANDALONE", "_MSC_VER", "_WIN32"} | ({"__cplusplus"} if cxx else set())
     m = FLAGS_RE.search(t)
     flags = m.group(1) if m else M.DEFAULT_FLAGS
     lang = (LANG_RE.search(t).group(1) if LANG_RE.search(t) else "c")
@@ -307,13 +318,13 @@ def parse_source(path: pathlib.Path):
     matches = [(int(a, 16), n) for a, n in MATCH_RE.findall(t)]
     # the MATCH functions the port compiles: those outside `#ifndef MATCH_PORT` blocks (C++ + MATCH_PORT + exe)
     ported = {CE.undecorate(n) for _a, n in MATCH_RE.findall(chr(10).join(
-        active_lines(t, {"MATCH_PORT", "__cplusplus", "MASHED_STANDALONE", "_MSC_VER", "_WIN32"})))}
+        active_lines(t, pdefs)))}
     glob = {}
     for rx in (MGLOBAL_RE, MGLOBALA_RE):
         for _T, n, a in rx.findall(t):
             glob[n] = int(a, 16)
     cview = list(active_lines(t, {"_MSC_VER", "_WIN32"}))
-    pview = list(active_lines(t, {"MATCH_PORT", "__cplusplus", "MASHED_STANDALONE", "_MSC_VER", "_WIN32"}))
+    pview = list(active_lines(t, pdefs))
     excluded = func_defs(cview) - func_defs(pview)
     # data the port defines itself with an initializer (0x0048ff20: `static char s_Tri_dff_005cf4f8[8] = "Tri.dff";`
     # under MATCH_PORT, MGLOBALA in C). The exe arena is zero there, so the DDK object reads a copy of the original bytes.
@@ -502,7 +513,7 @@ def main_build(a):
     units = []
     seen_src = set()
     for src, wpath, wrel, defs in cand:
-        info = parse_source(src)
+        info = parse_source(src, cxx=wpath.suffix.lower() != ".c")
         rvas = [r for r, _ in info["matches"]]
         if not rvas:
             continue

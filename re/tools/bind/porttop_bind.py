@@ -233,10 +233,13 @@ def crt_bodies():
 # Planner
 # --------------------------------------------------------------------------------------------------------------------
 class Binder:
-    def __init__(self, profile, roots):
+    def __init__(self, profile, roots, roots_only=False):
         self.name = profile
         self.P = PROFILES[profile]
         self.roots = [r.lower().replace('0x', '') for r in roots if r]
+        # --roots-only (BIND-CUNCLEAN-AS-C): a matched callee that is neither a root nor bound by the previous plan is a
+        # named stop instead of a new bind, so a row binds only the rvas it owns (one owner per rva, run 53 merge bar)
+        self.roots_only = roots_only
         self.rows, self.adm, self.prov, self.pend = load_trackers()
         self.idx = build_index(self.P['own_mark'])
         self.crt = crt_bodies()
@@ -259,6 +262,16 @@ class Binder:
                 if l.strip() and not l.startswith('#'):
                     k, _, why = l.rstrip('\r\n').partition('\t')
                     self.unclean[k.strip().lower()] = why.strip()
+        # BIND-CUNCLEAN-AS-C: a cpp-unclean source binds as a C unit (Match/PortTop_<rva>.c, compiled as C by its
+        # extension), unless state/<profile>/c_hold.txt holds it back (owned by another row: it stays a named stop)
+        self.hold = {}
+        hp = os.path.join(self.sd, 'c_hold.txt')
+        if os.path.exists(hp):
+            for l in open(hp, encoding='utf-8'):
+                if l.strip() and not l.startswith('#'):
+                    k, _, why = l.rstrip('\r\n').partition('\t')
+                    self.hold[k.strip().lower()] = why.strip()
+        self.cemit = set(self.unclean) - set(self.hold)
 
     # matched / replay / provisional / admitted source of an rva, with its kind
     def msrc(self, rva):
@@ -326,7 +339,7 @@ class Binder:
                 continue
             if rva in P['stop_force']:
                 plan[rva] = ('stop',); continue
-            if rva in self.unclean:
+            if rva in self.unclean and rva not in self.cemit:
                 plan[rva] = ('stop', 'cpp-unclean: ' + self.unclean[rva]); continue
             if rva in self.alias:
                 plan[rva] = ('reuse',) + self.alias[rva]; continue
@@ -336,6 +349,8 @@ class Binder:
             if ru:
                 plan[rva] = ('reuse', ru[0], ru[1]); continue
             s, kind = self.msrc(rva)
+            if s and self.roots_only and rva not in self.roots and (self.old_plan.get(rva) or ['x'])[0] != 'bind':
+                plan[rva] = ('stop', 'not bound here (--roots-only): matched source %s' % s); continue
             if s:
                 cs, local, _ = self.callees(s, rva)
                 # a callee defined only under #ifndef MATCH_PORT (a HELD copy the DDK needs) is external on the port
@@ -435,8 +450,17 @@ class Binder:
     def wrapper_text(self, rva):
         P = self.P
         _, src, kind, cs, local = self.plan[rva]
-        fn = '%s/Match/PortTop_%s.cpp' % (SRC, rva)
+        is_c = rva in self.cemit
+        fn = self.wrapper_path(rva)
         L = self.header(rva, src, kind, fn)
+        if is_c:
+            # BIND-CUNCLEAN-AS-C: the source does not compile as C++ under MATCH_PORT (cpp_unclean.txt), so the unit is C.
+            # cl compiles a .c by its extension (no /TP in build_objs.ps1 or ddkobj.py). Same exe symbol: a C unit's
+            # PortTop_Bound_<rva> has C linkage like the extern "C" include of a .cpp wrapper. Every callee below binds
+            # to an exe body defined with C linkage (PortTop_Bound_* / stops / Orig_* / RwCore_* are extern "C").
+            L.append('// C unit (BIND-CUNCLEAN-AS-C, re/tools/bind/porttop_bind.py): as C++ (MATCH_PORT, VS2022) the source fails')
+            L.append('// with %s (state/%s/cpp_unclean.txt); cl compiles a .c as C, same exe symbol, C-linkage callees.'
+                     % (self.unclean[rva].split()[0], self.name))
         L += ['// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#define MATCH_PORT 1', '#define FUN_%s PortTop_Bound_%s' % (rva, rva)]
         for c in cs:
             if (rva, c) in P['callee_override']:
@@ -448,6 +472,17 @@ class Binder:
                 note = '   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)'
             if c in P['knob'] and pc[0] == 'stop':
                 L.append('#define FUN_%s %s   // knob stand-in, default off = the named stop (%s)' % (c, P['knob'][c][0], P['knob'][c][1]))
+                continue
+            ex = call_excess(rd(src), c) if is_c else None
+            if ex:
+                # C rejects a call with more arguments than the source's own prototype (C2197, VS2022); the DDK object
+                # pushes them (caller cleans, cdecl) and the callee does not read them. The function-like form drops the
+                # extra ones (ddkobj.py fnlike_target binds it, as Match/PortTop_004039c0.cpp's FUN_0042a5d0).
+                n, mx = ex
+                ps = ['a%d' % k for k in range(n)]
+                L.append('#define FUN_%s(%s) %s(%s)   // %sthe source passes %d argument(s), its prototype declares %d'
+                         % (c, ', '.join(ps + ['...']), self.sym(c), ', '.join(ps),
+                            (note.strip()[3:] + '; ') if note else '', mx, n))
                 continue
             L.append('#define FUN_%s %s%s' % (c, self.sym(c), note))
         for c in local:
@@ -461,10 +496,17 @@ class Binder:
         if 'FID_conflict__wprintf' in rd(src):
             L.append('#define FID_conflict__wprintf PortTop_Printf04G   // printf -> log (Match/PortTop_0040bbb0.cpp)')
         L += EXTRA_PRE.get(rva, [])
+        if is_c:
+            L += EXTRA_IN.get(rva, [])
+            L += ['#include "../../../../%s"' % src, '#endif // MASHED_STANDALONE']
+            return fn, NL.join(L) + NL
         L.append('extern "C" {')
         L += EXTRA_IN.get(rva, [])
         L += ['#include "../../../../%s"' % src, '}', '#endif // MASHED_STANDALONE']
         return fn, NL.join(L) + NL
+
+    def wrapper_path(self, rva):
+        return '%s/Match/PortTop_%s.%s' % (SRC, rva, 'c' if rva in self.cemit else 'cpp')
 
     def stops_text(self):
         stops = sorted(r for r, p in self.plan.items() if p[0] == 'stop')
@@ -528,13 +570,15 @@ class Binder:
             # remove this profile's wrappers whose rva is no longer bound (and their exe_sources.rsp lines)
             rr = open(RSP, 'rb').read(); nl = '\r\n' if b'\r\n' in rr else '\n'
             rl = rr.decode().split(nl); n0 = len(rl)
-            for f in glob.glob(SRC + '/Match/PortTop_*.cpp'):
-                m = re.search(r'PortTop_([0-9a-f]{8})\.cpp$', f)
+            for f in glob.glob(SRC + '/Match/PortTop_*.cpp') + glob.glob(SRC + '/Match/PortTop_*.c'):
+                m = re.search(r'PortTop_([0-9a-f]{8})\.(cpp|c)$', f)
                 if not m or not rd(f).startswith(self.P['own_mark']):
                     continue
-                if self.plan.get(m.group(1), ('x',))[0] != 'bind':
+                # BIND-CUNCLEAN-AS-C: a wrapper of the other language (.cpp <-> .c) is stale too
+                if (self.plan.get(m.group(1), ('x',))[0] != 'bind'
+                        or os.path.normcase(f) != os.path.normcase(self.wrapper_path(m.group(1)))):
                     os.remove(f)
-                    rl = [l for l in rl if l.strip() != '"Match\\PortTop_%s.cpp"' % m.group(1)]
+                    rl = [l for l in rl if l.strip() != '"Match\\PortTop_%s.%s"' % (m.group(1), m.group(2))]
                     print('REMOVED', f)
             if len(rl) != n0:
                 open(RSP, 'wb').write(nl.join(rl).encode())
@@ -566,14 +610,95 @@ EXTERN_PAT = re.compile(r'^(\s*)extern\s+((?:const\s+)?(?:struct\s+)?[A-Za-z_]\w
                         r'\s*(\[\s*([0-9xXa-fA-F]*)\s*\])?\s*;\s*$')
 
 
-def guard_externs(path, apply):
+def _call_args(text, start):
+    """top-level argument count of the call whose '(' is at text[start] (None when unbalanced)."""
+    depth, n, seen = 0, 0, False
+    for k in range(start, len(text)):
+        ch = text[k]
+        if ch == '(':
+            depth += 1
+            if depth == 1:
+                continue
+        elif ch == ')':
+            depth -= 1
+            if depth == 0:
+                return n + 1 if seen else 0
+        elif ch == ',' and depth == 1:
+            n += 1
+            continue
+        if depth >= 1 and not ch.isspace():
+            seen = True
+    return None
+
+
+def call_excess(text, c):
+    """(prototype params, max call args) when a call of FUN_<c> in the source passes more arguments than the source's
+    own prototype of it declares; None otherwise (no prototype, a variadic one, or no excess)."""
+    name = 'FUN_' + c
+
+    def is_proto(l):
+        return bool(PROTO_PAT.match(l)) and (l.split() or [''])[0] not in ('return', 'else', 'do', 'case', 'goto')
+    proto = None
+    for l in text.splitlines():
+        if is_proto(l) and re.search(r'\b%s\s*\(' % name, l, re.I):
+            inner = l[l.lower().index(name.lower()) + len(name):]
+            inner = inner[inner.index('(') + 1:inner.rindex(')')].strip()
+            if '...' in inner:
+                return None
+            proto = 0 if inner in ('', 'void') else inner.count(',') + 1
+    if proto is None:
+        return None
+    mx = -1
+    for m in re.finditer(r'\b%s\s*\(' % name, text, re.I):
+        ls = text.rfind('\n', 0, m.start()) + 1
+        le = text.find('\n', m.start())
+        if is_proto(text[ls:le if le >= 0 else len(text)]):
+            continue
+        k = _call_args(text, m.end() - 1)
+        if k is not None:
+            mx = max(mx, k)
+    return (proto, mx) if mx > proto else None
+
+
+PROTO_PAT = re.compile(r'^\s*(?:extern\s+)?[A-Za-z_][\w\s\*]*?\bFUN_[0-9a-fA-F]{8}\s*\([^;{}]*\)\s*;\s*(?://.*)?$')
+
+
+def unwrap_hidden(lines):
+    """BIND-CUNCLEAN-AS-C, C units only: a `#ifndef MATCH_PORT` ... `#endif` block holding only extern data declarations,
+    FUN_ prototypes, blanks and // comments hides them from the port (re/match/s03/h1_0041a4a0.c lines 41-62: the C++
+    exe never compiled that source, and a C unit needs the prototypes, or a float return / float argument goes through
+    an implicit int declaration). The block is unwrapped: the DDK sees the same declarations in the same order (it never
+    defines MATCH_PORT), and the data lines are then port-guarded by guard_externs. Returns (lines, blocks unwrapped)."""
+    out, i, n = [], 0, 0
+    while i < len(lines):
+        if lines[i].strip() == '#ifndef MATCH_PORT':
+            j = i + 1
+            while j < len(lines) and not lines[j].strip().startswith('#'):
+                j += 1
+            body = lines[i + 1:j]
+            ok = j < len(lines) and lines[j].strip().startswith('#endif') and body and all(
+                not l.strip() or l.strip().startswith('//') or EXTERN_PAT.match(l) or PROTO_PAT.match(l) for l in body)
+            if ok and any(EXTERN_PAT.match(l) for l in body):
+                out += body
+                i = j + 1
+                n += 1
+                continue
+        out.append(lines[i])
+        i += 1
+    return out, n
+
+
+def guard_externs(path, apply, cunit=False):
     """A matched source's plain `extern <T> DAT_/LAB_<addr>;` data declaration does not link in the exe. Put it under
     #ifndef MATCH_PORT and bind the port (MATCH_PORT, C++) to the original address. The DDK never defines MATCH_PORT,
     so its object is unchanged: run re/tools/match/match.py <src> --bytes after the edit (done by `externs --apply`)."""
     raw = open(path, 'rb').read()
     nl = '\r\n' if b'\r\n' in raw else '\n'
     lines = raw.decode('latin-1').split(nl)   # byte-preserving round trip (sources mix UTF-8 and cp1252)
-    out, n, prev, conds = [], 0, '', []
+    nun = 0
+    if cunit:
+        lines, nun = unwrap_hidden(lines)
+    out, n, prev, conds = [], nun, '', []
     for l in lines:
         s = l.strip()
         if s.startswith('#if'):
@@ -604,7 +729,9 @@ def cmd_externs(a):
     srcs = sorted({v[1] for v in plan.values() if v and v[0] == 'bind'})
     if a.src:
         srcs = a.src
-    hit = [(s, guard_externs(s, False)) for s in srcs]
+    # sources of C-unit binds also get their hidden `#ifndef MATCH_PORT` declaration blocks unwrapped (unwrap_hidden)
+    csrc = {v[1] for k, v in plan.items() if v and v[0] == 'bind' and k in b.cemit}
+    hit = [(s, guard_externs(s, False, s in csrc)) for s in srcs]
     hit = [(s, n) for s, n in hit if n]
     for s, n in hit:
         print('EXTERNS', s, n)
@@ -613,7 +740,7 @@ def cmd_externs(a):
         return 0
     bad = 0
     for s, n in hit:
-        guard_externs(s, True)
+        guard_externs(s, True, s in csrc)
         r = subprocess.run([sys.executable, 're/tools/match/match.py', s, '--bytes'], capture_output=True, text=True)
         ok = 'BYTE-IDENTICAL' in r.stdout
         print('GUARDED', s, n, 'match.py --bytes', 'BYTE-IDENTICAL' if ok else 'NOT IDENTICAL')
@@ -832,7 +959,7 @@ def cmd_index(a):
 
 
 def cmd_plan(a, write):
-    b = Binder(a.profile, a.roots.split(','))
+    b = Binder(a.profile, a.roots.split(','), roots_only=a.roots_only)
     b.build_plan()
     lst = b.listing()
     if a.listing:
@@ -848,6 +975,110 @@ def cmd_plan(a, write):
 # BINDINGS.tsv. Wrappers / stop file / BINDINGS.tsv are compared modulo CRLF (core.autocrlf working copies).
 # --------------------------------------------------------------------------------------------------------------------
 SELFTEST = {'raceload': '00426e10,004264d0'}   # PORT-OT-RACE checkpoint 3 (verify/ro_20261116/RESULT_PORT-OT-RACE.md 7.1)
+# BIND-CUNCLEAN-AS-C (2026-11-21): the 34 cpp-unclean rvas of RACE-BIND-C4-BULK checkpoint 1, bound as C units with
+# --roots-only (verify/bindcunclean_20261121/RESULT_BIND-CUNCLEAN-AS-C.md). A later raceload `write` must pass them as roots
+# too (roots are cumulative), or prune removes their wrappers.
+CUNCLEAN_ROOTS = ('0041a8d0,00472330,004cac10,004d3450,004d34d0,004e3bd0,004e3e70,004e3ea0,004eb320,004f4540,005142d0,'
+                  '005142f0,0052e4e0,0052e500,00533840,00534ad0,00534af0,005386b0,00538c30,0053d3e0,0053ec40,0053ec60,'
+                  '0053f9b0,0053fa90,005444a0,00544e00,00544f10,005492d0,00549310,0054a000,0054a0f0,005518f0,00557d90,'
+                  '0057c2e0')
+SELFTEST['raceload'] += ',' + CUNCLEAN_ROOTS
+SELFTEST_ROOTS_ONLY = {'raceload'}
+
+VCVARS = r'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat'
+
+
+def cl_compile(files, outdir):
+    """compile files with the exe's VS2022 flags (build.bat line 250: /EHa /W3 /O2 /DMASHED_STANDALONE), one cl call,
+    each file in the language of its extension (cl: .c = C, .cpp = C++). Returns {file: error lines}."""
+    import tempfile
+    rsp = os.path.join(outdir, 'cemit.rsp')
+    open(rsp, 'w').write(NL.join('"%s"' % os.path.abspath(f) for f in files) + NL)
+    bat = os.path.join(outdir, 'cemit.bat')
+    open(bat, 'w').write('@echo off\r\n%scl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /c "/Fo%s\\\\" "@%s"\r\n' % (
+        '' if os.environ.get('VCINSTALLDIR') else 'call "%s" >nul\r\n' % VCVARS, outdir, rsp))
+    r = subprocess.run(['cmd', '/c', bat], capture_output=True)
+    out = r.stdout.decode('mbcs', errors='replace') + r.stderr.decode('mbcs', errors='replace')
+    errs = {f: [] for f in files}
+    for l in out.splitlines():
+        if ': error ' in l or ': fatal error ' in l:
+            for f in files:
+                if (os.path.basename(f).lower() + '(') in l.lower():
+                    errs[f].append(l.strip())
+    return errs, out
+
+
+def selftest_cemit(b):
+    """C emit: (1) every bound cpp-unclean rva has a .c wrapper and no .cpp twin, the C text carries no extern "C";
+    (2) fixture: one g2sh-preamble shape (typedef unsigned char bool / unsigned short wchar_t, unprototyped code() call,
+    undefined4 to pointer) fails as C++ and compiles as C under the same flags; (3) every held rva (c_hold.txt) emitted as
+    a C unit into a scratch dir compiles (the C emit works for them; they are not bound). Returns the failure count."""
+    import tempfile, shutil
+    bad = 0
+    nb = 0
+    for rva in sorted(b.cemit):
+        p = b.plan.get(rva)
+        if not p or p[0] != 'bind':
+            continue
+        nb += 1
+        fn, text = b.wrapper_text(rva)
+        twin = fn[:-2] + '.cpp'
+        if not fn.endswith('.c') or 'extern "C"' in text or os.path.exists(twin):
+            print('   cemit wrapper', fn, 'twin' if os.path.exists(twin) else '', 'extern-C' if 'extern "C"' in text else '')
+            bad += 1
+    print('[selftest] C emit: %d cpp-unclean rvas bound as .c units, %d wrapper-shape failures' % (nb, bad))
+    if not os.path.exists(VCVARS):
+        print('[selftest] C emit compile: SKIPPED (no %s)' % VCVARS)
+        return bad
+    d = tempfile.mkdtemp(prefix='cemit_')
+    try:
+        fx = ('typedef unsigned int undefined4; typedef int code();\ntypedef unsigned char bool;\n'
+              'typedef unsigned short wchar_t;\nint FUN_00400100(int *p);\n'
+              'int FUN_00400110(undefined4 a, code *f) { return FUN_00400100(a) + f(1, 2); }\n')
+        for ext in ('c', 'cpp'):
+            open(os.path.join(d, 'cemit_fixture.' + ext), 'w').write(fx)
+        errs, _ = cl_compile([os.path.join(d, 'cemit_fixture.c'), os.path.join(d, 'cemit_fixture.cpp')], d)
+        okc = not errs[os.path.join(d, 'cemit_fixture.c')]
+        okx = bool(errs[os.path.join(d, 'cemit_fixture.cpp')])
+        print('[selftest] C emit fixture: as C %s, as C++ %s' % ('compiles' if okc else 'FAILS', 'fails (expected)' if okx else 'COMPILES (unexpected)'))
+        bad += (not okc) + (not okx)
+        # held rvas: emit as if bound (callees as the plan has them), absolute include path, compile only
+        held = [r for r in sorted(b.hold) if r in b.unclean]
+        files = []
+        for rva in held:
+            src, kind = b.msrc(rva)
+            if not src:
+                print('   held', rva, 'has no matched source'); bad += 1; continue
+            cs, local, _ = b.callees(src, rva)
+            saved = b.plan.get(rva)
+            b.plan[rva] = ('bind', src, kind, cs, local)
+            missing = [c for c in cs if c not in b.plan]
+            for c in missing:
+                b.plan[c] = ('stop',)
+            b.cemit.add(rva)
+            try:
+                _, text = b.wrapper_text(rva)
+            finally:
+                b.cemit.discard(rva)
+                b.plan[rva] = saved
+                for c in missing:
+                    del b.plan[c]
+            text = text.replace('#include "../../../../%s"' % src, '#include "%s"' % os.path.abspath(src).replace('\\', '/'))
+            f = os.path.join(d, 'PortTop_%s.c' % rva)
+            open(f, 'w', encoding='utf-8', newline='\n').write(text)
+            files.append(f)
+        if files:
+            errs, out = cl_compile(files, d)
+            nfail = sum(1 for f in files if errs[f])
+            for f in files:
+                for e in errs[f][:2]:
+                    print('   held', os.path.basename(f), e[:200])
+            print('[selftest] C emit of the %d held rvas (c_hold.txt, not bound): %d compile, %d fail' % (
+                len(files), len(files) - nfail, nfail))
+            bad += nfail
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+    return bad
 
 
 def audio_roots():
@@ -862,7 +1093,7 @@ def cmd_selftest(a):
         roots = SELFTEST.get(prof) or audio_roots()
         pp = os.path.join(state_dir(prof), 'plan.json')
         before = json.load(open(pp))
-        b = Binder(prof, roots.split(','))
+        b = Binder(prof, roots.split(','), roots_only=prof in SELFTEST_ROOTS_ONLY)
         plan = {k: list(v) for k, v in b.build_plan().items()}
         same_plan = plan == before
         diffs = []
@@ -887,6 +1118,8 @@ def cmd_selftest(a):
         for d in diffs:
             print('   file', d)
         bad += (not same_plan) + len(diffs)
+        if b.unclean:
+            bad += selftest_cemit(b)
     # BINDINGS.tsv: the audio plan's rows rebuilt in memory must equal the committed file
     raw = open(BINDINGS, 'rb').read()
     bak = raw
@@ -913,6 +1146,8 @@ def main():
         s.add_argument('--roots', required=True, help='comma-separated rvas (cumulative: pass every root of the closure)')
         s.add_argument('--listing', help='also write the listing to this file')
         s.add_argument('-v', '--verbose', action='store_true')
+        s.add_argument('--roots-only', action='store_true',
+                       help='newly bind only the roots: other matched callees not bound by the previous plan are named stops')
     s = sp.add_parser('externs'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
     s.add_argument('--apply', action='store_true'); s.add_argument('src', nargs='*')
     s = sp.add_parser('sync'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))

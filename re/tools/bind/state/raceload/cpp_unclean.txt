@@ -23,3 +23,37 @@
 0047b8d0	C2664 'void Orig_004b6520(undefined4,undefined4)': el argumento 1 no puede convertirse de 'undefined1 [32768]' a 'un
 004c3d90	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
 004e89a0	C2440 'inicializando': no se puede realizar la conversi¢n de 'int' a 'void *'
+0041a8d0	C2065 'DAT_0063c630': identificador no declarado
+00472330	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004cac10	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004d3450	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004d34d0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004e3bd0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004e3e70	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004e3ea0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004eb320	C2632 'char' seguido de 'bool' no es vÃ¡lido
+004f4540	C2632 'char' seguido de 'bool' no es vÃ¡lido
+005142d0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+005142f0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0052e4e0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0052e500	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00533840	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00534ad0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00534af0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+005386b0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00538c30	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0053d3e0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0053ec40	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0053ec60	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0053f9b0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0053fa90	C2632 'char' seguido de 'bool' no es vÃ¡lido
+005444a0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00544e00	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00544f10	C2632 'char' seguido de 'bool' no es vÃ¡lido
+005492d0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00549310	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0054a000	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0054a0f0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+005518f0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00557d90	C2632 'char' seguido de 'bool' no es vÃ¡lido
+0057c2e0	C2632 'char' seguido de 'bool' no es vÃ¡lido

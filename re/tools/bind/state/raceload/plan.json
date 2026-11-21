@@ -65,6 +65,319 @@
 "00426460"
 ]
 ],
+"0041a8d0": [
+"bind",
+"re/match/s03/h1_0041a4a0.c",
+"match",
+[
+"0041a5b0",
+"0041a5d0",
+"0041f260",
+"0042a5d0",
+"004b51d0",
+"004b5260",
+"004b52f0",
+"004b6520",
+"004c39b0",
+"004c3ac0"
+],
+[
+"0041a400",
+"0041a4a0",
+"0041a500",
+"0041a550",
+"0041a840",
+"0041a9d0",
+"0041aac0",
+"0041ac60",
+"0041ad00"
+]
+],
+"00472330": [
+"bind",
+"re/match/g2sh/00472330.c",
+"match",
+[
+"004722e0"
+],
+[]
+],
+"004cac10": [
+"bind",
+"re/match/rwtb/004cac10.c",
+"match",
+[
+"004c9ad0",
+"004d1e30",
+"004d6200",
+"004db3e0",
+"004dc8a0",
+"004dc970",
+"004e0920"
+],
+[]
+],
+"004d3450": [
+"bind",
+"re/match/rwtb/004d3450.c",
+"match",
+[],
+[]
+],
+"004d34d0": [
+"bind",
+"re/match/g2sh/004d34d0.c",
+"match",
+[],
+[]
+],
+"004e3bd0": [
+"bind",
+"re/match/g2sh/004e3bd0.c",
+"match",
+[],
+[]
+],
+"004e3e70": [
+"bind",
+"re/match/g2sh/004e3e70.c",
+"match",
+[],
+[]
+],
+"004e3ea0": [
+"bind",
+"re/match/g2sh/004e3ea0.c",
+"match",
+[],
+[]
+],
+"004eb320": [
+"bind",
+"re/match/g2sh/004eb320.c",
+"match",
+[],
+[]
+],
+"004f4540": [
+"bind",
+"re/match/g2sh/004f4540.c",
+"match",
+[],
+[]
+],
+"005142d0": [
+"bind",
+"re/match/g2sh/005142d0.c",
+"match",
+[],
+[]
+],
+"005142f0": [
+"bind",
+"re/match/g2sh/005142f0.c",
+"match",
+[],
+[]
+],
+"0052e4e0": [
+"bind",
+"re/match/g2sh/0052e4e0.c",
+"match",
+[],
+[]
+],
+"0052e500": [
+"bind",
+"re/match/g2sh/0052e500.c",
+"match",
+[
+"004d7ff0",
+"00530090"
+],
+[]
+],
+"00533840": [
+"bind",
+"re/match/g2sh/00533840.c",
+"match",
+[
+"004522d0"
+],
+[]
+],
+"00534ad0": [
+"bind",
+"re/match/g2sh/00534ad0.c",
+"match",
+[],
+[]
+],
+"00534af0": [
+"bind",
+"re/match/g2sh/00534af0.c",
+"match",
+[
+"004e8090"
+],
+[]
+],
+"005386b0": [
+"bind",
+"re/match/rwta/005386b0.c",
+"match",
+[
+"004c3ac0",
+"00538310",
+"00538bd0"
+],
+[]
+],
+"00538c30": [
+"bind",
+"re/match/rwtb/00538c30.c",
+"match",
+[
+"004d7ff0",
+"004d8480"
+],
+[]
+],
+"0053d3e0": [
+"bind",
+"re/match/g2sh/0053d3e0.c",
+"match",
+[],
+[]
+],
+"0053ec40": [
+"bind",
+"re/match/g2sh/0053ec40.c",
+"match",
+[],
+[]
+],
+"0053ec60": [
+"bind",
+"re/match/g2sh/0053ec60.c",
+"match",
+[
+"0053eca0"
+],
+[]
+],
+"0053f9b0": [
+"bind",
+"re/match/g2sh/0053f9b0.c",
+"match",
+[],
+[]
+],
+"0053fa90": [
+"bind",
+"re/match/g2sh/0053fa90.c",
+"match",
+[],
+[]
+],
+"005444a0": [
+"bind",
+"re/match/rwtb/005444a0.c",
+"match",
+[
+"004cbd30",
+"004cc790"
+],
+[]
+],
+"00544e00": [
+"bind",
+"re/match/rwtb/00544e00.c",
+"match",
+[
+"004c0e50"
+],
+[]
+],
+"00544f10": [
+"bind",
+"re/match/g2sh/00544f10.c",
+"match",
+[],
+[]
+],
+"005492d0": [
+"bind",
+"re/match/g2sh/005492d0.c",
+"match",
+[
+"005495b0"
+],
+[]
+],
+"00549310": [
+"bind",
+"re/match/g2sh/00549310.c",
+"match",
+[
+"005495a0"
+],
+[]
+],
+"0054a000": [
+"bind",
+"re/match/g2sh/0054a000.c",
+"match",
+[
+"005495b0"
+],
+[]
+],
+"0054a0f0": [
+"bind",
+"re/match/g2sh/0054a0f0.c",
+"match",
+[
+"005c9d00"
+],
+[]
+],
+"005518f0": [
+"bind",
+"re/match/rwtb/005518f0.c",
+"match",
+[
+"004cbd30",
+"004cc5e0",
+"004cc790",
+"0052ddc0",
+"0052ddf0",
+"0052de60",
+"00551a50",
+"00551ad0",
+"00551fd0",
+"00558cb0",
+"00562560"
+],
+[]
+],
+"00557d90": [
+"bind",
+"re/match/rwta/00557d90.c",
+"match",
+[
+"004e8ea0",
+"00557a60"
+],
+[]
+],
+"0057c2e0": [
+"bind",
+"re/match/g2sh/0057c2e0.c",
+"match",
+[],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -384,6 +697,205 @@
 "RwCore_004e6e00",
 "RwCore/RwCore_004e6e00.cpp"
 ],
+"0041a5b0": [
+"stop",
+"not bound here (--roots-only): matched source re/match/s03/raw_0041a5b0.c"
+],
+"0041a5d0": [
+"stop",
+"not bound here (--roots-only): matched source re/match/s03/h3_0041a5d0.c"
+],
+"0041f260": [
+"stop",
+"not bound here (--roots-only): matched source re/match/s04/0041f260.c"
+],
+"004b51d0": [
+"reuse",
+"Orig_004b51d0",
+"Match/PortTop_004b51d0.cpp"
+],
+"004b5260": [
+"stop",
+"not bound here (--roots-only): matched source re/match/s18/004b5260.c"
+],
+"004b52f0": [
+"reuse",
+"RwCore_004b52f0",
+"RwCore/RwCore_004b52f0.cpp"
+],
+"004b6520": [
+"reuse",
+"Orig_004b6520",
+"Match/PortTop_004b6520.cpp"
+],
+"004c39b0": [
+"reuse",
+"RwCore_004c39b0",
+"RwCore/RwCore_004c39b0.cpp"
+],
+"004c3ac0": [
+"reuse",
+"RwCore_004c3ac0",
+"RwCore/RwCore_004c3ac0.cpp"
+],
+"004722e0": [
+"reuse",
+"RwCore_004722e0",
+"RwCore/RwCore_004722e0.cpp"
+],
+"004c9ad0": [
+"reuse",
+"RwCore_004c9ad0",
+"RwCore/RwCore_004c9ad0.cpp"
+],
+"004d1e30": [
+"reuse",
+"RwCore_004d1e30",
+"RwCore/RwCore_004d1e30.cpp"
+],
+"004d6200": [
+"reuse",
+"RwCore_004d6200",
+"RwCore/RwCore_004d6200.cpp"
+],
+"004db3e0": [
+"reuse",
+"RwCore_004db3e0",
+"RwCore/RwCore_004db3e0.cpp"
+],
+"004dc8a0": [
+"reuse",
+"RwCore_004dc8a0",
+"RwCore/RwCore_004dc8a0.cpp"
+],
+"004dc970": [
+"reuse",
+"RwCore_004dc970",
+"RwCore/RwCore_004dc970.cpp"
+],
+"004e0920": [
+"reuse",
+"RwCore_004e0920",
+"RwCore/RwCore_004e0920.cpp"
+],
+"004d7ff0": [
+"reuse",
+"Orig_004d7ff0",
+"Match/PortTop_004d7ff0.cpp"
+],
+"00530090": [
+"reuse",
+"RwCore_00530090",
+"RwCore/RwCore_00530090.cpp"
+],
+"004522d0": [
+"reuse",
+"RwCore_004522d0",
+"RwCore/RwCore_004522d0.cpp"
+],
+"004e8090": [
+"reuse",
+"Orig_004e8090",
+"Match/PortTop_004e8090.cpp"
+],
+"00538310": [
+"reuse",
+"RwCore_00538310",
+"RwCore/RwCore_00538310.cpp"
+],
+"00538bd0": [
+"reuse",
+"RwCore_00538bd0",
+"RwCore/RwCore_00538bd0.cpp"
+],
+"004d8480": [
+"reuse",
+"RwCore_004d8480",
+"RwCore/RwCore_004d8480.cpp"
+],
+"0053eca0": [
+"reuse",
+"RwCore_0053eca0",
+"RwCore/RwCore_0053eca0.cpp"
+],
+"004cbd30": [
+"reuse",
+"RwCore_004cbd30",
+"RwCore/RwCore_004cbd30.cpp"
+],
+"004cc790": [
+"reuse",
+"RwCore_004cc790",
+"RwCore/RwCore_004cc790.cpp"
+],
+"004c0e50": [
+"reuse",
+"RwCore_004c0e50",
+"RwCore/RwCore_004c0e50.cpp"
+],
+"005495b0": [
+"reuse",
+"RwCore_005495b0",
+"RwCore/RwCore_005495b0.cpp"
+],
+"005495a0": [
+"reuse",
+"RwCore_005495a0",
+"RwCore/RwCore_005495a0.cpp"
+],
+"005c9d00": [
+"reuse",
+"GetRaceEndTrigger",
+"Match/PortBatch_GAMEPLAY_005c9d00.cpp"
+],
+"004cc5e0": [
+"reuse",
+"RwCore_004cc5e0",
+"RwCore/RwCore_004cc5e0.cpp"
+],
+"0052ddc0": [
+"reuse",
+"RwCore_0052ddc0",
+"RwCore/RwCore_0052ddc0.cpp"
+],
+"0052ddf0": [
+"reuse",
+"RwCore_0052ddf0",
+"RwCore/RwCore_0052ddf0.cpp"
+],
+"0052de60": [
+"stop",
+"not bound here (--roots-only): matched source re/match/s23/0052de60.c"
+],
+"00551a50": [
+"reuse",
+"Orig_00551a50",
+"Match/PortTop_00551a50.cpp"
+],
+"00551ad0": [
+"stop"
+],
+"00551fd0": [
+"reuse",
+"RwCore_00551fd0",
+"RwCore/RwCore_00551fd0.cpp"
+],
+"00558cb0": [
+"stop"
+],
+"00562560": [
+"reuse",
+"RwCore_00562560",
+"RwCore/RwCore_00562560.cpp"
+],
+"004e8ea0": [
+"reuse",
+"RwCore_004e8ea0",
+"RwCore/RwCore_004e8ea0.cpp"
+],
+"00557a60": [
+"stop"
+],
 "0047cdc0": [
 "bind",
 "re/match/s13/0047cdc0.c",
@@ -430,11 +942,6 @@
 ],
 []
 ],
-"004cbd30": [
-"reuse",
-"RwCore_004cbd30",
-"RwCore/RwCore_004cbd30.cpp"
-],
 "004cc160": [
 "reuse",
 "PortTop_RwStreamClose_004cc160",
@@ -444,11 +951,6 @@
 "reuse",
 "PortTop_RwStreamOpen_004cc230",
 "Match/PortTop_RwStream04F.cpp"
-],
-"004cc5e0": [
-"reuse",
-"RwCore_004cc5e0",
-"RwCore/RwCore_004cc5e0.cpp"
 ],
 "00425b70": [
 "reuse",
@@ -498,11 +1000,6 @@
 ],
 []
 ],
-"004b6520": [
-"reuse",
-"Orig_004b6520",
-"Match/PortTop_004b6520.cpp"
-],
 "0047bf70": [
 "bind",
 "re/match/s13/0047bf70.c",
@@ -518,11 +1015,6 @@
 "0047bc90",
 "0047bcc0"
 ]
-],
-"004c0e50": [
-"reuse",
-"RwCore_004c0e50",
-"RwCore/RwCore_004c0e50.cpp"
 ],
 "00426060": [
 "bind",
@@ -892,19 +1384,9 @@
 "RwCore_004c0ed0",
 "RwCore/RwCore_004c0ed0.cpp"
 ],
-"004c39b0": [
-"reuse",
-"RwCore_004c39b0",
-"RwCore/RwCore_004c39b0.cpp"
-],
 "004c3d90": [
 "stop",
 "cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada"
-],
-"004cc790": [
-"reuse",
-"RwCore_004cc790",
-"RwCore/RwCore_004cc790.cpp"
 ],
 "004cf2b0": [
 "stop"

@@ -38,18 +38,57 @@ typedef struct Rec63c630 {
     char   padb4[0xc0 - 0xb4];
     int    active;      /* +0xc0 */
 } Rec63c630;            /* 0xc4 */
-#ifndef MATCH_PORT
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063c630 (*(Rec63c630 (*)[2])0x0063c630u)
+#else
 extern Rec63c630 DAT_0063c630[2];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063c7b8 (*(int (*)[2])0x0063c7b8u)
+#else
 extern int       DAT_0063c7b8[2];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063c7c0 (*(RwV4_ (*)[2])0x0063c7c0u)
+#else
 extern RwV4_     DAT_0063c7c0[2];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063c7e0 (*(RwV3d_ (*)[2])0x0063c7e0u)
+#else
 extern RwV3d_    DAT_0063c7e0[2];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063c7f8 (*(RwMatrix_ (*)[2])0x0063c7f8u)
+#else
 extern RwMatrix_ DAT_0063c7f8[2];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005d757c (*(const float *)0x005d757cu)
+#else
 extern const float DAT_005d757c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005cd188 (*(const float *)0x005cd188u)
+#else
 extern const float DAT_005cd188;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005ccac4 (*(const float *)0x005ccac4u)
+#else
 extern const float DAT_005ccac4;
+#endif
 float FUN_004c39b0(RwV3d_ *out, RwV3d_ *in);
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005cc56c (*(const float *)0x005cc56cu)
+#else
 extern const float DAT_005cc56c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005cc32c (*(const float *)0x005cc32cu)
+#else
 extern const float DAT_005cc32c;
+#endif
 void  FUN_0041f260(int a, RwMatrix_ *out);
 float FUN_004c3ac0(RwV3d_ *v);
 void  FUN_0041a5b0(int i, float t);
@@ -59,7 +98,6 @@ int  FUN_004b51d0(int clump, Obj48 **out, int n, int a, int b);
 void FUN_004b52f0(Obj48 *obj, unsigned int a, int b);
 void FUN_004b5260(Obj48 *obj, RwRGBA_ *c);
 int  FUN_0042a5d0(const char *name, int a, int b);
-#endif
 
 void FUN_0041a4a0(int i, RwMatrix_ *src)
 {

@@ -1,0 +1,29 @@
+# BIND-CUNCLEAN-AS-C (2026-11-21): cpp-unclean rvas the C emit does NOT bind yet (they stay named stops).
+# Every other rva of cpp_unclean.txt is bound as a C unit (Match/PortTop_<rva>.c). An rva leaves this list when the row
+# that owns it binds it (delete its line, then `write`). Owner of all 24 below: the RACE lead
+# (log/orch/run53_bindlists/race_owned.txt, rows PORT-OT-RACE-BIND-PROV4 / RACE-WRITER-0067EA74 / RACE-RWGLOBALS-FRAMELIST).
+# The C emit of each was compiled and ddkobj-checked by BIND-CUNCLEAN-AS-C on a scratch tree (RESULT section 5), not bound.
+00409680	race-owned
+00409710	race-owned
+00425bf0	race-owned
+00440bc0	race-owned
+00458dd0	race-owned
+0047a1b0	race-owned
+0047a540	race-owned
+0047a580	race-owned
+0047a5b0	race-owned
+0047a5e0	race-owned
+0047a6b0	race-owned
+0047a6f0	race-owned
+0047a880	race-owned
+0047aa50	race-owned
+0047aaa0	race-owned
+0047aad0	race-owned
+0047acd0	race-owned
+0047ad00	race-owned
+0047b230	race-owned
+0047b250	race-owned
+0047b860	race-owned
+0047b8d0	race-owned
+004c3d90	race-owned
+004e89a0	race-owned
