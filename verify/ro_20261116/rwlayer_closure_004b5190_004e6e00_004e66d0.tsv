@@ -1,0 +1,24 @@
+rva	bound_symbol	kind	best_pct	hooks_status	owner_lists
+004b5190	RwCore_004b5190	match100	100.0	C4	
+004c0790	RwCore_004c0790	match100	100.0	C4	race_owned
+004c0d70	RwCore_004c0d70	match100	100.0	C4	race_owned
+004c0de0	RwCore_004c0de0	match100	100.0	C4	race_owned
+004c0e50	RwCore_004c0e50	match100	100.0	C4	race_owned
+004c1cf0	RwCore_004c1cf0	match100	100.0	C4	race_owned
+004c5a60	RwCore_004c5a60	match100	100.0	C4	race_owned
+004c7650	RwCore_004c7650	match100	100.0	C4	race_owned
+004d8060	RwCore_004d8060	match100	100.0	C4	race_owned
+004d8bd0	RwCore_004d8bd0	match100	100.0	C4	race_owned
+004e2ff0	RwCore_004e2ff0	match100	100.0	C4	race_owned
+004e4440	RwCore_004e4440	match100	100.0	C4	race_owned
+004e4d90	RwCore_004e4d90	match100	100.0	C4	race_owned
+004e66d0	RwCore_004e66d0	provisional	70.6	C4	race_owned
+004e6e00	RwCore_004e6e00	provisional	67.9	C4	race_owned
+004e8030	RwCore_004e8030	match100	100.0	C4	race_owned
+004e8ea0	RwCore_004e8ea0	match100	100.0	C4	race_owned
+004f0c10	RwCore_004f0c10	match100	100.0	C4	race_owned
+004f3b60	RwCore_004f3b60	match100	100.0	C4	race_owned
+00543d40	RwCore_00543d40	match100	100.0	C4	bulk_cp1
+00543d70	RwCore_00543d70	match100	100.0	C4	bulk_cp1
+00543df0	RwCore_00543df0	match100	100.0	C4	bulk_cp1
+0055deb0	RwCore_0055deb0	provisional		C4	race_owned

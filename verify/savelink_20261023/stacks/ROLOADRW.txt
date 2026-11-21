@@ -1,0 +1,3 @@
+# RACE-RWLAYER-00543D40: the ROLOAD replay arm with the RW module record knob (MASHED_ORIG_TOP_RWMOD, default OFF)
+@ROLOAD
+MASHED_ORIG_TOP_RWMOD=1
