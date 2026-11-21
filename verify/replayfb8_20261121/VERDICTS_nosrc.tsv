@@ -1,0 +1,8 @@
+rva	source	link_pct	neighbour	calls_census	calls_before_warp	verdict	run	calls_run	jmp_ok	wleg_static	ws_run	ws_run_replay	write_set_leg	promote	level_now
+0x0048ae00	re/match/s14/0048ae00.c	98.3	-	1	1	IDENTICAL-FOR-600	nosrc_101539_001_1	1	True	not-covered	ws_0048ae00	IDENTICAL-FOR-N 600	dynamic pass (104 image stores in 1 stepped calls)	True	C4
+0x00412190	re/match/nsa/00412190.c	86.1	-	4	0	IDENTICAL-FOR-600	nosrc_101539_002_1	4	True	not-covered	ws_00412190	IDENTICAL-FOR-N 600	dynamic pass (24 image stores in 4 stepped calls)	True	C2
+0x0040be50	re/match/nsa/0040be50.c	80.9	-	871	0	IDENTICAL-FOR-600	nosrc_101539_003_1	177	True	not-covered	ws_0040be50	IDENTICAL-FOR-N 600	dynamic covered (image 0, stores 34, stepped 10, run IDENTICAL-FOR-N 600)	False	C2
+0x0040eee0	re/match/nsa/0040eee0.c	75.2	-	8	0	IDENTICAL-FOR-600	nosrc_101539_004_1	8	True	covered			static covered	True	C2
+0x005b8200	re/match/nsb/005b8200.c	83.7	-	4	0	IDENTICAL-FOR-600	nosrc_101539_005_1	4	True	not-covered	ws_005b8200	IDENTICAL-FOR-N 600	dynamic escapes (image 0, stores 2772, stepped 4, run IDENTICAL-FOR-N 600)	False	C2
+0x004883b0	re/match/nsb/004883b0.c	18.1	-	1	0	IDENTICAL-FOR-600	nosrc_101539_006_1	1	True	not-covered	ws_004883b0	IDENTICAL-FOR-N 600	dynamic escapes (image 1, stores 6, stepped 1, run IDENTICAL-FOR-N 600)	False	C2
+0x0047be80	re/match/nsb/0047be80.c	86.4	-	2	0	IDENTICAL-FOR-600	nosrc_101539_007_1	2	True	empty			static empty	True	C2
