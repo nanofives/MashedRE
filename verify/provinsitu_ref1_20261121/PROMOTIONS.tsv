@@ -1,0 +1,55 @@
+rva	name	level	class	verdict	run	calls_run	jmp_ok	write_set_leg	source	link_pct
+0x00547450	FUN_00547450	C2	game	IDENTICAL-FOR-600	b2_035802_001_3	523931	True	static empty	re/match/s24/00547450.c	66.8
+0x004c39b0	RwV3dNormalize	C2	game	IDENTICAL-FOR-600	b2_035802_001_3	408232	True	static empty	re/match/s19/004c39b0.c	69.9
+0x004dc4a0	FUN_004dc4a0	C2	RW core	IDENTICAL-FOR-600	b3_060610_005_1	213519	True	static empty	re/match/rwl01/004dc4a0.c	8.8
+0x004c3c60	Vec2Normalize	C3	game	IDENTICAL-FOR-600	b1_023950_001_6	194622	True	static empty	re/match/s19/004c3c60.c	97.3
+0x004a2be9	__security_check_cookie	C2	game	IDENTICAL-FOR-600	b2_035802_003_3	95145	True	static empty	re/match/s17/004a2be9.c	50.0
+0x0055c2d0	FUN_0055c2d0	C3	RW-Physics	IDENTICAL-FOR-600	b1_023950_001_6	51046	True	static empty	re/match/rwl05/0055c2d0.c	89.2
+0x00564310	FUN_00564310	C3	RW-Physics	IDENTICAL-FOR-600	nw_055230_001_1	54367	True	static empty	re/match/rwl05/00564310.c	15.4
+0x00578b20	FUN_00578b20	C3	RW-Physics	IDENTICAL-FOR-600	b1_023950_001_6	20175	True	static empty	re/match/rwl06/00578b20.c	90.6
+0x00547bf0	FUN_00547bf0	C2	game	IDENTICAL-FOR-600	b3_060610_021_2	18797	True	static empty	re/match/s24/00547bf0.c	46.0
+0x0055bae0	FUN_0055bae0	C3	RW-Physics	IDENTICAL-FOR-600	b3_060610_025_2	12000	True	static empty	re/match/rwl05/0055bae0.c	39.2
+0x005b10a0	AudioTableDispatchAt4	C3	game	IDENTICAL-FOR-600	b3_060610_030_2	4425	True	static empty	re/match/s26/005b10a0.c	42.9
+0x00536e90	FUN_00536e90	C1	RW core	IDENTICAL-FOR-600	b3_060610_030_2	3935	True	static empty	re/match/rwl03/00536e90.c	0.0
+0x004dc8a0	FUN_004dc8a0	C2	RW core	IDENTICAL-FOR-600	b2_035802_010_3	3284	True	static covered	re/match/rwl01/004dc8a0.c	58.3
+0x005a6ea0	FUN_005a6ea0	C2	game	IDENTICAL-FOR-600	b3_060610_033_1	3216	True	static covered	re/match/s25/005a6ea0.c	38.9
+0x00481a30	FUN_00481a30	C2	game	IDENTICAL-FOR-600	b2_032830_009_1	2719	True	static covered	re/match/s13/00481a30.c	63.3
+0x0055c230	FUN_0055c230	C3	RW-Physics	IDENTICAL-FOR-600	b1_023950_006_6	2266	True	static empty	re/match/rwl05/0055c230.c	93.4
+0x0056c8e0	FUN_0056c8e0	C3	RW-Physics	IDENTICAL-FOR-600	b3_060610_050_1	2030	True	static empty	re/match/rwl06/0056c8e0.c	21.1
+0x0053e5d0	FUN_0053e5d0	C2	RW core	IDENTICAL-FOR-600	b2_035802_013_2	1628	True	static empty	re/match/rwl03/0053e5d0.c	59.4
+0x0055b750	FUN_0055b750	C3	RW-Physics	IDENTICAL-FOR-600	b3_060610_053_2	2174	True	static empty	re/match/rwl05/0055b750.c	42.4
+0x004c4220	FUN_004c4220	C2	RW core	IDENTICAL-FOR-600	b3_060610_059_1	1046	True	static empty	re/match/rwl01/004c4220.c	40.7
+0x0055b650	FUN_0055b650	C3	RW-Physics	IDENTICAL-FOR-600	b3_060610_062_1	458	True	static empty	re/match/rwl05/0055b650.c	31.6
+0x00577be0	FUN_00577be0	C2	RW-Physics	IDENTICAL-FOR-600	b2_035802_019_3	96	True	static empty	re/match/rwl06/00577be0.c	60.8
+0x004dee40	FUN_004dee40	C2	RW core	IDENTICAL-FOR-600	b3_060610_074_2	248	True	static empty	re/match/rwl01/004dee40.c	22.5
+0x005bba60	FUN_005bba60	C2	game	IDENTICAL-FOR-600	b2_035802_026_3	92	True	static empty	re/match/s27/005bba60.c	64.9
+0x004785e0	FUN_004785e0	C2	game	IDENTICAL-FOR-600	b1_023950_012_6	30	True	static empty	re/match/s12/004785e0.c	97.8
+0x004b53b0	FUN_004b53b0	C2	game	IDENTICAL-FOR-600	b3_060610_088_2	18	True	static empty	re/match/s18/004b53b0.c	45.4
+0x005a9f10	FUN_005a9f10	C2	game	IDENTICAL-FOR-600	b2_032830_014_1	275	True	static empty	re/match/s25/005a9f10.c	73.9
+0x005abfa0	FUN_005abfa0	C3	game	IDENTICAL-FOR-600	b2_032830_016_1	55	True	static empty	re/match/s25/005abfa0.c	62.9
+0x004c4360	MatrixIdentityResidual4c4360	C3	game	IDENTICAL-FOR-600	b2_035802_028_3	11	True	static empty	re/match/s19/004c4360.c	65.2
+0x005b73b0	AudioFindExtension	C3	game	IDENTICAL-FOR-600	b1_023950_013_6	8	True	static empty	re/match/s27/005b73b0.c	82.4
+0x005b3020	FUN_005b3020	C2	game	IDENTICAL-FOR-600	b2_035802_033_1	5	True	static empty	re/match/s27/005b3020.c	53.5
+0x005ae170	FUN_005ae170	C3	game	IDENTICAL-FOR-600	b2_035802_038_3	4	True	static empty	re/match/s26/005ae170.c	61.9
+0x005aeb90	FUN_005aeb90	C3	game	IDENTICAL-FOR-600	b3_060610_093_2	32	True	static empty	re/match/s26/005aeb90.c	43.3
+0x005b03e0	FUN_005b03e0	C2	game	IDENTICAL-FOR-600	b1_023950_014_6	4	True	static empty	re/match/s26/005b03e0.c	85.9
+0x005b09c0	FUN_005b09c0	C2	game	IDENTICAL-FOR-600	b2_035802_038_3	4	True	static empty	re/match/s26/005b09c0.c	79.7
+0x0053d820	FUN_0053d820	C2	RW core	IDENTICAL-FOR-600	b2_035802_043_1	3	True	static empty	re/match/rwl03/0053d820.c	66.7
+0x005672c0	FUN_005672c0	C3	RW-Physics	IDENTICAL-FOR-600	b3_060610_098_2	2	True	static empty	re/match/rwl06/005672c0.c	18.8
+0x005b6710	FUN_005b6710	C2	game	IDENTICAL-FOR-600	b1_023950_015_6	2	True	static empty	re/match/s27/005b6710.c	87.5
+0x0040cea0	FUN_0040cea0	C2	game	IDENTICAL-FOR-600	b1_023950_015_6	1	True	static covered	re/match/s02/0040cea0.c	82.8
+0x004783f0	FUN_004783f0	C2	game	IDENTICAL-FOR-600	b1_023950_016_4	1	True	static empty	re/match/pilot/a4_004783f0.c	90.8
+0x00558cb0	FUN_00558cb0	C2	RW-Physics	IDENTICAL-FOR-600	b2_035802_050_3	1	True	static empty	re/match/rwl05/00558cb0.c	78.4
+0x00559560	FUN_00559560	C3	RW-Physics	IDENTICAL-FOR-600	b2_035802_050_3	1	True	static empty	re/match/rwl05/00559560.c	68.3
+0x005749b0	FUN_005749b0	C3	RW-Physics	IDENTICAL-FOR-600	b3_060610_105_2	1	True	static empty	re/match/rwl06/005749b0.c	8.0
+0x005a7b60	FUN_005a7b60	C2	game	IDENTICAL-FOR-600	b2_032830_018_1	2	True	static covered	re/match/s25/005a7b60.c	53.5
+0x00416250	FUN_00416250	C2	game	IDENTICAL-FOR-600	b1_023950_003_6	6052	True	dynamic covered, 88 compared-image stores in 10 stepped calls (ws_g02, IDENTICAL-FOR-N 600)	re/match/t01g/00416250.c	88.9
+0x00499d90	FUN_00499d90	C2	game	IDENTICAL-FOR-600	b3_060610_052_2	857	True	dynamic covered, 1620 compared-image stores in 10 stepped calls (ws_g04, IDENTICAL-FOR-N 600)	re/match/s16/00499d90.c	43.9
+0x004c4eb0	RwMatrixInvert_CofactorPath	C3	game	IDENTICAL-FOR-600	b3_060610_055_2	2547	True	dynamic covered, 10 compared-image stores in 10 stepped calls (ws_g04, IDENTICAL-FOR-N 600)	re/match/s19/004c4eb0.c	47.7
+0x004b6b20	FUN_004b6b20	C2	game	IDENTICAL-FOR-600	b2_035802_020_3	153	True	dynamic covered, 40 compared-image stores in 10 stepped calls (ws_g06, IDENTICAL-FOR-N 600)	re/match/s18/004b6b20.c	71.4
+0x0045a3a0	FUN_0045a3a0	C2	game	IDENTICAL-FOR-600	b1_023950_013_6	16	True	dynamic covered, 10040 compared-image stores in 10 stepped calls (ws_g07, IDENTICAL-FOR-N 600)	re/match/s09/0045a3a0.c	81.0
+0x0040e590	FUN_0040e590	C2	game	IDENTICAL-FOR-600	b1_023950_014_6	4	True	dynamic covered, 72 compared-image stores in 4 stepped calls (ws_g08, IDENTICAL-FOR-N 600)	re/match/t01g/0040e590.c	84.6
+0x00481e00	FUN_00481e00	C2	game	IDENTICAL-FOR-600	b1_022238_006_1	4	True	dynamic covered, 118 compared-image stores in 4 stepped calls (ws_g08, IDENTICAL-FOR-N 600)	re/match/s13/00481e00.c	86.5
+0x00424b80	FUN_00424b80	C2	game	IDENTICAL-FOR-600	b1_023950_015_6	2	True	dynamic covered, 105 compared-image stores in 2 stepped calls (ws_g09, IDENTICAL-FOR-N 600)	re/match/s05/00424b80.c	88.7
+0x00478660	FUN_00478660	C2	game	IDENTICAL-FOR-600	b3_060610_099_2	1	True	dynamic covered, 361 compared-image stores in 1 stepped calls (ws_g09, IDENTICAL-FOR-N 600)	re/match/s12/00478660.c	22.6
+0x0047a020	FUN_0047a020	C2	game	IDENTICAL-FOR-600	b1_023950_016_4	1	True	dynamic covered, 264 compared-image stores in 1 stepped calls (ws_g09, IDENTICAL-FOR-N 600)	re/match/s12/0047a020.c	92.2

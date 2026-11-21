@@ -1,0 +1,310 @@
+rva	name	level	class	subsystem	best_pct	link_pct	source	jmp_ok	calls_run	calls_census	group	run	wleg_static	insitu_1111	verdict	detail
+0x005cb2a0	RwDeviceMatrixMultiply	C3	game	render	15.6	15.6	re/match/s28/005cb2a0.c	True	2474626	2446491	1	b3_060610_002_1	empty		DIVERGED@302	confirmed 2 of 2; tick 302 race blocks ['0x896400']
+0x004d8300	FUN_004d8300	C2	game	render	51.6	51.6	re/match/s21/004d8300.c	True	13710	894672	3	b2_035802_001_3	not-covered		IDENTICAL-FOR-600	
+0x004e6100	RpAtomicGetWorldBoundingSphere	C2	RW core	third-party-library[renderware]	31.7	31.7	re/match/rwl02/004e6100.c	True	707031	707031	1	b3_060610_003_1	not-covered		IDENTICAL-FOR-600	
+0x00547450	FUN_00547450	C2	game	track	66.8	66.8	re/match/s24/00547450.c	True	523931	523931	3	b2_035802_001_3	empty		IDENTICAL-FOR-600	
+0x004c39b0	RwV3dNormalize	C2	game	render	69.9	69.9	re/match/s19/004c39b0.c	True	408232	408232	3	b2_035802_001_3	empty		IDENTICAL-FOR-600	
+0x004c4a50	RwMatrixRotateInner	C3	game	render	77.8	77.8	re/match/s19/004c4a50.c	True	243330	243330	3	b2_035802_002_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004dc4a0	FUN_004dc4a0	C2	RW core	third-party-library[renderware]	8.8	8.8	re/match/rwl01/004dc4a0.c	True	213519	213519	1	b3_060610_005_1	empty		IDENTICAL-FOR-600	
+0x004c51a0	RwMatrixTranslate	C3	game	render	14.7	14.7	re/match/s19/004c51a0.c	True	218777	218777	1	b3_060028_001_1	not-covered	DIVERGED@1	DIVERGED@301	confirmed 2 of 2; tick 301 race blocks ['0x881c00', '0x882800', '0x882c00', '0x883800', '0x884400']
+0x004c3c60	Vec2Normalize	C3	game	render	97.3	97.3	re/match/s19/004c3c60.c	True	194622	194622	6	b1_023950_001_6	empty		IDENTICAL-FOR-600	
+0x004dc410	FUN_004dc410	C2	RW core	third-party-library[renderware]	2.2	2.2	re/match/rwl01/004dc410.c	True	157877	191952	1	b3_060610_006_1	empty		DIVERGED@300	confirmed 2 of 2; tick 300 race blocks ['0x6c3400', '0x6c3800', '0x6c3c00']
+0x004dc370	FUN_004dc370	C2	RW core	third-party-library[renderware]	2.0	2.0	re/match/rwl01/004dc370.c			187310	1	b3_060610_008_1	empty		CRASH	confirmed 2 of 2; ; rep_080743_001_1: read 0x1e at eip 0x48214a (no body address on the stack), n=3664
+0x005c6b60	Delta5c6b60	C3	game	boot	54.8	54.8	re/match/s28/005c6b60.c	True	137914	137904	3	b2_035802_002_3	not-covered		IDENTICAL-FOR-600	
+0x005405c0	FUN_005405c0	C2	RW core	third-party-library[renderware]	23.8	23.8	re/match/rwl03/005405c0.c			136752	1	b3_060610_009_1	covered		CRASH	confirmed 2 of 2; ; rep_080743_002_1: read 0x43 at eip 0x4d6e19 (ret into body 0x005405c0+0xa1 on the stack), n=3636
+0x004c5010	RwMatrixScale	C3	game	render	84.7	84.7	re/match/s19/004c5010.c	True	115506	115506	6	b1_023950_001_6	not-covered		IDENTICAL-FOR-600	
+0x00535700	FUN_00535700	C2	RW core	third-party-library[renderware]	51.7	51.7	re/match/rwl03/00535700.c	True	99214	99214	3	b2_035802_002_3	not-covered		IDENTICAL-FOR-600	
+0x004a2be9	__security_check_cookie	C2	game	boot	50.0	50.0	re/match/s17/004a2be9.c	True	95145	95227	3	b2_035802_003_3	empty		IDENTICAL-FOR-600	
+0x004c52f0	RwMatrixCombine	C3	game	render	12.6	12.6	re/match/s19/004c52f0.c	True	90225	90225	2	b3_060610_010_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005b8c40	FUN_005b8c40	C2	game	audio	30.0	30.0	re/match/s27/005b8c40.c			92387			-		NOT-WIRED	_ROUND
+0x0047ba20	FUN_0047ba20	C2	game	gameplay	60.8	60.8	re/match/s13/0047ba20.c	True	74268	74268	3	b2_035802_003_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004c4dc0	RwMatrixInvertEntry	C3	game	util	91.2	91.2	re/match/s19/004c4dc0.c	True	74294	74327	6	b1_023950_001_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005c7330	FUN_005c7330	C2	game	audio	29.3	29.3	re/match/s28/005c7330.c	True	68945	68925	2	b3_060610_010_2	not-covered		IDENTICAL-FOR-600	
+0x005a75b0	FUN_005a75b0	C2	game	audio	51.6	51.6	re/match/s25/005a75b0.c	True	55932	55932	1	b2_032830_001_1	not-covered	CRASH	IDENTICAL-FOR-600	
+0x0045ac40	FUN_0045ac40	C2	game	gameplay	61.5	61.5	re/match/s09/0045ac40.c	True	54380	54380	3	b2_035802_003_3	not-covered		IDENTICAL-FOR-600	
+0x0055c2d0	FUN_0055c2d0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	89.2	89.2	re/match/rwl05/0055c2d0.c	True	51046	51046	6	b1_023950_001_6	empty		IDENTICAL-FOR-600	
+0x00564310	FUN_00564310	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	15.4	15.4	re/match/rwl05/00564310.c	True	54367	48983	1	nw_055230_001_1	empty		IDENTICAL-FOR-600	wired after the symmap additions (NOT-WIRED leg); 
+0x005a9280	FUN_005a9280	C2	game	audio	38.0	38.0	re/match/s25/005a9280.c	True	47843	47843	1	b3_060610_012_1	not-covered		IDENTICAL-FOR-600	
+0x005412d0	FUN_005412d0	C2	RW core	third-party-library[renderware]	44.2	44.2	re/match/rwl04/005412d0.c	True	37764	37764	1	b3_060610_013_1	covered		DIVERGED@302	confirmed 2 of 2; tick 302 race blocks ['0x7d5400', '0x7d5800']
+0x00539ec0	FUN_00539ec0	C2	RW core	third-party-library[renderware]	12.4	12.4	re/match/rwl03/00539ec0.c			36865	1	b3_060610_015_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_003_1: read 0x35f6fc at eip 0x40a00d1 (in body 0x00539ec0+0xc1), n=3645
+0x004c4680	FUN_004c4680	C2	game	render	34.5	34.5	re/match/s19/004c4680.c			31704	1	b3_060610_016_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_004_1: read 0xbf8001d3 at eip 0xbf8001d3 (no body address on the stack), n=4940
+0x005b6b00	FUN_005b6b00	C3	game	audio	26.8	26.8	re/match/s27/005b6b00.c	True	28728	28728	2	b3_060610_017_2	not-covered		IDENTICAL-FOR-600	
+0x0056ac40	FUN_0056ac40	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	4.1	4.1	re/match/rwl06/0056ac40.c	True	27791	27791	2	b3_060610_017_2	not-covered		IDENTICAL-FOR-600	
+0x0056adb0	FUN_0056adb0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	10.6	10.6	re/match/rwl06/0056adb0.c			23316	1	b3_060610_019_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_005_1: read 0xc at eip 0x41e0160 (in body 0x0056adb0+0x150), n=3676
+0x0046f6c0	VehicleWheelContactSolver	C2	game	vehicle	50.7	44.3	re/match/s11/0046f6c0.c	True	14488	21823	1	b3_060028_002_1	not-covered	DIVERGED@1	DIVERGED@301	confirmed 2 of 2; tick 301 race blocks ['0x881400', '0x881800', '0x881c00', '0x882400', '0x882c00', '0x883000']
+0x00454350	FUN_00454350	C2	game	gameplay	98.2	98.2	re/match/s09/00454350.c	True	21752	21752	6	b1_023950_001_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00468d80	VehicleTerrainContactSolver	C2	game	vehicle	82.1	82.1	re/match/s11/00468d80.c	True	21556	21556	1	b1_022238_001_1	not-covered	DIVERGED@408	IDENTICAL-FOR-600	
+0x004694e0	VehicleObjectContactSolver	C2	game	vehicle	46.5	46.5	re/match/s11/004694e0.c	True	21556	21556	1	b3_060610_020_1	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00469aa0	VehicleContactScanUpdate	C2	game	vehicle	60.0	60.0	re/match/s11/00469aa0.c	True	21556	21556	1	b2_032830_002_1	not-covered	DIVERGED@385	IDENTICAL-FOR-600	
+0x0046e9e0	FUN_0046e9e0	C2	game	vehicle	81.7	81.7	re/match/s11/0046e9e0.c	True	21556	21556	1	b1_022238_002_1	not-covered	DIVERGED@116	IDENTICAL-FOR-600	
+0x00578b20	FUN_00578b20	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	90.6	90.6	re/match/rwl06/00578b20.c	True	20175	20175	6	b1_023950_001_6	empty		IDENTICAL-FOR-600	
+0x00547bf0	FUN_00547bf0	C2	game	track	46.0	46.0	re/match/s24/00547bf0.c	True	18797	18797	2	b3_060610_021_2	empty		IDENTICAL-FOR-600	
+0x004c1f80	FUN_004c1f80	C2	game	render	17.4	17.4	re/match/s19/004c1f80.c	True	16397	16397	2	b3_060610_021_2	not-covered		IDENTICAL-FOR-600	
+0x00568990	FUN_00568990	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	40.6	40.6	re/match/rwl06/00568990.c			14377	1	b3_060610_023_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_006_1: read 0x4148ace4 at eip 0x40a0042 (in body 0x00568990+0x32), n=13498
+0x004c2620	FUN_004c2620	C2	game	render	19.0	19.0	re/match/s19/004c2620.c	True	12862	12862	1	b3_060610_024_1	not-covered		IDENTICAL-FOR-600	
+0x004c2a30	FUN_004c2a30	C2	game	render	49.6	49.6	re/match/s19/004c2a30.c	True	12862	12862	2	b3_060610_025_2	not-covered		IDENTICAL-FOR-600	
+0x00443440	FUN_00443440	C2	game	ai	58.4	58.4	re/match/s08/00443440.c	True	11872	12104	1	b2_032830_003_1	empty	DIVERGED@196	DIVERGED@496	confirmed 2 of 2; tick 496 race blocks ['0x803000', '0x89a400']
+0x0055bae0	FUN_0055bae0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	39.2	39.2	re/match/rwl05/0055bae0.c	True	12000	12000	2	b3_060610_025_2	empty		IDENTICAL-FOR-600	
+0x00564040	FUN_00564040	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	19.4	19.4	re/match/rwl05/00564040.c	True	11382	11776	2	b3_060610_026_2	not-covered		IDENTICAL-FOR-600	
+0x00420050	PerPlayerViewportRender	C2	game	render	99.3	99.3	re/match/s05/00420050.c	True	10900	10900	6	b1_023950_002_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00463640	FUN_00463640	C2	game	audio	94.3	94.3	re/match/s10/00463640.c	True	10896	10896	6	b1_023950_002_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00420290	FUN_00420290	C2	game	gameplay	86.7	86.7	re/match/s05/00420290.c	True	10880	10880	6	b1_023950_002_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0040aef0	FUN_0040aef0	C2	game	gameplay	97.6	97.6	re/match/racepath/0040aef0.c	True	10876	10876	6	b1_023950_002_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00420870	FUN_00420870	C2	game	gameplay	72.1	72.1	re/match/s05/00420870.c	True	10876	10876	3	b2_035802_004_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004752f0	FUN_004752f0	C2	game	render	95.0	95.0	re/match/s12/004752f0.c	True	10876	10876	6	b1_023950_002_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00546e70	FUN_00546e70	C2	game	vehicle	87.0	87.0	re/match/s24/00546e70.c	True	10876	10876	6	b1_023950_002_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00407e20	FUN_00407e20	C2	game	gameplay	76.6	76.6	re/match/s01/00407e20.c	True	10663	10663	3	b2_035802_004_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004b42c0	FUN_004b42c0	C2	game	render	89.0	89.0	re/match/s18/004b42c0.c	True	10635	10635	6	b1_023950_003_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005b7980	FUN_005b7980	C2	game	audio	62.5	62.5	re/match/s27/005b7980.c	True	10334	10800	3	b2_035802_004_3	not-covered		IDENTICAL-FOR-600	
+0x00467650	VehicleWheelDrivetrainUpdate	C3	game	vehicle	56.1	56.1	re/match/s11/00467650.c	True	9948	10263	1	b2_035802_006_1	not-covered		DIVERGED@417	confirmed 2 of 2; tick 417 race blocks ['0x881400', '0x884000']
+0x00468980	VehicleAeroStabilizer	C3	game	vehicle	90.1	90.1	re/match/s11/00468980.c	True	10263	10263	6	b1_023950_003_6	not-covered		IDENTICAL-FOR-600	
+0x0046ddb0	VehicleWheelForceIntegrator	C3	game	vehicle	81.7	81.7	re/match/s11/0046ddb0.c	True	10263	10263	6	b1_023950_003_6	not-covered		IDENTICAL-FOR-600	
+0x00470670	VehicleControlUpdate	C3	game	vehicle	98.0	98.0	re/match/s11/00470670.c	True	10263	10263	6	b1_023950_003_6	not-covered		IDENTICAL-FOR-600	
+0x004228f0	FUN_004228f0	C2	game	render	79.2	79.2	re/match/s05/004228f0.c	True	10135	10135	2	b2_035802_007_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00577ec0	FUN_00577ec0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	15.1	15.1	re/match/rwl06/00577ec0.c	True	23899	9336	2	b3_060610_026_2	not-covered		IDENTICAL-FOR-600	
+0x004cc5e0	FUN_004cc5e0	C2	game	render	59.8	59.8	re/match/s20/004cc5e0.c	True	16324	16324	2	b2_035802_007_2	not-covered		IDENTICAL-FOR-600	
+0x005667c0	FUN_005667c0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	73.7	73.7	re/match/rwl06/005667c0.c	True	16381	7479	3	b2_035802_008_3	not-covered		IDENTICAL-FOR-600	
+0x00578cb0	FUN_00578cb0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	78.4	78.4	re/match/rwl06/00578cb0.c	True	15375	6720	3	b2_035802_008_3	not-covered		IDENTICAL-FOR-600	
+0x00414570	FUN_00414570	C2	game	ai	93.0	93.0	re/match/racepath/00414570.c	True	6052	6052	6	b1_023950_003_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00416250	FUN_00416250	C2	game	ai	88.9	88.9	re/match/t01g/00416250.c	True	6052	6052	6	b1_023950_003_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00443dc0	FUN_00443dc0	C2	game	ai	57.5	57.5	re/match/s08/00443dc0.c	True	6052	6052	1	b2_032830_004_1	not-covered	DIVERGED@2	IDENTICAL-FOR-600	
+0x004709a0	VehicleCollisionBroadPhase	C2	game	vehicle	55.7	55.7	re/match/s11/004709a0.c	True	5434	5438	1	b2_032830_005_1	not-covered	DIVERGED@321	IDENTICAL-FOR-600	
+0x005b0cf0	FUN_005b0cf0	C3	game	audio	43.9	43.9	re/match/s26/005b0cf0.c	True	4672	4674	1	b3_060610_028_1	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0056a7a0	FUN_0056a7a0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	7.0	7.0	re/match/rwl06/0056a7a0.c			4475	1	b3_060610_029_1	empty		CRASH	confirmed 2 of 2; ; rep_080743_007_1: read 0xb3dbb84 at eip 0x41e002d (in body 0x0056a7a0+0x1d), n=13532
+0x005b10a0	AudioTableDispatchAt4	C3	game	audio	42.9	42.9	re/match/s26/005b10a0.c	True	4425	4401	2	b3_060610_030_2	empty		IDENTICAL-FOR-600	
+0x00414c30	FUN_00414c30	C2	game	ai	96.5	96.5	re/match/racepath/00414c30.c	True	4251	4251	6	b1_023950_004_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0047bb10	FUN_0047bb10	C2	game	gameplay	79.8	79.8	re/match/s13/0047bb10.c	True	4426	4126	3	b2_035802_008_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005784a0	FUN_005784a0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	69.6	69.6	re/match/rwl06/005784a0.c	True	4019	4067	3	b2_035802_009_3	not-covered		IDENTICAL-FOR-600	
+0x00536e90	FUN_00536e90	C1	RW core	third-party-library[renderware]	0.0	0.0	re/match/rwl03/00536e90.c	True	3935	3935	2	b3_060610_030_2	empty		IDENTICAL-FOR-600	
+0x00575120	FUN_00575120	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	86.7	86.7	re/match/rwl06/00575120.c	True	3464	3464	6	b1_023950_004_6	not-covered		IDENTICAL-FOR-600	
+0x0053e430	FUN_0053e430	C2	RW core	third-party-library[renderware]	44.2	44.2	re/match/rwl03/0053e430.c	True	3324	3324	2	b3_060610_031_2	not-covered		IDENTICAL-FOR-600	
+0x00450b10	HudIm2DQuad	C3	game	hud	86.6	86.6	re/match/s08/00450b10.c	True	3723	3723	6	b1_023950_004_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0056fad0	FUN_0056fad0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	85.3	85.3	re/match/rwl06/0056fad0.c	True	3075	3075	6	b1_023950_004_6	not-covered		IDENTICAL-FOR-600	
+0x00578bd0	FUN_00578bd0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	50.0	50.0	re/match/rwl06/00578bd0.c	True	2824	2972	3	b2_035802_009_3	not-covered		IDENTICAL-FOR-600	
+0x00575c60	FUN_00575c60	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	4.4	4.4	re/match/rwl06/00575c60.c	True	2878	2878	2	b3_060610_031_2	not-covered		IDENTICAL-FOR-600	
+0x004967e0	FUN_004967e0	C2	game	input	98.8	98.8	re/match/s16/004967e0.c	True	3283	3314	6	b1_023950_004_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004d8c40	FUN_004d8c40	C3	game	frontend	69.4	69.4	re/match/s21/004d8c40.c	True	3284	3319	3	b2_035802_009_3	not-covered		IDENTICAL-FOR-600	
+0x004dc8a0	FUN_004dc8a0	C2	RW core	third-party-library[renderware]	58.3	58.3	re/match/rwl01/004dc8a0.c	True	3284	3319	3	b2_035802_010_3	covered		IDENTICAL-FOR-600	
+0x005a6ea0	FUN_005a6ea0	C2	game	audio	38.9	38.9	re/match/s25/005a6ea0.c	True	3216	3216	1	b3_060610_033_1	covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0045d7a0	FUN_0045d7a0	C2	game	util	52.6	52.6	re/match/s10/0045d7a0.c	True	3215	3215	3	b2_035802_010_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0045dd60	FUN_0045dd60	C2	game	audio	78.7	78.7	re/match/s10/0045dd60.c	True	3215	3215	3	b2_035802_010_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005a6f30	FUN_005a6f30	C2	game	audio	65.4	65.4	re/match/s25/005a6f30.c	True	3215	3215	1	b2_032830_006_1	not-covered	NOT-WIRED	IDENTICAL-FOR-600	
+0x005ba7f0	FUN_005ba7f0	C2	game	audio	18.9	18.9	re/match/s27/005ba7f0.c			3215	1	b3_060610_034_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_008_1: read 0x30 at eip 0x5aabb4 (no body address on the stack), n=49
+0x005baf00	MusicGroupVolumeSet	C3	game	audio	82.6	82.6	re/match/s27/005baf00.c	True	3216	3216	6	b1_023950_004_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0045efe0	FUN_0045efe0	C2	game	audio	89.8	89.8	re/match/s10/0045efe0.c	True	2724	2724	6	b1_023950_005_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00448220	Frontend::PostRaceResultCamera	C2	game	frontend	97.0	97.0	re/match/s08/00448220.c	True	2722	2722	1	b1_022238_003_1	not-covered	DIVERGED@1116	IDENTICAL-FOR-600	
+0x00412620	FUN_00412620	C2	game	render	49.4	49.4	re/match/racepath/00412620.c	True	2719	2719	2	b3_060610_035_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00424eb0	FUN_00424eb0	C2	game	util	98.6	98.6	re/match/s05/00424eb0.c	True	2719	2719	1	b1_022238_004_1	not-covered	DIVERGED@1108	IDENTICAL-FOR-600	
+0x00426810	sub_00426810	C2	game	render	97.9	97.9	re/match/s06/00426810.c	True	2719	2719	6	b1_023950_005_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00457100	FUN_00457100	C2	game	gameplay	97.7	97.7	re/match/pilot/a2_00457100.c	True	2719	2719	6	b1_023950_005_6	not-covered		IDENTICAL-FOR-600	
+0x00459000	FUN_00459000	C2	game	gameplay	92.7	92.7	re/match/s09/00459000.c	True	2719	2719	6	b1_023950_005_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0045ae80	FUN_0045ae80	C2	game	gameplay	80.7	80.7	re/match/s09/0045ae80.c	True	2719	2719	6	b1_023950_005_6	not-covered		IDENTICAL-FOR-600	
+0x00470c70	FUN_00470c70	C2	game	vehicle	69.8	69.8	re/match/s11/00470c70.c			2719	1	b2_032830_007_1	not-covered	CRASH	CRASH	confirmed 2 of 2; ; rep_054328_001_1: read 0x9e4 at eip 0x470680 (ret into body 0x00470c70+0x413 on the stack), n=3665
+0x00471ec0	sub_00471ec0	C2	game	camera	44.4	44.4	re/match/s11/00471ec0.c	True	2719	2719	2	b3_060610_035_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00479100	FUN_00479100	C2	game	render	69.1	69.1	re/match/s12/00479100.c	True	2719	2719	1	b2_032830_008_1	not-covered	DIVERGED@161	IDENTICAL-FOR-600	
+0x0047d640	FUN_0047d640	C2	game	hud	45.7	45.7	re/match/s13/0047d640.c	True	2719	2719	2	b3_060610_036_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0047def0	FUN_0047def0	C2	game	hud	85.3	85.3	re/match/s13/0047def0.c	True	2719	2719	6	b1_023950_005_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0047eb30	VehiclePhysicsWorldStep	C3	game	vehicle	92.8	92.8	re/match/s13/0047eb30.c	True	2719	2719	6	b1_023950_006_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00481a30	FUN_00481a30	C2	game	vehicle	63.3	63.3	re/match/s13/00481a30.c	True	2719	2719	1	b2_032830_009_1	covered	CRASH	IDENTICAL-FOR-600	
+0x00488e70	FUN_00488e70	C2	game	util	99.6	99.6	re/match/racepath/00488e70.c	True	2719	2719	6	b1_023950_006_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0048a130	FUN_0048a130	C2	game	particle	93.0	93.0	re/match/s14/0048a130.c	True	2719	2719	6	b1_023950_006_6	not-covered		IDENTICAL-FOR-600	
+0x0048a780	FUN_0048a780	C2	game	particle	49.1	49.1	re/match/s14/0048a780.c	True	2719	2719	2	b3_060610_036_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00491340	FUN_00491340	C2	game	render	98.1	98.1	re/match/s15/00491340.c	True	2719	2719	6	b1_023950_006_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0052e0e0	FUN_0052e0e0	C2	RW core	third-party-library[renderware]	36.6	36.6	re/match/rwl03/0052e0e0.c	True	2719	2719	1	b3_060610_038_1	not-covered		DIVERGED@542	confirmed 2 of 2; tick 542 race blocks ['0x623c00']
+0x00551d40	FUN_00551d40	C2	RW core	third-party-library[renderware]	41.5	41.5	re/match/rwl04/00551d40.c	True	2719	2719	1	b3_060610_039_1	not-covered		IDENTICAL-FOR-600	
+0x0056a450	FUN_0056a450	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	3.3	3.3	re/match/rwl06/0056a450.c			2718	1	b3_060610_041_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_009_1: read 0x1154d76 at eip 0x4447d3 (no body address on the stack), n=13556
+0x00559040	FUN_00559040	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	11.4	11.4	re/match/rwl05/00559040.c	True	2713	2713	1	b3_060610_042_1	not-covered		DIVERGED@302	confirmed 2 of 2; tick 302 race blocks ['0x63e000']
+0x00575880	FUN_00575880	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	59.1	59.1	re/match/rwl06/00575880.c	True	5359	2508	1	b2_035802_012_1	not-covered		IDENTICAL-FOR-600	
+0x00578610	FUN_00578610	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	22.1	22.1	re/match/rwl06/00578610.c			2508	1	b3_060610_044_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_010_1: read 0x3d0faaa3 at eip 0x41e01fa (in body 0x00578610+0x1ea), n=13499
+0x00489500	FUN_00489500	C2	game	gameplay	48.8	48.8	re/match/racepath/00489500.c	True	2484	2484	1	b3_060610_045_1	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00469df0	VehicleVehicleCollisionImpulse	C2	game	vehicle	63.1	30.1	re/match/s11/00469df0.c	True	1487	2402	1	b3_060028_003_1	not-covered	DIVERGED@385	IDENTICAL-FOR-600	
+0x004f6870	FUN_004f6870	C2	game	render	23.9	23.9	re/match/s22/004f6870.c	True	2378	2378	1	b3_060610_047_1	not-covered		IDENTICAL-FOR-600	
+0x0047f6d0	FUN_0047f6d0	C2	game	gameplay	97.9	97.9	re/match/s13/0047f6d0.c	True	2276	2276	6	b1_023950_006_6	not-covered		IDENTICAL-FOR-600	
+0x0055c230	FUN_0055c230	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	93.4	93.4	re/match/rwl05/0055c230.c	True	2266	2266	6	b1_023950_006_6	empty		IDENTICAL-FOR-600	
+0x005af690	FUN_005af690	C2	game	audio	88.9	88.9	re/match/s26/005af690.c			2191	1	b1_023950_009_1	not-covered		CRASH	confirmed 2 of 2; ; rep_032759_001_1: read 0xa74e7d04 at eip 0x5b10ad (ret into body 0x005af690+0x48 on the stack), n=7935
+0x004ea9a0	FUN_004ea9a0	C2	RW core	third-party-library[renderware]	30.1	30.1	re/match/rwl02/004ea9a0.c			2117	1	b3_060610_048_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_011_1: read 0x8 at eip 0x41e01f4 (in body 0x004ea9a0+0x1e4), n=3525
+0x00475f90	FUN_00475f90	C2	game	render	96.4	96.4	re/match/s12/00475f90.c	True	2069	2069	2	b1_023950_010_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0056c8e0	FUN_0056c8e0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	21.1	21.1	re/match/rwl06/0056c8e0.c	True	2030	1876	1	b3_060610_050_1	empty		IDENTICAL-FOR-600	
+0x0047f7d0	FUN_0047f7d0	C1	game	physics	76.5	76.5	re/match/tlr/0047f7d0.c	True	1745	1745	2	b2_035802_013_2	not-covered		IDENTICAL-FOR-600	
+0x00539900	FUN_00539900	C2	RW core	third-party-library[renderware]	12.4	12.4	re/match/rwl03/00539900.c			1745	1	b3_060610_051_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_012_1: read 0xc0c00000 at eip 0x41e003d (in body 0x00539900+0x2d), n=13500
+0x00575fe0	FUN_00575fe0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	13.9	13.9	re/match/rwl06/00575fe0.c	True	3685	1745	2	b3_060610_052_2	not-covered		IDENTICAL-FOR-600	
+0x0053e5d0	FUN_0053e5d0	C2	RW core	third-party-library[renderware]	59.4	59.4	re/match/rwl03/0053e5d0.c	True	1628	1628	2	b2_035802_013_2	empty		IDENTICAL-FOR-600	
+0x00441d40	FUN_00441d40	C2	game	util	69.2	69.2	re/match/s08/00441d40.c	True	1626	1626	1	b2_032830_010_1	not-covered	DIVERGED@2	DIVERGED@302	confirmed 2 of 2; tick 302 race blocks ['0x896400', '0x896800']
+0x00544bf0	FUN_00544bf0	C2	RW core	third-party-library[renderware]	74.3	74.3	re/match/rwl04/00544bf0.c	True	1281	1501	3	b2_035802_014_3	not-covered		IDENTICAL-FOR-600	
+0x00499d90	FUN_00499d90	C2	game	render	43.9	43.9	re/match/s16/00499d90.c	True	857	1330	2	b3_060610_052_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0055b750	FUN_0055b750	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	42.4	42.4	re/match/rwl05/0055b750.c	True	2174	1139	2	b3_060610_053_2	empty		IDENTICAL-FOR-600	
+0x005752b0	FUN_005752b0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	56.0	56.0	re/match/rwl06/005752b0.c	True	4075	1133	3	b2_035802_014_3	not-covered		IDENTICAL-FOR-600	
+0x00576880	FUN_00576880	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	23.9	23.9	re/match/rwl06/00576880.c	True	3294	1133	2	b3_060610_053_2	not-covered		IDENTICAL-FOR-600	
+0x00574ad0	FUN_00574ad0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	21.0	21.0	re/match/rwl06/00574ad0.c	True	2798	1095	2	b3_060610_054_2	not-covered		IDENTICAL-FOR-600	
+0x004d8810	RwNativeRasterRead	C2	RW core	third-party-library[renderware]	50.7	50.7	re/match/rwl01/004d8810.c	True	2132	2132	3	b2_035802_014_3	not-covered		IDENTICAL-FOR-600	
+0x004f71f0	FUN_004f71f0	C2	game	render	34.7	34.7	re/match/s22/004f71f0.c	True	525	934	2	b3_060610_054_2	not-covered		IDENTICAL-FOR-600	
+0x004e8a10	FUN_004e8a10	C2	RW core	third-party-library[renderware]	58.6	58.6	re/match/rwl02/004e8a10.c			1515	1	b2_035802_016_1	not-covered		CRASH	confirmed 2 of 2; ; rep_054328_002_1: write 0x0 at eip 0x41e015b (in body 0x004e8a10+0x14b), n=215
+0x004f57e0	FUN_004f57e0	C2	game	render	14.2	14.2	re/match/s22/004f57e0.c	True	772	772	2	b3_060610_055_2	not-covered		IDENTICAL-FOR-600	
+0x004c4eb0	RwMatrixInvert_CofactorPath	C3	game	render	47.7	47.7	re/match/s19/004c4eb0.c	True	2547	2547	2	b3_060610_055_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00554940	LAB_00554940	C2	game	hud	12.5	12.5	re/match/s24/00554940.c	True	2504	2504	2	b3_060610_056_2	not-covered		IDENTICAL-FOR-600	
+0x00556e90	FUN_00556e90	C2	game	render	97.5	97.5	re/match/s24/00556e90.c	True	2511	2511	2	b1_023950_010_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00575560	FUN_00575560	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	31.2	31.2	re/match/rwl06/00575560.c	True	554	554	2	b3_060610_056_2	not-covered		IDENTICAL-FOR-600	
+0x00445aa0	CamEntryType0Step445aa0	C3	game	util	67.4	67.4	re/match/s08/00445aa0.c	True	542	542	1	b2_032830_011_1	not-covered	DIVERGED@2	IDENTICAL-FOR-600	
+0x00578ff0	FUN_00578ff0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	13.8	13.8	re/match/rwl06/00578ff0.c			532	1	b3_060610_058_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_013_1: read 0xf4af000 at eip 0x41e0620 (in body 0x00578ff0+0x610), n=13554
+0x004e8120	FUN_004e8120	C2	RW core	third-party-library[renderware]	50.2	50.2	re/match/rwl02/004e8120.c	True	899	899	2	b2_035802_017_2	not-covered		IDENTICAL-FOR-600	
+0x004c4220	FUN_004c4220	C2	RW core	third-party-library[renderware]	40.7	40.7	re/match/rwl01/004c4220.c	True	1046	1046	1	b3_060610_059_1	empty		IDENTICAL-FOR-600	
+0x0046ef70	FUN_0046ef70	C2	game	vehicle	43.9	43.9	re/match/s11/0046ef70.c	True	486	486	1	b3_060028_004_1	not-covered	DIVERGED@408	IDENTICAL-FOR-600	
+0x004cf5a0	FUN_004cf5a0	C2	RW core	third-party-library[renderware]	59.4	59.4	re/match/rwl01/004cf5a0.c	True	825	825	2	b2_035802_017_2	not-covered		IDENTICAL-FOR-600	
+0x0055c000	RwpGjkSupportMap	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	43.8	43.8	re/match/rwl05/0055c000.c	True	468	468	1	b3_060610_061_1	empty		DIVERGED@302	confirmed 2 of 2; tick 302 race blocks ['0x913000', '0x913400']
+0x005c2f84	FUN_005c2f84	C2	game	boot	2.4	2.4	re/match/s28/005c2f84.c			468			-		NOT-WIRED	___math_exit,___startOneArgErrorHandling
+0x0055b650	FUN_0055b650	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	31.6	31.6	re/match/rwl05/0055b650.c	True	458	458	1	b3_060610_062_1	empty		IDENTICAL-FOR-600	
+0x004f0f10	FUN_004f0f10	C2	RW core	third-party-library[renderware]	9.3	9.3	re/match/rwl03/004f0f10.c	True	826	826	2	b3_060610_063_2	not-covered		IDENTICAL-FOR-600	
+0x00408b00	FUN_00408b00	C2	game	util	97.0	90.2	re/match/s01/00408b00.c	True	416	416	3	b1_023950_011_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00477be0	FUN_00477be0	C2	game	render	93.2	93.2	re/match/s12/00477be0.c	True	416	416	3	b1_023950_011_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004e8c70	FUN_004e8c70	C2	RW core	third-party-library[renderware]	28.9	28.9	re/match/rwl02/004e8c70.c	True	1013	1013	2	b3_060610_063_2	not-covered		IDENTICAL-FOR-600	
+0x004f3e90	FUN_004f3e90	C2	RW core	third-party-library[renderware]	26.5	26.5	re/match/rwl03/004f3e90.c	True	784	784	2	b3_060610_064_2	not-covered		IDENTICAL-FOR-600	
+0x004e7060	RpAtomicStreamRead	C2	RW core	third-party-library[renderware]	39.5	39.5	re/match/rwl02/004e7060.c	True	779	779	2	b3_060610_064_2	not-covered		IDENTICAL-FOR-600	
+0x004e9330	FUN_004e9330	C2	RW core	third-party-library[renderware]	51.5	51.5	re/match/rwl02/004e9330.c	True	779	779	3	b2_035802_018_3	not-covered		IDENTICAL-FOR-600	
+0x0056f350	FUN_0056f350	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	15.0	15.0	re/match/rwl06/0056f350.c			370	1	b3_060610_066_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_014_1: read 0xc0033513 at eip 0x41e016f (in body 0x0056f350+0x15f), n=13533
+0x00480d60	FUN_00480d60	C2	game	vehicle	72.8	72.8	re/match/s13/00480d60.c	True	366	366	3	b2_035802_018_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005aa0c0	AudioTreeWalkPredicateSearch	C3	game	audio	56.2	56.2	re/match/s25/005aa0c0.c	True	83	565	1	b2_032830_012_1	not-covered	CRASH	IDENTICAL-FOR-600	
+0x004cff20	FUN_004cff20	C2	game	render	62.5	62.5	re/match/s20/004cff20.c	True	923	923	3	b2_035802_018_3	not-covered		IDENTICAL-FOR-600	
+0x004df120	FUN_004df120	C2	RW core	third-party-library[renderware]	46.3	46.3	re/match/rwl01/004df120.c	True	913	913	1	b3_060610_067_1	not-covered		IDENTICAL-FOR-600	
+0x00522ce0	FUN_00522ce0	C2	game	util	66.6	66.6	re/match/s23/00522ce0.c	True	384	384	3	b2_035802_019_3	not-covered		IDENTICAL-FOR-600	
+0x0052ab00	inflate	C2	game	util	32.2	32.2	re/match/s23/0052ab00.c	True	384	384	2	b3_060610_068_2	not-covered		IDENTICAL-FOR-600	
+0x00442e00	FUN_00442e00	C2	game	util	65.1	65.1	re/match/s08/00442e00.c	True	200	200	1	b2_032830_013_1	not-covered	DIVERGED@1132	IDENTICAL-FOR-600	
+0x0053fbb0	FUN_0053fbb0	C2	RW core	third-party-library[renderware]	68.5	68.5	re/match/rwl03/0053fbb0.c	True	201	201	3	b2_035802_019_3	not-covered		IDENTICAL-FOR-600	
+0x00577cb0	FUN_00577cb0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	29.8	29.8	re/match/rwl06/00577cb0.c	True	431	192	2	b3_060610_068_2	not-covered		IDENTICAL-FOR-600	
+0x004ddcb0	FUN_004ddcb0	C2	RW core	third-party-library[renderware]	46.2	46.2	re/match/rwl01/004ddcb0.c	True	499	499	1	b3_060610_070_1	not-covered		IDENTICAL-FOR-600	
+0x00547230	FUN_00547230	C2	RW core	third-party-library[renderware]	28.4	28.4	re/match/rwl04/00547230.c	True	132	132	1	b3_060610_071_1	empty		DIVERGED@302	confirmed 2 of 2; tick 302 race blocks ['0x6c3400']
+0x0055b080	FUN_0055b080	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	14.5	14.5	re/match/rwl05/0055b080.c			128			-		NOT-WIRED	_SQRT
+0x00559c40	PhysicsSceneBodyRegister	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	42.4	42.4	re/match/rwl05/00559c40.c	True	124	124	2	b3_060610_072_2	not-covered		IDENTICAL-FOR-600	
+0x00401da0	FUN_00401da0	C2	game	frontend	93.5	93.5	re/match/s01/00401da0.c	True	104	104	3	b1_023950_011_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00487180	FUN_00487180	C1	game	render	11.7	11.7	re/match/tlr/00487180.c	True	96	96	1	b3_060028_005_1	not-covered	DIVERGED@0	DIVERGED@300	confirmed 2 of 2; tick 300 race blocks ['0x6c3400', '0x6c3800', '0x6c3c00']
+0x00559ee0	FUN_00559ee0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	43.9	43.9	re/match/rwl05/00559ee0.c	True	96	96	2	b3_060610_072_2	not-covered		IDENTICAL-FOR-600	
+0x00577be0	FUN_00577be0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	60.8	60.8	re/match/rwl06/00577be0.c	True	96	96	3	b2_035802_019_3	empty		IDENTICAL-FOR-600	
+0x005c1f97	_strtod	C2	game	boot	69.4	69.4	re/match/s28/005c1f97.c	True	118	118	3	b2_035802_020_3	not-covered		IDENTICAL-FOR-600	
+0x005655a0	FUN_005655a0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	14.8	14.8	re/match/rwl06/005655a0.c	True	80	80	2	b3_060610_073_2	not-covered		IDENTICAL-FOR-600	
+0x004b6b20	FUN_004b6b20	C2	game	render	71.4	71.4	re/match/s18/004b6b20.c	True	153	153	3	b2_035802_020_3	not-covered		IDENTICAL-FOR-600	
+0x004b4550	Vec3Centroid	C3	game	util	63.3	63.3	re/match/s18/004b4550.c	True	74	74	3	b2_035802_020_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004d2340	rwD3D8RasterCreate	C2	game	render	37.3	37.3	re/match/s20/004d2340.c	True	266	266	2	b3_060610_073_2	not-covered		IDENTICAL-FOR-600	
+0x004dee40	FUN_004dee40	C2	RW core	third-party-library[renderware]	22.5	22.5	re/match/rwl01/004dee40.c	True	248	248	2	b3_060610_074_2	empty		IDENTICAL-FOR-600	
+0x005ae800	AudioPoolBlockAlloc	C3	game	audio	38.2	38.2	re/match/s26/005ae800.c	True	227	227	2	b3_060610_074_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00550130	FUN_00550130	C2	RW core	third-party-library[renderware]	18.3	18.3	re/match/rwl04/00550130.c			241	1	b3_060610_076_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_015_1: write 0x1 at eip 0x4cc6bd (ret into body 0x00550130+0x10 on the stack), n=2
+0x0055ded0	FUN_0055ded0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	98.4	98.4	re/match/rwl05/0055ded0.c	True	64	64	6	b1_023950_012_6	not-covered		IDENTICAL-FOR-600	
+0x005c2300	_strncat	C2	game	boot	4.1	4.1	re/match/s28/005c2300.c	True	64	64	1	b3_060610_077_1	not-covered		IDENTICAL-FOR-600	
+0x005abd30	FUN_005abd30	C2	game	audio	52.3	52.3	re/match/s25/005abd30.c	True	184	184	1	b2_035802_022_1	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00490020	FUN_00490020	C2	game	render	90.9	90.9	re/match/s15/00490020.c	True	60	60	6	b1_023950_012_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004cc230	FUN_004cc230	C2	game	frontend	48.0	48.0	re/match/s20/004cc230.c	True	187	187	1	b3_060610_079_1	not-covered		IDENTICAL-FOR-600	
+0x004e9e40	FUN_004e9e40	C2	RW core	third-party-library[renderware]	34.4	34.4	re/match/rwl02/004e9e40.c			47			-		NOT-WIRED	_RwFrameDestroy,_RwFrameDestroyHierarchy
+0x005af8f0	FUN_005af8f0	C2	game	audio	90.8	90.8	re/match/s26/005af8f0.c	True	46	46	6	b1_023950_012_6	not-covered		IDENTICAL-FOR-600	
+0x004ea220	FUN_004ea220	C2	RW core	third-party-library[renderware]	46.5	46.5	re/match/rwl02/004ea220.c			44	1	b3_060610_080_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_016_1: read 0x41bc205c at eip 0x41bc205c (no body address on the stack), n=3556
+0x0055b4a0	FUN_0055b4a0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	50.8	50.8	re/match/rwl05/0055b4a0.c			40	1	b2_035802_024_1	not-covered		CRASH	confirmed 2 of 2; ; rep_054328_003_1: read 0x0 at eip 0x41e0092 (in body 0x0055b4a0+0x82), n=3675
+0x0055b940	PhysicsBodySetMass	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	23.4	23.4	re/match/rwl05/0055b940.c			40	1	b3_060610_082_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_017_1: read 0x0 at eip 0x0 (no body address on the stack), n=3571
+0x0055bbf0	FUN_0055bbf0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	15.9	15.9	re/match/rwl05/0055bbf0.c			40	1	b3_060610_083_1	empty		CRASH	confirmed 2 of 2; ; rep_080743_018_1: read 0xc at eip 0x41e002c (in body 0x0055bbf0+0x1c), n=3571
+0x005ab380	AudioRwsChunkHeaderRead	C3	game	audio	75.0	75.0	re/match/s25/005ab380.c	True	169	169	1	b2_035802_025_1	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005b3a00	FUN_005b3a00	C2	game	audio	84.7	84.7	re/match/s27/005b3a00.c	True	122	122	6	b1_023950_012_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005ab710	FUN_005ab710	C2	game	audio	44.9	44.9	re/match/s25/005ab710.c	True	33	33	2	b3_060610_084_2	not-covered		IDENTICAL-FOR-600	
+0x005aba20	FUN_005aba20	C2	game	audio	81.9	81.9	re/match/s25/005aba20.c	True	118	118	1	b1_022238_005_1	not-covered	HANG	IDENTICAL-FOR-600	
+0x005bba60	FUN_005bba60	C2	game	audio	64.9	64.9	re/match/s27/005bba60.c	True	92	92	3	b2_035802_026_3	empty		IDENTICAL-FOR-600	
+0x004785e0	FUN_004785e0	C2	game	util	97.8	97.8	re/match/s12/004785e0.c	True	30	30	6	b1_023950_012_6	empty		IDENTICAL-FOR-600	
+0x004b4eb0	FUN_004b4eb0	C1	game	render	70.9	70.9	re/match/tlr/004b4eb0.c	True	30	30	3	b2_035802_026_3	not-covered		IDENTICAL-FOR-600	
+0x004e7420	RpClumpStreamRead	C2	RW core	third-party-library[renderware]	37.9	37.9	re/match/rwl02/004e7420.c	True	144	144	2	b3_060610_084_2	not-covered		IDENTICAL-FOR-600	
+0x005c47e0	FUN_005c47e0	C2	game	boot	80.0	80.0	re/match/s28/005c47e0.c	True	144	144	6	b1_023950_012_6	not-covered		IDENTICAL-FOR-600	
+0x004b5080	FUN_004b5080	C2	game	render	85.4	85.4	re/match/s18/004b5080.c	True	28	28	6	b1_023950_013_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004cf2b0	FUN_004cf2b0	C2	RW core	third-party-library[renderware]	47.8	47.8	re/match/rwl01/004cf2b0.c			28	1	b3_060610_086_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_019_1: read 0x0 at eip 0x0 (no body address on the stack), n=3565
+0x005acaa0	FUN_005acaa0	C2	game	audio	60.4	60.4	re/match/s26/005acaa0.c	True	114	114	3	b2_035802_026_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005b92e0	FUN_005b92e0	C2	game	audio	31.6	31.6	re/match/s27/005b92e0.c	True	29	29	1	b3_060610_087_1	not-covered		IDENTICAL-FOR-600	
+0x005ae920	AudioPoolFree	C3	game	audio	96.8	96.8	re/match/s26/005ae920.c	True	67	67	6	b1_023950_013_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0046b540	VehicleSpawnInit	C3	game	vehicle	59.2	59.2	re/match/s11/0046b540.c	True	20	20	3	b2_035802_027_3	not-covered		IDENTICAL-FOR-600	
+0x005aa560	FUN_005aa560	C2	game	audio	79.8	79.8	re/match/s25/005aa560.c	True	280	280	3	b2_035802_027_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004b53b0	FUN_004b53b0	C2	game	render	45.4	45.4	re/match/s18/004b53b0.c	True	18	18	2	b3_060610_088_2	empty		IDENTICAL-FOR-600	
+0x0053d460	FUN_0053d460	C2	RW core	third-party-library[renderware]	41.5	41.5	re/match/rwl03/0053d460.c	True	16	16	2	b3_060610_088_2	not-covered		IDENTICAL-FOR-600	
+0x0053dba0	FUN_0053dba0	C2	RW core	third-party-library[renderware]	66.2	66.2	re/match/rwl03/0053dba0.c	True	16	16	3	b2_035802_027_3	not-covered		IDENTICAL-FOR-600	
+0x005a9f10	FUN_005a9f10	C2	game	audio	73.9	73.9	re/match/s25/005a9f10.c	True	275	275	1	b2_032830_014_1	empty	CRASH	IDENTICAL-FOR-600	
+0x005ad0b0	FUN_005ad0b0	C2	game	audio	56.2	56.2	re/match/s26/005ad0b0.c	True	45	45	1	b2_032830_015_1	not-covered	CRASH	IDENTICAL-FOR-600	
+0x005aeda0	AudioShiftAddMul64	C3	game	audio	90.0	90.0	re/match/s26/005aeda0.c	True	16	16	6	b1_023950_013_6	not-covered		IDENTICAL-FOR-600	
+0x0045a3a0	FUN_0045a3a0	C2	game	gameplay	81.0	81.0	re/match/s09/0045a3a0.c	True	16	16	6	b1_023950_013_6	not-covered		IDENTICAL-FOR-600	
+0x005ab410	AudioRwsChunkTypeSeek	C3	game	audio	75.4	75.4	re/match/s25/005ab410.c	True	55	55	3	b2_035802_028_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005abfa0	FUN_005abfa0	C3	game	audio	62.9	62.9	re/match/s25/005abfa0.c	True	55	55	1	b2_032830_016_1	empty	CRASH	IDENTICAL-FOR-600	
+0x005ac210	FUN_005ac210	C2	game	audio	57.1	57.1	re/match/s25/005ac210.c			55	1	b2_032830_017_1	not-covered	CRASH	CRASH	confirmed 2 of 2; ; rep_054328_004_1: read 0x8b at eip 0x8b (ret into body 0x005ac210+0x132 on the stack), n=19
+0x004c4360	MatrixIdentityResidual4c4360	C3	game	render	65.2	65.2	re/match/s19/004c4360.c	True	11	11	3	b2_035802_028_3	empty		IDENTICAL-FOR-600	
+0x005b3760	FUN_005b3760	C2	game	audio	57.1	57.1	re/match/s27/005b3760.c	True	10	10	3	b2_035802_028_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005ab1c0	FUN_005ab1c0	C2	game	audio	88.9	88.9	re/match/s25/005ab1c0.c	True	9	9	6	b1_023950_013_6	not-covered		IDENTICAL-FOR-600	
+0x005b0f90	FUN_005b0f90	C3	game	audio	71.8	71.8	re/match/s26/005b0f90.c	True	9	9	1	b2_035802_030_1	not-covered		IDENTICAL-FOR-600	
+0x005ae4c0	FUN_005ae4c0	C3	game	audio	35.5	35.5	re/match/s26/005ae4c0.c	True	542	542	2	b3_060610_089_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005b73b0	AudioFindExtension	C3	game	audio	82.4	82.4	re/match/s27/005b73b0.c	True	8	8	6	b1_023950_013_6	empty		IDENTICAL-FOR-600	
+0x00441b30	CamEntryBuild441b30	C3	game	camera	86.7	86.7	re/match/s08/00441b30.c	True	7	7	6	b1_023950_014_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004e6ab0	FUN_004e6ab0	C2	RW core	third-party-library[renderware]	46.1	46.1	re/match/rwl02/004e6ab0.c	True	115	115	2	b3_060610_089_2	not-covered		IDENTICAL-FOR-600	
+0x005b2080	FUN_005b2080	C2	game	audio	82.6	82.6	re/match/s27/005b2080.c	True	6	6	6	b1_023950_014_6	not-covered		IDENTICAL-FOR-600	
+0x005b2190	FUN_005b2190	C2	game	audio	61.0	61.0	re/match/s27/005b2190.c			6	1	b2_035802_032_1	not-covered		CRASH	confirmed 2 of 2; ; rep_054328_005_1: read 0x53 at eip 0x53 (no body address on the stack), n=3740
+0x0052daf0	anim_stream_read_scheme_dispatch	C2	RW core	third-party-library[renderware]	42.5	42.5	re/match/rwl03/0052daf0.c	True	5	5	2	b3_060610_090_2	not-covered		IDENTICAL-FOR-600	
+0x00551460	FUN_00551460	C2	RW core	third-party-library[renderware]	37.9	37.9	re/match/rwl04/00551460.c	True	7	7	2	b3_060610_090_2	not-covered		IDENTICAL-FOR-600	
+0x005b2820	FUN_005b2820	C2	game	audio	42.6	42.6	re/match/s27/005b2820.c	True	5	5	2	b3_060610_091_2	not-covered		IDENTICAL-FOR-600	
+0x005b3020	FUN_005b3020	C2	game	audio	53.5	53.5	re/match/s27/005b3020.c	True	5	5	1	b2_035802_033_1	empty		IDENTICAL-FOR-600	
+0x005b30e0	FUN_005b30e0	C2	game	audio	16.7	16.7	re/match/s27/005b30e0.c	True	5	5	2	b3_060610_091_2	not-covered		IDENTICAL-FOR-600	
+0x0040e590	FUN_0040e590	C2	game	util	84.6	84.6	re/match/t01g/0040e590.c	True	4	4	6	b1_023950_014_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00420420	FUN_00420420	C2	game	track	79.8	79.8	re/match/s05/00420420.c			4	1	b2_035802_035_1	not-covered		CRASH	confirmed 3 of 3; ; rep2_061516_001_1: read 0x8 at eip 0x4e66db (ret into body 0x00420420+0x101 on the stack), n=3595
+0x00481e00	FUN_00481e00	C2	game	vehicle	86.5	86.5	re/match/s13/00481e00.c	True	4	4	1	b1_022238_006_1	not-covered	DIVERGED@2	IDENTICAL-FOR-600	
+0x00482140	FUN_00482140	C2	game	vehicle	76.8	76.8	re/match/s13/00482140.c	True	4	4	2	b2_035802_036_2	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x004e8640	FUN_004e8640	C2	RW core	third-party-library[renderware]	77.9	77.9	re/match/rwl02/004e8640.c	True	136	136	2	b2_035802_036_2	not-covered		IDENTICAL-FOR-600	
+0x004f36c0	FUN_004f36c0	C2	RW core	third-party-library[renderware]	32.0	32.0	re/match/rwl03/004f36c0.c	True	4	4	2	b3_060610_092_2	not-covered		IDENTICAL-FOR-600	
+0x00544a70	FUN_00544a70	C2	RW core	third-party-library[renderware]	58.1	58.1	re/match/rwl04/00544a70.c	True	5	5	3	b2_035802_037_3	not-covered		IDENTICAL-FOR-600	
+0x00544ad0	FUN_00544ad0	C2	RW core	third-party-library[renderware]	46.0	46.0	re/match/rwl04/00544ad0.c	True	85	85	2	b3_060610_092_2	not-covered		IDENTICAL-FOR-600	
+0x00563840	FUN_00563840	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	70.3	70.3	re/match/rwl05/00563840.c	True	4	4	3	b2_035802_037_3	not-covered		IDENTICAL-FOR-600	
+0x00563940	FUN_00563940	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	56.4	56.4	re/match/rwl05/00563940.c	True	4	4	3	b2_035802_037_3	not-covered		IDENTICAL-FOR-600	
+0x005a8890	FUN_005a8890	C2	game	audio	88.2	88.2	re/match/s25/005a8890.c	True	4	4	6	b1_023950_014_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005ab090	FUN_005ab090	C2	game	audio	85.7	85.7	re/match/s25/005ab090.c	True	4	4	6	b1_023950_014_6	not-covered		IDENTICAL-FOR-600	
+0x005ae170	FUN_005ae170	C3	game	audio	61.9	61.9	re/match/s26/005ae170.c	True	4	4	3	b2_035802_038_3	empty		IDENTICAL-FOR-600	
+0x005aeb90	FUN_005aeb90	C3	game	audio	43.3	43.3	re/match/s26/005aeb90.c	True	32	32	2	b3_060610_093_2	empty		IDENTICAL-FOR-600	
+0x005afa00	FUN_005afa00	C2	game	audio	74.7	74.7	re/match/s26/005afa00.c	True	4	4	3	b2_035802_038_3	not-covered		IDENTICAL-FOR-600	
+0x005afcf0	FUN_005afcf0	C2	game	audio	31.4	31.4	re/match/s26/005afcf0.c	True	4	4	2	b3_060610_093_2	not-covered		IDENTICAL-FOR-600	
+0x005b03e0	FUN_005b03e0	C2	game	audio	85.9	85.9	re/match/s26/005b03e0.c	True	4	4	6	b1_023950_014_6	empty		IDENTICAL-FOR-600	
+0x005b04b0	FUN_005b04b0	C2	game	audio	30.6	30.6	re/match/s26/005b04b0.c	True	4	4	2	b3_060610_094_2	not-covered		IDENTICAL-FOR-600	
+0x005b09c0	FUN_005b09c0	C2	game	audio	79.7	79.7	re/match/s26/005b09c0.c	True	4	4	3	b2_035802_038_3	empty		IDENTICAL-FOR-600	
+0x005b0bb0	FUN_005b0bb0	C3	game	audio	58.8	58.8	re/match/s26/005b0bb0.c	True	4	4	1	b2_035802_040_1	not-covered		IDENTICAL-FOR-600	
+0x005b1260	FUN_005b1260	C2	game	audio	63.0	63.0	re/match/s27/005b1260.c			4	1	b2_035802_042_1	not-covered		CRASH	confirmed 2 of 2; ; rep_054328_007_1: read 0x53 at eip 0x53 (no body address on the stack), n=3650
+0x004e51e0	FUN_004e51e0	C2	RW core	third-party-library[renderware]	90.7	90.7	re/match/rwl02/004e51e0.c	True	3	3	6	b1_023950_015_6	not-covered		IDENTICAL-FOR-600	
+0x004e5300	RpWorldInstance	C2	RW core	third-party-library[renderware]	27.9	27.9	re/match/rwl02/004e5300.c	True	4	4	2	b3_060610_094_2	not-covered		IDENTICAL-FOR-600	
+0x004e99b0	FUN_004e99b0	C2	RW core	third-party-library[renderware]	45.5	45.5	re/match/rwl02/004e99b0.c			3			-		NOT-WIRED	_RpWorldInstance
+0x0053d820	FUN_0053d820	C2	RW core	third-party-library[renderware]	66.7	66.7	re/match/rwl03/0053d820.c	True	3	3	1	b2_035802_043_1	empty		IDENTICAL-FOR-600	
+0x005a9e60	FUN_005a9e60	C2	game	audio	75.4	75.4	re/match/s25/005a9e60.c	True	9	9	3	b2_035802_044_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0041a400	FUN_0041a400	C2	game	gameplay	76.4	76.4	re/match/s03/h1_0041a4a0.c	True	2	2	3	b2_035802_044_3	not-covered		IDENTICAL-FOR-600	
+0x00424b80	FUN_00424b80	C2	game	frontend	88.7	88.7	re/match/s05/00424b80.c	True	2	2	6	b1_023950_015_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005185a0	png_do_background	C2	game	util	27.3	27.3	re/match/s23/005185a0.c	True	3	3	1	nw_055230_002_1	not-covered		IDENTICAL-FOR-600	wired after the symmap additions (NOT-WIRED leg); 
+0x00525bd0	FUN_00525bd0	C2	game	util	72.6	72.6	re/match/s23/00525bd0.c	True	3	3	3	b2_035802_044_3	not-covered		IDENTICAL-FOR-600	
+0x0052aa40	FUN_0052aa40	C2	game	util	89.3	89.3	re/match/s23/0052aa40.c	True	3	3	6	b1_023950_015_6	not-covered		IDENTICAL-FOR-600	
+0x00534d00	FUN_00534d00	C2	RW core	third-party-library[renderware]	23.4	23.4	re/match/rwl03/00534d00.c			100	1	b3_060610_096_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_020_1: read 0xa1 at eip 0xa1 (no body address on the stack), n=3635
+0x00535330	FUN_00535330	C2	RW core	third-party-library[renderware]	30.1	30.1	re/match/rwl03/00535330.c	True	100	100	1	b3_060610_097_1	not-covered		IDENTICAL-FOR-600	
+0x0054f8d0	FUN_0054f8d0	C2	RW core	third-party-library[renderware]	54.9	54.9	re/match/rwl04/0054f8d0.c	True	16	16	1	b2_035802_046_1	not-covered		IDENTICAL-FOR-600	
+0x0055f520	FUN_0055f520	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	44.7	44.7	re/match/rwl05/0055f520.c	True	2	2	2	b3_060610_098_2	not-covered		IDENTICAL-FOR-600	
+0x005672c0	FUN_005672c0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	18.8	18.8	re/match/rwl06/005672c0.c	True	2	2	2	b3_060610_098_2	empty		IDENTICAL-FOR-600	
+0x005ae250	FUN_005ae250	C2	game	audio	64.9	64.9	re/match/s26/005ae250.c	True	5	5	1	b2_035802_048_1	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005b2b00	FUN_005b2b00	C2	game	audio	42.3	42.3	re/match/s27/005b2b00.c	True	2	2	2	b3_060610_099_2	not-covered		IDENTICAL-FOR-600	
+0x005b3b80	FUN_005b3b80	C2	game	audio	43.4	43.4	re/match/s27/005b3b80.c			2	1	b3_060028_006_1	not-covered	CRASH	CRASH	confirmed 2 of 2; ; rep_080743_021_1: read 0x1 at eip 0x41e0114 (in body 0x005b3b80+0x104), n=7949
+0x005b6710	FUN_005b6710	C2	game	audio	87.5	87.5	re/match/s27/005b6710.c	True	2	2	6	b1_023950_015_6	empty		IDENTICAL-FOR-600	
+0x00405540	FUN_00405540	C2	game	gameplay	93.4	88.1	re/match/s01/00405540.c	True	1	1	6	b1_023950_015_6	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x0040cea0	FUN_0040cea0	C2	game	track	82.8	82.8	re/match/s02/0040cea0.c	True	1	1	6	b1_023950_015_6	covered		IDENTICAL-FOR-600	
+0x0045de80	FUN_0045de80	C2	game	render	52.9	52.9	re/match/s10/0045de80.c	True	1	1	1	b2_035802_049_1	not-covered		DIVERGED@300	confirmed 2 of 2; tick 300 race blocks ['0x68d400', '0x68d800', '0x68dc00', '0x68e000', '0x68e400', '0x68e800']
+0x00462950	FUN_00462950	C2	game	render	88.8	88.8	re/match/s10/00462950.c	True	1	1	4	b1_023950_016_4	not-covered		IDENTICAL-FOR-600	
+0x004783f0	FUN_004783f0	C2	game	ai	90.8	90.8	re/match/pilot/a4_004783f0.c	True	1	1	4	b1_023950_016_4	empty		IDENTICAL-FOR-600	
+0x00478660	FUN_00478660	C2	game	ai	79.1	22.6	re/match/s12/00478660.c	True	1	1	2	b3_060610_099_2	not-covered		IDENTICAL-FOR-600	
+0x00479330	FUN_00479330	C2	game	track	97.2	35.6	re/match/s12/00479330.c	True	1	1	1	b3_060610_101_1	not-covered		IDENTICAL-FOR-600	
+0x0047a020	FUN_0047a020	C2	game	vehicle	92.2	92.2	re/match/s12/0047a020.c	True	1	1	4	b1_023950_016_4	not-covered		IDENTICAL-FOR-600	
+0x0047d3c0	VehiclePhysicsWorldCreate	C2	game	vehicle	96.5	91.9	re/match/s13/0047d3c0.c	True	1	1	4	b1_023950_016_4	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x00489dc0	FUN_00489dc0	C2	game	particle	36.1	36.1	re/match/s14/00489dc0.c			1	1	b3_060610_102_1	not-covered		CRASH	confirmed 2 of 2; ; rep_080743_022_1: read 0x4 at eip 0x4 (no body address on the stack), n=3590
+0x00558cb0	FUN_00558cb0	C2	RW-Physics	third-party-library[RenderWare-Physics-3.7]	78.4	78.4	re/match/rwl05/00558cb0.c	True	1	1	3	b2_035802_050_3	empty		IDENTICAL-FOR-600	
+0x00558df0	FUN_00558df0	C2	RW core	third-party-library[renderware]	39.7	39.7	re/match/rwl05/00558df0.c	True	1	1	2	b3_060610_103_2	not-covered		IDENTICAL-FOR-600	
+0x00559560	FUN_00559560	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	68.3	68.3	re/match/rwl05/00559560.c	True	1	1	3	b2_035802_050_3	empty		IDENTICAL-FOR-600	
+0x005595d0	FUN_005595d0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	57.5	57.5	re/match/rwl05/005595d0.c	True	1	1	3	b2_035802_050_3	not-covered		IDENTICAL-FOR-600	
+0x0055f670	FUN_0055f670	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	56.0	56.0	re/match/rwl05/0055f670.c	True	1	1	1	b2_035802_052_1	not-covered		IDENTICAL-FOR-600	
+0x0055f800	FUN_0055f800	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	65.3	65.3	re/match/rwl05/0055f800.c			1	1	b2_035802_054_1	not-covered		CRASH	confirmed 2 of 2; ; rep_054328_008_1: read 0x55 at eip 0x55 (no body address on the stack), n=3678
+0x005645b0	FUN_005645b0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	27.5	27.5	re/match/rwl05/005645b0.c	True	1	1	2	b3_060610_103_2	not-covered		IDENTICAL-FOR-600	
+0x00567350	FUN_00567350	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	8.2	8.2	re/match/rwl06/00567350.c	True	1	1	2	b3_060610_104_2	not-covered		IDENTICAL-FOR-600	
+0x005676f0	FUN_005676f0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	4.0	4.0	re/match/rwl06/005676f0.c	True	1	1	2	b3_060610_104_2	not-covered		IDENTICAL-FOR-600	
+0x00568d20	FUN_00568d20	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	51.4	51.4	re/match/rwl06/00568d20.c	True	1	1	1	b2_035802_055_1	not-covered		IDENTICAL-FOR-600	
+0x00574920	FUN_00574920	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	12.5	12.5	re/match/rwl06/00574920.c			1			-		NOT-WIRED	_cpuid_basic_info
+0x005749b0	FUN_005749b0	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	8.0	8.0	re/match/rwl06/005749b0.c	True	1	1	2	b3_060610_105_2	empty		IDENTICAL-FOR-600	
+0x00574a20	FUN_00574a20	C3	RW-Physics	third-party-library[RenderWare-Physics-3.7]	48.1	48.1	re/match/rwl06/00574a20.c			1			-		NOT-WIRED	_cpuid_Version_info,_strncmp
+0x005a7b60	FUN_005a7b60	C2	game	audio	53.5	53.5	re/match/s25/005a7b60.c	True	2	2	1	b2_032830_018_1	covered	CRASH	IDENTICAL-FOR-600	
+0x005ab620	FUN_005ab620	C2	game	audio	49.3	49.3	re/match/s25/005ab620.c	True	1	1	2	b3_060610_105_2	not-covered		IDENTICAL-FOR-600	
+0x005ae650	AudioPoolConstruct	C3	game	audio	74.1	74.1	re/match/s26/005ae650.c	True	21	21	3	b2_035802_056_3	not-covered	IDENTICAL-FOR-2724	IDENTICAL-FOR-600	
+0x005b1180	FUN_005b1180	C3	game	audio	46.4	46.4	re/match/s27/005b1180.c	True	1	1	2	b3_060610_106_2	not-covered		IDENTICAL-FOR-600	
+0x005b29e0	FUN_005b29e0	C2	game	audio	73.3	73.3	re/match/s27/005b29e0.c	True	1	1	3	b2_035802_056_3	not-covered		IDENTICAL-FOR-600	
+0x005b3300	FUN_005b3300	C2	game	audio	53.8	53.8	re/match/s27/005b3300.c	True	1	1	3	b2_035802_056_3	not-covered		IDENTICAL-FOR-600	
+0x005c8910	FUN_005c8910	C2	game	audio	37.8	37.8	re/match/s28/005c8910.c	True	1	1	2	b3_060610_106_2	not-covered		IDENTICAL-FOR-600	
