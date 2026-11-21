@@ -690,8 +690,8 @@
 ],
 "00428d30": [
 "reuse",
-"FUN_00428d30",
-"Match/MatchS06_00428d30.cpp"
+"PortTop_Bound_00428d30",
+"Match/PortTop_00428d30.cpp"
 ],
 "00429240": [
 "reuse",
@@ -2227,83 +2227,15 @@
 "00401da0": [
 "stop"
 ],
-"00427e00": [
-"reuse",
-"RwCore_00427e00",
-"RwCore/RwCore_00427e00.cpp"
-],
-"00428450": [
-"reuse",
-"RwCore_00428450",
-"RwCore/RwCore_00428450.cpp"
-],
-"00428760": [
-"reuse",
-"RwCore_00428760",
-"RwCore/RwCore_00428760.cpp"
-],
-"0042e590": [
-"reuse",
-"RwCore_0042e590",
-"RwCore/RwCore_0042e590.cpp"
-],
-"004671a0": [
-"reuse",
-"RwCore_004671a0",
-"RwCore/RwCore_004671a0.cpp"
-],
-"00472c60": [
-"reuse",
-"RwCore_00472c60",
-"RwCore/RwCore_00472c60.cpp"
-],
-"00472f40": [
-"reuse",
-"RwCore_00472f40",
-"RwCore/RwCore_00472f40.cpp"
-],
-"004730b0": [
-"reuse",
-"RwCore_004730b0",
-"RwCore/RwCore_004730b0.cpp"
-],
-"00473220": [
-"reuse",
-"RwCore_00473220",
-"RwCore/RwCore_00473220.cpp"
-],
-"004c19f0": [
-"reuse",
-"RwCore_004c19f0",
-"RwCore/RwCore_004c19f0.cpp"
-],
-"004c1a00": [
-"reuse",
-"RwCore_004c1a00",
-"RwCore/RwCore_004c1a00.cpp"
-],
-"004c1bb0": [
-"reuse",
-"RwCore_004c1bb0",
-"RwCore/RwCore_004c1bb0.cpp"
-],
-"004c1be0": [
-"reuse",
-"Orig_004c1be0",
-"Match/PortTop_004c1be0.cpp"
-],
-"004c1c80": [
-"reuse",
-"RwCore_004c1c80",
-"RwCore/RwCore_004c1c80.cpp"
-],
 "00428a30": [
-"stop",
-"outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s06/00428a30.c"
+"reuse",
+"PortTop_Bound_00428a30",
+"Match/PortTop_00428a30.cpp"
 ],
 "00428bf0": [
-"stop",
-"outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s06/00428bf0.c"
+"reuse",
+"PortTop_Bound_00428bf0",
+"Match/PortTop_00428bf0.cpp"
 ],
 "0045d3f0": [
 "reuse",

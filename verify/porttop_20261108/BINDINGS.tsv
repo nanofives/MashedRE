@@ -331,7 +331,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004c2bb0	FUN_004c2bb0	bound	MashedRw_CameraBeginUpdateCb_004c2bb0	PORT-TOP-04B: LibRw/RwApiBind.cpp: camera begin-update function stored at +0x18 by 0x004c1d30 (no source, no hooks row): rw::Camera::beginUpdate + BeginScene (librw skips it under adoption, P3)	4	0x004c1a00
 0x004c2b80	FUN_004c2b80	bound	MashedRw_CameraEndUpdateCb_004c2b80	PORT-TOP-04B: LibRw/RwApiBind.cpp: camera end-update function stored at +0x1c by 0x004c1d30 (no source, no hooks row): EndScene + rw::Camera::endUpdate	4	0x004c19f0
 0x004c7730	RwRasterShowRaster	bound	MashedRw_RasterShowRaster_004c7730	PORT-TOP-04B: LibRw/RwApiBind.cpp: IDirect3DDevice9::Present on the adopted device. Not librw showRaster: it Resets the device when the vsync flag differs from the PresentationInterval	4	0x004c1be0
-0x00428450	FUN_00428450	missing	PortTop_Missing_00428450	PORT-TOP-04B: Match/PortTop_00493710.cpp: the loading-disc draw is not run. Only port body = .asi-only naked asm (HUD/TextCluster.cpp, raw calls); source 84.6%, so an exe copy is a second body (rva-lint CROSS-TARGET). Its callee 0x00450b10 (HudIm2DQuad, exe body) is not reached	3	0x00428590
+0x00428450	FUN_00428450	matched	RwCore_00428450	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_00428450.cpp	3	0x00428590
 0x004210f0	FUN_004210f0	matched	Orig_004210f0	PORT-TOP-04C: Match/PortTop_004210f0.cpp (re/match/s05/004210f0.c): 0x004768c0(&DAT_0063e548)	3	0x00421590
 0x00496970	FUN_00496970	matched	Orig_00496970	PORT-TOP-04C: Match/PortTop_00496970.cpp (re/match/s16/00496970.c): RwRasterDestroy(DAT_0077307c) when nonzero; returns 1	3	0x0047ba10
 0x00494320	FUN_00494320	matched	Orig_00494320	PORT-TOP-04C: Match/PortTop_00494320.cpp (re/match/s15/00494320.c): Stop + Release of DAT_00771a34, Release of 5 pointers when nonzero, Release of DAT_00771a10 / DAT_00771a14	4	0x00494460
@@ -1768,3 +1768,23 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0048a4e0	FUN_0048a4e0	matched	PortTop_Bound_0048a4e0	PORT-TOP-LAND-06-RF: re/match/s14/0048a4e0.c (L-126 admitted, re/match/ADMITTED.tsv, not a byte match), Match/PortTop_0048a4e0.cpp	6	0x004818d0
 0x004b4120	FUN_004b4120	matched	PortTop_Bound_004b4120	PORT-TOP-LAND-06-RF: re/match/s18/004b4120.c (c4=match), Match/PortTop_004b4120.cpp	7	0x0048a4e0
 0x004c3d60	FUN_004c3d60	matched	RwCore_004c3d60	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_004c3d60.cpp	7	0x0048a4e0
+0x00401ee0	FUN_00401ee0	matched	PortTop_Local_00401570_00401ee0	PORT-TOP-LAND-06-RF: existing exe body Match/PortTop_00401570.cpp	3	0x00428d30
+0x0040d250	FUN_0040d250	matched	DoubleDerefIndexedGetter	PORT-TOP-LAND-06-RF: existing exe body Match/MatchS02_0040d250.cpp	3	0x00428d30
+0x00427c90	FUN_00427c90	matched	GetDat0067d84c	PORT-TOP-LAND-06-RF: existing exe body Match/MatchS06_00427c90.cpp	3	0x00428a30
+0x00428320	FUN_00428320	matched	PortTop_Bound_00428320	PORT-TOP-LAND-06-RF: re/match/s06/00428320.c (c4=match), Match/PortTop_00428320.cpp	3	0x00428a30
+0x00428760	FUN_00428760	matched	RwCore_00428760	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_00428760.cpp	3	0x00428bf0
+0x004288a0	FUN_004288a0	matched	PortTop_Bound_004288a0	PORT-TOP-LAND-06-RF: re/match/s06/004288a0.c (c4=match), Match/PortTop_004288a0.cpp	3	0x00428a30
+0x00428a30	FUN_00428a30	matched	PortTop_Bound_00428a30	PORT-TOP-LAND-06-RF: re/match/s06/00428a30.c (c4=match), Match/PortTop_00428a30.cpp	2	0x00429290
+0x00428bf0	FUN_00428bf0	matched	PortTop_Bound_00428bf0	PORT-TOP-LAND-06-RF: re/match/s06/00428bf0.c (c4=match), Match/PortTop_00428bf0.cpp	2	0x00429290
+0x00428d30	FUN_00428d30	matched	PortTop_Bound_00428d30	PORT-TOP-LAND-06-RF: re/match/s06/00428d30.c (c4=match), Match/PortTop_00428d30.cpp	2	0x00429290
+0x0042e590	FUN_0042e590	matched	RwCore_0042e590	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_0042e590.cpp	3	0x00428d30
+0x0042f0b0	FUN_0042f0b0	matched	GetFrameCounterPlus73	PORT-TOP-LAND-06-RF: existing exe body Match/MatchS07_0042f0b0.cpp	3	0x00428d30
+0x00472f40	FUN_00472f40	matched	RwCore_00472f40	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_00472f40.cpp	3	0x00428d30
+0x004730b0	FUN_004730b0	matched	RwCore_004730b0	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_004730b0.cpp	3	0x00428d30
+0x00473220	FUN_00473220	matched	RwCore_00473220	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_00473220.cpp	3	0x00428d30
+0x004744a0	FUN_004744a0	matched	PortTop_Bound_004744a0	PORT-TOP-LAND-06-RF: existing exe body Match/PortTop_004744a0.cpp	3	0x00428d30
+0x005554d0	FUN_005554d0	matched	RwCore_005554d0	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_005554d0.cpp	4	0x00428320
+0x00427840	FUN_00427840	matched	PortTop_Bound_00427840	PORT-TOP-LAND-06-RF: re/match/s06/00427840.c (c4=match), Match/PortTop_00427840.cpp	4	0x00428320
+0x00552d10	FUN_00552d10	matched	RwCore_00552d10	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_00552d10.cpp	5	0x00427840
+0x00552d70	FUN_00552d70	matched	RwCore_00552d70	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_00552d70.cpp	5	0x00427840
+0x005555b0	FUN_005555b0	matched	RwCore_005555b0	PORT-TOP-LAND-06-RF: existing exe body RwCore/RwCore_005555b0.cpp	5	0x00427840

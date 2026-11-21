@@ -35,6 +35,13 @@ mashedmod/src/mashed_re/Match/PortTop_00426d20.cpp
 mashedmod/src/mashed_re/Match/PortTop_00426d90.cpp
 mashedmod/src/mashed_re/Match/PortTop_00426e00.cpp
 mashedmod/src/mashed_re/Match/PortTop_004270f0.cpp
+mashedmod/src/mashed_re/Match/PortTop_00427840.cpp
+mashedmod/src/mashed_re/Match/PortTop_00428320.cpp
+mashedmod/src/mashed_re/Match/PortTop_004288a0.cpp
+mashedmod/src/mashed_re/Match/PortTop_00428a30.cpp
+mashedmod/src/mashed_re/Match/PortTop_00428bf0.cpp
+mashedmod/src/mashed_re/Match/PortTop_00428d30.cpp
+mashedmod/src/mashed_re/Match/PortTop_00429290.cpp
 mashedmod/src/mashed_re/Match/PortTop_00429620.cpp
 mashedmod/src/mashed_re/Match/PortTop_00429660.cpp
 mashedmod/src/mashed_re/Match/PortTop_00429b70.cpp

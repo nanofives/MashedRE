@@ -15,6 +15,7 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <memory>
 
@@ -226,6 +227,22 @@ void* PortTop_StandIn04E_004caea0(void) {
 // ---- stand-ins (loaders not moved yet) ----
 #define SI(rva, job) int PortTop_StandIn04E_##rva() { static int once; StandInLog("0x" #rva, job, &once); return 0; }
 SI(00429290, "title tick, passed to 0x004b6560 as a callback only")
+// PORT-TOP-LAND-06-RF checkpoint 3 (PREREG verify/porttopland_20261121/PREREG_PORT-TOP-LAND-06-RF_cp3.md): the pointer the
+// matched 0x00402750 passes to 0x004b6560 (re/match/s01/00402750.c:122). Sub-knob MASHED_OT_TITLETICK, default OFF: the
+// stand-in above. =1: the byte-matched 0x00429290 (Match/PortTop_00429290.cpp, re/match/s06/00429290.c, renderframe
+// profile root). PortTop_PizFs_SetIdle_004b6560 records the pointer and never calls it, so neither path runs on this tree.
+// The two int arguments are the bound source's signature (re/match/s06/00429290.c:75); 0x00402750.c declares int(void).
+void PortTop_Bound_00429290(int a, int b);
+int PortTop_Sel_00429290(int a, int b) {
+    static int knob = -1;
+    if (knob < 0) {
+        const char* const v = std::getenv("MASHED_OT_TITLETICK");
+        knob = (v && v[0] == '1') ? 1 : 0;
+    }
+    if (!knob) return PortTop_StandIn04E_00429290();
+    PortTop_Bound_00429290(a, b);
+    return 0;
+}
 SI(00494c80, "small.mpg graph setup; piece 2 plays the boot movies")
 SI(00427ca0, "fonts family; the exe copy of FontText_HudInit forwards to raw Rt2d font addresses")
 SI(004275d0, "fonts family; Rt2d font toolkit callees (0x00552920, 0x00553cf0) have no exe body")

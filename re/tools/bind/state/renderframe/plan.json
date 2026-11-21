@@ -38,6 +38,23 @@
 ],
 []
 ],
+"00429290": [
+"bind",
+"re/match/s06/00429290.c",
+"match",
+[
+"00428a30",
+"00428bf0",
+"00428d30",
+"0045d3f0",
+"0045d430",
+"00466b50",
+"004967e0"
+],
+[
+"00429240"
+]
+],
 "00403050": [
 "reuse",
 "RwCore_00403050",
@@ -274,6 +291,91 @@
 "reuse",
 "RwCore_004c1c80",
 "RwCore/RwCore_004c1c80.cpp"
+],
+"00428a30": [
+"bind",
+"re/match/s06/00428a30.c",
+"match",
+[
+"00427c90",
+"00427e00",
+"00428320",
+"00428450",
+"004288a0",
+"004671a0",
+"004950b0",
+"004a2b60",
+"004c19f0",
+"004c1a00",
+"004c1bb0",
+"004c1be0"
+],
+[]
+],
+"00428bf0": [
+"bind",
+"re/match/s06/00428bf0.c",
+"match",
+[
+"00427c90",
+"00427e00",
+"00428320",
+"00428450",
+"00428760",
+"004671a0",
+"004a2b60",
+"004c19f0",
+"004c1a00",
+"004c1bb0",
+"004c1be0"
+],
+[]
+],
+"00428d30": [
+"bind",
+"re/match/s06/00428d30.c",
+"match",
+[
+"00401ee0",
+"0040d250",
+"00427e00",
+"00428450",
+"00428760",
+"0042e590",
+"0042f0b0",
+"004671a0",
+"00472c60",
+"00472f40",
+"004730b0",
+"00473220",
+"004744a0",
+"004c19f0",
+"004c1a00",
+"004c1bb0",
+"004c1be0",
+"004c1c80"
+],
+[]
+],
+"0045d3f0": [
+"reuse",
+"PortTop_Bound_0045d3f0",
+"Match/PortTop_0045d3f0.cpp"
+],
+"0045d430": [
+"reuse",
+"PortTop_Bound_0045d430",
+"Match/PortTop_0045d430.cpp"
+],
+"00466b50": [
+"reuse",
+"PortTop_Bound_00466b50",
+"Match/PortTop_00466b50.cpp"
+],
+"004967e0": [
+"reuse",
+"PortTop_Local_00496530_004967e0",
+"Match/PortTop_00496530.cpp"
 ],
 "004c1480": [
 "reuse",
@@ -734,6 +836,87 @@
 "0042b8c0"
 ],
 []
+],
+"00427c90": [
+"reuse",
+"GetDat0067d84c",
+"Match/MatchS06_00427c90.cpp"
+],
+"00428320": [
+"bind",
+"re/match/s06/00428320.c",
+"match",
+[
+"00427840",
+"005554d0"
+],
+[]
+],
+"00428450": [
+"reuse",
+"RwCore_00428450",
+"RwCore/RwCore_00428450.cpp"
+],
+"004288a0": [
+"bind",
+"re/match/s06/004288a0.c",
+"match",
+[
+"00427e00",
+"004282a0",
+"00428760"
+],
+[]
+],
+"004a2b60": [
+"reuse",
+"MashedCrt_sprintf_004a2b60",
+"Match/PortTop_CrtStdio.cpp"
+],
+"00428760": [
+"reuse",
+"RwCore_00428760",
+"RwCore/RwCore_00428760.cpp"
+],
+"00401ee0": [
+"reuse",
+"PortTop_Local_00401570_00401ee0",
+"Match/PortTop_00401570.cpp"
+],
+"0040d250": [
+"reuse",
+"DoubleDerefIndexedGetter",
+"Match/MatchS02_0040d250.cpp"
+],
+"0042e590": [
+"reuse",
+"RwCore_0042e590",
+"RwCore/RwCore_0042e590.cpp"
+],
+"0042f0b0": [
+"reuse",
+"GetFrameCounterPlus73",
+"Match/MatchS07_0042f0b0.cpp"
+],
+"00472f40": [
+"reuse",
+"RwCore_00472f40",
+"RwCore/RwCore_00472f40.cpp"
+],
+"004730b0": [
+"reuse",
+"RwCore_004730b0",
+"RwCore/RwCore_004730b0.cpp"
+],
+"00473220": [
+"reuse",
+"RwCore_00473220",
+"RwCore/RwCore_00473220.cpp"
+],
+"004744a0": [
+"reuse",
+"PortTop_Bound_004744a0",
+"Match/PortTop_004744a0.cpp"
 ],
 "0040e340": [
 "reuse",
@@ -1305,6 +1488,24 @@
 "RwCore_004c0e50",
 "RwCore/RwCore_004c0e50.cpp"
 ],
+"00427840": [
+"bind",
+"re/match/s06/00427840.c",
+"match",
+[
+"00427780",
+"00552d10",
+"00552d70",
+"005555b0",
+"00556e90"
+],
+[]
+],
+"005554d0": [
+"reuse",
+"RwCore_005554d0",
+"RwCore/RwCore_005554d0.cpp"
+],
 "004cd430": [
 "bind",
 "re/match/s20/004cd430.c",
@@ -1561,6 +1762,31 @@
 "RwCore_004d8480",
 "RwCore/RwCore_004d8480.cpp"
 ],
+"00427780": [
+"reuse",
+"RwCore_00427780",
+"RwCore/RwCore_00427780.cpp"
+],
+"00552d10": [
+"reuse",
+"RwCore_00552d10",
+"RwCore/RwCore_00552d10.cpp"
+],
+"00552d70": [
+"reuse",
+"RwCore_00552d70",
+"RwCore/RwCore_00552d70.cpp"
+],
+"005555b0": [
+"reuse",
+"RwCore_005555b0",
+"RwCore/RwCore_005555b0.cpp"
+],
+"00556e90": [
+"reuse",
+"RwCore_00556e90",
+"RwCore/RwCore_00556e90.cpp"
+],
 "004e12b0": [
 "reuse",
 "RwCore_004e12b0",
@@ -1655,11 +1881,6 @@
 "reuse",
 "HudOverlayFloatGet",
 "Match/MatchS06_00429300.cpp"
-],
-"00427780": [
-"reuse",
-"RwCore_00427780",
-"RwCore/RwCore_00427780.cpp"
 ],
 "004011f0": [
 "bind",
