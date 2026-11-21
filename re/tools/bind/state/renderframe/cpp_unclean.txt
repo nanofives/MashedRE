@@ -1,0 +1,36 @@
+# matched sources that fail to compile as C++ (MATCH_PORT, VS2022) in the exe build; first error.
+00406130	C2632 'char' seguido de 'bool' no es vÂ lido
+0040df20	C2664 'int RwCore_004c1c80(int,undefined4 *)': el argumento 2 no puede convertirse de 'undefined1 *' a 'undefined4 *
+00412100	C2440 '=': no se puede realizar la conversiÂ¢n de 'undefined4 *' a 'int *'
+00412130	C3861 'GetRaceSubMode': no se encontrÂ¢ el identificador
+00413a00	C2065 'DAT_00828320': identificador no declarado
+00413a40	C2632 'char' seguido de 'bool' no es vÂ lido
+00413f50	C2632 'char' seguido de 'bool' no es vÂ lido
+004173e0	C2065 'DAT_007f1a9c': identificador no declarado
+004189c0	C2632 'char' seguido de 'bool' no es vÂ lido
+0041a3e0	C3861 'PortTop_Bound_0042a5d0': no se encontrÂ¢ el identificador
+0041a5b0	C2632 'char' seguido de 'bool' no es vÂ lido
+0041a5d0	C2065 'DAT_0063c630': identificador no declarado
+0041a840	C2065 'DAT_0063c630': identificador no declarado
+0041a960	C2632 'char' seguido de 'bool' no es vÂ lido
+0041b630	C3861 'Orig_004b3fc0': no se encontrÂ¢ el identificador
+0041ebb0	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00421560	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00426030	C2660 'PortTop_Bound_0041e8f0': la funciÂ¢n no acepta 1 argumentos
+00457610	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0045b990	C2440 '=': no se puede realizar la conversiÂ¢n de 'void **' a 'undefined **'
+004725c0	C2440 '=': no se puede realizar la conversiÂ¢n de 'undefined4 *' a 'int *'
+00475e50	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00486f50	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00487d70	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00487de0	C2660 'PortTop_Bound_00487d70': la funciÂ¢n no acepta 1 argumentos
+004891f0	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00489c30	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0048ad50	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0048baf0	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0048fce0	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0048fd10	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0048fd40	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+0048fd70	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+00490490	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+004914b0	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada

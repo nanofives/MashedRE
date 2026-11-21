@@ -33,7 +33,11 @@ typedef struct {
   void *pad2[2];
   int (*Im2DRenderTriangle)(RwIm2DVertex *v, int n, int a, int b, int c); /* +0x2c */
 } RwGlobalsT;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d3ff8 (*(RwGlobalsT * *)0x007d3ff8u)
+#else
 extern RwGlobalsT *DAT_007d3ff8;
+#endif
 void FUN_004c75e0(RwRaster *r, short *x, short *y);
 
 #define RWRGBALONG(r,g,b,a) ((unsigned int)(((a) << 24) | ((r) << 16) | ((g) << 8) | (b)))
@@ -96,9 +100,17 @@ typedef struct {
   long (__stdcall *StretchRect)(IDirect3DDevice9 *, IDirect3DSurface9 *, const void *, IDirect3DSurface9 *, const void *, int); /* +0x88 */
 } DevVtbl;
 struct IDirect3DDevice9 { DevVtbl *vt; };
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636b70 (*(IDirect3DTexture9 * *)0x00636b70u)
+#else
 extern IDirect3DTexture9 *DAT_00636b70;
+#endif
 static IDirect3DDevice9 *DAT_00636b74; /* file-static, see 0x004034a0 */
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636b78 (*(int *)0x00636b78u)
+#else
 extern int DAT_00636b78;
+#endif
 void FUN_004938e0(int p0, IDirect3DTexture9 *p1);
 
 // MATCH: 0x00403910 FUN_00403910

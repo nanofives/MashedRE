@@ -1089,3 +1089,181 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005ae3a0	FUN_005ae3a0	matched	PortTop_Bound_005ae3a0	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ae3a0.c (L-126 admitted, re/match/ADMITTED.tsv, not a byte match), Match/PortTop_005ae3a0.cpp	8	0x005a9f10
 0x005ae470	FUN_005ae470	matched	PortTop_Bound_005ae470	PORT-TOP-AUDIOTICK-STOPS: re/match/s26/005ae470.c (c4=match), Match/PortTop_005ae470.cpp	10	0x005ae300
 0x005ae4c0	FUN_005ae4c0	missing	PortTop_AStop_005ae4c0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	9	0x005ae3a0
+0x004011f0	FUN_004011f0	matched	PortTop_Bound_004011f0	PORT-TOP-RENDERFRAME-492E90: re/match/s01/004011f0.c (c4=match), Match/PortTop_004011f0.cpp	6	0x004013f0
+0x00401340	FUN_00401340	matched	CupSpinSpeedAndColor	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS01.cpp	5	0x00429bd0
+0x004013f0	FUN_004013f0	matched	PortTop_Bound_004013f0	PORT-TOP-RENDERFRAME-492E90: re/match/s01/004013f0.c (c4=match), Match/PortTop_004013f0.cpp	5	0x00429bd0
+0x00401f10	FUN_00401f10	matched	PortTop_Bound_00401f10	PORT-TOP-RENDERFRAME-492E90: re/match/s01/00401f10.c (c4=match), Match/PortTop_00401f10.cpp	3	0x0040df60
+0x00403160	FUN_00403160	matched	RwCore_00403160	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_00403160.cpp	3	0x0040dfc0
+0x00403910	FUN_00403910	matched	PortTop_Bound_00403910	PORT-TOP-RENDERFRAME-492E90: re/match/s01/004036a0.c (c4=match), Match/PortTop_00403910.cpp	3	0x00410b30
+0x00404650	FUN_00404650	matched	PortTop_Bound_00404650	PORT-TOP-RENDERFRAME-492E90: re/match/s01/00404650.c (c4=match), Match/PortTop_00404650.cpp	3	0x00410b30
+0x00406130	FUN_00406130	missing	PortTop_RRStop_00406130	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x004072e0
+0x004072e0	FUN_004072e0	matched	PortTop_Bound_004072e0	PORT-TOP-RENDERFRAME-492E90: re/match/s01/004072e0.c (c4=match), Match/PortTop_004072e0.cpp	3	0x00410b30
+0x00408a50	FUN_00408a50	matched	PerCarRaceProgressGet	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS01.cpp	5	0x00444ff0
+0x0040bde0	FUN_0040bde0	matched	PortTop_Bound_0040bde0	PORT-TOP-RENDERFRAME-492E90: re/match/s02/0040bde0.c (c4=match), Match/PortTop_0040bde0.cpp	3	0x00410b30
+0x0040dc80	FUN_0040dc80	matched	PortTop_Bound_0040dc80	PORT-TOP-RENDERFRAME-492E90: re/match/s02/0040dc80.c (c4=match), Match/PortTop_0040dc80.cpp	4	0x00429e10
+0x0040dc90	FUN_0040dc90	matched	PortTop_Bound_0040dc90	PORT-TOP-RENDERFRAME-492E90: re/match/s02/0040dc90.c (c4=match), Match/PortTop_0040dc90.cpp	5	0x00429660
+0x0040e4a0	FUN_0040e4a0	matched	PortTop_Bound_0040e4a0	PORT-TOP-RENDERFRAME-492E90: re/match/s02/0040e4a0.c (c4=match), Match/PortTop_0040e4a0.cpp	4	0x00429e10
+0x00411ce0	FUN_00411ce0	matched	PortTop_Bound_00411ce0	PORT-TOP-RENDERFRAME-492E90: re/match/s02/00411ce0.c (c4=match), Match/PortTop_00411ce0.cpp	3	0x00410b30
+0x00412100	FUN_00412100	missing	PortTop_RRStop_00412100	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x00412130	FUN_00412130	missing	PortTop_RRStop_00412130	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00401f10
+0x00413a00	FUN_00413a00	missing	PortTop_RRStop_00413a00	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x00413a40	FUN_00413a40	missing	PortTop_RRStop_00413a40	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x00413f50	FUN_00413f50	missing	PortTop_RRStop_00413f50	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x004173e0	FUN_004173e0	missing	PortTop_RRStop_004173e0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	5	0x00444ff0
+0x00417730	FUN_00417730	matched	VehicleRaceAngleGet	PORT-TOP-RENDERFRAME-492E90: existing exe body Vehicle/VehicleState.cpp	4	0x00429e10
+0x00417740	FUN_00417740	matched	Float89a870ToInt	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchGFFU_00417740.cpp	4	0x00429e10
+0x004189c0	FUN_004189c0	missing	PortTop_RRStop_004189c0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x0041a3e0	FUN_0041a3e0	missing	PortTop_RRStop_0041a3e0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x0040dfc0
+0x0041a960	FUN_0041a960	missing	PortTop_RRStop_0041a960	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00411ce0
+0x0041b630	FUN_0041b630	missing	PortTop_RRStop_0041b630	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x0040dfc0
+0x0041c0c0	FUN_0041c0c0	matched	HudDispatchSlot2	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS04_0041bc50.cpp	3	0x0040dfc0
+0x0041c300	FUN_0041c300	matched	HudDispatchMode5	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS04_0041c2d0.cpp	3	0x0040dfc0
+0x0041ccc0	FUN_0041ccc0	matched	HudSlotLoopCcc0	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS04_0041c9a0.cpp	3	0x0040dfc0
+0x0041d870	FUN_0041d870	matched	PortTop_Bound_0041d870	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041d410.c (c4=match), Match/PortTop_0041d870.cpp	3	0x0040dfc0
+0x0041db80	FUN_0041db80	missing	PortTop_RRStop_0041db80	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x0040dfc0
+0x0041ded0	FUN_0041ded0	missing	PortTop_RRStop_0041ded0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x0040dfc0
+0x0041e140	FUN_0041e140	matched	PortTop_Bound_0041e140	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041e140.c (c4=match), Match/PortTop_0041e140.cpp	4	0x00429e10
+0x0041e850	FUN_0041e850	matched	PortBatch_0041e850	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/PortBatch_HUD_0041e630.cpp	3	0x0040dfc0
+0x0041e8d0	FUN_0041e8d0	matched	PortTop_Bound_0041e8d0	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041e8d0.c (c4=match), Match/PortTop_0041e8d0.cpp	4	0x004270f0
+0x0041e8e0	FUN_0041e8e0	matched	PortTop_Bound_0041e8e0	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041e8e0.c (c4=match), Match/PortTop_0041e8e0.cpp	4	0x004270f0
+0x0041e950	FUN_0041e950	matched	PortTop_Bound_0041e950	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041e950.c (c4=match), Match/PortTop_0041e950.cpp	4	0x00426640
+0x0041e9b0	FUN_0041e9b0	missing	PortTop_RRStop_0041e9b0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00426640
+0x0041e9f0	FUN_0041e9f0	matched	PortTop_Bound_0041e9f0	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041e9f0.c (c4=match), Match/PortTop_0041e9f0.cpp	4	0x004270f0
+0x0041ea00	FUN_0041ea00	matched	PortTop_Bound_0041ea00	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041ea00.c (c4=match), Match/PortTop_0041ea00.cpp	4	0x004270f0
+0x0041ea70	FUN_0041ea70	matched	PortTop_Bound_0041ea70	PORT-TOP-RENDERFRAME-492E90: re/match/s04/0041ea70.c (c4=match), Match/PortTop_0041ea70.cpp	4	0x00426640
+0x0041ebb0	FUN_0041ebb0	missing	PortTop_RRStop_0041ebb0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x0041f290	FUN_0041f290	missing	PortTop_RRStop_0041f290	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00404650
+0x00420050	FUN_00420050	matched	PortTop_Bound_00420050	PORT-TOP-RENDERFRAME-492E90: re/match/s05/00420050.c (L-126 admitted, re/match/ADMITTED.tsv, not a byte match), Match/PortTop_00420050.cpp	3	0x00410b30
+0x00421560	FUN_00421560	missing	PortTop_RRStop_00421560	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x004219c0	FUN_004219c0	matched	PortTop_Bound_004219c0	PORT-TOP-RENDERFRAME-492E90: re/match/s05/004216b0.c (c4=match), Match/PortTop_004219c0.cpp	3	0x00410b30
+0x00422570	FUN_00422570	matched	PortTop_Bound_00422570	PORT-TOP-RENDERFRAME-492E90: re/match/s05/00422570.c (c4=match), Match/PortTop_00422570.cpp	4	0x00420050
+0x004228f0	FUN_004228f0	missing	PortTop_RRStop_004228f0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00420050
+0x00422ac0	FUN_00422ac0	matched	PortTop_Bound_00422ac0	PORT-TOP-RENDERFRAME-492E90: re/match/s05/00422ac0.c (c4=match), Match/PortTop_00422ac0.cpp	4	0x00420050
+0x00422af0	FUN_00422af0	matched	PortTop_Bound_00422af0	PORT-TOP-RENDERFRAME-492E90: re/match/s05/00422af0.c (c4=match), Match/PortTop_00422af0.cpp	4	0x00420050
+0x00425e40	FUN_00425e40	matched	PortTop_Bound_00425e40	PORT-TOP-RENDERFRAME-492E90: re/match/s05/00425e40.c (c4=match), Match/PortTop_00425e40.cpp	3	0x00410b30
+0x00426060	FUN_00426060	matched	PortTop_Bound_00426060	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/PortTop_00426060.cpp	4	0x00420050
+0x00426070	FUN_00426070	matched	TrackPhysWorld2Get	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS06_00426070.cpp	4	0x00420050
+0x004260c0	FUN_004260c0	matched	PortTop_Bound_004260c0	PORT-TOP-RENDERFRAME-492E90: re/match/s06/004260c0.c (c4=match), Match/PortTop_004260c0.cpp	4	0x00420050
+0x00426640	FUN_00426640	matched	PortTop_Bound_00426640	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00426640.c (c4=match), Match/PortTop_00426640.cpp	3	0x00410b30
+0x00426d20	FUN_00426d20	matched	PortTop_Bound_00426d20	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00426d20.c (c4=match), Match/PortTop_00426d20.cpp	4	0x004270f0
+0x00426d90	FUN_00426d90	matched	PortTop_Bound_00426d90	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00426d90.c (c4=match), Match/PortTop_00426d90.cpp	4	0x004270f0
+0x00426e00	FUN_00426e00	matched	PortTop_Bound_00426e00	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00426e00.c (c4=match), Match/PortTop_00426e00.cpp	4	0x00420050
+0x004270f0	FUN_004270f0	matched	PortTop_Bound_004270f0	PORT-TOP-RENDERFRAME-492E90: re/match/s06/004270f0.c (c4=match), Match/PortTop_004270f0.cpp	3	0x00410b30
+0x00427780	FUN_00427780	matched	RwCore_00427780	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_00427780.cpp	6	0x0042c7c0
+0x00427e00	FUN_00427e00	matched	RwCore_00427e00	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_00427e00.cpp	3	0x00430b90
+0x004282a0	FUN_004282a0	matched	RwCore_004282a0	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004282a0.cpp	3	0x00430b90
+0x004292c0	FUN_004292c0	matched	UtilWritePtr	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS06_004292c0.cpp	4	0x004270f0
+0x004292d0	FUN_004292d0	matched	FUN_004292d0	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS06_004292d0.cpp	4	0x004270f0
+0x00429300	FUN_00429300	matched	HudOverlayFloatGet	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS06_00429300.cpp	6	0x00429620
+0x004295a0	FUN_004295a0	matched	HudDualLabelRender	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS06_004295a0.cpp	4	0x00429e10
+0x00429620	FUN_00429620	matched	PortTop_Bound_00429620	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00429620.c (c4=match), Match/PortTop_00429620.cpp	5	0x00429660
+0x00429660	FUN_00429660	matched	PortTop_Bound_00429660	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00429660.c (c4=match), Match/PortTop_00429660.cpp	4	0x00429e10
+0x00429b70	FUN_00429b70	matched	PortTop_Bound_00429b70	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00429b70.c (c4=match), Match/PortTop_00429b70.cpp	5	0x00429bd0
+0x00429bd0	FUN_00429bd0	matched	PortTop_Bound_00429bd0	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00429bd0.c (L-126 admitted, re/match/ADMITTED.tsv, not a byte match), Match/PortTop_00429bd0.cpp	4	0x00429e10
+0x00429e10	FUN_00429e10	matched	PortTop_Bound_00429e10	PORT-TOP-RENDERFRAME-492E90: re/match/s06/00429e10.c (c4=match), Match/PortTop_00429e10.cpp	3	0x00410b30
+0x0042aae0	FUN_0042aae0	matched	RwCore_0042aae0	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_0042aae0.cpp	5	0x00432ad0
+0x0042ac00	FUN_0042ac00	matched	MenuGroupCountBody	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS06_0042ac00.cpp	3	0x00430b90
+0x0042ac50	FUN_0042ac50	matched	Calc42ac50	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS06_0042ac50.cpp	3	0x00430b90
+0x0042c7c0	FUN_0042c7c0	matched	PortTop_Bound_0042c7c0	PORT-TOP-RENDERFRAME-492E90: re/match/s07/0042c7c0.c (c4=match), Match/PortTop_0042c7c0.cpp	5	0x00429660
+0x0042f520	FUN_0042f520	matched	PortTop_Bound_0042f520	PORT-TOP-RENDERFRAME-492E90: re/match/s07/0042f520.c (c4=match), Match/PortTop_0042f520.cpp	5	0x004430c0
+0x00432ad0	FUN_00432ad0	matched	PortTop_Bound_00432ad0	PORT-TOP-RENDERFRAME-492E90: re/match/s08/00432ad0.c (c4=match), Match/PortTop_00432ad0.cpp	4	0x00448730
+0x00443080	FUN_00443080	missing	PortTop_RRStop_00443080	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00429e10
+0x004430c0	FUN_004430c0	matched	PortTop_Bound_004430c0	PORT-TOP-RENDERFRAME-492E90: re/match/s08/004430c0.c (c4=match), Match/PortTop_004430c0.cpp	4	0x00448730
+0x004430e0	FUN_004430e0	matched	PortTop_Bound_004430e0	PORT-TOP-RENDERFRAME-492E90: re/match/s08/004430e0.c (c4=match), Match/PortTop_004430e0.cpp	5	0x00444ff0
+0x00443210	FUN_00443210	matched	PortTop_Bound_00443210	PORT-TOP-RENDERFRAME-492E90: re/match/s08/00443210.c (c4=match), Match/PortTop_00443210.cpp	5	0x00444ff0
+0x00444b60	FUN_00444b60	missing	PortTop_RRStop_00444b60	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	5	0x00444ff0
+0x00444ff0	FUN_00444ff0	matched	PortTop_Bound_00444ff0	PORT-TOP-RENDERFRAME-492E90: re/match/s08/00444ff0.c (c4=match), Match/PortTop_00444ff0.cpp	4	0x00448730
+0x00448730	FUN_00448730	matched	PortTop_Bound_00448730	PORT-TOP-RENDERFRAME-492E90: re/match/s08/00448730.c (c4=match), Match/PortTop_00448730.cpp	3	0x00410b30
+0x00450b10	FUN_00450b10	matched	RwCore_00450b10	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_00450b10.cpp	4	0x004270f0
+0x00457610	FUN_00457610	missing	PortTop_RRStop_00457610	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x0045b990	FUN_0045b990	missing	PortTop_RRStop_0045b990	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x00467210	FUN_00467210	missing	PortTop_RRStop_00467210	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x004270f0
+0x00472500	FUN_00472500	matched	PortTop_Bound_00472500	PORT-TOP-RENDERFRAME-492E90: re/match/s11/00472500.c (c4=match), Match/PortTop_00472500.cpp	5	0x00422570
+0x004725c0	FUN_004725c0	missing	PortTop_RRStop_004725c0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x004729b0	FUN_004729b0	matched	PortTop_Bound_004729b0	PORT-TOP-RENDERFRAME-492E90: re/match/s11/004729b0.c (c4=match), Match/PortTop_004729b0.cpp	5	0x00472ad0
+0x00472ad0	FUN_00472ad0	matched	PortTop_Bound_00472ad0	PORT-TOP-RENDERFRAME-492E90: re/match/s11/00472ad0.c (c4=match), Match/PortTop_00472ad0.cpp	4	0x004270f0
+0x00472c60	FUN_00472c60	matched	RwCore_00472c60	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_00472c60.cpp	3	0x00430b90
+0x00473870	FUN_00473870	matched	TextSpriteUVExplicit	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS11_00473870.cpp	3	0x00430b90
+0x004739f0	FUN_004739f0	matched	PortTop_Bound_004739f0	PORT-TOP-RENDERFRAME-492E90: re/match/s11/004739f0.c (c4=match), Match/PortTop_004739f0.cpp	3	0x00430b90
+0x00475d30	FUN_00475d30	matched	PortTop_Bound_00475d30	PORT-TOP-RENDERFRAME-492E90: re/match/s12/00475d30.c (c4=match), Match/PortTop_00475d30.cpp	3	0x00410b30
+0x00475e50	FUN_00475e50	missing	PortTop_RRStop_00475e50	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x004769f0	FUN_004769f0	matched	ParticleEmitter_SetColour	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS12_004769f0.cpp	4	0x00420050
+0x00476a10	FUN_00476a10	matched	Copy476a10	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS12_00476a10.cpp	4	0x00420050
+0x00476d00	FUN_00476d00	matched	MultiArrayScatter476d00	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/MatchS12_00476d00.cpp	4	0x00420050
+0x004770a0	FUN_004770a0	near-match	PortTop_Bound_004770a0	PORT-TOP-RENDERFRAME-492E90: re/match/s12/004770a0.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_004770a0.cpp	4	0x00475d30
+0x00477810	FUN_00477810	matched	PortTop_Bound_00477810	PORT-TOP-RENDERFRAME-492E90: re/match/s12/00477500.c (c4=match), Match/PortTop_00477810.cpp	3	0x00410b30
+0x00477a10	FUN_00477a10	matched	PortTop_Bound_00477a10	PORT-TOP-RENDERFRAME-492E90: re/match/s12/00477a10.c (c4=match), Match/PortTop_00477a10.cpp	3	0x00410b30
+0x00477e60	FUN_00477e60	near-match	PortTop_Bound_00477e60	PORT-TOP-RENDERFRAME-492E90: re/match/s12/00477e60.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_00477e60.cpp	5	0x00422570
+0x00477f50	FUN_00477f50	near-match	PortTop_Bound_00477f50	PORT-TOP-RENDERFRAME-492E90: re/match/s12/00477f50.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_00477f50.cpp	5	0x00422570
+0x00478220	FUN_00478220	matched	PortTop_Bound_00478220	PORT-TOP-RENDERFRAME-492E90: re/match/s12/00478220.c (c4=match), Match/PortTop_00478220.cpp	4	0x004270f0
+0x00478cd0	FUN_00478cd0	matched	PortTop_Bound_00478cd0	PORT-TOP-RENDERFRAME-492E90: re/match/s12/00478cd0.c (c4=match), Match/PortTop_00478cd0.cpp	4	0x004270f0
+0x0047b9e0	FUN_0047b9e0	matched	PortTop_Bound_0047b9e0	PORT-TOP-RENDERFRAME-492E90: re/match/s13/0047b9e0.c (c4=match), Match/PortTop_0047b9e0.cpp	3	0x00410b30
+0x00482ae0	FUN_00482ae0	matched	SplineCubicBlend3	PORT-TOP-RENDERFRAME-492E90: existing exe body Vehicle/SplineCubicBlend.cpp	5	0x00483a70
+0x00483a70	FUN_00483a70	matched	PortTop_Bound_00483a70	PORT-TOP-RENDERFRAME-492E90: re/match/s13/00483a70.c (c4=match), Match/PortTop_00483a70.cpp	4	0x00411ce0
+0x004842b0	FUN_004842b0	matched	PortTop_Bound_004842b0	PORT-TOP-RENDERFRAME-492E90: re/match/s14/004842b0.c (c4=match), Match/PortTop_004842b0.cpp	6	0x00484580
+0x00484310	FUN_00484310	missing	PortTop_RRStop_00484310	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	6	0x00484580
+0x00484360	FUN_00484360	missing	PortTop_RRStop_00484360	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	6	0x00484580
+0x00484580	FUN_00484580	matched	PortTop_Bound_00484580	PORT-TOP-RENDERFRAME-492E90: re/match/racepath/004844a0.c (c4=match), Match/PortTop_00484580.cpp	5	0x00478cd0
+0x00486220	FUN_00486220	matched	PortTop_Bound_00486220	PORT-TOP-RENDERFRAME-492E90: re/match/s14/00486220.c (c4=match), Match/PortTop_00486220.cpp	4	0x0040bde0
+0x00486f50	FUN_00486f50	missing	PortTop_RRStop_00486f50	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x00487de0	FUN_00487de0	missing	PortTop_RRStop_00487de0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x004891f0	FUN_004891f0	missing	PortTop_RRStop_004891f0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x00489910	FUN_00489910	matched	PortTop_Bound_00489910	PORT-TOP-RENDERFRAME-492E90: re/match/s14/00489910.c (c4=match), Match/PortTop_00489910.cpp	5	0x00486220
+0x0048ad50	FUN_0048ad50	missing	PortTop_RRStop_0048ad50	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x0048baf0	FUN_0048baf0	missing	PortTop_RRStop_0048baf0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x0048e7b0	FUN_0048e7b0	matched	PortTop_Bound_0048e7b0	PORT-TOP-RENDERFRAME-492E90: re/match/s15/0048e7b0.c (c4=match), Match/PortTop_0048e7b0.cpp	4	0x0040bde0
+0x0048fce0	FUN_0048fce0	missing	PortTop_RRStop_0048fce0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x0048fd10	FUN_0048fd10	missing	PortTop_RRStop_0048fd10	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x0048fd40	FUN_0048fd40	missing	PortTop_RRStop_0048fd40	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x0040bde0
+0x0048fd70	FUN_0048fd70	missing	PortTop_RRStop_0048fd70	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x00490490	FUN_00490490	missing	PortTop_RRStop_00490490	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	3	0x00410b30
+0x004914b0	FUN_004914b0	missing	PortTop_RRStop_004914b0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x004270f0
+0x004924e0	FUN_004924e0	matched	PortTop_Bound_004924e0	PORT-TOP-RENDERFRAME-492E90: re/match/s15/004924e0.c (c4=match), Match/PortTop_004924e0.cpp	4	0x004270f0
+0x004938e0	FUN_004938e0	matched	PortTop_Movie_004938e0	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/PortTop_MovieCore.cpp	4	0x00403910
+0x00496c10	FUN_00496c10	matched	PortTop_Bound_00496c10	PORT-TOP-RENDERFRAME-492E90: re/match/s16/00496c10.c (c4=match), Match/PortTop_00496c10.cpp	4	0x0047b9e0
+0x004b41b0	FUN_004b41b0	matched	PortTop_Bound_004b41b0	PORT-TOP-RENDERFRAME-492E90: re/match/s18/004b41b0.c (c4=match), Match/PortTop_004b41b0.cpp	6	0x00484580
+0x004b42c0	FUN_004b42c0	missing	PortTop_RRStop_004b42c0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00420050
+0x004b4a80	FUN_004b4a80	missing	PortTop_RRStop_004b4a80	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	6	0x004b4ad0
+0x004b4ad0	FUN_004b4ad0	matched	PortTop_Bound_004b4ad0	PORT-TOP-RENDERFRAME-492E90: re/match/s18/004b4ad0.c (c4=match), Match/PortTop_004b4ad0.cpp	5	0x00422570
+0x004b59c0	FUN_004b59c0	matched	PortTop_Bound_004b59c0	PORT-TOP-RENDERFRAME-492E90: re/match/s18/004b59c0.c (c4=match), Match/PortTop_004b59c0.cpp	4	0x004072e0
+0x004b5af0	FUN_004b5af0	missing	PortTop_RRStop_004b5af0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x004270f0
+0x004b5d90	FUN_004b5d90	missing	PortTop_RRStop_004b5d90	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	7	0x004b60c0
+0x004b60c0	FUN_004b60c0	matched	PortTop_Bound_004b60c0	PORT-TOP-RENDERFRAME-492E90: re/match/s18/004b60c0.c (c4=match), Match/PortTop_004b60c0.cpp	6	0x00484580
+0x004b61c0	FUN_004b61c0	matched	PortTop_Bound_004b61c0	PORT-TOP-RENDERFRAME-492E90: re/match/s18/004b61c0.c (L-126 admitted, re/match/ADMITTED.tsv, not a byte match), Match/PortTop_004b61c0.cpp	6	0x00484580
+0x004c1340	FUN_004c1340	matched	PortTop_Bound_004c1340	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/PortTop_004c1340.cpp	4	0x00420050
+0x004c1480	FUN_004c1480	matched	PortTop_Bound_004c1480	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/PortTop_004c1480.cpp	3	0x0040de30
+0x004c1520	FUN_004c1520	matched	PortTop_Bound_004c1520	PORT-TOP-RENDERFRAME-492E90: existing exe body Match/PortTop_004c1520.cpp	5	0x00426d20
+0x004c1680	FUN_004c1680	matched	PortTop_Bound_004c1680	PORT-TOP-RENDERFRAME-492E90: re/match/s19/004c1680.c (c4=match), Match/PortTop_004c1680.cpp	4	0x00420050
+0x004c1b40	FUN_004c1b40	missing	PortTop_RRStop_004c1b40	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00420050
+0x004c1c10	FUN_004c1c10	matched	RwCore_004c1c10	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004c1c10.cpp	3	0x0040de30
+0x004c3d90	FUN_004c3d90	missing	PortTop_RRStop_004c3d90	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	5	0x00422570
+0x004c45f0	FUN_004c45f0	matched	RwCore_004c45f0	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004c45f0.cpp	4	0x00420050
+0x004c4670	FUN_004c4670	matched	RwCore_004c4670	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004c4670.cpp	5	0x004c1680
+0x004c4d20	FUN_004c4d20	matched	RwCore_004c4d20	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004c4d20.cpp	4	0x00420050
+0x004c5010	FUN_004c5010	matched	RwCore_004c5010	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004c5010.cpp	4	0x00420050
+0x004c51a0	FUN_004c51a0	matched	RwCore_004c51a0	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004c51a0.cpp	4	0x00420050
+0x004c52f0	FUN_004c52f0	missing	PortTop_RRStop_004c52f0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00420050
+0x004c75e0	FUN_004c75e0	matched	PortTop_Bound_004c75e0	PORT-TOP-RENDERFRAME-492E90: re/match/s19/004c75e0.c (c4=match), Match/PortTop_004c75e0.cpp	4	0x00403910
+0x004cd070	FUN_004cd070	matched	RwCore_004cd070	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004cd070.cpp	4	0x00477a10
+0x004cd140	FUN_004cd140	matched	RwCore_004cd140	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004cd140.cpp	4	0x00477a10
+0x004cd170	FUN_004cd170	matched	RwCore_004cd170	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004cd170.cpp	5	0x00478220
+0x004cd2d0	FUN_004cd2d0	matched	PortTop_Bound_004cd2d0	PORT-TOP-RENDERFRAME-492E90: re/match/s20/004cd2d0.c (c4=match), Match/PortTop_004cd2d0.cpp	4	0x00477a10
+0x004cd430	FUN_004cd430	matched	PortTop_Bound_004cd430	PORT-TOP-RENDERFRAME-492E90: re/match/s20/004cd430.c (c4=match), Match/PortTop_004cd430.cpp	5	0x004b59c0
+0x004d40c0	FUN_004d40c0	matched	GetPipelinePtr	PORT-TOP-RENDERFRAME-492E90: existing exe body Render/BatchAB_s1.cpp	5	0x004cd2d0
+0x004d40d0	FUN_004d40d0	matched	RwCore_004d40d0	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004d40d0.cpp	5	0x004cd2d0
+0x004e12b0	FUN_004e12b0	matched	RwCore_004e12b0	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004e12b0.cpp	6	0x004cd430
+0x004e14a0	FUN_004e14a0	missing	PortTop_RRStop_004e14a0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	6	0x004cd430
+0x004e4350	FUN_004e4350	matched	PortTop_Bound_004e4350	PORT-TOP-RENDERFRAME-492E90: re/match/s21/004e4350.c (c4=match), Match/PortTop_004e4350.cpp	3	0x004266b0
+0x004e47b0	FUN_004e47b0	matched	PortTop_Bound_004e47b0	PORT-TOP-RENDERFRAME-492E90: re/match/rwl02/004e47b0.c (c4=match), Match/PortTop_004e47b0.cpp	5	0x004e5660
+0x004e5660	FUN_004e5660	matched	PortTop_Bound_004e5660	PORT-TOP-RENDERFRAME-492E90: re/match/rwl02/004e5660.c (c4=match), Match/PortTop_004e5660.cpp	4	0x004270f0
+0x004e5680	FUN_004e5680	matched	PortTop_Bound_004e5680	PORT-TOP-RENDERFRAME-492E90: re/match/rwl02/004e5680.c (c4=match), Match/PortTop_004e5680.cpp	5	0x004e5660
+0x004e5820	FUN_004e5820	matched	RwCore_004e5820	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004e5820.cpp	6	0x00484580
+0x004e5840	FUN_004e5840	matched	PortTop_Bound_004e5840	PORT-TOP-RENDERFRAME-492E90: re/match/rwl02/004e5840.c (c4=match), Match/PortTop_004e5840.cpp	6	0x00484580
+0x004e5c70	FUN_004e5c70	matched	RwCore_004e5c70	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004e5c70.cpp	7	0x004b41b0
+0x004e6100	FUN_004e6100	matched	RwCore_004e6100	PORT-TOP-RENDERFRAME-492E90: existing exe body RwCore/RwCore_004e6100.cpp	4	0x004219c0
+0x004e6680	FUN_004e6680	missing	PortTop_RRStop_004e6680	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	4	0x00401f10
+0x004f0900	FUN_004f0900	matched	PortTop_Bound_004f0900	PORT-TOP-RENDERFRAME-492E90: re/match/s22/004f0900.c (c4=match), Match/PortTop_004f0900.cpp	6	0x004e5680
+0x005492a0	FUN_005492a0	matched	PortTop_Bound_005492a0	PORT-TOP-RENDERFRAME-492E90: re/match/rwl04/005492a0.c (c4=match), Match/PortTop_005492a0.cpp	4	0x00477810
+0x005493d0	FUN_005493d0	matched	PortTop_Bound_005493d0	PORT-TOP-RENDERFRAME-492E90: re/match/rwl04/005493d0.c (c4=match), Match/PortTop_005493d0.cpp	4	0x00477810
+0x005586f0	FUN_005586f0	missing	PortTop_RRStop_005586f0	PORT-TOP-RENDERFRAME-492E90: named stop (log + exit code = rva, Match/PortTop_RenderFrameStops.cpp). No matched or admitted body	5	0x00444ff0
+0x0055dec0	FUN_0055dec0	matched	UtilDeref55dec0	PORT-TOP-RENDERFRAME-492E90: existing exe body Util/UtilLeaves_ab6.cpp	4	0x004270f0
