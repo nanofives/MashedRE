@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-21  0x00401690  FUN_00401690  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/replayfb8_20261121/RESULT_REPLAY-FALLBACK-8.md; evidence: verify/replayfb8_20261121/RESULT_REPLAY-FALLBACK-8.md
 2026-11-21  0x00412190  FUN_00412190  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md; evidence: verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md
 2026-11-21  0x0040eee0  FUN_0040eee0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md; evidence: verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md
 2026-11-21  0x0047be80  FUN_0047be80  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md; evidence: verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md
