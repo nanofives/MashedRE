@@ -8,7 +8,7 @@
 #define FUN_00458e00 PortTop_Bound_00458e00
 #define FUN_0042fe30 RaceEndFlagIfEndMode   // exe body (Match/MatchS07_0042fe30.cpp)
 #define FUN_00458d00 PortTop_Bound_00458d00
-#define FUN_00458dd0 PortTop_RLStop_00458dd0   // named stop
+#define FUN_00458dd0 PortTop_Bound_00458dd0
 #define FUN_004c15c0 RwCore_004c15c0   // exe body (RwCore/RwCore_004c15c0.cpp)
 extern "C" {
 #include "../../../../re/match/s09/00458e00.c"

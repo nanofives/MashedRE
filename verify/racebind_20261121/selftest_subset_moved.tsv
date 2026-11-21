@@ -1,0 +1,31 @@
+head failure lines 29 merged 29
+in-head	audio	[selftest] audio roots 63: plan DIFFERENT (bind 384 reuse 83 stop 76), wrappers+stops DIFFERENT 13 (385 checked)
+in-head	audio	plan 005a6ea0 ['bind', 're/match/s25/005a6ea0.c', 'provisional'] -> ['bind', 're/match/s25/005a6ea0.c', 'replay']
+in-head	audio	plan 005a71f0 ['stop'] -> ['reuse', 'PortTop_Bound_005a71f0', 'Match/PortTop_005a71f0.cpp']
+in-head	audio	plan 005a7b60 ['stop'] -> ['reuse', 'PortTop_Bound_005a7b60', 'Match/PortTop_005a7b60.cpp']
+in-head	audio	plan 005a91b0 ['stop'] -> ['reuse', 'PortTop_Bound_005a91b0', 'Match/PortTop_005a91b0.cpp']
+in-head	audio	plan 005a9f10 ['bind', 're/match/s25/005a9f10.c', 'provisional'] -> ['bind', 're/match/s25/005a9f10.c', 'replay']
+in-head	audio	plan 005ae250 ['stop'] -> ['reuse', 'PortTop_Bound_005ae250', 'Match/PortTop_005ae250.cpp']
+in-head	audio	plan 005b10a0 ['stop'] -> ['reuse', 'AudioTableDispatchAt4', 'Audio/AudioTableDispatch.cpp']
+in-head	audio	plan 005ba1d0 ['stop'] -> ['reuse', 'PortTop_Bound_005ba1d0', 'Match/PortTop_005ba1d0.cpp']
+in-head	audio	plan 005bb000 ['stop'] -> ['reuse', 'PortTop_Bound_005bb000', 'Match/PortTop_005bb000.cpp']
+in-head	audio	plan 005bb910 ['stop'] -> ['reuse', 'PortTop_Bound_005bb910', 'Match/PortTop_005bb910.cpp']
+in-head	audio	plan 005bba30 ['stop'] -> ['reuse', 'PortTop_Bound_005bba30', 'Match/PortTop_005bba30.cpp']
+in-head	audio	plan 005bba60 ['stop'] -> ['reuse', 'PortTop_Bound_005bba60', 'Match/PortTop_005bba60.cpp']
+in-head	audio	plan 005bbac0 ['stop'] -> ['reuse', 'PortTop_Bound_005bbac0', 'Match/PortTop_005bbac0.cpp']
+in-head	audio	plan 005c7d30 ['stop'] -> ['reuse', 'PortTop_Bound_005c7d30', 'Match/PortTop_005c7d30.cpp']
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_0045d460.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005a8f30.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005a9e60.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005b10d0.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005b1140.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005b9f30.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005ba780.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005bb850.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005bc860.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005be0f0.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005c7a90.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_005c7fb0.cpp
+in-head	audio	file mashedmod/src/mashed_re/Match/PortTop_AudioStops.cpp
+in-head	renderframe	[selftest] FAIL 14
+NEW lines 0

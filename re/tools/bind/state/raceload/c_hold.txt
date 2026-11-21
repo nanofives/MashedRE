@@ -6,8 +6,6 @@
 00409680	race-owned
 00409710	race-owned
 00425bf0	race-owned
-00440bc0	race-owned
-00458dd0	race-owned
 0047a1b0	race-owned
 0047a540	race-owned
 0047a580	race-owned
@@ -23,8 +21,5 @@
 0047ad00	race-owned
 0047b230	race-owned
 0047b250	race-owned
-0047b860	race-owned
-0047b8d0	race-owned
 004c3d90	race-owned
-004e89a0	race-owned
 00451730	PORT-OT-RACE-BIND-PROV4 (integration 34c823375): cpp-unclean stop of 0x00485460, not in this row's 34 (merge of RACE-BIND-C4-BULK into BIND-CUNCLEAN-AS-C)
