@@ -292,19 +292,43 @@ def load_provisional():
     """L-126 (6a): RVAs listed in re/match/PROVISIONAL.tsv (status provisional or refused). A provisional body is not
     byte-matched, so it never joins the object build and never counts in the byte-check (a whole unit is skipped; in a
     unit with a linked function the provisional function alone keeps its VS2022 body, DDKOBJ-PROV-MIXED-UNIT).
-    DDKOBJ_EXTRA_PROVISIONAL (comma-separated RVAs) adds rows, for the selftest fixtures only."""
-    out = {int(x, 16) for x in os.environ.get("DDKOBJ_EXTRA_PROVISIONAL", "").split(",") if x.strip()}
+    DDKOBJ_EXTRA_PROVISIONAL (comma-separated RVAs, or `rva=source`) adds rows, for the selftest fixtures only.
+    L-178 (BIND-CUNCLEAN-AS-C, 2026-11-21): keyed by (rva, listed source). Returns {rva: set of keys}. A row whose
+    listed source is a re/match/ file keys as "*" and skips every unit of that rva, as before. A row whose listed source is
+    anything else (the L-137 lifted scaffolding RwCore/RwCore_Lifted_NN.cpp, RwCore/RwCore_Hand.cpp) keys as that source
+    and skips only a unit compiling that source: a re/match unit of the same rva is checked on its own (a dual body)."""
+    out = {}
+    for x in os.environ.get("DDKOBJ_EXTRA_PROVISIONAL", "").split(","):
+        if x.strip():
+            a, _, s = x.strip().partition("=")
+            out.setdefault(int(a, 16), set()).add(_prov_key(s))
     try:
         with open(PROVISIONAL, newline="", encoding="utf-8") as fh:
             rows = [l for l in fh if not l.startswith("#")]
         for r in csv.DictReader(rows, delimiter="	"):
             try:
-                out.add(int(r["rva"], 16))
+                out.setdefault(int(r["rva"], 16), set()).add(_prov_key(r.get("source") or ""))
             except (ValueError, KeyError):
                 pass
     except OSError:
         pass
     return out
+
+
+def _prov_key(source):
+    s = (source or "").strip().replace("\\", "/").lower()
+    return "*" if (not s or s in ("-", "n/a") or s.startswith("re/match/")) else s
+
+
+def prov_applies(prov, r, src=None):
+    """True when a PROVISIONAL row of rva r applies to a unit compiling src (L-178 key, see load_provisional)."""
+    keys = prov.get(r)
+    if not keys:
+        return False
+    if "*" in keys or src is None:
+        return "*" in keys or src is None
+    s = str(src).replace("\\", "/").lower()
+    return any(s == k or s.endswith("/" + k) for k in keys)
 
 
 def parse_source(path: pathlib.Path, cxx: bool = True):
@@ -447,8 +471,8 @@ def main_build(a):
     B = load_bindings()
     PROV = load_provisional()
 
-    def is_prov(r):
-        return r in PROV or B.get(r, {}).get("kind") == "provisional"
+    def is_prov(r, src=None):   # L-178: keyed by (rva, the unit's source)
+        return prov_applies(PROV, r, src) or B.get(r, {}).get("kind") == "provisional"
     crt = vs_crt_symbols()
     # every external the default link can resolve: defined in a default object, or in a library on the link line
     defmap = default_link_symbols() | crt
@@ -543,7 +567,7 @@ def main_build(a):
     for u in units:
         for r, mname in u["info"]["matches"]:
             plain = CE.undecorate(mname)
-            if plain in u["info"]["ported"] and not is_prov(r):   # a provisional body stays the VS2022 copy
+            if plain in u["info"]["ported"] and not is_prov(r, u["src"]):   # a provisional body stays the VS2022 copy
                 exe_names[u["defs"].get(plain, plain)] = u
     wrapper_edits = collections.defaultdict(list)   # wrapper obj path -> [(exe plain name, rva)]
     # PORT-TOP-08: `__ddkreg_<rva>` -> the source that took it. A second source that holds the same static
@@ -564,7 +588,7 @@ def main_build(a):
         # linked function keeps its VS2022 body. Its DDK copy is treated like a port-excluded helper below: renamed to
         # a dead local, and every in-object reference repointed to the exe name, so the DDK functions of the unit call
         # the VS2022 body and the byte check never sees it.
-        prov_plain = {p for p, r in match_plain.items() if is_prov(r)}
+        prov_plain = {p for p, r in match_plain.items() if is_prov(r, u["src"])}
         ported = info["ported"] - prov_plain
         excluded = info["port_excluded"]
         regconv = u.get("regconv") or {}     # DDKOBJ-REGCONV: static MATCH name -> adapter cc (None: no VS2022 copy)
@@ -774,7 +798,7 @@ def main_build(a):
             rec["status"] = "skip:lang-" + info["lang"]
             report["units"].append(rec)
             continue
-        if all(is_prov(r) for r in u["rvas"]):
+        if all(is_prov(r, u["src"]) for r in u["rvas"]):
             rec["status"] = "skip:provisional"      # L-126 (6a): VS2022 body on the knob path, no byte-check
             report["units"].append(rec)
             continue
@@ -1437,6 +1461,7 @@ def main_check(a):
     print(f"[ddkobj check] {dict(c)} -> {out / 'BYTECHECK.tsv'}")
     # DDKOBJ-TRAIN: one summary the merge train reports (IDENTICAL count, refusals, differences)
     st = collections.Counter(u["status"] for u in rep["units"])
+    PROV = load_provisional()
     summ = {"identical": c.get("IDENTICAL", 0), "different": c.get("DIFFERENT", 0),
             "not_in_map": c.get("not-in-map", 0), "functions": len(rows),
             "provisional_units_skipped": st.get("skip:provisional", 0),
@@ -1446,6 +1471,9 @@ def main_check(a):
             "units": len(rep["units"]), "units_linked": st.get("ok", 0),
             "refusals": {k: v for k, v in sorted(st.items()) if k.startswith("fail:")},
             "skips": {k: v for k, v in sorted(st.items()) if k.startswith("skip:")},
+            # L-178: IDENTICAL functions whose rva also has a listed provisional body (another exe body, not this unit's
+            # source). They are pre-bound: never report them as "the path runs matched bytes".
+            "dual_body_rvas": sorted(r["rva"] for r in rows if r["result"] == "IDENTICAL" and _dual(PROV, r)),
             "different_rvas": sorted(r["rva"] for r in rows if r["result"] == "DIFFERENT"),
             "not_in_map_rvas": sorted(r["rva"] for r in rows if r["result"] == "not-in-map")}
     (out / "ddkobj_summary.json").write_text(json.dumps(summ, indent=1))
@@ -1454,8 +1482,14 @@ def main_check(a):
           f"[{' '.join(summ['different_rvas'])}]  not-in-map {summ['not_in_map']}  units linked "
           f"{summ['units_linked']}/{summ['units']}  refusals {sum(summ['refusals'].values())} ({ref})  "
           f"provisional kept VS2022 {summ['provisional_units_skipped']} units + "
-          f"{len(summ['provisional_functions_vs2022_in_linked_units'])} fns in linked units")
+          f"{len(summ['provisional_functions_vs2022_in_linked_units'])} fns in linked units  "
+          f"dual body {len(summ['dual_body_rvas'])} (IDENTICAL, rva also has a listed provisional body: pre-bound)")
     return 0
+
+
+def _dual(prov, row):
+    r = int(row["rva"], 16)
+    return r in prov and not prov_applies(prov, r, row.get("src"))
 
 
 # ------------------------------------------------------------------ selftest (DDKOBJ-TRAIN)
@@ -1664,6 +1698,30 @@ def main_selftest(a):
             os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
         check(by.get("provmix", {}).get("status") == "skip:provisional",
               f"every function provisional -> skip:provisional ({by.get('provmix', {}).get('status')})")
+        # L-178 (BIND-CUNCLEAN-AS-C): provisional rows keyed by (rva, listed source). A row whose listed source is not a
+        # re/match file (the L-137 lifted scaffolding) is another exe body: the matched unit of the same rva is checked.
+        os.environ["DDKOBJ_EXTRA_PROVISIONAL"] = ("0x004000b0=RwCore/RwCore_Lifted_NN.cpp,"
+                                                  "0x004000c0=RwCore/RwCore_Lifted_NN.cpp")
+        try:
+            rc, rep, by = run(["provmix"], "provlift")
+        finally:
+            os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
+        check(by.get("provmix", {}).get("status") == "ok",
+              f"lifted rows (listed source RwCore/RwCore_Lifted_NN.cpp) + matched unit -> checked "
+              f"({by.get('provmix', {}).get('status')})")
+        # a row whose listed source is the re/match file still skips every unit of that rva, as before
+        os.environ["DDKOBJ_EXTRA_PROVISIONAL"] = ("0x004000b0=re/match/ddkst_provmix.c,"
+                                                  "0x004000c0=re/match/ddkst_provmix.c")
+        try:
+            rc, rep, by = run(["provmix"], "provsrc")
+        finally:
+            os.environ.pop("DDKOBJ_EXTRA_PROVISIONAL", None)
+        check(by.get("provmix", {}).get("status") == "skip:provisional",
+              f"row listing the re/match source -> still skip:provisional ({by.get('provmix', {}).get('status')})")
+        pv = {0x1: {"rwcore/rwcore_lifted_nn.cpp"}, 0x2: {"*"}}
+        check(not prov_applies(pv, 0x1, "C:/w/re/match/g2sh/x.c") and prov_applies(pv, 0x2, "C:/w/re/match/g2sh/x.c")
+              and _dual(pv, {"rva": "0x00000001", "src": "re/match/g2sh/x.c"}),
+              "prov_applies / dual body: lifted row -> not applied, dual body; re/match row -> applied")
     finally:
         os.environ.pop("DDKOBJ_EXTRA_WRAPPERS", None)
         if not a.keep:
