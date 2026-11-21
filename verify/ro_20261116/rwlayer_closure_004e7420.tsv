@@ -1,0 +1,89 @@
+rva	bound_symbol	kind	best_pct	hooks_status	owner_lists
+004c0740	RwCore_004c0740	match100	100.0	C4	race_owned
+004c0790	RwCore_004c0790	match100	100.0	C4	race_owned
+004c0ad0	RwCoreCopy_004c1040_004c0ad0	rwcore-other:RwCoreCopy	100.0	C4	race_owned
+004c0b30	RwCore_004c0b30	match100	100.0	C4	race_owned
+004c0b70	RwCore_004c0b70	match100	100.0	C4	race_owned
+004c0d70	RwCore_004c0d70	match100	100.0	C4	race_owned
+004c0de0	RwCore_004c0de0	match100	100.0	C4	race_owned
+004c0e50	RwCore_004c0e50	match100	100.0	C4	race_owned
+004c0ef0	RwCore_004c0ef0	match100	100.0	C4	race_owned
+004c0f00	RwCore_004c0f00	provisional	98.8	C2	race_owned
+004c1040	RwCore_004c1040	provisional	99.2	C4	race_owned
+004c1a10	RwCore_004c1a10	match100	100.0	C4	race_owned
+004c1a40	RwCore_004c1a40	match100	100.0	C4	race_owned
+004c1a70	RwCore_004c1a70	provisional	90.7	C4	race_owned
+004c1b10	RwCore_004c1b10	match100	100.0	C4	race_owned
+004c1c10	RwCore_004c1c10	match100	100.0	C4	race_owned
+004c1c80	RwCore_004c1c80	match100	100.0	C4	race_owned
+004c1cf0	RwCore_004c1cf0	match100	100.0	C4	race_owned
+004c1d30	RwCore_004c1d30	match100	100.0	C4	race_owned
+004c1de0	RwCoreLift_004c1de0	lifted		C1	race_owned
+004c2b80	RwCoreLift_004c2b80	lifted		C4	race_owned
+004c2bb0	RwCoreLift_004c2bb0	lifted		C4	race_owned
+004c3b30	RwCore_004c3b30	match100	100.0	C4	race_owned
+004c4220	RwCore_004c4220	provisional	40.7	C2	race_owned
+004c4270	RwCore_004c4270	match100	100.0	C4	race_owned
+004c42d0	RwCore_004c42d0	match100	100.0	C4	race_owned
+004c5a60	RwCore_004c5a60	match100	100.0	C4	race_owned
+004c7650	RwCore_004c7650	match100	100.0	C4	race_owned
+004cbd30	RwCore_004cbd30	match100	100.0	C4	audio_owned
+004cc050	RwCore_004cc050	provisional	78.5	C3	audio_owned
+004cc400	RwCore_004cc400	match100	100.0	C4	audio_owned
+004cc4f0	RwCore_004cc4f0	match100	100.0	C4	audio_owned
+004cc5e0	RwCore_004cc5e0	provisional	59.8	C2	audio_owned
+004cc790	RwCore_004cc790	match100	100.0	C4	race_owned
+004d7ff0	Orig_004d7ff0	exe:Orig_004d7ff0		C4	audio_owned
+004d8000	RwCore_004d8000	match100	100.0	C4	race_owned
+004d8060	RwCore_004d8060	match100	100.0	C4	race_owned
+004d8480	RwCore_004d8480	provisional	85.7	C4	audio_owned
+004d8bd0	RwCore_004d8bd0	match100	100.0	C4	race_owned
+004e1b60	RwCore_004e1b60	provisional	86.5	C4	race_owned
+004e1c90	RwCore_004e1c90	match100	100.0	C4	race_owned
+004e2ff0	RwCore_004e2ff0	match100	100.0	C4	race_owned
+004e4440	RwCore_004e4440	match100	100.0	C4	race_owned
+004e4c30	RwCore_004e4c30	provisional	71.3	C4	race_owned
+004e4d90	RwCore_004e4d90	match100	100.0	C4	race_owned
+004e4dd0	RwCore_004e4dd0	match100	100.0	C4	race_owned
+004e66d0	RwCore_004e66d0	provisional	70.6	C4	race_owned
+004e6710	RwCore_004e6710	provisional	87.1	C4	race_owned
+004e6760	RwCore_004e6760	provisional	87.1	C4	race_owned
+004e6920	RwCore_004e6920	provisional	90.9	C4	race_owned
+004e6d00	RwCore_004e6d00	match100	100.0	C4	race_owned
+004e6d40	RwCoreLift_004e6d40	lifted		C4	race_owned
+004e6d80	RwCore_004e6d80	match100	100.0	C4	race_owned
+004e6e00	RwCore_004e6e00	provisional	67.9	C4	race_owned
+004e7010	RwCore_004e7010	match100	100.0	C4	race_owned
+004e7060	RwCore_004e7060	provisional	39.5	C2	race_owned
+004e7420	RwCore_004e7420	provisional	37.9	C2	race_owned
+004e7cc0	RwCore_004e7cc0	provisional	90.9	C4	race_owned
+004e8030	RwCore_004e8030	match100	100.0	C4	race_owned
+004e8750	RwCore_004e8750	match100	100.0	C4	race_owned
+004e89e0	RwCore_004e89e0	match100	100.0	C4	race_owned
+004e8a10	RwCore_004e8a10	provisional	58.6	C2	race_owned
+004e8c70	RwCore_004e8c70	provisional	28.9	C2	race_owned
+004e8e90	RwCore_004e8e90	match100	100.0	C4	race_owned
+004e8ea0	RwCore_004e8ea0	match100	100.0	C4	race_owned
+004e9330	RwCore_004e9330	provisional	51.5	C2	race_owned
+004e9850	RwCore_004e9850	match100	100.0	C4	race_owned
+004f0970	RwCore_004f0970	match100	100.0	C4	race_owned
+004f0ae0	RwCore_004f0ae0	provisional	81.8	C4	race_owned
+004f0bd0	RwCore_004f0bd0	match100	100.0	C4	race_owned
+004f0c10	RwCore_004f0c10	match100	100.0	C4	race_owned
+004f0c50	RwCore_004f0c50	match100	100.0	C4	race_owned
+004f0d80	RwCore_004f0d80	match100	100.0	C4	race_owned
+004f2420	RwCoreLift_004f2420	lifted			race_owned
+004f36c0	RwCore_004f36c0	provisional	32.0	C2	race_owned
+004f38c0	RwCoreLift_004f38c0	lifted			race_owned
+004f3b00	RwCore_004f3b00	match100	100.0	C4	race_owned
+004f3b60	RwCore_004f3b60	match100	100.0	C4	race_owned
+004f3bc0	RwCore_004f3bc0	match100	100.0	C4	race_owned
+004f3bd0	RwCore_004f3bd0	match100	100.0	C4	race_owned
+004f3e90	RwCoreLift_004f3e90	lifted		C2	race_owned
+00550950	RwCore_00550950	match100	100.0	C4	audio_owned,bulk_cp1
+005509b0	RwCore_005509b0	match100	100.0	C4	audio_owned,bulk_cp1
+00550af0	RwCore_00550af0	match100	100.0	C4	audio_owned
+005c24e0	RwCoreCrt_qsort	rwcore-other:RwCoreCrt		C4	race_owned
+005c4670	RwCore_005c4670	provisional	68.2	C2	race_owned
+005c47b0	RwCore_005c47b0	match100	100.0	C4	race_owned
+005c47e0	RwCore_005c47e0	provisional	80.0	C2	race_owned
