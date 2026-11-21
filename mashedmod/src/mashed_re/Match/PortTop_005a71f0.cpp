@@ -11,7 +11,7 @@
 #define FUN_005a6b70 PortTop_Bound_005a6b70
 #define FUN_005a6cb0 PortTop_AStop_005a6cb0   // named stop
 #define FUN_005a6df0 PortTop_Bound_005a6df0
-#define FUN_005a73a0 PortTop_AStop_005a73a0   // named stop
+#define FUN_005a73a0 PortTop_Bound_005a73a0
 #define FUN_005ad6a0 PortTop_Bound_005ad6a0
 #define FUN_005aea00 PortTop_Bound_005aea00
 extern "C" {

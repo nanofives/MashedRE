@@ -11,13 +11,13 @@
 #define FUN_004cbd30 RwCore_004cbd30   // exe body (RwCore/RwCore_004cbd30.cpp)
 #define FUN_004cc050 RwCore_004cc050   // exe body (RwCore/RwCore_004cc050.cpp)
 #define FUN_005a79a0 PortTop_Bound_005a79a0
-#define FUN_005a7b40 PortTop_AStop_005a7b40   // named stop
+#define FUN_005a7b40 PortTop_Bound_005a7b40
 #define FUN_005a7b50 PortTop_Bound_005a7b50
 #define FUN_005a7ee0 PortTop_Bound_005a7ee0
-#define FUN_005ab380 PortTop_AStop_005ab380   // named stop
+#define FUN_005ab380 PortTop_Bound_005ab380
 #define FUN_005ab410 PortTop_Bound_005ab410
 #define FUN_005abcf0 PortTop_Bound_005abcf0
-#define FUN_005abfa0 PortTop_AStop_005abfa0   // named stop
+#define FUN_005abfa0 PortTop_Bound_005abfa0
 #define FUN_005ade10 PortTop_Bound_005ade10
 #define FUN_005aea00 PortTop_Bound_005aea00
 #define FUN_005aea10 PortTop_Bound_005aea10

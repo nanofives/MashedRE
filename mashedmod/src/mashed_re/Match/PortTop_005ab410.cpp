@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_005ab410 PortTop_Bound_005ab410
 #define FUN_004cc050 RwCore_004cc050   // exe body (RwCore/RwCore_004cc050.cpp)
-#define FUN_005ab380 PortTop_AStop_005ab380   // named stop
+#define FUN_005ab380 PortTop_Bound_005ab380
 extern "C" {
 #include "../../../../re/match/s25/005ab410.c"
 }

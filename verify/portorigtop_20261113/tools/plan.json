@@ -3069,7 +3069,11 @@
 []
 ],
 "005a73a0": [
-"stop"
+"bind",
+"re/match/s25/005a73a0.c",
+"match",
+[],
+[]
 ],
 "005adf60": [
 "bind",
@@ -3094,7 +3098,11 @@
 "RwCore/RwCore_004cc050.cpp"
 ],
 "005a7b40": [
-"stop"
+"bind",
+"re/match/s25/005a7b40.c",
+"match",
+[],
+[]
 ],
 "005a7b50": [
 "bind",
@@ -3115,7 +3123,13 @@
 []
 ],
 "005ab380": [
-"stop"
+"bind",
+"re/match/s25/005ab380.c",
+"provisional",
+[
+"004cbd30"
+],
+[]
 ],
 "005ab410": [
 "bind",
@@ -3128,7 +3142,24 @@
 []
 ],
 "005abfa0": [
-"stop"
+"bind",
+"re/match/s25/005abfa0.c",
+"provisional",
+[
+"004522d0",
+"004cbd30",
+"005ab380",
+"005abcf0",
+"005abd30",
+"005abf80",
+"005ac210",
+"005adf30",
+"005aea00",
+"005aea10",
+"005aea40",
+"005aec30"
+],
+[]
 ],
 "005ade10": [
 "bind",
@@ -4048,7 +4079,15 @@
 []
 ],
 "005ad0b0": [
-"stop"
+"bind",
+"re/match/s26/005ad0b0.c",
+"provisional",
+[
+"005ad320",
+"005adf30",
+"005aea00"
+],
+[]
 ],
 "005ae0c0": [
 "bind",
@@ -4057,6 +4096,57 @@
 [
 "005aeca0"
 ],
+[]
+],
+"005abd30": [
+"bind",
+"re/match/s25/005abd30.c",
+"provisional",
+[
+"005abf80",
+"005ac5f0",
+"005aea10",
+"005aea40",
+"005b3b30",
+"005b3b60",
+"005b3b80"
+],
+[]
+],
+"005abf80": [
+"reuse",
+"AudioWaveVtableSlot1cDispatch",
+"Audio/RwsStream.cpp"
+],
+"005ac210": [
+"bind",
+"re/match/s25/005ac210.c",
+"provisional",
+[
+"005aa060",
+"005aa0c0",
+"005aaaa0",
+"005aaac0",
+"005aba20",
+"005ac770",
+"005ac7b0",
+"005ac900",
+"005ac980",
+"005aca80",
+"005acaa0",
+"005acd10",
+"005adf30",
+"005ae0c0",
+"005aea00",
+"005aec00"
+],
+[]
+],
+"005aec30": [
+"bind",
+"re/match/s26/005aec30.c",
+"provisional",
+[],
 []
 ],
 "005ae470": [
@@ -4550,7 +4640,99 @@
 []
 ],
 "005aeca0": [
+"bind",
+"re/match/s26/005aeca0.c",
+"provisional",
+[],
+[]
+],
+"005ac5f0": [
+"bind",
+"re/match/s25/005ac5f0.c",
+"match",
+[
+"005adf30"
+],
+[]
+],
+"005b3b30": [
+"bind",
+"re/match/s27/005b3b30.c",
+"match",
+[
+"005b3a00"
+],
+[]
+],
+"005b3b60": [
+"bind",
+"re/match/s27/005b3b60.c",
+"match",
+[
+"005b3a00"
+],
+[]
+],
+"005b3b80": [
 "stop"
+],
+"005aba20": [
+"bind",
+"re/match/s25/005aba20.c",
+"provisional",
+[
+"005a7b00",
+"005a7b50",
+"005abcb0",
+"005ac5f0",
+"005ac980",
+"005acd10",
+"005ae0b0",
+"005ae650",
+"005ae800",
+"005aea00",
+"005b3b60"
+],
+[]
+],
+"005ac770": [
+"bind",
+"re/match/tlr/005ac770.c",
+"match",
+[],
+[]
+],
+"005ac900": [
+"bind",
+"re/match/s25/005ac900.c",
+"match",
+[
+"005aa0c0",
+"005ac930"
+],
+[]
+],
+"005ac980": [
+"reuse",
+"AudioFmtDescCopy",
+"Audio/AudioRwsLeaves.cpp"
+],
+"005aca80": [
+"reuse",
+"AudioFmtSizeCalc",
+"Audio/AudioRwsLeaves.cpp"
+],
+"005acaa0": [
+"stop"
+],
+"005acd10": [
+"bind",
+"re/match/s26/005acd10.c",
+"replay",
+[
+"005ac9e0"
+],
+[]
 ],
 "005bc880": [
 "bind",
@@ -4729,6 +4911,37 @@
 "005ae4c0": [
 "stop"
 ],
+"005b3a00": [
+"stop"
+],
+"005a7b00": [
+"bind",
+"re/match/s25/005a7b00.c",
+"match",
+[
+"005a7a40",
+"005addd0"
+],
+[]
+],
+"005ac930": [
+"bind",
+"re/match/tlr/005ac930.c",
+"match",
+[
+"005adf30"
+],
+[]
+],
+"005ac9e0": [
+"bind",
+"re/match/s26/005ac9e0.c",
+"match",
+[
+"005adf30"
+],
+[]
+],
 "005be160": [
 "bind",
 "re/match/s28/005be160.c",
@@ -4865,6 +5078,15 @@
 "reuse",
 "AudioTableDispatchAt8",
 "Audio/AudioTableDispatch.cpp"
+],
+"005addd0": [
+"bind",
+"re/match/s26/005addd0.c",
+"match",
+[
+"005ae800"
+],
+[]
 ],
 "005be140": [
 "reuse",
