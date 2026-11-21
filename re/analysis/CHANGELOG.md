@@ -26,6 +26,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-21  0x00412190  FUN_00412190  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md; evidence: verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md
+2026-11-21  0x0040eee0  FUN_0040eee0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md; evidence: verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md
+2026-11-21  0x0047be80  FUN_0047be80  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md; evidence: verify/replayfb8_20261121/RESULT_PROV-INSITU-REF1-NOSRC.md
 2026-11-21  0x00547450  FUN_00547450  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md; evidence: verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md
 2026-11-21  0x004c39b0  RwV3dNormalize  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md; evidence: verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md
 2026-11-21  0x004dc4a0  FUN_004dc4a0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md; evidence: verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md
