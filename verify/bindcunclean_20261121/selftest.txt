@@ -1,0 +1,7 @@
+[selftest] raceload roots 36: plan IDENTICAL (bind 126 reuse 73 stop 41), wrappers+stops IDENTICAL (127 checked)
+[selftest] C emit: 34 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit of the 24 held rvas (c_hold.txt, not bound): 24 compile, 0 fail
+[selftest] audio roots 63: plan IDENTICAL (bind 384 reuse 71 stop 88), wrappers+stops IDENTICAL (385 checked)
+[selftest] BINDINGS.tsv from the audio plan: IDENTICAL (updated 0 added 0)
+[selftest] PASS
