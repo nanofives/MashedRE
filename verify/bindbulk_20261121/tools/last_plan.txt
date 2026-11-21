@@ -1,0 +1,507 @@
+Counter({'stop': 227, 'reuse': 181, 'bind': 97}) Counter({'match': 96, 'replay': 1})
+00401570 reuse EntryTableScanByKey C4 EntryTableScanByKey
+00401da0 stop  C2 FUN_00401da0
+00401ee0 reuse EntityTableSelectUpdate C4 EntityTableSelectUpdate
+004074a0 bind re/match/s01/004074a0.c C4 FUN_004074a0
+0040cea0 stop  C2 FUN_0040cea0
+0040d020 reuse Orig_0040d020 C4 FUN_0040d020
+0040d110 bind re/match/topm01/0040d110.c C4 FUN_0040d110
+0040d250 reuse DoubleDerefIndexedGetter C4 DoubleDerefIndexedGetter
+00411350 reuse PortTop_Bound_00411350 C4 Replay::TimeFormat
+00411750 bind re/match/s02/00411750.c C4 ReplayStartLap
+00411d90 bind re/match/topm01/00411d90.c C4 Replay::CreateOrLoad
+0041a8d0 stop cpp-unclean: C2065 'DAT_0063c630': identificador no declarado C4 FUN_0041a8d0
+0041e980 reuse PortTop_Bound_0041e980 C4 TrackNodeRecordFind
+0041ecc0 bind re/match/s04/0041ecc0.c C4 FUN_0041ecc0
+0041f120 bind re/match/s04/0041f120.c C4 Player::ComputeVehicleToCameraVec
+0041f330 stop file-local copy of this rva in the source of 0x00420230 (one body per RVA) C4 FUN_0041f330
+0041fe10 bind re/match/s05/0041fe10.c C4 FUN_0041fe10
+00420230 bind re/match/s05/00420230.c C4 FUN_00420230
+00420420 stop  C2 FUN_00420420
+004218b0 bind re/match/s05/004218b0.c C4 PhysBodyCreateAttach
+004218d0 reuse PortTop_Bound_004218d0 C4 PhysWorldBodyBuild
+00421930 reuse BodyGeometryFirstDword C4 FUN_00421930
+00421a90 bind re/match/s05/004220d0.c C4 FUN_00421a90
+00421ba0 reuse PortTop_Bound_00421ba0 C4 FUN_00421ba0
+004220d0 reuse PortTop_Bound_004220d0 C4 FUN_004220d0
+004222f0 stop  - 
+004223b0 bind re/match/s05/004223b0.c C4 FUN_004223b0
+004224d0 bind re/match/s05/004224d0.c C4 MenuSlotInit
+00426060 reuse PortTop_Bound_00426060 C4 TrackPhysWorld1Get
+004260a0 reuse GetDat00657438 C4 GetDat00657438
+004260b0 reuse GetDat0065743c C4 GetDat0065743c
+00426460 reuse PortTop_Local_004264d0_00426460 C4 FUN_00426460
+004264d0 reuse PortTop_Bound_004264d0 C4 FUN_004264d0
+00426c00 reuse GameStateFlagGet C4 FUN_00426c00
+00426de0 reuse FrontendFloatGet426de0 C4 FUN_00426de0
+00426df0 reuse FrontendFloatGet426df0 C4 FUN_00426df0
+00427e00 reuse RwCore_00427e00 C4 FUN_00427e00
+00428450 reuse RwCore_00428450 C4 FUN_00428450
+00428760 reuse RwCore_00428760 C4 ViewportScaledRectDraw_Arg7Zero
+00428a30 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s06/00428a30.c C4 FUN_00428a30
+00428bf0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s06/00428bf0.c C4 FUN_00428bf0
+00428d30 reuse FUN_00428d30 C4 FUN_00428d30
+00429240 reuse FUN_00429240 C4 FUN_00429240
+004299d0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s06/004299d0.c C4 TimeRecord::WriteTrackBest
+0042a470 reuse PortTop_Bound_0042a470 C4 FUN_0042a470
+0042a5d0 reuse PortTop_Bound_0042a5d0 C4 FUN_0042a5d0
+0042a8d0 reuse PortTop_Bound_0042a8d0 C4 FUN_0042a8d0
+0042b8b0 reuse ScreenWidthGet C4 ScreenWidthGet
+0042b8c0 reuse ScreenHeightGet C4 ScreenHeightGet
+0042b930 reuse RwCore_0042b930 C4 MenuAlphaGet
+0042e590 reuse RwCore_0042e590 C4 SpriteAnimFrameThunk
+0042f0b0 reuse GetFrameCounterPlus73 C4 GetFrameCounterPlus73
+0042f510 reuse Vehicle0HandleGet C4 Vehicle0HandleGet
+0042f6a0 reuse GetRaceSubMode C4 GetRaceSubMode
+0042f7a0 reuse GhostFlagReset C4 GhostMode::Clear
+0042fe30 reuse RaceEndFlagIfEndMode C4 RaceEndFlagIfEndMode
+00430820 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s07/00430820.c C4 Global67ed6cGet
+00431d70 bind re/match/s07/00431d70.c C4 Course::GetLeaderIndex
+004522d0 reuse RwCore_004522d0 C4 FUN_004522d0
+00458c70 reuse PortTop_StandInRL_00458c70 C4 FUN_00458c70
+00458fd0 reuse PortTop_Bound_00458fd0 C4 FUN_00458fd0
+0045b350 reuse RwInitNullStub C4 RwInitNullStub
+0045bfd0 bind re/match/s10/0045bfd0.c C4 thunk_FUN_00426060
+0045d3f0 reuse PortTop_Bound_0045d3f0 C4 FUN_0045d3f0
+0045d430 reuse PortTop_Bound_0045d430 C4 FUN_0045d430
+00462500 reuse Set603868_1 C4 Set603868_1
+00462510 reuse Set603868_0 C4 Set603868_0
+00466b50 reuse PortTop_Bound_00466b50 C4 FUN_00466b50
+004671a0 reuse RwCore_004671a0 C4 BackBuffRasterOpen
+00467210 reuse FollowTargetField10_impl C4 sub_00467210
+004722e0 reuse RwCore_004722e0 C4 FUN_004722e0
+00472330 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00472330
+00472820 bind re/match/s11/00472820.c C4 FUN_00472820
+004728a0 bind re/match/s11/004728a0.c C4 FUN_004728a0
+00472c60 reuse RwCore_00472c60 C4 ChromeBaseDraw
+00472f40 reuse RwCore_00472f40 C4 TextGradientV0V1Override
+004730b0 reuse RwCore_004730b0 C4 TextGradientV2V3Override
+00473220 reuse RwCore_00473220 C4 FUN_00473220
+004744a0 bind re/match/s11/004744a0.c C4 FUN_004744a0
+0047a130 reuse PortTop_Bound_0047a130 C4 FUN_0047a130
+0047f290 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s13/0047f290.c C4 FUN_0047f290
+00482860 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s13/00482860.c C4 FUN_00482860
+00482900 stop  C3 ReplayGetSize
+00482930 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s13/00482930.c C4 Replay::New
+00483a30 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s13/00483a30.c C4 FUN_00483a30
+00483d10 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s13/00483d10.c C4 Replay::Load
+00487e20 bind re/match/s14/00487e20.c C4 thunk_FUN_00535700
+00489c60 reuse Orig_00489c60 C4 FUN_00489c60
+00489ce0 bind re/match/s14/00489ce0.c C4 FUN_00489ce0
+00489da0 bind re/match/s14/00489da0.c C4 FUN_00489da0
+00495280 reuse PortTop_PizFs_Mount_00495280 C4 FUN_00495280
+004952f0 reuse PortTop_PizFs_Unmount_004952f0 C4 FUN_004952f0
+00495790 reuse Orig_00495790 C4 Global772facGet
+004957a0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s16/004957a0.c C4 FUN_004957a0
+00495fe0 bind re/match/s16/00495fe0.c C4 FUN_00495fe0
+00496100 bind re/match/s16/00496100.c C4 FUN_00496100
+00496530 bind re/match/s16/004967e0.c C4 FUN_00496530
+004967e0 stop  C2 FUN_004967e0
+004972b0 bind re/match/s16/004972b0.c C4 FUN_004972b0
+00497310 reuse PortTop_Bound_00497310 C4 FUN_00497310
+00497450 reuse Pred497450 C4 Pred497450
+004987b0 reuse DbgPrintf_004987b0 C4 FUN_004987b0
+0049c790 stop  C4 CBaseRenderer::GetSampleTimes
+0049c800 stop  C4 FUN_0049c800
+0049c810 stop  C4 FUN_0049c810
+0049c840 stop  C4 FUN_0049c840
+0049c8c0 stop  C4 CBaseRenderer::Render
+0049c990 stop  C4 FUN_0049c990
+0049d0a0 stop  C4 FUN_0049d0a0
+0049d0c0 stop  C4 CBaseVideoRenderer::RecordFrameLateness
+0049d1d0 stop  C4 FUN_0049d1d0
+0049d240 stop  C4 FUN_0049d240
+0049d270 stop  C4 FUN_0049d270
+0049d320 stop  C4 CBaseVideoRenderer::SendQuality
+0049d490 stop  C4 CBaseVideoRenderer::ShouldDrawSampleNow
+0049d8f0 stop  C4 CBaseVideoRenderer::ScheduleSample
+0049e0d0 stop  C4 CBaseRenderer::WaitForRenderTime
+0049e6c0 stop  C4 FUN_0049e6c0
+0049e850 stop  C4 CBaseRenderer::Receive
+0049e9d0 stop  C4 CBaseRenderer::SendEndOfStream
+0049eae0 stop  C4 CRendererInputPin::Receive
+0049fcc0 stop  C4 FUN_0049fcc0
+0049ffb0 stop  C4 CBaseInputPin::CheckStreaming
+004a21a0 stop  C4 FUN_004a21a0
+004a2cbd reuse PortTop_Crt_004a2cbd C4 printf
+004a3907 stop  C4 FUN_004a3907
+004a4554 stop  C4 __heap_alloc
+004a45cf stop  C4 __nh_malloc
+004a45fb reuse MashedCrt_malloc_004a45fb C4 _malloc
+004a460d reuse MashedCrt_free_004a460d C4 _free
+004a467e bind re/match/s17/004a467e.c C4 _calloc
+004a4b6e stop  C4 __amsg_exit
+004a4da0 stop  C4 __aulldvrm
+004a4e40 reuse MashedCrt_aulldiv_004a4e40 C4 FUN_004a4e40
+004a4ea8 stop  C4 FUN_004a4ea8
+004a4fc1 stop  C4 write_char
+004a4ff4 stop  C4 write_multi_char
+004a5018 stop  C4 write_string
+004a504f bind re/match/s17/004a504f.c C4 FUN_004a504f
+004a59bf stop  C4 CrtSehEpilog
+004a5aaf stop  C4 FUN_004a5aaf
+004a5bee stop  C4 FUN_004a5bee
+004a5d92 stop  C4 FUN_004a5d92
+004a5f4a stop  C4 FUN_004a5f4a
+004a5f9c stop  C4 FUN_004a5f9c
+004a5fbf stop  C4 FUN_004a5fbf
+004a6047 stop  C4 FUN_004a6047
+004a77eb bind re/match/s17/004a77eb.c C4 FUN_004a77eb
+004a7800 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s17/004a7800.c C4 FUN_004a7800
+004a787f bind re/match/s17/004a787f.c C4 __lock
+004a842d stop  C4 FUN_004a842d
+004a8828 stop  C4 FUN_004a8828
+004a9410 stop  C2 _strlen
+004aac76 stop  C4 ___sbh_alloc_block
+004aaf72 stop  C4 __callnewh
+004aaf90 stop  C2 _memset
+004ac3ab stop  C4 FUN_004ac3ab
+004ac435 stop  C4 FUN_004ac435
+004ac777 stop  C4 FUN_004ac777
+004ac7f0 stop  C4 FUN_004ac7f0
+004ac953 stop  C4 FUN_004ac953
+004ac985 stop  C4 FUN_004ac985
+004ac9d2 stop  C4 FUN_004ac9d2
+004aca44 stop  C4 FUN_004aca44
+004aca78 stop  C4 FUN_004aca78
+004acaf3 stop  C4 FUN_004acaf3
+004acc4b stop  C2 FUN_004acc4b
+004ad0b4 stop  C4 FUN_004ad0b4
+004b044b stop  C4 FUN_004b044b
+004b046c stop  C4 FUN_004b046c
+004b04ca stop  C4 FUN_004b04ca
+004b04f8 stop  C4 FUN_004b04f8
+004b0609 stop  C2 FUN_004b0609
+004b3fc0 reuse Orig_004b3fc0 C4 FUN_004b3fc0
+004b40c0 reuse RenderElemArrayCopy C4 FUN_004b40c0
+004b4130 bind re/match/s18/004b4130.c C4 FUN_004b4130
+004b4140 bind re/match/s18/004b4140.c C4 FUN_004b4140
+004b5190 reuse RwCore_004b5190 C4 FUN_004b5190
+004b5260 bind re/match/s18/004b5260.c C4 FUN_004b5260
+004b5360 bind re/match/s18/004b5360.c C4 thunk_FUN_005507b0
+004b5370 bind re/match/s18/004b5370.c C4 thunk_FUN_00550910
+004b5380 bind re/match/s18/004b5380.c C4 thunk_FUN_00550950
+004b5390 bind re/match/s18/004b5390.c C4 thunk_FUN_005509b0
+004b53a0 bind re/match/s18/004b53a0.c C4 thunk_FUN_00550bc0
+004b6480 reuse Orig_004b6480 C4 BitArrayClear
+004b6520 reuse Orig_004b6520 C4 ZeroFillWrapper
+004b6590 bind re/match/s18/004b6590.c C4 thunk_FUN_004b67a0
+004b67a0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s18/004b67a0.c C4 FUN_004b67a0
+004b6b90 bind re/match/s18/004b6b90.c C4 FUN_004b6b90
+004b7210 stop  C4 FUN_004b7210
+004b7280 stop  C4 FUN_004b7280
+004b7530 stop  C4 FUN_004b7530
+004b75d0 stop  C4 FUN_004b75d0
+004b7960 stop  C4 FUN_004b7960
+004b79a0 stop  C4 f_call
+004b7a20 stop  C4 f_parser
+004b7ca0 stop  C4 FUN_004b7ca0
+004b7cc0 stop  C4 FUN_004b7cc0
+004b7d20 stop  C4 FUN_004b7d20
+004b7fd0 bind re/match/s18/004b7fd0.c C4 FUN_004b7fd0
+004b7ff0 stop  C2 FUN_004b7ff0
+004b8080 bind re/match/s18/004b8080.c C4 FUN_004b8080
+004b82a0 stop  C4 FUN_004b82a0
+004b8340 stop  C4 FUN_004b8340
+004b9540 stop  C4 FUN_004b9540
+004b9630 stop  C4 FUN_004b9630
+004b97f0 stop  C4 FUN_004b97f0
+004b9850 stop  C4 FUN_004b9850
+004b9890 stop  C4 FUN_004b9890
+004b9b00 stop  C4 FUN_004b9b00
+004b9bb0 stop  C4 FUN_004b9bb0
+004b9eb0 stop  C4 FUN_004b9eb0
+004ba140 stop  C4 FUN_004ba140
+004ba9e0 stop  C4 FUN_004ba9e0
+004bab00 stop  C4 FUN_004bab00
+004bc440 stop  C4 FUN_004bc440
+004bccc0 stop  C4 FUN_004bccc0
+004bee20 stop  C4 lfunc_newupval
+004bee60 stop  C4 lfunc_newproto
+004bf080 stop  C4 lcode_getlabel
+004bf0b0 stop  C4 lcode_checkstack
+004bf0f0 stop  C4 lcode_storestring_or_storek
+004bf110 stop  C4 lcode_storeNumber
+004bf180 stop  C4 lcode_numberK
+004bf200 stop  C4 lcode_setreg_or_loadnil
+004bf280 stop  C4 lcode_setreturns
+004bfa40 stop  C4 lcode_codeABC_nil
+004bfa60 stop  C4 lcode_codeABx
+004c06c0 stop  C4 FUN_004c06c0
+004c0870 reuse RwCore_004c0870 C4 FUN_004c0870
+004c0910 reuse RwCore_004c0910 C4 FUN_004c0910
+004c0a60 reuse RwCore_004c0a60 C4 FUN_004c0a60
+004c0b10 reuse RwCore_004c0b10 C4 FUN_004c0b10
+004c0ed0 reuse RwCore_004c0ed0 C4 FUN_004c0ed0
+004c1210 reuse RwCore_004c1210 C4 FUN_004c1210
+004c19f0 reuse RwCore_004c19f0 C4 RwVtableSlot07Call
+004c1a00 reuse RwCore_004c1a00 C4 IntroSplashVtableSlot6
+004c1bb0 reuse RwCore_004c1bb0 C4 IntroSplashRenderState
+004c1be0 reuse Orig_004c1be0 C4 sub_004c1be0
+004c1c80 reuse RwCore_004c1c80 C4 FUN_004c1c80
+004c2dc0 reuse RwCore_004c2dc0 C4 FUN_004c2dc0
+004c3ac0 reuse RwCore_004c3ac0 C4 Vec3Magnitude
+004c3d60 reuse RwCore_004c3d60 C4 FUN_004c3d60
+004c4670 reuse RwCore_004c4670 C4 thunk_FUN_004c4680
+004c5a60 reuse RwCore_004c5a60 C4 FUN_004c5a60
+004cac10 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004cac10
+004cb070 reuse RwCore_004cb070 C4 FUN_004cb070
+004cb0b0 reuse RwCore_004cb0b0 C4 FUN_004cb0b0
+004cb0f0 reuse RwCore_004cb0f0 C4 FUN_004cb0f0
+004cb130 reuse RwCore_004cb130 C4 FUN_004cb130
+004cb190 reuse RwCore_004cb190 C4 FUN_004cb190
+004cb330 reuse RwCore_004cb330 C4 FUN_004cb330
+004cb4c0 reuse RwCore_004cb4c0 C4 FUN_004cb4c0
+004cb840 reuse RwCore_004cb840 C4 FUN_004cb840
+004cbb70 reuse RwCore_004cbb70 C4 FUN_004cbb70
+004ccc50 reuse RwCore_004ccc50 C4 FUN_004ccc50
+004ccde0 reuse RwCore_004ccde0 C4 FUN_004ccde0
+004d0290 reuse RwCore_004d0290 C4 FUN_004d0290
+004d1640 reuse RwCore_004d1640 C4 FUN_004d1640
+004d1d20 reuse RwCore_004d1d20 C4 FUN_004d1d20
+004d2980 reuse RwCore_004d2980 C4 rwD3D8NativeTextureRasterCreate
+004d3450 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004d3450
+004d34d0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004d34d0
+004d38b0 reuse RwCore_004d38b0 C4 rwD3D8CheckTextureFormat
+004d53b0 reuse RwCore_004d53b0 C4 D3d9State_Flush
+004d5480 reuse RwCore_004d5480 C4 FUN_004d5480
+004d54d0 reuse RwCore_004d54d0 C4 FUN_004d54d0
+004d54f0 reuse RwCore_004d54f0 C4 FUN_004d54f0
+004d6b90 reuse RwCore_004d6b90 C4 D3d9State_SetStage0Filter
+004d6c40 reuse RwCore_004d6c40 C4 FUN_004d6c40
+004d6c90 reuse RwCore_004d6c90 C4 FUN_004d6c90
+004d6ce0 reuse RwCore_004d6ce0 C4 FUN_004d6ce0
+004d6e60 reuse RwCore_004d6e60 C4 TexStageCacheGet
+004d6e70 reuse RwCore_004d6e70 C4 FUN_004d6e70
+004d7100 reuse RwCore_004d7100 C4 FUN_004d7100
+004d71f0 reuse RwCore_004d71f0 C4 FUN_004d71f0
+004d7480 reuse RwCore_004d7480 C4 FUN_004d7480
+004d7ac0 reuse RwCore_004d7ac0 C4 D3d9State_FogBlendToggle
+004d7c10 reuse RwCore_004d7c10 C4 FUN_004d7c10
+004d7db0 reuse RwCore_004d7db0 C4 RwPluginExtensionSlotGet
+004d84e0 reuse RwCore_004d84e0 C4 RwErrorGet
+004d8560 reuse UtilReturnOne4d8560 C4 FUN_004d8560
+004db770 reuse RwCore_004db770 C4 FUN_004db770
+004dba60 reuse RwCore_004dba60 C4 FUN_004dba60
+004dc5b0 reuse RwCore_004dc5b0 C4 FUN_004dc5b0
+004dcbb0 reuse RwCore_004dcbb0 C4 FUN_004dcbb0
+004dcd30 reuse RwCore_004dcd30 C4 FUN_004dcd30
+004df750 reuse RwCore_004df750 C4 FUN_004df750
+004df8a0 reuse RwCore_004df8a0 C4 FUN_004df8a0
+004df910 reuse RwCore_004df910 C4 PixEncode4444
+004e3bd0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004e3bd0
+004e3e70 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004e3e70
+004e3ea0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004e3ea0
+004e41b0 reuse RwCore_004e41b0 C4 FUN_004e41b0
+004e42d0 reuse RwCore_004e42d0 C4 FUN_004e42d0
+004e5fc0 reuse RwCore_004e5fc0 C4 FUN_004e5fc0
+004e6680 bind re/match/s21/004e6680.c C4 RpClumpRender
+004e66d0 reuse RwCore_004e66d0 C4 RpClumpForAllAtomics
+004e68a0 reuse RwCore_004e68a0 C4 FUN_004e68a0
+004e6920 reuse RwCore_004e6920 C4 FUN_004e6920
+004e6ab0 reuse RwCore_004e6ab0 C2 FUN_004e6ab0
+004e6e00 reuse RwCore_004e6e00 C4 RpClumpDestroy
+004e6fb0 bind re/match/rwl02/004e6fb0.c C4 FUN_004e6fb0
+004e7e10 reuse RwCore_004e7e10 C4 FUN_004e7e10
+004e7fa0 reuse RwCore_004e7fa0 C4 FUN_004e7fa0
+004e8940 reuse RwCore_004e8940 C4 FUN_004e8940
+004eb320 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004eb320
+004f3cb0 reuse RwCore_004f3cb0 C4 PtrArrayFindLastIndex
+004f4540 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_004f4540
+004f77f0 reuse RwCore_004f77f0 C4 FUN_004f77f0
+004f8660 reuse RwCore_004f8660 C4 PluginDataDwordA
+005142d0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_005142d0
+005142f0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_005142f0
+00515680 stop  C4 FUN_00515680
+00515710 stop  C4 FUN_00515710
+00515740 stop  C4 FUN_00515740
+00515770 stop  C2 FUN_00515770
+005157c0 stop  C4 FUN_005157c0
+005159d0 stop  C2 FUN_005159d0
+00515fd0 stop  C2 FUN_00515fd0
+005163a0 stop  C2 FUN_005163a0
+00516c40 bind re/match/s23/00516c40.c C4 png_sig_cmp
+00516cc0 stop  C4 png_zalloc
+00516d20 bind re/match/s23/00516d20.c C4 thunk_png_free
+00516d30 stop  C4 png_reset_crc
+00516d50 bind re/match/s23/00516d50.c C4 png_calculate_crc
+00516da0 bind re/match/s23/00516da0.c C4 png_create_info_struct
+00516de0 bind re/match/s23/00516de0.c C4 png_free_data
+005171a0 bind re/match/s23/005171a0.c C4 FUN_005171a0
+00517200 bind re/match/s23/00517200.c C4 FUN_00517200
+00517250 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00517250.c C4 FUN_00517250
+00517270 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00517270.c C4 FUN_00517270
+005172b0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/005172b0.c C4 FUN_005172b0
+00517380 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00517380.c C4 FUN_00517380
+005173d0 stop  C4 Set5173d0
+005173f0 bind re/match/s23/005173f0.c C4 FUN_005173f0
+005175d0 stop  C4 FUN_005175d0
+00517940 bind re/match/s23/00517940.c C4 FUN_00517940
+00517da0 bind re/match/s23/00517da0.c C4 FUN_00517da0
+00517e00 stop  C4 FUN_00517e00
+00518080 bind re/match/s23/00518080.c C4 FUN_00518080
+00518140 bind re/match/s23/00518140.c C4 FUN_00518140
+005183a0 stop  C4 FUN_005183a0
+005183c0 stop  C4 FUN_005183c0
+005184b0 stop  C4 FUN_005184b0
+005184f0 stop  C4 FUN_005184f0
+00518570 bind re/match/s23/00518570.c C4 Rmw518570
+00519270 bind re/match/s23/00519270.c C4 png_do_read_transformations
+005196f0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/005196f0.c C4 FUN_005196f0
+00519820 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00519820.c C4 FUN_00519820
+005199f0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/005199f0.c C4 FUN_005199f0
+00519af0 stop  C4 FUN_00519af0
+00519bc0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00519bc0.c C4 FUN_00519bc0
+00519e30 stop  C4 FUN_00519e30
+00519f70 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00519f70.c C4 FUN_00519f70
+0051a6c0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/0051a6c0.c C4 png_do_expand_palette
+0051b750 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/0051b750.c C4 FUN_0051b750
+0051bb40 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/0051bb40.c C4 FUN_0051bb40
+0051bd70 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/0051bd70.c C4 FUN_0051bd70
+0051c100 stop  C4 FUN_0051c100
+0051c9f0 stop  C4 FUN_0051c9f0
+0051ca10 bind re/match/s23/0051ca10.c C4 FUN_0051ca10
+005207c0 stop  C2 png_create_struct_2
+00520850 stop  C4 png_destroy_struct
+00520870 stop  C2 FUN_00520870
+005208c0 stop  C2 FUN_005208c0
+00520930 stop  C2 png_free
+00520960 stop  C4 FUN_00520960
+00520990 stop  C4 FUN_00520990
+005209d0 bind re/match/s23/005209d0.c C4 Set5209d0
+00522970 bind re/match/s23/00522970.c C4 FUN_00522970
+00522ab0 stop  C4 FUN_00522ab0
+00522b00 stop  C4 FUN_00522b00
+00522b50 bind re/match/s23/00522b50.c C4 FUN_00522b50
+00522cc0 stop  C4 FUN_00522cc0
+00522ce0 stop  C2 FUN_00522ce0
+00523110 stop  C3 LoadBE523110
+00523140 stop  C4 png_crc_read
+00523170 bind re/match/s23/00523170.c C4 FUN_00523170
+005232c0 bind re/match/s23/005232c0.c C4 FUN_005232c0
+00523640 bind re/match/s23/00523640.c C4 FUN_00523640
+005238c0 bind re/match/s23/005238c0.c C4 FUN_005238c0
+00523cd0 bind re/match/s23/00523cd0.c C4 FUN_00523cd0
+00527ee0 bind re/match/s23/00527ee0.c C4 FUN_00527ee0
+00528200 stop  C4 FUN_00528200
+00528630 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00528630.c C4 FUN_00528630
+00528810 bind re/match/s23/00528810.c C4 FUN_00528810
+00528ba0 stop  C4 FUN_00528ba0
+00528e00 stop  C4 zcalloc
+00528e20 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s23/00528e20.c C4 zcfree
+0052a890 stop  C4 FUN_0052a890
+0052a9c0 stop  C4 FUN_0052a9c0
+0052aa40 stop  C2 FUN_0052aa40
+0052b750 bind re/match/s23/0052b750.c C4 FUN_0052b750
+0052b7e0 stop  C4 FUN_0052b7e0
+0052b820 bind re/match/s23/0052b820.c C4 FUN_0052b820
+0052bf20 stop  C4 FUN_0052bf20
+0052bf40 bind re/match/s23/0052bf40.c C4 FUN_0052bf40
+0052bff0 bind re/match/s23/0052bff0.c C4 inflate_table
+0052c4a0 bind re/match/s23/0052c4a0.c C4 inflate_fast_huffman_setup
+0052c660 stop  C4 FUN_0052c660
+0052c7a0 bind re/match/s23/0052c7a0.c C4 FUN_0052c7a0
+0052ddc0 reuse RwCore_0052ddc0 C4 FUN_0052ddc0
+0052ddf0 reuse RwCore_0052ddf0 C4 FUN_0052ddf0
+0052de60 bind re/match/s23/0052de60.c C4 FUN_0052de60
+0052e4e0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0052e4e0
+0052e500 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0052e500
+005333a0 reuse RwCore_005333a0 C4 FUN_005333a0
+00533840 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00533840
+00534ad0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00534ad0
+00534af0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00534af0
+005356f0 bind re/match/rwl03/005356f0.c C4 FUN_005356f0
+00535700 stop  C2 FUN_00535700
+00538310 reuse RwCore_00538310 C4 FUN_00538310
+005386b0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_005386b0
+00538bd0 reuse RwCore_00538bd0 C4 FUN_00538bd0
+00538c30 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00538c30
+0053d040 bind re/match/rwl03/0053d040.c C4 FUN_0053d040
+0053d090 bind re/match/rwl03/0053d090.c C4 FUN_0053d090
+0053d200 reuse RwCore_0053d200 C4 FUN_0053d200
+0053d3e0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0053d3e0
+0053d400 bind re/match/rwl03/0053d400.c C4 FUN_0053d400
+0053d460 stop  C2 FUN_0053d460
+0053d5a0 reuse RwCore_0053d5a0 C4 FUN_0053d5a0
+0053de50 bind re/match/rwl03/0053de50.c C4 FUN_0053de50
+0053e690 bind re/match/rwl03/0053e690.c C4 FUN_0053e690
+0053e6f0 bind re/match/rwl03/0053e6f0.c C4 FUN_0053e6f0
+0053e730 bind re/match/rwl03/0053e730.c C4 FUN_0053e730
+0053e760 bind re/match/rwl03/0053e760.c C4 FUN_0053e760
+0053e790 bind re/match/rwl03/0053e790.c C4 FUN_0053e790
+0053e7f0 bind re/match/rwl03/0053e7f0.c C4 FUN_0053e7f0
+0053ec40 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0053ec40
+0053ec60 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0053ec60
+0053f150 reuse RwCore_0053f150 C4 FUN_0053f150
+0053f9b0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0053f9b0
+0053fa20 reuse RwCore_0053fa20 C4 FUN_0053fa20
+0053fa90 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0053fa90
+0053fb00 reuse RwCore_0053fb00 C4 FUN_0053fb00
+0053fba0 bind re/match/rwl03/0053fba0.c C4 FUN_0053fba0
+0053fbb0 reuse RwCore_0053fbb0 C2 FUN_0053fbb0
+0053fea0 bind re/match/rwl03/0053fea0.c C4 FUN_0053fea0
+005401d0 bind re/match/rwl03/005401d0.c C4 FUN_005401d0
+00540260 reuse RwCore_00540260 C4 FUN_00540260
+00543b10 reuse RwCore_00543b10 C4 FUN_00543b10
+00543b20 reuse RwCore_00543b20 C4 FUN_00543b20
+00543b90 bind re/match/rwl04/00543b90.c C4 FUN_00543b90
+00543bb0 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/rwl04/00543bb0.c C4 FUN_00543bb0
+00543d40 reuse RwCore_00543d40 C4 FUN_00543d40
+00543d70 reuse RwCore_00543d70 C4 FUN_00543d70
+00543df0 reuse RwCore_00543df0 C4 FUN_00543df0
+00543e10 bind re/match/rwl04/00543e10.c C4 FUN_00543e10
+005444a0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_005444a0
+005449f0 bind re/match/rwl04/005449f0.c C4 FUN_005449f0
+00544e00 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00544e00
+00544f10 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00544f10
+005492d0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_005492d0
+00549310 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00549310
+0054a000 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0054a000
+0054a0f0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0054a0f0
+005507b0 reuse RwCore_005507b0 C4 VFS_Open
+00550910 reuse RwCore_00550910 C4 FUN_00550910
+00550950 reuse RwCore_00550950 C4 RwsStreamRead
+005509b0 reuse RwCore_005509b0 C4 FUN_005509b0
+00550bc0 reuse RwCore_00550bc0 C4 VfsStreamGetType
+005518f0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_005518f0
+00551a50 reuse Orig_00551a50 C4 FUN_00551a50
+00551c40 reuse RwCore_00551c40 C4 FUN_00551c40
+00551cf0 reuse RwCore_00551cf0 C4 FUN_00551cf0
+00551fd0 reuse RwCore_00551fd0 C4 FUN_00551fd0
+00557d90 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_00557d90
+0055b940 stop  C3 PhysicsBodySetMass
+0055c4a0 reuse PortTop_Bound_0055c4a0 C4 PhysicsBodySetRestitution
+0055c4f0 reuse PortTop_Bound_0055c4f0 C4 PhysicsBodySetFriction
+0055c540 reuse PortTop_Bound_0055c540 C4 FUN_0055c540
+0055dff0 stop  C4 RwpBodyRefreshGate
+00563e70 stop  C4 FUN_00563e70
+00563f60 stop  C4 FUN_00563f60
+005641b0 stop  C4 FUN_005641b0
+005646c0 stop  C4 FUN_005646c0
+00565120 stop  C4 FUN_00565120
+005651b0 stop  C4 FUN_005651b0
+0057c210 stop  C4 RwpBodyTableLookup
+0057c220 reuse PortTop_Bound_0057c220 C4 RWP37WorldSlotAssign
+0057c2e0 stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido C4 FUN_0057c2e0
+0057c300 reuse PortTop_Bound_0057c300 C4 RWP37BodyCreate
+0057c500 reuse PortTop_Bound_0057c500 C4 RWP37WorldCreate
+0057c550 reuse PortTop_Bound_0057c550 C4 FUN_0057c550
+005a6670 reuse PortTop_Bound_005a6670 C4 FUN_005a6670
+005ab040 reuse PortTop_Bound_005ab040 C4 FUN_005ab040
+005aba20 stop  C2 FUN_005aba20
+005b9320 reuse PortTop_Bound_005b9320 C4 FUN_005b9320
+005b93a0 bind re/match/s27/005b93a0.c C4 FUN_005b93a0
+005b9410 reuse AudioSourceLoopSet C4 AudioSourceLoopSet
+005b9460 reuse PortTop_Bound_005b9460 C4 FUN_005b9460
+005c1f1c stop  C4 __setjmp3
+005c229b stop  C4 _rand
+005c2470 stop  C4 shortsort
+005c31d0 bind re/match/s28/005c31d0.c C4 FUN_005c31d0
+005c6b40 bind re/match/s28/005c6b40.c C4 FUN_005c6b40
+005c7500 bind re/match/s28/005c7500.c C4 AudioMixerRateCompute
+005c7570 bind re/match/s28/005c7570.c C4 FUN_005c7570
+005c75b0 reuse AudioVoiceField8cGet C4 AudioVoiceField8cGet
+005c75c0 reuse PortTop_Bound_005c75c0 C4 FUN_005c75c0
+005c7fe0 reuse PortTop_Bound_005c7fe0 C4 FUN_005c7fe0
+005c91f0 bind re/match/s28/005c91f0.c C4 FUN_005c91f0
+wrote 98 bind files + 227 stops

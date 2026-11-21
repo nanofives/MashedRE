@@ -1,0 +1,290 @@
+rva	bound_symbol	kind	best_pct	hooks_status	owner_lists
+004522d0	RwCore_004522d0	match100	100.0	C4	audio_owned
+00472330	RwCoreLift_00472330	lifted		C4	bulk_cp1
+00472360	RwCoreLift_00472360	lifted			
+00472380	RwCore_00472380	match100	100.0	C4	
+00493640	RwCore_00493640	provisional	67.9	C2	
+004c0e50	RwCore_004c0e50	match100	100.0	C4	race_owned
+004c1710	RwCore_004c1710	match100	100.0	C4	
+004c1cc0	RwCore_004c1cc0	match100	100.0	C4	
+004c2d70	RwCore_004c2d70	match100	100.0	C4	
+004c2d90	RwCore_004c2d90	match100	100.0	C4	
+004c2dc0	RwCore_004c2dc0	match100	100.0	C4	bulk_cp1
+004c45f0	RwCore_004c45f0	match100	100.0	C4	race_owned
+004c51a0	RwCore_004c51a0	provisional	14.7	C3	race_owned
+004c5da0	RwCore_004c5da0	match100	100.0	C4	
+004cbb60	RwCore_004cbb60	match100	100.0	C4	
+004cbc80	RwCore_004cbc80	match100	100.0	C4	
+004cbc90	RwCore_004cbc90	match100	100.0	C4	
+004cbd30	RwCore_004cbd30	match100	100.0	C4	audio_owned
+004cbe80	RwCore_004cbe80	provisional	78.6	C3	
+004cc580	RwCore_004cc580	match100	100.0	C4	
+004cc770	RwCore_004cc770	match100	100.0	C4	
+004cc790	RwCore_004cc790	match100	100.0	C4	race_owned
+004cca80	RwCoreHand_004cca80	rwcore-other:RwCoreHand		C1	
+004cf430	RwCore_004cf430	match100	100.0	C4	
+004d3e90	RwCore_004d3e90	provisional	82.8	C2	
+004d4170	RwCore_004d4170	match100	100.0	C4	
+004d41e0	RwCore_004d41e0	match100	100.0	C4	
+004d4250	RwCore_004d4250	provisional	75.0	C4	
+004d42b0	RwCore_004d42b0	provisional	77.8	C4	
+004d4310	RwCore_004d4310	provisional	95.7	C4	
+004d4380	RwCore_004d4380	provisional	17.2	C2	
+004d4910	RwCore_004d4910	provisional	55.4	C2	
+004d4a20	RwCore_004d4a20	provisional	99.4	C2	
+004d4bf0	RwCore_004d4bf0	match100	100.0	C4	
+004d4dd0	RwCore_004d4dd0	provisional	63.2	C4	
+004d4f90	RwCore_004d4f90	provisional	28.3	C2	
+004d5190	RwCore_004d5190	provisional	79.0	C2	
+004d7db0	RwCore_004d7db0	match100	100.0	C4	bulk_cp1
+004d7de0	RwCore_004d7de0	provisional	61.5	C2	
+004d7ff0	Orig_004d7ff0	exe:Orig_004d7ff0		C4	audio_owned
+004d8480	RwCore_004d8480	provisional	85.7	C4	audio_owned
+004d8560	UtilReturnOne4d8560	exe:UtilReturnOne4d8560		C4	race_owned
+004e1ac0	RwCore_004e1ac0	match100	100.0	C4	
+004e1b00	RwCore_004e1b00	match100	100.0	C4	
+004e1b30	RwCore_004e1b30	match100	100.0	C4	
+004e2090	RwCore_004e2090	provisional	29.7	C2	
+004e2420	RwCore_004e2420	match100	100.0	C4	
+004e2470	RwCore_004e2470	provisional	93.6	C2	
+004e2500	RwCore_004e2500	match100	100.0	C4	
+004e2530	RwCore_004e2530	provisional	22.5	C2	
+004e2650	RwCore_004e2650	provisional	23.8	C2	
+004e2930	RwCore_004e2930	provisional	34.3	C2	
+004e2b60	RwCore_004e2b60	match100	100.0	C4	
+004e2bf0	RwCore_004e2bf0	provisional	38.2	C2	
+004e3160	RwCore_004e3160	provisional	9.9	C2	
+004e3470	RwCore_004e3470	match100	100.0	C4	
+004e36a0	RwCoreLift_004e36a0	lifted		C4	
+004e3790	RwCoreLift_004e3790	lifted		C1	
+004e3800	RwCoreLift_004e3800	lifted		C1	
+004e3b30	RwCoreLift_004e3b30	lifted		C1	
+004e3b80	RwCoreLift_004e3b80	lifted		C4	
+004e3bd0	RwCoreLift_004e3bd0	lifted		C4	bulk_cp1
+004e3dc0	RwCoreLift_004e3dc0	lifted		C1	
+004e3e40	RwCoreLift_004e3e40	lifted		C1	
+004e3e70	RwCoreLift_004e3e70	lifted		C4	bulk_cp1
+004e3ea0	RwCoreLift_004e3ea0	lifted		C4	bulk_cp1
+004e40d0	RwCoreLift_004e40d0	lifted		C1	
+004e4130	RwCore_004e4130	match100	100.0	C4	
+004e4190	RwCoreLift_004e4190	lifted		C4	
+004e41b0	RwCore_004e41b0	match100	100.0	C4	bulk_cp1
+004e41e0	RwCoreLift_004e41e0	lifted		C4	
+004e4200	RwCoreLift_004e4200	lifted		C4	
+004e4220	RwCoreLift_004e4220	lifted		C1	
+004e4240	RwCoreLift_004e4240	lifted		C1	
+004e4250	RwCoreLift_004e4250	lifted		C4	
+004e4270	RwCoreLift_004e4270	lifted		C1	
+004e4290	RwCoreLift_004e4290	lifted		C1	
+004e42a0	RwCore_004e42a0	match100	100.0	C4	
+004e42d0	RwCore_004e42d0	match100	100.0	C4	bulk_cp1
+004e4300	RwCore_004e4300	match100	100.0	C4	
+004e4bd0	RwCore_004e4bd0	match100	100.0	C4	
+004e4c00	RwCore_004e4c00	match100	100.0	C4	
+004e4e60	RwCoreLift_004e4e60	lifted		C1	
+004e4f00	RwCoreLift_004e4f00	lifted		C4	
+004e55d0	RwCore_004e55d0	match100	100.0	C4	race_owned
+004e5cd0	RwCore_004e5cd0	match100	100.0	C4	
+004e5d00	RwCore_004e5d00	match100	100.0	C4	
+004e5d30	RwCore_004e5d30	provisional	94.1	C4	
+004e5e20	RwCoreLift_004e5e20	lifted		C1	
+004e5e70	RwCoreLift_004e5e70	lifted		C4	
+004e5ef0	RwCore_004e5ef0	provisional	88.0	C4	
+004e5f30	RwCore_004e5f30	match100	100.0	C4	
+004e5f70	RwCoreLift_004e5f70	lifted		C4	
+004e6250	RwCoreLift_004e6250	lifted		C1	
+004e64f0	RwCoreLift_004e64f0	lifted		C4	
+004e65c0	RwCore_004e65c0	match100	100.0	C4	
+004e6610	RwCoreLift_004e6610	lifted		C1	
+004e6630	RwCoreLift_004e6630	lifted		C1	
+004e7d40	RwCore_004e7d40	match100	100.0	C4	
+004e7d70	RwCore_004e7d70	match100	100.0	C4	
+004e7da0	RwCore_004e7da0	match100	100.0	C4	
+004e7dd0	RwCore_004e7dd0	match100	100.0	C4	
+004e7df0	RwCore_004e7df0	match100	100.0	C4	
+004e7e50	RwCore_004e7e50	provisional	88.0	C4	
+004e7e90	RwCore_004e7e90	match100	100.0	C4	
+004e7ed0	RwCoreLift_004e7ed0	lifted		C4	
+004e7ef0	RwCoreLift_004e7ef0	lifted		C4	
+004e7f60	RwCoreLift_004e7f60	lifted		C1	
+004e80c0	RwCore_004e80c0	match100	100.0	C4	
+004e80f0	RwCore_004e80f0	match100	100.0	C4	
+004e8540	RwCoreLift_004e8540	lifted		C4	
+004e8560	RwCoreLift_004e8560	lifted		C4	
+004e8f50	RwCore_004e8f50	match100	100.0	C4	
+004e8f80	RwCore_004e8f80	match100	100.0	C4	
+004e8fb0	RwCore_004e8fb0	match100	100.0	C4	
+004e98d0	RwCore_004e98d0	provisional	88.0	C4	
+004e9910	RwCore_004e9910	provisional	88.0	C4	
+004e9950	RwCore_004e9950	match100	100.0	C4	
+004e9990	RwCoreLift_004e9990	lifted		C4	
+004ea4c0	RwCoreLift_004ea4c0	lifted		C4	
+004ea4d0	RwCoreLift_004ea4d0	lifted		C4	
+004f08e0	RwCoreLift_004f08e0	lifted		C4	
+004f08f0	RwCoreLift_004f08f0	lifted		C4	
+004f0910	RwCore_004f0910	match100	100.0	C4	
+004f0940	RwCore_004f0940	match100	100.0	C4	
+004f0990	RwCoreLift_004f0990	lifted		C4	
+004f09c0	RwCoreLift_004f09c0	lifted		C4	
+004f0dc0	RwCore_004f0dc0	provisional	79.6	C2	
+004f0f10	RwCore_004f0f10	provisional	9.3	C2	
+004f10e0	RwCore_004f10e0	provisional	92.3	C4	
+004f3bd0	RwCore_004f3bd0	match100	100.0	C4	race_owned
+004f3cb0	RwCore_004f3cb0	match100	100.0	C4	bulk_cp1
+004f42d0	RwCore_004f42d0	match100	100.0	C4	
+004f4310	RwCoreLift_004f4310	lifted			
+004f4510	RwCore_004f4510	match100	100.0	C4	
+004f4540	RwCoreLift_004f4540	lifted		C4	bulk_cp1
+004f4570	RwCoreLift_004f4570	lifted			
+004f4660	RwCoreLift_004f4660	lifted			
+004f8580	RwCore_004f8580	provisional	91.4	C4	
+004f8600	RwCoreLift_004f8600	lifted			
+004f8620	RwCoreLift_004f8620	lifted		C4	
+004f8630	RwCoreLift_004f8630	lifted		C4	
+0052d8e0	RwCore_0052d8e0	match100	100.0	C4	
+0052d910	RwCoreLift_0052d910	lifted			
+0052d950	RwCoreLift_0052d950	lifted		C4	
+0052e310	RwCore_0052e310	match100	100.0	C4	
+0052e3d0	RwCore_0052e3d0	match100	100.0	C4	
+0052e490	RwCoreLift_0052e490	lifted		C4	
+0052e4e0	RwCoreLift_0052e4e0	lifted		C4	bulk_cp1
+0052e500	RwCoreLift_0052e500	lifted		C4	bulk_cp1
+0052e560	RwCoreLift_0052e560	lifted		C1	
+0052e580	RwCoreLift_0052e580	lifted		C1	
+0052e5a0	RwCoreLift_0052e5a0	lifted		C1	
+0052e5c0	RwCoreLift_0052e5c0	lifted		C1	
+0052e650	RwCore_0052e650	match100	100.0	C4	
+0052e6c0	RwCoreLift_0052e6c0	lifted		C1	
+0052e710	RwCoreLift_0052e710	lifted		C4	
+0052e800	RwCoreLift_0052e800	lifted		C1	
+0052ec50	RwCoreLift_0052ec50	lifted		C1	
+0052ffd0	RwCore_0052ffd0	match100	100.0	C4	
+00530000	RwCore_00530000	match100	100.0	C4	
+005327d0	RwCore_005327d0	match100	100.0	C4	
+005336d0	RwCore_005336d0	match100	100.0	C4	
+00533740	RwCoreLift_00533740	lifted		C4	
+005337f0	RwCoreLift_005337f0	lifted		C4	
+00533820	RwCoreLift_00533820	lifted		C1	
+00533840	RwCoreLift_00533840	lifted		C4	bulk_cp1
+00533900	RwCoreLift_00533900	lifted		C1	
+005339a0	RwCoreLift_005339a0	lifted		C1	
+00533ad0	RwCoreLift_00533ad0	lifted		C1	
+00533cc0	RwCoreLift_00533cc0	lifted		C1	
+00534920	RwCore_00534920	match100	100.0	C4	
+00534950	RwCoreLift_00534950	lifted		C1	
+00534990	RwCoreLift_00534990	lifted		C1	
+00534a80	RwCore_00534a80	match100	100.0	C4	
+00534ad0	RwCoreLift_00534ad0	lifted		C4	bulk_cp1
+00534af0	RwCoreLift_00534af0	lifted		C4	bulk_cp1
+00536630	RwCoreLift_00536630	lifted		C1	
+00536660	RwCoreLift_00536660	lifted		C1	
+00538600	RwCore_00538600	provisional	84.8	C4	
+005386b0	RwCoreLift_005386b0	lifted		C4	bulk_cp1
+00538780	RwCoreLift_00538780	lifted		C1	
+00538800	RwCoreLift_00538800	lifted		C1	
+00538830	RwCoreLift_00538830	lifted		C4	
+00538870	RwCoreLift_00538870	lifted		C4	
+00538890	RwCoreLift_00538890	lifted		C1	
+005388f0	RwCoreLift_005388f0	lifted		C1	
+00538960	RwCoreLift_00538960	lifted		C1	
+00538980	RwCoreLift_00538980	lifted		C4	
+005389c0	RwCoreLift_005389c0	lifted		C1	
+0053d0b0	RwCore_0053d0b0	provisional	67.1	C2	
+0053d1c0	RwCoreLift_0053d1c0	lifted		C1	
+0053d1f0	RwCoreLift_0053d1f0	lifted		C4	
+0053d200	RwCore_0053d200	match100	100.0	C4	bulk_cp1
+0053d230	RwCoreLift_0053d230	lifted		C4	
+0053d250	RwCoreLift_0053d250	lifted		C1	
+0053d2b0	RwCoreLift_0053d2b0	lifted		C1	
+0053d3e0	RwCoreLift_0053d3e0	lifted		C4	bulk_cp1
+0053eaa0	RwCore_0053eaa0	provisional	79.2	C4	
+0053ebb0	RwCoreLift_0053ebb0	lifted		C4	
+0053ebf0	RwCoreLift_0053ebf0	lifted		C4	
+0053ec40	RwCoreLift_0053ec40	lifted		C4	bulk_cp1
+0053ec60	RwCoreLift_0053ec60	lifted		C4	bulk_cp1
+0053ed20	RwCoreMissing_0053ed20	missing-stop		C1	
+0053f1a0	RwCoreLift_0053f1a0	lifted		C1	
+0053f3c0	RwCoreLift_0053f3c0	lifted		C1	
+0053f920	RwCoreLift_0053f920	lifted		C1	
+0053f9b0	RwCoreLift_0053f9b0	lifted		C4	bulk_cp1
+0053f9d0	RwCoreLift_0053f9d0	lifted		C1	
+0053f9f0	RwCoreLift_0053f9f0	lifted		C1	
+0053fa20	RwCore_0053fa20	provisional	93.8	C4	bulk_cp1
+0053fa70	RwCoreLift_0053fa70	lifted		C1	
+0053fa90	RwCoreLift_0053fa90	lifted		C4	bulk_cp1
+0053fab0	RwCoreLift_0053fab0	lifted		C1	
+0053fad0	RwCoreLift_0053fad0	lifted		C1	
+0053fb00	RwCore_0053fb00	provisional	93.8	C4	bulk_cp1
+0053fb50	RwCoreLift_0053fb50	lifted		C1	
+00543b10	RwCore_00543b10	match100	100.0	C4	bulk_cp1
+00543b20	RwCore_00543b20	match100	100.0	C4	bulk_cp1
+00543e50	RwCore_00543e50	provisional	75.9	C4	
+005440c0	RwCoreLift_005440c0	lifted		C4	
+005440d0	RwCoreLift_005440d0	lifted		C4	
+005440e0	RwCoreLift_005440e0	lifted		C4	
+00544100	RwCoreLift_00544100	lifted		C1	
+005441f0	RwCoreLift_005441f0	lifted		C1	
+005444a0	RwCoreLift_005444a0	lifted		C4	bulk_cp1
+005446f0	RwCoreLift_005446f0	lifted		C1	
+005448f0	RwCoreLift_005448f0	lifted		C1	
+00544d20	RwCore_00544d20	provisional	86.7	C4	
+00544dc0	RwCoreLift_00544dc0	lifted		C4	
+00544dd0	RwCoreLift_00544dd0	lifted		C4	
+00544de0	RwCoreLift_00544de0	lifted		C1	
+00544e00	RwCoreLift_00544e00	lifted		C4	bulk_cp1
+00544f10	RwCoreLift_00544f10	lifted		C4	bulk_cp1
+00544f50	RwCoreLift_00544f50	lifted		C1	
+00544fc0	RwCoreLift_00544fc0	lifted		C1	
+00545080	RwCoreLift_00545080	lifted		C1	
+005451d0	RwCoreLift_005451d0	lifted		C4	
+005451f0	RwCoreLift_005451f0	lifted		C1	
+00546530	RwCore_00546530	match100	100.0	C4	
+00546560	RwCoreLift_00546560	lifted		C1	
+005465c0	RwCoreLift_005465c0	lifted		C1	
+005492b0	RwCoreLift_005492b0	lifted		C1	
+005492d0	RwCoreLift_005492d0	lifted		C4	bulk_cp1
+00549310	RwCoreLift_00549310	lifted		C4	bulk_cp1
+00549350	RwCoreLift_00549350	lifted		C1	
+00549390	RwCoreLift_00549390	lifted		C1	
+00549640	RwCore_00549640	match100	100.0	C4	
+00549710	RwCoreLift_00549710	lifted		C4	
+005497f0	RwCoreLift_005497f0	lifted		C4	
+00549fe0	RwCoreLift_00549fe0	lifted		C1	
+0054a000	RwCoreLift_0054a000	lifted		C4	bulk_cp1
+0054a030	RwCoreLift_0054a030	lifted		C4	
+0054a070	RwCoreLift_0054a070	lifted		C1	
+0054a090	RwCoreLift_0054a090	lifted		C4	
+0054a0d0	RwCoreLift_0054a0d0	lifted		C1	
+0054a0f0	RwCoreLift_0054a0f0	lifted		C4	bulk_cp1
+00550950	RwCore_00550950	match100	100.0	C4	audio_owned,bulk_cp1
+00550980	RwCore_00550980	match100	100.0	C4	
+00550af0	RwCore_00550af0	match100	100.0	C4	audio_owned
+005515a0	RwCore_005515a0	match100	100.0	C4	
+00551610	RwCoreLift_00551610	lifted		C4	
+00551680	RwCoreLift_00551680	lifted		C4	
+005516c0	RwCoreLift_005516c0	lifted		C1	
+005516e0	RwCoreLift_005516e0	lifted		C1	
+00551770	RwCoreMissing_00551770	missing-stop		C1	
+00551840	RwCore_00551840	provisional	46.5	C2	
+005518f0	RwCoreMissing_005518f0	missing-stop		C4	bulk_cp1
+00551bf0	RwCoreLift_00551bf0	lifted		C1	
+005578a0	RwCore_005578a0	match100	100.0	C4	
+00557920	RwCoreLift_00557920	lifted		C1	
+00557bf0	RwCoreLift_00557bf0	lifted		C4	
+00557c60	RwCoreLift_00557c60	lifted		C4	
+00557cb0	RwCoreLift_00557cb0	lifted		C1	
+00557d90	RwCoreLift_00557d90	lifted		C4	bulk_cp1
+00557e50	RwCoreLift_00557e50	lifted		C4	
+00557e90	RwCoreLift_00557e90	lifted		C4	
+00561ee0	RwCore_00561ee0	match100	100.0	C4	
+00561f40	RwCoreLift_00561f40	lifted		C1	
+00561f50	RwCoreLift_00561f50	lifted		C1	
+00561f80	RwCoreLift_00561f80	lifted		C1	
+00561ff0	RwCoreLift_00561ff0	lifted		C4	
+0057c270	RwCore_0057c270	match100	100.0	C4	
+0057c2b0	RwCore_0057c2b0	match100	100.0	C4	
+0057c2e0	RwCoreLift_0057c2e0	lifted		C4	bulk_cp1
+0057c440	RwCore_0057c440	match100	100.0	C4	
+005c4640	RwCore_005c4640	match100	100.0	C4	
+005c4780	RwCore_005c4780	match100	100.0	C4	
+005c9d00	GetRaceEndTrigger	exe:GetRaceEndTrigger		C4	race_owned

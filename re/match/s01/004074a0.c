@@ -33,12 +33,36 @@ struct Rec {
     int fe8;                    /* 0xe8 */
 };
 struct Smoke { int obj; int f4, f8, fc; int fx; int f14, f18, f1c; };
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00639d80 (*(struct Rec (*)[1])0x00639d80u)
+#else
 extern struct Rec DAT_00639d80[];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d0 (*(int *)0x0063a5d0u)
+#else
 extern int DAT_0063a5d0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d4 (*(int *)0x0063a5d4u)
+#else
 extern int DAT_0063a5d4;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a5d8 (*(int *)0x0063a5d8u)
+#else
 extern int DAT_0063a5d8;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a478 (*(int (*)[1])0x0063a478u)
+#else
 extern int DAT_0063a478[];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063a490 (*(struct Smoke (*)[10])0x0063a490u)
+#else
 extern struct Smoke DAT_0063a490[10];
+#endif
 void FUN_004e6e00(int o);
 void FUN_0047f290(int h);
 void FUN_00489c60(int h);

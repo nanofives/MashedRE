@@ -1,0 +1,18 @@
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+152:[RW_BIND] RwGlobals [MASHED_OT_RACELOAD]: RW core frame-module open 0x004c07b0(record 0110F4B0, 0x164, 4) -> 0110F4B0; +0xbc 0110F56C +0xc0 0110F56C (record + 0xbc = 0110F56C), +0x164 007D3E78, DAT_007d3e70 00000164, DAT_007d3e74 00000001, header 0x007d3e78 +0x0 000000A4 +0x4 00000032 +0x8 00000
+199:[ORIG_TOP] rva 0x00427ca0: RWMOD on: matched body (HUDINIT-B) (HUDINIT-A)
+350:[RW_BIND] RwGlobals [MASHED_ORIG_TOP_RWMOD]: image formats via 0x00493600 ran (1), image +0x21c = 0x1005A980
+353:[RW_BIND] RwGlobals [MASHED_ORIG_TOP_RWMOD]: modules registered (0x007d3ffc 0x134, 0x007d4028 0x14c, 0x007d4054 0x3f4, 0x007d4628 0x170), freelist alloc / free at +0x118 / +0x11c, string slots +0xc4 +0xd0 +0xdc +0xe8 +0xf4 +0xf8 +0xfc, device slots +0x24 +0x34, record 0110F4B0 size 0x440
+848:[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 0110F4B0 (PORT-OT-RACE)
+849:[ORIG_TOP] rva 0x00458c70: matched body PortTop_Bound_00458c70 entered, [0x007d3ff8] = 0110F4B0, [+0xbc] = 0110F56C, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+850:[ORIG_TOP] rva 0x00458c70: matched body returned, [+0xbc] = 11223F50, [+0xc0] = 11222A50, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+852:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+853:[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("pc/powerups_gold.dff") call 1: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+854:[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("powerups_gold.dff") call 2: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+855:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "powerups_gold.dff"): 11902 bytes from piz -> memory stream 11E8EAC0
+856:[RW_BIND] RpClumpStreamRead(0x11E8EAC0) -> rw::Clump::streamRead 1121A098 (11890 bytes, 17 atomics)
+857:[ORIG_TOP] rva 0x004264d0: fault code C0000005 at exe+0x2E96D, access kind 0 (PORT-OT-RACE)
+858:[ORIG_TOP] rva 0x004264d0: fault address 00000000, eax 00000000, ecx 00000000 (PORT-OT-RACE)
+859:[ORIG_TOP] rva 0x004264d0: at the fault [0x007d3ff8] = 0110F4B0, [+0xbc] = 11223F50, edx 014FFC1C (PORT-OT-RACE)

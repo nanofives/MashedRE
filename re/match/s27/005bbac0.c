@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-// MATCH-S27 0x005bbac0: 64.9% (regs 97.3%). Branch order and int-return callee fixed. Residual: original hoists the [esp+0x14] load of param_4 above the branch (and orders the arg loads differently); single-join, local copy and permuter did not move it. Class: a.
+/* MATCH-S27 0x005bbac0: RO-AUDIOINIT-45D460-REACH (2026-11-21), new source from the listing; 0x005bb850 stores its address at +0x18 (0x005bb8a2). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -22,26 +22,19 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned char byte;
-int FUN_005abe30(int p0, int p1, undefined4 p2, int p3);
-int FUN_005bc0f0(undefined4 * p0, undefined4 * p1, undefined4 p2, undefined4 p3);
+/* listing 0x005bbac0..0x005bbb15 */
+int FUN_005abe30(int p0, int p1, int p2, int p3);
+int FUN_005bc0f0(int p0, int p1, int p2, int p3);
 // MATCH: 0x005bbac0 FUN_005bbac0
-int FUN_005bbac0(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+int FUN_005bbac0(int param_1,int param_2,int param_3,int param_4)
 {
-  int iVar1;
-
   if ((*(byte *)(*(int *)(*(int *)(param_1 + 0x58) + 0x20) + 0x50) & 8) != 0) {
-    iVar1 = FUN_005abe30(*(int *)(param_1 + 0x4c),param_2,param_3,param_4);
-    if (iVar1 == 0) {
+    if (FUN_005abe30(*(int *)(param_1 + 0x4c),param_2,param_3,param_4) == 0) {   /* 0x005bbae4 */
       return 0;
     }
   }
-  else {
-    iVar1 = FUN_005bc0f0((undefined4 *)(param_1 + 0x5c),(undefined4 *)param_3,param_4,*(undefined4 *)(param_2 + 8));
-    if (iVar1 == 0) {
-      return 0;
-    }
+  else if (FUN_005bc0f0(param_1 + 0x5c,param_3,param_4,*(int *)(param_2 + 8)) == 0) {   /* 0x005bbb04 */
+    return 0;
   }
   return param_1;
 }

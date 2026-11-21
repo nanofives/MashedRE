@@ -1,0 +1,4 @@
+[selftest] raceload roots 2: plan IDENTICAL (bind 92 reuse 45 stop 33), wrappers+stops IDENTICAL (93 checked)
+[selftest] audio roots 63: plan IDENTICAL (bind 384 reuse 71 stop 88), wrappers+stops IDENTICAL (385 checked)
+[selftest] BINDINGS.tsv from the audio plan: IDENTICAL (updated 0 added 0)
+[selftest] PASS

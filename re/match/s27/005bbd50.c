@@ -25,31 +25,29 @@ typedef unsigned char bool;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 #ifdef __cplusplus
-typedef int code(...);
 #else
-typedef int code();
 #endif
+/* PORT-TOP-AUDIO-5BA1D0-STOPS: body rewritten from the listing 0x005bbd50..0x005bbdaf. The Ghidra form cleared the
+   descriptor from its second dword and returned the descriptor's address; the original returns the buffer the method at
+   +0xc wrote to [esp+4] when it returns >= 0, else 0 (0x005bbd9d..0x005bbdaa). The method is __stdcall (no add esp after
+   0x005bbd9a). Descriptor at [esp+8]: dword 0 = 0x24 (0x005bbd92), dword 1 = (param_2 != 0 ? 0x10 : 0) | 1 (0x005bbd61..0x005bbd76). */
+typedef int (__stdcall *PFN4_005bbd50)(int *, uint *, int **, int);
 // MATCH: 0x005bbd50 FUN_005bbd50
-uint FUN_005bbd50(int *param_1,int param_2)
+int *FUN_005bbd50(int *param_1,int param_2)
 
 {
   int iVar1;
-  uint *puVar2;
-  undefined4 local_28;
-  uint local_24 [4];
-  undefined4 local_14;
-  
-  puVar2 = local_24;
-  for (iVar1 = 9; iVar1 != 0; iVar1 = iVar1 + -1) {
-    puVar2 = puVar2 + 1;
-    *puVar2 = 0;
+  int *res;
+  uint desc [9];
+
+  for (iVar1 = 0; iVar1 < 9; iVar1 = iVar1 + 1) {
+    desc[iVar1] = 0;
   }
-  local_24[2] = 0;
-  local_28 = 0;
-  local_24[1] = (uint)(-(param_2) & 0x10U | 1);
-  local_14 = 0;
-  puVar2 = local_24;
-  iVar1 = (**(code **)(*param_1 + 0xc))(param_1,puVar2,&local_28,0);
-  local_24[0] = 0x24;
-  return (uint)puVar2 & (iVar1 < 0) - 1;
+  res = (int *)0x0;
+  desc[2] = 0;
+  desc[4] = 0;
+  desc[1] = (uint)(-(param_2 != 0) & 0x10) | 1;
+  desc[0] = 0x24;
+  iVar1 = (*(PFN4_005bbd50 *)(*param_1 + 0xc))(param_1,desc,&res,0);
+  return (int *)((uint)res & ((iVar1 < 0) - 1));
 }

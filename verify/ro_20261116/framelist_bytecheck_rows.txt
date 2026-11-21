@@ -1,0 +1,4 @@
+0x004c15c0	_RwCore_004c15c0	0x00033400	192	0	4	0	IDENTICAL		False	re/match/rwl01/004c15c0.c
+0x004c07b0	_RwCore_004c07b0	0x0003cd60	128	1	12	0	IDENTICAL		False	re/match/s19/004c07b0.c
+0x004c07b0	_PortTop_Bound_004c07b0	0x0004e000	128	1	12	0	IDENTICAL		False	re/match/s19/004c07b0.c
+0x00458c70	_PortTop_Bound_00458c70	0x0004e080	144	1	3	0	IDENTICAL		False	re/match/s09/00458c70.c

@@ -7,7 +7,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_005be0f0 PortTop_Bound_005be0f0
-#define FUN_005bf610 PortTop_AStop_005bf610   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)
+#define FUN_005bf610 PortTop_Bound_005bf610
 #define FUN_00635850 PortTop_AStop_00635850   // named stop
 extern "C" {
 #include "../../../../re/match/s28/005be0f0.c"
