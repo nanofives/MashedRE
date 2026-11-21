@@ -10,6 +10,7 @@
 #define FUN_005444a0 PortTop_Bound_005444a0
 #define FUN_004cbd30 RwCore_004cbd30   // exe body (RwCore/RwCore_004cbd30.cpp)
 #define FUN_004cc790 RwCore_004cc790   // exe body (RwCore/RwCore_004cc790.cpp)
+#define FUN_004cc790_site2 RwCore_004cc790   // the case-2 read: the 9 direct calls of 0x005444a0 target 0x004cc790 (7) and 0x004cbd30 (2)
 #include "../../../../re/match/rwtb/005444a0.c"
 void *PortTop_Keep_005444a0 = (void *)PortTop_Bound_005444a0;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

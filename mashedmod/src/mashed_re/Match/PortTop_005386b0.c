@@ -11,6 +11,7 @@
 #define FUN_004c3ac0 RwCore_004c3ac0   // exe body (RwCore/RwCore_004c3ac0.cpp)
 #define FUN_00538310 RwCore_00538310   // exe body (RwCore/RwCore_00538310.cpp)
 #define FUN_00538bd0 RwCore_00538bd0   // exe body (RwCore/RwCore_00538bd0.cpp)
+#define RpWorldForAllWorldSectors RwCore_004e5c70   // 0x00538762: call 0x004e5c70 (as RwCore/RwCore_00538bd0.cpp:12)
 #include "../../../../re/match/rwta/005386b0.c"
 void *PortTop_Keep_005386b0 = (void *)PortTop_Bound_005386b0;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

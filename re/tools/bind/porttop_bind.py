@@ -84,6 +84,11 @@ EXTRA_PRE['005ac590'] = ['// LAB_005ac5c0 is a code address the body stores, not
 EXTRA_PRE['005ae330'] = ['#define thunk_FUN_004522d0 RwCore_004522d0   // Ghidra thunk_ name of the jump to 0x004522d0 (re/match/s26/005ae330.c)']
 EXTRA_PRE['005ab180'] = ['#define thunk_FUN_005ab620 PortTop_Bound_005ab180   // PORT-TOP-AUDIO-5A8F30-STOPS: re/match/s25/005ab180.c names its body after the jump target (Ghidra thunk name)']
 EXTRA_PRE['005b7880'] = ['#define thunk_FUN_005b1500 PortTop_Bound_005b1500   // PORT-TOP-AUDIO-5A8F30-STOPS: Ghidra thunk_ name of 0x005b15d0 (jmp 0x005b1500, called at 0x005b789a); the port calls the target body']
+# BIND-CUNCLEAN-AS-C: C units whose sources call a callee by an RW API name or a site alias (relocheck leaves these
+# names unchecked); the target is read from the original listing (capstone on original/MASHED.exe.unpatched).
+EXTRA_PRE['004e3e70'] = ['#define RwFrameAddChild RwCore_004e4450   // the one call, 0x004e3e88: call 0x004e4450']
+EXTRA_PRE['005386b0'] = ['#define RpWorldForAllWorldSectors RwCore_004e5c70   // 0x00538762: call 0x004e5c70 (as RwCore/RwCore_00538bd0.cpp:12)']
+EXTRA_PRE['005444a0'] = ['#define FUN_004cc790_site2 RwCore_004cc790   // the case-2 read: the 9 direct calls of 0x005444a0 target 0x004cc790 (7) and 0x004cbd30 (2)']
 # re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 under #ifndef MATCH_PORT_SHARED_0045c4e0: the port binds
 # the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
 EXTRA_PRE['0045cbe0'] = ['#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp']
@@ -657,7 +662,7 @@ class Binder:
 # --------------------------------------------------------------------------------------------------------------------
 # Extern-guard step (was rltools/guard_externs.py)
 # --------------------------------------------------------------------------------------------------------------------
-EXTERN_PAT = re.compile(r'^(\s*)extern\s+((?:const\s+)?(?:struct\s+)?[A-Za-z_]\w*(?:\s*\*+)?)\s*(_?(?:DAT|LAB)_([0-9a-fA-F]{8}))'
+EXTERN_PAT = re.compile(r'^(\s*)extern\s+((?:const\s+)?(?:struct\s+)?[A-Za-z_]\w*(?:\s*\*+)?)\s*(_?(?:DAT|LAB|PTR(?:_\w+?)?)_([0-9a-fA-F]{8}))'   # PTR_<x>_<addr>: BIND-CUNCLEAN-AS-C (0x005518f0)
                         r'\s*(\[\s*([0-9xXa-fA-F]*)\s*\])?\s*;\s*$')
 
 

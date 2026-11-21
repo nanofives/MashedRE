@@ -49,7 +49,11 @@ extern undefined4 DAT_007dc770;
 #else
 extern int DAT_007d3ff8;
 #endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define PTR_s_UVAnim_00623df0 (*(void * *)0x00623df0u)
+#else
 extern void * PTR_s_UVAnim_00623df0;
+#endif
 uint FUN_004cbd30(undefined4 * p0, undefined4 * p1, uint p2);
 undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 * p2, uint * p3);
 undefined4 FUN_004cc790(undefined4 p0, undefined4 p1, undefined4 p2);
