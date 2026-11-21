@@ -7,8 +7,9 @@ Worker session cmwq48iuj6n2bnz1ch8hs26zx (claude2, Opus 5.5), lead cmwpwu26q5v0h
 
 **Checkpoint 1 (0x00492e90) bound behind the default-OFF sub-knob `MASHED_OT_RENDERFRAME`.** The closure was walked from
 0x00492e90 with `re/tools/bind/porttop_bind.py --profile renderframe`. Both builds `=== Build OK ===`, rva-lint OK
-(424 known, NEW=0). `ddkobj.py check`: IDENTICAL 1897/1958, DIFFERENT 37, not-in-map 24. Every byte-matched bound unit is
-IDENTICAL (87 of 87). The 9 DIFFERENT units that are new against the base's 28 are classified in section 4. Binder selftest:
+(424 known, NEW=0). `ddkobj.py check` (cp1d, after the two PROVISIONAL.tsv rows): IDENTICAL 1895/1954, DIFFERENT 35, not-in-map 24. 85 of 87
+byte-matched bound units are IDENTICAL; 0x00403910 and 0x00496c10 are refused by ddkobj and keep their VS2022 bodies (section 4).
+The 7 DIFFERENT units new against the base's 28 are admitted or replay bodies (section 4). Binder selftest:
 renderframe IDENTICAL, audio IDENTICAL, BINDINGS IDENTICAL, raceload DIFFERENT 2 = the known PROV4 baseline (section 5).
 Knob boots (section 6): 7 arms exit 0, 600 frames, every game self-test PASS; the switched callees are not called at
 phase 1, so the walked closure is built and linked but not yet executed. **cp2 (0x0040d110) and cp3 (0x00429290) were not started.** The lead ended run 53 after
@@ -103,18 +104,34 @@ PROV-INSITU-REF1 (a game run, does not block a build).
 
 ## 4. ddkobj check (`py -3.12 re/tools/ddkobj/ddkobj.py check`)
 
-IDENTICAL 1897/1958 (base 1803/1855), DIFFERENT 37 (base 28), not-in-map 24 (base 24). Base list: the integration head's
-check in `D:/MashedWT/RACE-WRITER-0067EA74_ddkcheck.log`. `comm`: no base unit dropped out of DIFFERENT. 9 newly DIFFERENT:
+First check (cp1c): IDENTICAL 1897/1958, DIFFERENT 37 (base 1803/1855, DIFFERENT 28, not-in-map 24). Base list: the
+integration head's check in `D:/MashedWT/RACE-WRITER-0067EA74_ddkcheck.log`. `comm`: no base unit dropped out of
+DIFFERENT. 9 newly DIFFERENT, classified below. L0 condition (a linked DIFFERENT unit never stays bound and unlisted): the
+two C2 co-resident functions got `re/tools/match/equiv.py` (tool commit 1ed7ceb1a, same file on this branch) and a
+`re/match/PROVISIONAL.tsv` row each, class P3, status provisional:
+
+- 0x004036a0 (re/match/s01/004036a0.c, match.py 77.4%): `NOT-PROVEN call-args: region ours +0x5c / orig 0x004036fc call
+  0x4c75e0 arg 0: (esp0+-0xb4) | (esp0+-0xb8) (fallback: stack address inside sx)`
+- 0x004969a0 (re/match/s16/00496c10.c, match.py 66.0%): `NOT-PROVEN call-args: region ours +0x5c / orig 0x004969fc call
+  0x4c75e0 arg 0: (esp0+-0xb4) | (esp0+-0xb8) (fallback: stack address inside sx)`
+
+Second object build + check (cp1d, `ddk_cp1d.log`): **IDENTICAL 1895/1954, DIFFERENT 35, not-in-map 24**. With the rows
+listed, ddkobj refuses both units, `fail:externalized-static-register-convention`: "FUN_004036a0: bytes differ when non-static
+(624 vs 640 B); forwarder refused: the forwarder changes _FUN_00403910's bytes", and the same for FUN_004969a0 /
+_FUN_00496c10 (`mashedmod/build/ddkobj/ddkobj_build.json`). So the bound 100% functions 0x00403910 and 0x00496c10 keep
+their VS2022 bodies in the object build too (refusal reported, not worked around, WORKER_RULES "Object build"). They
+leave the check (IDENTICAL -2), and 0x004036a0 / 0x004969a0 leave DIFFERENT. Newly DIFFERENT against the base: 7. Table
+(cp1c; the last two rows are resolved as above):
 
 | rva | unit | class |
 |---|---|---|
 | 0x00420050, 0x00429bd0, 0x004b61c0 | bound, ADMITTED.tsv bodies | admitted source below 100% by definition (L-126), as the base classifies 0x005bce80 / 0x005bbdb0 |
 | 0x004770a0, 0x00477e60, 0x00477f50 | bound, c4=frida-replay bodies | replay C4 source below 100%, as the base classifies 0x005ae3a0 |
 | 0x0041fcc0 | `___ddkreg_0041fcc0`, co-resident in re/match/s05/00420050.c | C4 frida-replay, second function of the admitted source above |
-| 0x004036a0 | `___ddkreg_004036a0`, co-resident in re/match/s01/004036a0.c (bound rva 0x00403910 is IDENTICAL) | C2 function of a bound source, below 100% |
-| 0x004969a0 | `___ddkreg_004969a0`, co-resident in re/match/s16/00496c10.c (bound rva 0x00496c10 is IDENTICAL) | C2 function of a bound source, below 100% |
+| 0x004036a0 | `___ddkreg_004036a0`, co-resident in re/match/s01/004036a0.c | C2, NOT-PROVEN: PROVISIONAL.tsv P3; unit refused in cp1d |
+| 0x004969a0 | `___ddkreg_004969a0`, co-resident in re/match/s16/00496c10.c | C2, NOT-PROVEN: PROVISIONAL.tsv P3; unit refused in cp1d |
 
-Per bound unit: match 87 IDENTICAL, admitted 3 DIFFERENT, replay 3 DIFFERENT. **ddkobj.py decode defect:** the decode-only
+Per bound unit (cp1d): match 85 IDENTICAL + 2 refused (VS2022 body), admitted 3 DIFFERENT, replay 3 DIFFERENT. **ddkobj.py decode defect:** the decode-only
 diff of commit 296c82aca (orch/BIND-CUNCLEAN-AS-C) was applied to the working tree for the object build and the check
 (`git show 296c82aca -- re/tools/ddkobj/ddkobj.py | git apply`) and reverted with `git checkout -- re/tools/ddkobj/ddkobj.py`
 before the commit. ddkobj.py is not changed on this branch.
@@ -142,7 +159,9 @@ MASHED_RWC_FRAME_N=100000 MASHED_OT_TIMER=1`; rf arms add `MASHED_OT_RENDERFRAME
 | vs_frameT / ddk_frameT | VS2022 / object | 0 / 0 | 489 / 489 | 600 frames, `rendered by 0x00492e90 (matched, RW core)` x5 (phase 1), OT_TIMER PASS (0 of 6000), RWC-DEVICE PASS, binding self-tests PASS (0 of 11) x2, portstate-image PASS, OT_CODEPTR PASS |
 | vs_rfT / ddk_rfT | VS2022 / object | 0 / 0 | 489 / 489 | identical to vs_frameT / ddk_frameT apart from OT_TIMER clock values and the cfglog timestamp; same self-tests PASS |
 
-0 `AV at`, 0 `FAIL` lines in all 7 logs. Knob-off on the frame route is unchanged against the frame arms of
+0 `AV at`, 0 `FAIL` lines in all 7 logs. After the PROVISIONAL rows changed the object exe (cp1d), ddk_off / ddk_frameT / ddk_rfT were re-run on it
+(`arms_cp1d.out`): exit 0 after 600 frames each, 0 AV, 0 FAIL, the same self-tests PASS, no knob line, rfT vs frameT differs
+only in OT_TIMER clock values and the cfglog timestamp. The cp1c object-exe logs are kept in `cp1c_arms/`. Knob-off on the frame route is unchanged against the frame arms of
 RWC-FRAME-MOVIE-BACKDROP (exit 0, 600 frames, the same self-tests PASS). **The walked closure did not execute in these
 arms:** no `[PORT-TOP-RENDERFRAME-492E90] MASHED_OT_RENDERFRAME` line in vs_rfT / ddk_rfT. That line is printed on the first
 call of any selector, so in 600 frames at phase 1 (menu, `DAT_00771968` = 1) 0x00492e90 called none of its 15 switched
@@ -201,8 +220,8 @@ BINDINGS.tsv, 6 guarded sources.
 Raw (not committed), `D:/MashedWT/PORT-TOP-RENDERFRAME-492E90_data/`:
 
 `raw_sha256.txt` (committed) lists the sha256 of every raw file: vs_cp1a.log, vs_cp1b.log, vs_cp1c.log, ddk_cp1c.log,
-check_cp1c.log, arms_cp1.out, the 7 arm logs (vs_off, vs_rfoff, vs_frameT, vs_rfT, ddk_off, ddk_frameT, ddk_rfT), diff_base.txt, diff_mine.txt, diff_rows.tsv, and both exes.
+check_cp1c.log, ddk_cp1d.log, arms_cp1.out, the 7 arm logs (vs_off, vs_rfoff, vs_frameT, vs_rfT, ddk_off, ddk_frameT, ddk_rfT), diff_base.txt, diff_mine.txt, diff_rows.tsv, and both exes.
 
-Exes: mashed_re.exe sha256 1b6f96d23d82f326..., mashed_re_ddk.exe 436d49a09a800f3a... (full values in the raw list).
+Exes: mashed_re.exe and the cp1d mashed_re_ddk.exe (cp1c object exe 436d49a09a800f3a...) (full values in the raw list).
 Kills: none (knob_boot.py kills only the PID it spawns, on its own timeout). No `original\` write, no deploy of
 `original\mashed_re_dev.asi`, no tracker edit, no merge.
