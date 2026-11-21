@@ -1,0 +1,31 @@
+PROV_BIND       EQUAL (union of the old files)
+EXTRA_PRE       EQUAL (union of the old files)
+EXTRA_IN        EQUAL (union of the old files)
+LOCAL_SHARED    EQUAL (union of the old files)
+LOCAL_AS_BOUND  EQUAL (union of the old files)
+ALIAS           EQUAL (union of the old files)
+base.py audio: 19 keys compared
+base.py raceload: 26 keys compared
+rf.py audio: 19 keys compared
+DIFF rf.py raceload alias
+   old {'0042fe30': ['RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp'], '00458c70': ['PortTop_StandInRL_00458c70', 'Match/PortTop_StandInsRL.cpp'], '00495280': ['PortTop_PizFs_Mount_00495280', 'Match/PortTop_00402750_Pieces.cpp'], '004952f0': ['PortTop_PizFs_Unmount_004952f0', 'Match/PortTop_00402750_Pieces.cpp'], '004cc160': ['PortTop_RwStreamClose_004cc160', 'Match/PortTop_RwStream04F.cpp'], '004cc230': ['PortTop_RwStreamOpen_004cc230', 'Match/PortTop_RwStream04F.cpp'], '00550b00': ['RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_00550b00.cpp']}
+   new {'0042fe30': ['RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp'], '00458c70': ['PortTop_RL_00458c70', 'Match/PortTop_StandInsRL.cpp'], '00495280': ['PortTop_PizFs_Mount_00495280', 'Match/PortTop_00402750_Pieces.cpp'], '004952f0': ['PortTop_PizFs_Unmount_004952f0', 'Match/PortTop_00402750_Pieces.cpp'], '004cc160': ['PortTop_RwStreamClose_004cc160', 'Match/PortTop_RwStream04F.cpp'], '004cc230': ['PortTop_RwStreamOpen_004cc230', 'Match/PortTop_RwStream04F.cpp'], '00550b00': ['RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_00550b00.cpp']}
+DIFF rf.py raceload not_local
+   old [['0047bf70', '0047be80']]
+   new [['00478660', '004785e0'], ['0047bf70', '0047be80']]
+rf.py raceload: 20 keys compared
+rf.py raceframe: 30 keys compared
+rn.py audio: 19 keys compared
+DIFF rn.py raceload alias
+   old {'0042fe30': ['RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp'], '00458c70': ['PortTop_StandInRL_00458c70', 'Match/PortTop_StandInsRL.cpp'], '00495280': ['PortTop_PizFs_Mount_00495280', 'Match/PortTop_00402750_Pieces.cpp'], '004952f0': ['PortTop_PizFs_Unmount_004952f0', 'Match/PortTop_00402750_Pieces.cpp'], '004cc160': ['PortTop_RwStreamClose_004cc160', 'Match/PortTop_RwStream04F.cpp'], '004cc230': ['PortTop_RwStreamOpen_004cc230', 'Match/PortTop_RwStream04F.cpp'], '00550b00': ['RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_00550b00.cpp']}
+   new {'0042fe30': ['RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp'], '00458c70': ['PortTop_RL_00458c70', 'Match/PortTop_StandInsRL.cpp'], '00495280': ['PortTop_PizFs_Mount_00495280', 'Match/PortTop_00402750_Pieces.cpp'], '004952f0': ['PortTop_PizFs_Unmount_004952f0', 'Match/PortTop_00402750_Pieces.cpp'], '004cc160': ['PortTop_RwStreamClose_004cc160', 'Match/PortTop_RwStream04F.cpp'], '004cc230': ['PortTop_RwStreamOpen_004cc230', 'Match/PortTop_RwStream04F.cpp'], '00550b00': ['RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_00550b00.cpp']}
+DIFF rn.py raceload not_local
+   old [['0047bf70', '0047be80']]
+   new [['00478660', '004785e0'], ['0047bf70', '0047be80']]
+rn.py raceload: 20 keys compared
+rn.py raceframe: 30 keys compared
+DIFF rn.py renderframe root_external
+   old {'00492e90': {'gate': 'RwCore_FrameRoute, MASHED_RWC_FRAME', 'knob': 'MASHED_OT_RENDERFRAME', 'sel_file': 'Match/PortTop_RenderFrameSel.cpp', 'sel_prefix': 'PortTop_RRSel_', 'sym': 'RwCore_00492e90', 'tu': 'RwCore/RwCore_00492e90.cpp'}}
+   new {'00492e90': {'_doc': 'the root keeps its one exe body, the RW core TU (RWC-FRAME-492E90); its callees go through knob selectors', 'closure': 'frame-render', 'gate': 'RwCore_FrameRoute, MASHED_RWC_FRAME', 'knob': 'MASHED_OT_RENDERFRAME', 'sel_file': 'Match/PortTop_RenderFrameSel.cpp', 'sel_prefix': 'PortTop_RRSel_', 'sym': 'RwCore_00492e90', 'tu': 'RwCore/RwCore_00492e90.cpp'}}
+rn.py renderframe: 31 keys compared
+RESULT DIFFERENT 5
