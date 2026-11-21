@@ -5,7 +5,6 @@
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #pragma comment(linker, "/include:_PortTop_Keep_004074a0")
-#pragma comment(linker, "/include:_PortTop_Keep_0040d110")
 #pragma comment(linker, "/include:_PortTop_Keep_00411750")
 #pragma comment(linker, "/include:_PortTop_Keep_00411d90")
 #pragma comment(linker, "/include:_PortTop_Keep_0041a8d0")
@@ -25,7 +24,6 @@
 #pragma comment(linker, "/include:_PortTop_Keep_00472330")
 #pragma comment(linker, "/include:_PortTop_Keep_00472820")
 #pragma comment(linker, "/include:_PortTop_Keep_004728a0")
-#pragma comment(linker, "/include:_PortTop_Keep_004744a0")
 #pragma comment(linker, "/include:_PortTop_Keep_00487e20")
 #pragma comment(linker, "/include:_PortTop_Keep_00489ce0")
 #pragma comment(linker, "/include:_PortTop_Keep_00489da0")
@@ -54,7 +52,6 @@
 #pragma comment(linker, "/include:_PortTop_Keep_004e3bd0")
 #pragma comment(linker, "/include:_PortTop_Keep_004e3e70")
 #pragma comment(linker, "/include:_PortTop_Keep_004e3ea0")
-#pragma comment(linker, "/include:_PortTop_Keep_004e6680")
 #pragma comment(linker, "/include:_PortTop_Keep_004e6fb0")
 #pragma comment(linker, "/include:_PortTop_Keep_004eb320")
 #pragma comment(linker, "/include:_PortTop_Keep_004f4540")

@@ -6,10 +6,26 @@
    0x005cc950 (0.75), 0x005d757c (0.0), 0x005cc948 (1/3000) are .rdata float literals. */
 typedef struct { float x, y, z; } RwV3d;
 typedef struct { RwV3d right; unsigned int flags; RwV3d up; unsigned int pad1; RwV3d at; unsigned int pad2; RwV3d pos; unsigned int pad3; } RwMatrix;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00639d70 (*(int *)0x00639d70u)
+#else
 extern int DAT_00639d70;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00639d78 (*(int *)0x00639d78u)
+#else
 extern int DAT_00639d78;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00803344 (*(float *)0x00803344u)
+#else
 extern float DAT_00803344;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00639d74 (*(float *)0x00639d74u)
+#else
 extern float DAT_00639d74;
+#endif
 void FUN_00404fa0(void *p0, int p1, float p2);
 int FUN_004c1480(int p0, void *p1, int p2);
 int FUN_004c1c80(int p0, float *p1);

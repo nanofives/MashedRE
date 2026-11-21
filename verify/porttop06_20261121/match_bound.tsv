@@ -1,0 +1,241 @@
+src	kind	rvas	match_bytes	relocheck
+re/match/pilot/a5_00410510.c	match	00410510	BYTE-IDENTICAL	OK 1/1
+re/match/pilot/a5_00422b50.c	match	00422b50	BYTE-IDENTICAL	OK 1/1
+re/match/pilot/a6_00423040.c	match	00423040	BYTE-IDENTICAL	OK 1/1
+re/match/racepath/0040c690.c	replay	0040c690	878 B whole symbol, 638 differing unmasked bytes (first at +0x2f)	NOT OK 0040c690:BAD
+re/match/racepath/0040ca00.c	match	0040ca00	BYTE-IDENTICAL	OK 1/1
+re/match/racepath/0040d8f0.c	match	0040d8f0	BYTE-IDENTICAL	OK 1/1
+re/match/racepath/00410860.c	match	00410860	BYTE-IDENTICAL	OK 1/1
+re/match/racepath/00411ae0.c	replay	00411ae0	497 B whole symbol, 13 differing unmasked bytes (first at +0x64)	NOT OK 00411ae0:BAD
+re/match/racepath/00486830.c	replay	00486830	1671 B whole symbol, 1331 differing unmasked bytes (first at +0x0)	NOT OK 00486830:BAD
+re/match/racepath/0048ab70.c	replay	0048ab70	468 B whole symbol, 34 differing unmasked bytes (first at +0xf7)	NOT OK 0048ab70:BAD
+re/match/racepath/0048aff0.c	match	0048b440	BYTE-IDENTICAL	OK 3/3
+re/match/rwl03/00535910.c	match	00535910	BYTE-IDENTICAL	OK 1/1
+re/match/rwl05/00557fb0.c	match	00557fb0	BYTE-IDENTICAL	OK 1/1
+re/match/rwl05/0055ac50.c	match	0055ac50	BYTE-IDENTICAL	OK 1/1
+re/match/rwl05/0055ad30.c	match	0055ad30	BYTE-IDENTICAL	OK 1/1
+re/match/rwl05/0055ae70.c	match	0055ae70	BYTE-IDENTICAL	OK 1/1
+re/match/rwl05/00565570.c	match	00565570	BYTE-IDENTICAL	OK 1/1
+re/match/s01/00401570.c	match	00401570	BYTE-IDENTICAL	OK 2/2
+re/match/s01/00403250.c	match	00403250	BYTE-IDENTICAL	OK 1/1
+re/match/s01/00405460.c	match	00405460	BYTE-IDENTICAL	OK 1/1
+re/match/s01/004073b0.c	match	004073b0	BYTE-IDENTICAL	OK 1/1
+re/match/s01/00407b00.c	match	00407b00	BYTE-IDENTICAL	OK 1/1
+re/match/s01/00407b70.c	match	00407b70	BYTE-IDENTICAL	OK 1/1
+re/match/s01/00408590.c	replay	00408590	121 B whole symbol, 12 differing unmasked bytes (first at +0x16)	OK 1/1
+re/match/s01/00408610.c	replay	00408610	1073 B whole symbol, 32 differing unmasked bytes (first at +0x19c)	NOT OK 00408610:BAD
+re/match/s01/00408a70.c	match	00408a70	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040ad40.c	match	0040ad40	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040ad90.c	match	0040ad90	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040ae30.c	match	0040ae30	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b090.c	match	0040b090	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b180.c	match	0040b180	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b420.c	match	0040b420	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b540.c	match	0040b540	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b890.c	match	0040b890	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b8e0.c	match	0040b8e0	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b930.c	match	0040b930	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b970.c	match	0040b970	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040b9a0.c	match	0040b9a0	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040ba00.c	match	0040ba00	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040bd80.c	match	0040bd80	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040c5b0.c	match	0040c5b0	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040ce00.c	match	0040ce00	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040d470.c	match	0040d470	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040da50.c	match	0040da50	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040dba0.c	match	0040dba0	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040dbd0.c	match	0040dbd0	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040dc70.c	match	0040dc70	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040dcb0.c	match	0040dcb0	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040de00.c	match	0040de00	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040e360.c	match	0040e360	BYTE-IDENTICAL	OK 1/1
+re/match/s02/0040e560.c	match	0040e560	BYTE-IDENTICAL	OK 1/1
+re/match/s02/00410d10.c	replay	00410d10	1104 B whole symbol, 106 differing unmasked bytes (first at +0x2b)	NOT OK 00410d10:BAD
+re/match/s02/00411170.c	match	00411170	BYTE-IDENTICAL	OK 1/1
+re/match/s02/00411600.c	match	00411600	BYTE-IDENTICAL	OK 1/1
+re/match/s02/00411d60.c	match	00411d60	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041b720.c	match	0041bf20	BYTE-IDENTICAL	OK 2/2
+re/match/s04/0041c090.c	match	0041c090	1132 B whole symbol, 851 differing unmasked bytes (first at +0x2c); 46 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocati	NOT OK 0041b7a0:BAD
+re/match/s04/0041c380.c	match	0041cb80	BYTE-IDENTICAL	OK 2/2
+re/match/s04/0041c410.c	match	0041cc50	1420 B whole symbol, 8 differing unmasked bytes (first at +0x3f8); 101 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocat	NOT OK 0041c410:BAD
+re/match/s04/0041cdb0.c	match	0041d730	BYTE-IDENTICAL	OK 2/2
+re/match/s04/0041d830.c	match	0041d830	1496 B whole symbol, 1178 differing unmasked bytes (first at +0x4); 59 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocati	NOT OK 0041ce00:BAD
+re/match/s04/0041d930.c	replay	0041d930	336 B whole symbol, 8 differing unmasked bytes (first at +0x10c)	NOT OK 0041d930:BAD
+re/match/s04/0041e8c0.c	match	0041e8c0	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041e910.c	match	0041e910	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041e920.c	match	0041e920	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041e930.c	match	0041e930	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041e960.c	match	0041e960	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041e9b0.c	match	0041e9b0	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041e9e0.c	match	0041e9e0	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041ea30.c	match	0041ea30	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041ea40.c	match	0041ea40	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041ea50.c	match	0041ea50	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041ea80.c	match	0041ea80	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041ede0.c	match	0041ede0	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041ee50.c	match	0041ee50	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041eeb0.c	match	0041eeb0	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041efe0.c	match	0041efe0	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041f100.c	match	0041f100	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041f1e0.c	match	0041f1e0	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041f260.c	match	0041f260	BYTE-IDENTICAL	OK 1/1
+re/match/s04/0041f290.c	match	0041f290	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00420d40.c	match	00420d40	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00420da0.c	match	00420da0	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00420dc0.c	match	00420dc0	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00420de0.c	match	004215c0	BYTE-IDENTICAL	OK 3/3
+re/match/s05/00420e00.c	match	004215a0	BYTE-IDENTICAL	OK 2/2
+re/match/s05/00421100.c	match	00421160	BYTE-IDENTICAL	OK 3/3
+re/match/s05/004212b0.c	replay	004212b0	674 B whole symbol, 486 differing unmasked bytes (first at +0x3)	NOT OK 004212b0:BAD
+re/match/s05/00421750.c	match	00421750	BYTE-IDENTICAL	OK 2/2
+re/match/s05/004219f0.c	match	004219f0	BYTE-IDENTICAL	OK 3/3
+re/match/s05/00421c10.c	match	00421c10	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00421d20.c	replay	00421d20	30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocati; 939 B whole symbol, 134 differing unmasked bytes (first at +0x185)	NOT OK 00421d20:BAD
+re/match/s05/00422120.c	match	00422120	BYTE-IDENTICAL	OK 2/2
+re/match/s05/004222c0.c	match	004222c0	BYTE-IDENTICAL	OK 1/1
+re/match/s05/004222d0.c	match	004222d0	BYTE-IDENTICAL	OK 5/5
+re/match/s05/00422ba0.c	replay	00422ba0	1071 B whole symbol, 22 differing unmasked bytes (first at +0x5c)	OK 1/1
+re/match/s05/00422fd0.c	match	00422fd0	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00423670.c	match	00423670	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00423b00.c	match	00423b00	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00423b20.c	match	00423b20	BYTE-IDENTICAL	OK 1/1
+re/match/s05/004252c0.c	replay	004252c0	1916 B whole symbol, 438 differing unmasked bytes (first at +0x1c7)	NOT OK 004252c0:BAD
+re/match/s05/00425a40.c	match	00425a40	BYTE-IDENTICAL	OK 1/1
+re/match/s05/00425ca0.c	replay	00425ca0	175 B whole symbol, 32 differing unmasked bytes (first at +0x18)	NOT OK 00425ca0:BAD
+re/match/s05/00425d50.c	match	00425d50	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00426700.c	match	00426700	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00426780.c	match	00426780	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00426ab0.c	match	00426ab0	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00426c10.c	match	00426c10	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00426c30.c	match	00426c30	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00426c70.c	match	00426c70	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00426c90.c	match	00426c90	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00429310.c	replay	00429310	644 B whole symbol, 16 differing unmasked bytes (first at +0x203)	OK 1/1
+re/match/s06/00429860.c	match	00429860	BYTE-IDENTICAL	OK 1/1
+re/match/s06/004298e0.c	match	004298e0	BYTE-IDENTICAL	OK 1/1
+re/match/s06/00429b30.c	match	00429b30	BYTE-IDENTICAL	OK 1/1
+re/match/s07/00430820.c	match	00430820	BYTE-IDENTICAL	OK 1/1
+re/match/s08/00433240.c	match	00433240	BYTE-IDENTICAL	OK 1/1
+re/match/s08/0043aee0.c	match	0043aee0	BYTE-IDENTICAL	OK 1/1
+re/match/s08/00442df0.c	match	00442df0	BYTE-IDENTICAL	OK 1/1
+re/match/s08/00443080.c	match	00443080	BYTE-IDENTICAL	OK 1/1
+re/match/s08/004430a0.c	match	004430a0	BYTE-IDENTICAL	OK 1/1
+re/match/s08/004430b0.c	match	004430b0	BYTE-IDENTICAL	OK 1/1
+re/match/s08/00448700.c	match	00448700	BYTE-IDENTICAL	OK 1/1
+re/match/s08/0044d5e0.c	match	0044d5e0	BYTE-IDENTICAL	OK 1/1
+re/match/s08/0044df80.c	match	0044df80	BYTE-IDENTICAL	OK 1/1
+re/match/s08/0044e0a0.c	match	0044e0a0	BYTE-IDENTICAL	OK 1/1
+re/match/s09/00458bf0.c	match	00458bf0	BYTE-IDENTICAL	OK 1/1
+re/match/s09/00458f20.c	match	00458f20	BYTE-IDENTICAL	OK 1/1
+re/match/s09/00458f80.c	match	00458f80	BYTE-IDENTICAL	OK 1/1
+re/match/s09/00459560.c	match	00459560	BYTE-IDENTICAL	OK 1/1
+re/match/s10/0045bfe0.c	match	0045bfe0	BYTE-IDENTICAL	OK 1/1
+re/match/s10/0045c110.c	match	0045c110	BYTE-IDENTICAL	OK 1/1
+re/match/s10/0045c350.c	match	0045c350	BYTE-IDENTICAL	OK 1/1
+re/match/s10/0045dd50.c	match	0045dd50	BYTE-IDENTICAL	OK 1/1
+re/match/s10/00465c10.c	match	00465c10	BYTE-IDENTICAL	OK 1/1
+re/match/s10/00465ca0.c	match	00465ca0	BYTE-IDENTICAL	OK 1/1
+re/match/s10/00466000.c	match	00466000	BYTE-IDENTICAL	OK 1/1
+re/match/s10/00466100.c	match	00466100	BYTE-IDENTICAL	OK 1/1
+re/match/s11/004671d0.c	match	004671d0	BYTE-IDENTICAL	OK 1/1
+re/match/s11/00467210.c	match	00467210	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046be50.c	match	0046be50	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046bf50.c	match	0046bf50	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046cb30.c	match	0046cb30	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046d320.c	match	0046d320	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046d360.c	match	0046d360	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046d400.c	match	0046d400	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046d510.c	match	0046d510	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046d570.c	match	0046d570	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046d660.c	match	0046d660	BYTE-IDENTICAL	OK 1/1
+re/match/s11/0046d780.c	match	0046d780	BYTE-IDENTICAL	OK 1/1
+re/match/s11/004704c0.c	replay	004704c0	427 B whole symbol, 136 differing unmasked bytes (first at +0x57)	OK 1/1
+re/match/s11/00471ac0.c	match	00471ac0	BYTE-IDENTICAL	OK 1/1
+re/match/s11/00471cf0.c	match	00471cf0	BYTE-IDENTICAL	OK 1/1
+re/match/s11/00472550.c	match	00472550	BYTE-IDENTICAL	OK 1/1
+re/match/s11/00472740.c	match	00472740	BYTE-IDENTICAL	OK 1/1
+re/match/s11/00474d80.c	match	00474d80	BYTE-IDENTICAL	OK 1/1
+re/match/s11/00474de0.c	replay	00474de0	119 B whole symbol, 12 differing unmasked bytes (first at +0x21)	OK 1/1
+re/match/s12/00475010.c	match	00475010	BYTE-IDENTICAL	OK 1/1
+re/match/s12/004756e0.c	match	004756e0	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00475a60.c	match	00475a60	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00475c10.c	match	00475c10	BYTE-IDENTICAL	OK 1/1
+re/match/s12/004762c0.c	match	004762c0	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00476320.c	match	00476320	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00476430.c	match	00476430	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00476440.c	match	00476440	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00476df0.c	match	00476df0	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00477490.c	match	004777d0	BYTE-IDENTICAL	OK 3/3
+re/match/s12/00477730.c	match	00477730	BYTE-IDENTICAL	OK 2/2
+re/match/s12/00477920.c	match	00477920	BYTE-IDENTICAL	OK 2/2
+re/match/s12/00477b60.c	match	00477b60	BYTE-IDENTICAL	OK 1/1
+re/match/s12/00477e00.c	match	00477e00	BYTE-IDENTICAL	OK 1/1
+re/match/s13/0047c160.c	match	0047c160	BYTE-IDENTICAL	OK 1/1
+re/match/s13/0047cea0.c	replay	0047cea0	127 B whole symbol, 3 differing unmasked bytes (first at +0x5e)	OK 1/1
+re/match/s13/0047d180.c	match	0047d180	BYTE-IDENTICAL	OK 1/1
+re/match/s13/0047ea60.c	match	0047ea60	BYTE-IDENTICAL	OK 1/1
+re/match/s13/0047f1e0.c	match	0047f1e0	BYTE-IDENTICAL	OK 1/1
+re/match/s13/00480720.c	match	00480720	BYTE-IDENTICAL	OK 1/1
+re/match/s13/00481750.c	match	00481750	BYTE-IDENTICAL	OK 1/1
+re/match/s13/00481780.c	match	00481780	BYTE-IDENTICAL	OK 1/1
+re/match/s13/004829d0.c	match	004829d0	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00484cf0.c	match	00484cf0	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00484de0.c	admitted	00484de0	394 B whole symbol, 8 differing unmasked bytes (first at +0x2c)	OK 1/1
+re/match/s14/00484f70.c	replay	00484f70	265 B whole symbol, 195 differing unmasked bytes (first at +0x8)	NOT OK 00484f70:BAD
+re/match/s14/00485070.c	match	00485070	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00485c20.c	match	00485e50	BYTE-IDENTICAL	OK 2/2
+re/match/s14/00485ef0.c	replay	00485ef0	353 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocat; 647 B whole symbol, 514 differing unmasked bytes (first at +0x8)	NOT OK 00485ef0:BAD
+re/match/s14/00486270.c	match	00486270	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00486460.c	match	00486460	BYTE-IDENTICAL	OK 1/1
+re/match/s14/004864f0.c	replay	004864f0	228 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocat; 282 B whole symbol, 9 differing unmasked bytes (first at +0xdf)	NOT OK 004864f0:BAD
+re/match/s14/00486610.c	match	00486610	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00486f90.c	match	00486f90	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00487020.c	replay	00487020	284 B whole symbol, 7 differing unmasked bytes (first at +0x9d)	OK 1/1
+re/match/s14/004893b0.c	match	004893b0	BYTE-IDENTICAL	OK 1/1
+re/match/s14/004893d0.c	match	004893d0	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00489450.c	match	00489450	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00489480.c	match	00489480	BYTE-IDENTICAL	OK 1/1
+re/match/s14/004894a0.c	match	004894a0	BYTE-IDENTICAL	OK 1/1
+re/match/s14/004894f0.c	match	004894f0	BYTE-IDENTICAL	OK 1/1
+re/match/s14/00489890.c	match	00489890	BYTE-IDENTICAL	OK 1/1
+re/match/s14/0048a490.c	match	0048a5d0	BYTE-IDENTICAL	OK 2/2
+re/match/s14/0048a850.c	match	0048a850	BYTE-IDENTICAL	OK 1/1
+re/match/s14/0048aa20.c	match	0048aa20	BYTE-IDENTICAL	OK 1/1
+re/match/s14/0048ade0.c	match	0048ade0	BYTE-IDENTICAL	OK 1/1
+re/match/s14/0048b650.c	match	0048b650	BYTE-IDENTICAL	OK 1/1
+re/match/s14/0048b7c0.c	replay	0048b7c0	412 B whole symbol, 305 differing unmasked bytes (first at +0x3)	NOT OK 0048b7c0:BAD
+re/match/s14/0048b960.c	match	0048b960	BYTE-IDENTICAL	OK 1/1
+re/match/s14/0048bb70.c	match	0048bb70	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048cf90.c	match	0048cf90	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048d360.c	replay	0048d360	80 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocati; 456 B whole symbol, 136 differing unmasked bytes (first at +0x28)	NOT OK 0048d360:BAD
+re/match/s15/0048d540.c	replay	0048d540	80 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocati; 456 B whole symbol, 136 differing unmasked bytes (first at +0x28)	NOT OK 0048d540:BAD
+re/match/s15/0048e5f0.c	match	0048e5f0	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048ebc0.c	match	0048ebc0	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f260.c	match	0048f260	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f290.c	match	0048f290	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f420.c	match	0048f420	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f590.c	match	0048f590	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f680.c	match	0048f680	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f6b0.c	match	0048f6b0	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f6e0.c	match	0048f6e0	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f710.c	match	0048f710	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f740.c	match	0048f740	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f8a0.c	match	0048f8a0	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048f9f0.c	match	0048f9f0	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048fb10.c	match	0048fb10	BYTE-IDENTICAL	OK 1/1
+re/match/s15/0048fe70.c	match	0048fe70	BYTE-IDENTICAL	OK 1/1
+re/match/s15/00490380.c	match	00490380	BYTE-IDENTICAL	OK 1/1
+re/match/s15/00490500.c	replay	00490500	2379 B whole symbol, 1778 differing unmasked bytes (first at +0x0)	NOT OK 00490500:BAD
+re/match/s15/00491490.c	match	00491490	BYTE-IDENTICAL	OK 1/1
+re/match/s15/004922e0.c	match	004922e0	BYTE-IDENTICAL	OK 1/1
+re/match/s15/00493590.c	match	00493590	BYTE-IDENTICAL	OK 1/1
+re/match/s18/004b40f0.c	match	004b40f0	BYTE-IDENTICAL	OK 1/1
+re/match/s18/004b4510.c	match	004b4510	BYTE-IDENTICAL	OK 1/1
+re/match/s18/004b47e0.c	match	004b47e0	BYTE-IDENTICAL	OK 1/1
+re/match/s18/004b4a80.c	match	004b4a80	BYTE-IDENTICAL	OK 1/1
+re/match/s18/004b4b60.c	match	004b4b60	BYTE-IDENTICAL	OK 1/1
+re/match/s19/004c18c0.c	match	004c18c0	BYTE-IDENTICAL	OK 1/1
+re/match/s19/004c1b40.c	replay	004c1b40	104 B whole symbol, 5 differing unmasked bytes (first at +0x20)	OK 1/1
+re/match/s24/00558100.c	match	00558100	BYTE-IDENTICAL	OK 1/1
+re/match/s24/00558140.c	match	00558140	BYTE-IDENTICAL	OK 1/1
+re/match/t01g/004111c0.c	match	004111c0	BYTE-IDENTICAL	OK 3/3

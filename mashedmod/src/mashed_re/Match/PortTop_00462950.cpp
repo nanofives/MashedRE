@@ -19,7 +19,7 @@
 #define FUN_005a6dc0 PortTop_Bound_005a6dc0   // exe body (Match/PortTop_005a6dc0.cpp)
 #define FUN_005a7aa0 PortTop_Bound_005a7aa0   // exe body (Match/PortTop_005a7aa0.cpp)
 #define FUN_005a7af0 PortTop_Bound_005a7af0   // exe body (Match/PortTop_005a7af0.cpp)
-#define FUN_005a7b60 PortTop_RLStop_005a7b60   // named stop
+#define FUN_005a7b60 PortTop_Bound_005a7b60   // exe body (Match/PortTop_005a7b60.cpp)
 extern "C" {
 #include "../../../../re/match/s10/00462950.c"
 }

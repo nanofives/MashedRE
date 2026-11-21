@@ -14,7 +14,7 @@
 #define FUN_004b6520 Orig_004b6520   // exe body (Match/PortTop_004b6520.cpp)
 #define FUN_004c1210 RwCore_004c1210   // exe body (RwCore/RwCore_004c1210.cpp)
 #define FUN_004e5fc0 RwCore_004e5fc0   // exe body (RwCore/RwCore_004e5fc0.cpp)
-#define FUN_0055dff0 PortTop_RLStop_0055dff0   // named stop
+#define FUN_0055dff0 PortTop_RFStop_0055dff0   // named stop
 #define FUN_00421ba0 PortTop_Local_00421a90_00421ba0   // file-local in this source
 #define FUN_004220d0 PortTop_Local_00421a90_004220d0   // file-local in this source
 #define FUN_00421ba0 PortTop_Bound_00421ba0   // member of this source, its only exe copy

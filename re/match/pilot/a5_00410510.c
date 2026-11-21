@@ -12,17 +12,61 @@
    Case 8 `if (r != 1 && r == 0)` reproduces the original's redundant cmp esi,1 / je 0x00410622.
    Constants: 0x005cc31c = 3.0f, 0x005cc9c8 = 0.9f, 0x005cc574 = 2.0f, 0x005d757c = 0.0f,
    0x442f0000 = 700.0f. DAT_005f2770 is a pointer (value 0x005f2728), read as int[13 + i]. */
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063b90c (*(int *)0x0063b90cu)
+#else
 extern int DAT_0063b90c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_008a94d0 (*(int *)0x008a94d0u)
+#else
 extern int DAT_008a94d0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f0fd0 (*(int *)0x007f0fd0u)
+#else
 extern int DAT_007f0fd0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_005f2770 (*(int * *)0x005f2770u)
+#else
 extern int *DAT_005f2770;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063ba8c (*(int *)0x0063ba8cu)
+#else
 extern int DAT_0063ba8c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063b910 (*(float *)0x0063b910u)
+#else
 extern float DAT_0063b910;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063b918 (*(float *)0x0063b918u)
+#else
 extern float DAT_0063b918;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063b91c (*(float *)0x0063b91cu)
+#else
 extern float DAT_0063b91c;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063b914 (*(int *)0x0063b914u)
+#else
 extern int DAT_0063b914;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f0fcc (*(int *)0x007f0fccu)
+#else
 extern int DAT_007f0fcc;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f0fe4 (*(float *)0x007f0fe4u)
+#else
 extern float DAT_007f0fe4;
+#endif
 int FUN_00405890(void);
 int FUN_0040b6d0(int i);
 int FUN_0040e340(void);

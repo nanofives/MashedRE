@@ -14,8 +14,16 @@ typedef struct Slot {
 } Slot;             /* 0x68 */
 typedef void (*RsFn)(int, int);
 typedef struct RwGlob { int pad[8]; RsFn setState; } RwGlob;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007d3ff8 (*(RwGlob * *)0x007d3ff8u)
+#else
 extern RwGlob *DAT_007d3ff8;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636ac0 (*(Slot * *)0x00636ac0u)
+#else
 extern Slot *DAT_00636ac0;
+#endif
 int FUN_0040e340(void);
 int FUN_00412130(void);
 int FUN_004e6680(int p0);

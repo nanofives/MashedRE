@@ -9,10 +9,26 @@ typedef struct {
   char m_0a;        /* 0x7f1042 + i*0x4c */
   char pad1[0x4c - 11];
 } Slot4c;
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636af0 (*(float *)0x00636af0u)
+#else
 extern float DAT_00636af0;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_00636af4 (*(float *)0x00636af4u)
+#else
 extern float DAT_00636af4;
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f1038 (*(Slot4c (*)[8])0x007f1038u)
+#else
 extern Slot4c DAT_007f1038[8];
+#endif
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_007f14f8 (*(Slot4c (*)[8])0x007f14f8u)
+#else
 extern Slot4c DAT_007f14f8[8];
+#endif
 int FUN_0042b920(void);
 void FUN_00433240(int p0);
 int FUN_00443080(void);
