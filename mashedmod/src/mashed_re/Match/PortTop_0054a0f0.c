@@ -10,4 +10,5 @@
 #define FUN_0054a0f0 PortTop_Bound_0054a0f0
 #define FUN_005c9d00(...) GetRaceEndTrigger()   // exe body (Match/PortBatch_GAMEPLAY_005c9d00.cpp); the source passes 1 argument(s), its prototype declares 0
 #include "../../../../re/match/g2sh/0054a0f0.c"
+void *PortTop_Keep_0054a0f0 = (void *)PortTop_Bound_0054a0f0;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

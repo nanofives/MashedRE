@@ -9,4 +9,5 @@
 #define MATCH_PORT 1
 #define FUN_004d34d0 PortTop_Bound_004d34d0
 #include "../../../../re/match/g2sh/004d34d0.c"
+void *PortTop_Keep_004d34d0 = (void *)PortTop_Bound_004d34d0;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

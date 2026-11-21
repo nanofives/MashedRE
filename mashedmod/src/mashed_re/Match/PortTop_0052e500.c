@@ -11,4 +11,5 @@
 #define FUN_004d7ff0 Orig_004d7ff0   // exe body (Match/PortTop_004d7ff0.cpp)
 #define FUN_00530090 RwCore_00530090   // exe body (RwCore/RwCore_00530090.cpp)
 #include "../../../../re/match/g2sh/0052e500.c"
+void *PortTop_Keep_0052e500 = (void *)PortTop_Bound_0052e500;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

@@ -10,4 +10,5 @@
 #define FUN_00534af0 PortTop_Bound_00534af0
 #define FUN_004e8090 Orig_004e8090   // exe body (Match/PortTop_004e8090.cpp)
 #include "../../../../re/match/g2sh/00534af0.c"
+void *PortTop_Keep_00534af0 = (void *)PortTop_Bound_00534af0;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

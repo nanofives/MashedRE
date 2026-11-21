@@ -10,4 +10,5 @@
 #define FUN_0054a000 PortTop_Bound_0054a000
 #define FUN_005495b0 RwCore_005495b0   // exe body (RwCore/RwCore_005495b0.cpp)
 #include "../../../../re/match/g2sh/0054a000.c"
+void *PortTop_Keep_0054a000 = (void *)PortTop_Bound_0054a000;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

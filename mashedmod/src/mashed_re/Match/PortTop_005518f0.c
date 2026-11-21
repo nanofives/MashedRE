@@ -20,4 +20,5 @@
 #define FUN_00558cb0 PortTop_RLStop_00558cb0   // named stop
 #define FUN_00562560 RwCore_00562560   // exe body (RwCore/RwCore_00562560.cpp)
 #include "../../../../re/match/rwtb/005518f0.c"
+void *PortTop_Keep_005518f0 = (void *)PortTop_Bound_005518f0;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

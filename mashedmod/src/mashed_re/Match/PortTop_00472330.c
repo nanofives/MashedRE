@@ -10,4 +10,5 @@
 #define FUN_00472330 PortTop_Bound_00472330
 #define FUN_004722e0(a0, ...) RwCore_004722e0(a0)   // exe body (RwCore/RwCore_004722e0.cpp); the source passes 2 argument(s), its prototype declares 1
 #include "../../../../re/match/g2sh/00472330.c"
+void *PortTop_Keep_00472330 = (void *)PortTop_Bound_00472330;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE

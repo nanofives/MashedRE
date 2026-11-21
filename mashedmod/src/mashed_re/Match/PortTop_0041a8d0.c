@@ -28,4 +28,5 @@
 #define FUN_0041ac60 PortTop_Local_0041a8d0_0041ac60   // file-local in this source
 #define FUN_0041ad00 PortTop_Local_0041a8d0_0041ad00   // file-local in this source
 #include "../../../../re/match/s03/h1_0041a4a0.c"
+void *PortTop_Keep_0041a8d0 = (void *)PortTop_Bound_0041a8d0;   // anchor: Match/PortTop_BulkRefs.cpp /include (no bound caller yet)
 #endif // MASHED_STANDALONE
