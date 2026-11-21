@@ -5,7 +5,7 @@ claude2, Opus 5.5 medium. Row kind: top-down tool row (binder change, KICKOFF_ru
 
 ## Verdict
 
-__VERDICT__
+GREEN. cp1's bulk set is the profile `bulk` of `porttop_bind.py`. A body any profile bound wins over a bulk stop (0x005c91f0 -> `PortTop_Bound_005aba20`). The selftest reproduces cp1's plan on the head with every moved line named, and the raceload / audio output is byte-identical to the head binder's. Both builds pass. ddkobj check: no newly DIFFERENT unit. Knob boot: rc 0, self-test PASS.
 
 The RACE-BIND-C4-BULK checkpoint 1 generator (`verify/bindbulk_20261121/tools/bulk_bind_gen.py` + `regen.py` +
 `refs_gen.py`, left untouched as history) is now the profile `bulk` of `re/tools/bind/porttop_bind.py`
@@ -118,7 +118,20 @@ unchanged.
 
 ## 4. Builds, object check, knob boot
 
-__BUILDS__
+Every build, check and boot ran after `py -3.12 re/orchestrator/mashed_lock.py status` showed HELD by another row's game
+run, PRIORITY-PENDING or free, never PRIORITY-HOLD or SOLO (`D:/MashedWT/BIND-BULK-PROFILE_data/status_pre_*.txt`).
+
+| Step | Result |
+|---|---|
+| VS2022 build `cmd /c "set MASHED_NO_DEPLOY=1&& set PYTHONUTF8=1&& mashedmod/build.bat"` | Build OK, rva-lint 465 findings all allowlisted, NEW=0; `mashed_re.exe` sha256 e95c6397c6a6f8610ba18c8b9fc08010fa32e8c7d9e44d31838183a24c4b742b |
+| Object build (`set MASHED_DDKOBJ=1`) | Build OK; `mashed_re_ddk.exe` sha256 c669ffc3757af9c60ca61fa52d61553ca7fa20868b6f454b3d7ade73790fa9f0 |
+| `py -3.12 re/tools/ddkobj/ddkobj.py check` | IDENTICAL 1977/2035, DIFFERENT 32, not-in-map 26 (`profile/ddkobj_check.log`, `profile/ddkobj_summary.json`) |
+| against `log/orch/run54_headcheck/` | head: IDENTICAL 1976, DIFFERENT 32, not-in-map 27. **No newly DIFFERENT unit**: the DIFFERENT list is the same 32 rvas. One unit moved: 0x00543bb0 `_PortTop_Bound_00543bb0` from not-in-map to IDENTICAL (400 B), because the bulk wrapper of 0x00543b90 now calls it, so /OPT:REF keeps it. 3 BYTECHECK rows changed only their link offset (0x00546380, 0x00552020, 0x00558ca0, still IDENTICAL). No listed unit with a 100% neighbour fell back to its VS2022 body that did not already at the head. 0x005aba20 is a PROVISIONAL.tsv body and stays out of the object build (`load_provisional`), as at the head |
+| Knob boot, VS2022 exe, `MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000`, root `D:/MashedWT/BIND-BULK-PROFILE_root`, test-slot outside, mashed_lock inside, `verify/porttop_20261108/knob_boot.py` | rc 0 after 41.8 s, `WinMain 0x00492370 returned 0 after 3000 frames`; `[OT_CODEPTR] ... self-test PASS (0 of 260 checks failed)`; 0 bulk stops reached. Output `knob_boot_vs.out`, log `D:/MashedWT/BIND-BULK-PROFILE_data/knob_vs.log` |
+| After merging orch/integration af2a7c4d0 | `write --profile bulk`, `refs --profile raceload`: 0 files changed; `sync --profile bulk --dry`: rsp + 0, allowlist + 0. It printed 3 `UNTAGGABLE ORIGTOP-HELD` seed lines (new lint class from LINT-ORIGTOP-HELDPAIR), but rva-lint on the merged tree reports NEW=0, ORIGTOP-HELD=0, so they are a sync-seed display mismatch with the new lint, not findings. Selftest after the merge: same output (section 3). No generated source changed, so no rebuild. The merge did bring in `re/match/PROVISIONAL.tsv` -1 row (0x00401690) and the lint script, so the train's object build on the merged head covers that row |
+
+The object-build exe was not knob-booted, the same as BIND-PROFILE-DATA. This row changes two callee symbols in two
+bulk wrappers, and neither runs on the knob path (no bulk stop or body reached in the boot).
 
 G-CTRL, B and the 12x4 captures not run: top-down tool row (WORKER_RULES "Row kinds").
 
@@ -133,27 +146,8 @@ G-CTRL, B and the 12x4 captures not run: top-down tool row (WORKER_RULES "Row ki
 
 ## STATE
 
-Handoff for the LIVING-PC reboot (2026-11-21 11:50). Row not yet in review; verdict and section 4 pending.
-
-- **Done and committed** (b105472f7, merge of orch/integration 6bb42c68a on top): binder change, `state/bulk/`, the 3
-  regenerated files, cp1-tree and head checks (sections 1-3), skill text. `refs --profile raceload` and
-  `sync --profile bulk` change nothing.
-- **VS2022 build**: Build OK, rva-lint 465 allowlisted NEW=0, `mashed_re.exe` sha256
-  e95c6397c6a6f8610ba18c8b9fc08010fa32e8c7d9e44d31838183a24c4b742b (log `D:/MashedWT/BIND-BULK-PROFILE_data/build_vs2022.log`).
-- **Running at the warning**: the object build (`MASHED_DDKOBJ=1`, log `D:/MashedWT/BIND-BULK-PROFILE_data/build_ddkobj.log`),
-  left to finish: **Build OK** (`mashedmod/build/ddkobj/mashed_re_ddk.exe` sha256
-  c669ffc3757af9c60ca61fa52d61553ca7fa20868b6f454b3d7ade73790fa9f0, log sha256
-  f1367b58a8519a2d0f878464f4435f79a96b34c2f2b2bc21e97722b096b500e1), so next step (1) is done unless the reboot cleared
-  `mashedmod/build/ddkobj/`. The VS2022 knob boot was queued in the test slot memory wait and was stopped before it started (no
-  game process launched). Private root ready: `D:/MashedWT/BIND-BULK-PROFILE_root`.
-- **Next**: (1) if `build_ddkobj.log` does not end in `Build OK`, rerun the object build
-  (`py -3.12 re/orchestrator/mashed_lock.py status` first; `cmd /c "set MASHED_NO_DEPLOY=1&& set MASHED_DDKOBJ=1&& set PYTHONUTF8=1&& mashedmod\build.bat"`);
-  (2) `py -3.12 re/tools/ddkobj/ddkobj.py check`, compare `mashedmod/build/ddkobj/ddkobj_summary.json` and `BYTECHECK.tsv`
-  with `C:\Users\maria\Desktop\Proyectos\Mashed\log\orch\run54_headcheck\`; expected changes only in units
-  0x005c91f0 / 0x00543b90 (callee symbol) and none newly DIFFERENT; (3) knob boot:
-  `PORTTOP_OUT=D:/MashedWT/BIND-BULK-PROFILE_data test-slot py -3.12 re/orchestrator/mashed_lock.py run --label BIND-BULK-PROFILE -- py -3.12 verify/porttop_20261108/knob_boot.py knob_vs D:/MashedWT/BIND-BULK-PROFILE_root 300 MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000`
-  (background, 7200000 ms); (4) re-merge orch/integration, rerun `write --profile bulk` + `refs --profile raceload` +
-  selftest, fill section 4 and the verdict, `roadmap.ps1 set BIND-BULK-PROFILE review -Evidence verify/bindbulk_20261121/RESULT_BIND-BULK-PROFILE.md`.
+Done. The reboot interrupted the run at 12:17 (the object build had finished before it). After the restart: ddkobj
+check, knob boot, merge of orch/integration af2a7c4d0, regenerate, selftest. Branch ready for the lead.
 
 ## Files
 
@@ -169,4 +163,9 @@ Handoff for the LIVING-PC reboot (2026-11-21 11:50). Row not yet in review; verd
 | `re/tools/bind/state/bulk/plan.json` | 01560f59483b4db4e73193261b3ff2135ba6a7a9114e02c22293b017cb95f0d3 |
 | `D:/MashedWT/BIND-BULK-PROFILE_data/{before,after}/raceload.txt` (raw) | 349af334cfa70f5ca579692b29dc4426dd8ad61068d02103fa3f30bdbac7f846 |
 | `D:/MashedWT/BIND-BULK-PROFILE_data/{before,after}/audio.txt` (raw) | 551dd8e9fe420dc9556fdf19324dca515e933c290c7901da06fe4509643e9068 |
+| `profile/ddkobj_check.log` | 7a010b96ad5a871c69259d955d6bb2fa61ea5471e8650cf1596f809bb1610479 |
+| `profile/ddkobj_summary.json` | 021a6b0643510bcde0344c49b95d01bc3ef2c3d51d95ac37db1839533e793518 |
+| `knob_boot_vs.out` | d522436680b6d67f2d1501a7bf552112cc3f0ca4f6f9ebc6125618405a01ef0c |
+| `D:/MashedWT/BIND-BULK-PROFILE_data/knob_vs.log` (raw) | bd9eeff4846e91387d87013ba16843214af8fe3f2c987d22994db07a7339295e |
+| `D:/MashedWT/BIND-BULK-PROFILE_data/build_ddkobj.log` (raw) | f1367b58a8519a2d0f878464f4435f79a96b34c2f2b2bc21e97722b096b500e1 |
 | `D:/MashedWT/BIND-BULK-PROFILE_data/build_vs2022.log` (raw) | c6456eaea0a3483b00626a83df97d0634ef62bdce025ffc0c4c6bb141da89508 |
