@@ -1,0 +1,12 @@
+# tree: git archive d4fda5c93 (RACE-BIND-C4-BULK cp1 commit), this branch's porttop_bind.py + state/ copied in, frozen index tools/exeidx.json
+plan     IDENTICAL, key order IDENTICAL (505 entries)
+listing  IDENTICAL vs last_plan.txt (506 lines)
+wrappers IDENTICAL (97 binds)
+stops    IDENTICAL
+keep     IDENTICAL, group IDENTICAL, refused IDENTICAL
+# same tree, live exe index
+plan     IDENTICAL, key order IDENTICAL (505 entries)
+listing  IDENTICAL vs last_plan.txt (506 lines)
+wrappers IDENTICAL (97 binds)
+stops    IDENTICAL
+keep     IDENTICAL, group IDENTICAL, refused IDENTICAL
