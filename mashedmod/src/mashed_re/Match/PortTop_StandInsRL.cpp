@@ -127,6 +127,52 @@ static void RlCall004264d0(int param_1) {
     } __except (RlFaultFilter(GetExceptionInformation())) {
     }
 }
+// RACE-RWGLOBALS-FRAMELIST: what the matched 0x0040d270 and the bound 0x004264d0 call for 0x00458c70. With the RW core
+// dirty-frame list on the record ([[0x007d3ff8]+0xbc] != 0, LibRw/RwApiBind.cpp RaceLoadFrameOpen under this knob) the
+// matched body runs (Match/PortTop_00458c70.cpp); with it 0 the counting stand-in above runs, logged (the RwCore_004c15c0
+// write [[+0xbc]+4] would fault, RESULT_PORT-OT-RACE.md 7.2).
+void PortTop_Bound_00458c70(void);
+void* PortTop_Bound_004c07b0(void* instance, int offset, int size);   // Match/PortTop_004c07b0.cpp (callee 0x004cc9e0 = Orig_004cc9e0)
+static unsigned s_8c70Bound = 0;
+// LibRw/RwApiBind.cpp (RaceLoadFrameOpen, MASHED_OT_RACELOAD only): the RW core frame-module open on the librw RwGlobals
+// record, offset 0x164. A fault inside it is logged with its exe-relative address and passed on (that TU has no windows.h).
+static int RlFrameOpenFilter(EXCEPTION_POINTERS* ep) {
+    const EXCEPTION_RECORD* er = ep->ExceptionRecord;
+    const unsigned base = static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(GetModuleHandleA(nullptr)));
+    const unsigned at = static_cast<unsigned>(reinterpret_cast<std::uintptr_t>(er->ExceptionAddress));
+    RlLog("RwGlobals 0x004c07b0 call: fault code %08X at exe+0x%X, access kind %u", static_cast<unsigned>(er->ExceptionCode), at - base,
+          er->NumberParameters >= 2 ? static_cast<unsigned>(er->ExceptionInformation[0]) : 9u);
+    RlLog("RwGlobals 0x004c07b0 call: fault address %08X, eax %08X, ecx %08X",
+          er->NumberParameters >= 2 ? static_cast<unsigned>(er->ExceptionInformation[1]) : 0u, static_cast<unsigned>(ep->ContextRecord->Eax),
+          static_cast<unsigned>(ep->ContextRecord->Ecx));
+    RlLog("RwGlobals 0x004c07b0 call: edx %08X, esi %08X, edi %08X", static_cast<unsigned>(ep->ContextRecord->Edx),
+          static_cast<unsigned>(ep->ContextRecord->Esi), static_cast<unsigned>(ep->ContextRecord->Edi));
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+void* PortTop_RL_FrameOpenSeh(void* record) {
+    __try {
+        return PortTop_Bound_004c07b0(record, 0x164, 4);
+    } __except (RlFrameOpenFilter(GetExceptionInformation())) {
+        return nullptr;
+    }
+}
+void PortTop_RL_00458c70(void) {
+    const unsigned g = U32(0x007d3ff8u);
+    const unsigned head = g ? U32(g + 0xbcu) : 0u;
+    if (head == 0) {
+        RlLog("rva 0x00458c70: [0x007d3ff8] = %08X, [+0xbc] = %08X: no RW core frame list, stand-in%c", g, head, ' ');
+        PortTop_StandInRL_00458c70();
+        return;
+    }
+    ++s_8c70Bound;
+    if (s_8c70Bound == 1)
+        RlLog("rva 0x00458c70: matched body PortTop_Bound_00458c70 entered, [0x007d3ff8] = %08X, [+0xbc] = %08X, DAT_0068b9a8 = %u", g,
+              head, U32(0x0068b9a8u));
+    PortTop_Bound_00458c70();
+    if (s_8c70Bound == 1)
+        RlLog("rva 0x00458c70: matched body returned, [+0xbc] = %08X, [+0xc0] = %08X, DAT_0068b9a8 = %u", U32(g + 0xbcu),
+              U32(g + 0xc0u), U32(0x0068b9a8u));
+}
 void PortTop_RL_004264d0(int param_1) {
     RlLog("rva 0x004264d0: matched body PortTop_Bound_004264d0(%08X) entered, DAT_0067ea74 = %u, DAT_007d3ff8 = %08X",
           static_cast<unsigned>(param_1), U32(0x0067ea74u), U32(0x007d3ff8u));

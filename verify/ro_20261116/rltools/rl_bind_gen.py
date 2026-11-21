@@ -39,7 +39,10 @@ ALIAS['00550b00'] = ('RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_005
 ALIAS['0042fe30'] = ('RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp')
 # Checkpoint 3 (lead decision (b), 2026-11-16): 0x00458c70 stays the named counting stand-in. Its bound body faulted in
 # RwCore_004c15c0+0x85 (original 0x004c1645): [RwGlobals+0xbc] is 0 on the librw RwGlobals record of this arm.
-ALIAS['00458c70'] = ('PortTop_StandInRL_00458c70', 'Match/PortTop_StandInsRL.cpp')
+# RACE-RWGLOBALS-FRAMELIST (run 53): the RW core frame list now exists on the record under MASHED_OT_RACELOAD (RwApiBind.cpp
+# RaceLoadFrameOpen, 0x004c07b0). Callers bind PortTop_RL_00458c70, which runs the hand-written bound TU
+# Match/PortTop_00458c70.cpp (not this generator's: it is never removed by it) when [RwGlobals+0xbc] != 0.
+ALIAS['00458c70'] = ('PortTop_RL_00458c70', 'Match/PortTop_StandInsRL.cpp')
 # Exe bodies that exist but are not match-include PortTop bodies: an rh or extern "C" body compiled into the exe for the
 # same rva. Reused when the rva is matched (C4) and the body is a C function (no ::).
 def reuse_any(rva):
