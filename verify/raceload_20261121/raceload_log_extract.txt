@@ -1,0 +1,113 @@
+# extract of D:/MashedWT/RACE-RWCORE-RACELOAD-ENGINE_data/RO_ROLOADRWC-pr1.log (line numbers kept)
+1:[portstate-image] range .rdata   va 0x005CC000 len 0x01D044 fnv1a32 0xEE647E46 copied
+2:[portstate-image] range .data    va 0x005EA000 len 0x04D000 fnv1a32 0x935B1E30 copied
+3:[portstate-image] range _rwdseg  va 0x00915000 len 0x000008 fnv1a32 0x9BE17165 copied
+4:[portstate-image] loaded D:\MashedWT\RACE-RWCORE-RACELOAD-ENGINE_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+5:[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS
+6:[portstate-image] witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+9:[OT_CODEPTR] image slots (IMG-4, CODEPTR_IMAGE.tsv): image loaded; 107 written (107 bound to an exe body, 0 to a stop thunk), 0 refused (image dword != list), table 107
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+86:[RWC_CORE] data seed: 47 ranges, 190 code-pointer fix-ups, 0 faults (device block 0x00618224 -> 00233940)
+87:[RWC_CORE] RwEngineInit 0x004c32b0(0, 0, 0x200000) = 1; RwGlobals [0x007d3ff8] = 007D3EC8, engine status +0x124 = 1
+92:[RWC_CORE] RenderwareAttachPlugins 0x00493640() = 1 on the RW core; [0x007dc57c] (PTank plugin offset, 0x00534ac4) = 0x80
+95:[RWC-DEVICE] Direct3DCreate9(31) -> real 01740000
+96:[RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=007F05D4) = 1; IDirect3D9 [0x007d4108] = 04BBF598
+100:[RWC-DEVICE] CreateDevice: asked windowed 1 0x0 refresh 0 -> forced windowed 1 640x480 refresh 0
+101:[RWC-DEVICE] CreateDevice(adapter 0, type 1, flags 0x00000054) -> 0x00000000
+102:[RWC-DEVICE] window: titled border, client 640x480 at 0,1472
+104:[RWC_CORE] RwEngineStart 0x004c2fb0() = 1
+108:[RWC_CORE] MASHED_RWC_FRAME: RwEngineStart returns 1; the top-down path continues with the bindings on the core
+132:[RWC-DEVICE] Reset: asked windowed 1 640x480 refresh 0 -> forced windowed 1 640x480 refresh 0
+133:[RWC-DEVICE] Reset -> 0x00000000
+135:[RWC-DEVICE] frame limiter: cap 60 FPS, race cap -1 (-1 = off)
+136:[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+137:[RWC_CORE] MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call 100000 on the RW core
+141:[RW_BIND] RwGlobals: MASHED_RWC_FRAME: 0x007d3ff8 01731518 -> the RW core's RwGlobals 01731518 (librw record not installed)
+143:[ORIG_TOP] [PIZ_FS] 0x004b6540 file system setup, mode flag 0 (exe piz reader, Piz/PizReader.h)
+144:[ORIG_TOP] [PIZ_FS] 0x004b6560 callback 001C6C20 arg 0 recorded (not called by the exe reader)
+176:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\font36.piz -> original/toastart/common/font36.piz: OK, 26 entries (depth 1)
+217:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "fgdc20.txd"): 132232 bytes from piz -> memory stream 0D48C7B0
+218:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "fgdc20.rwf"): 5321 bytes from piz -> memory stream 0D48C810
+221:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "english.dat"): 33626 bytes from piz -> memory stream 0D48C690
+222:[ORIG_TOP] [PIZ_FS] 0x004952f0 unmount d:\toastart\common\font36.piz (depth 0)
+228:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\sfx.piz -> original/toastart/common/sfx.piz: OK, 30 entries (depth 1)
+229:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "fx.txd"): 823308 bytes from piz -> memory stream 0E7E57F8
+231:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "badges.txd"): 165740 bytes from piz -> memory stream 0E7E5B58
+232:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "TrackImages.txd"): 1961640 bytes from piz -> memory stream 0E7E5918
+233:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "Interface.txd"): 354816 bytes from piz -> memory stream 0E7E5918
+239:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "cup.dff"): 24976 bytes from piz -> memory stream 0E7E5918
+240:[ORIG_TOP] [PIZ_FS] 0x004b68f0("Tri.dff") binding: found, length 664
+241:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "Tri.dff"): 664 bytes from piz -> memory stream 0E7E5918
+245:[ORIG_TOP] [PIZ_FS] 0x004952f0 unmount d:\toastart\common\sfx.piz (depth 0)
+256:[RW_BIND] RwGlobals: MASHED_RWC_FRAME: 0x007d3ff8 01731518 -> the RW core's RwGlobals 01731518 (librw record not installed)
+257:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\powerups\powerups.piz -> original/toastart/common/powerups/powerups.piz: OK, 36 entries (depth 1)
+260:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "PowerUpModels.txd"): 174296 bytes from piz -> memory stream 0E7E6E48
+261:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "GatlingGun.dff"): 36975 bytes from piz -> memory stream 0E7E6A58
+262:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "DepthCharge.dff"): 11731 bytes from piz -> memory stream 0E7E6E78
+263:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "DepthChargeRound.dff"): 2636 bytes from piz -> memory stream 0E7E6E78
+265:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "MissileLauncher.dff"): 14550 bytes from piz -> memory stream 0E7E6A58
+266:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "missile.dff"): 5278 bytes from piz -> memory stream 0E7E6E78
+268:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "MineDropper.dff"): 12548 bytes from piz -> memory stream 0E7E6F68
+269:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "Mine.dff"): 3094 bytes from piz -> memory stream 0E7E6FC8
+271:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "FlameThrower.dff"): 17310 bytes from piz -> memory stream 0E7E6FC8
+277:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "shotgun.dff"): 34007 bytes from piz -> memory stream 0E7E6FC8
+279:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "flashunit.dff"): 15934 bytes from piz -> memory stream 0E7E7088
+281:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "oilslicker.dff"): 7348 bytes from piz -> memory stream 0E7E6F68
+287:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "mortar.dff"): 18591 bytes from piz -> memory stream 0E7E7058
+288:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "MortarRound.dff"): 1548 bytes from piz -> memory stream 0E7E6FC8
+290:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "TargetHUD.txd"): 5796 bytes from piz -> memory stream 0E7E6FC8
+291:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream 0E7E7088
+292:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream 0E7E7058
+293:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream 0E7E6F08
+294:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream 0E7E7028
+295:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "PowerUpIcons.txd"): 137828 bytes from piz -> memory stream 0E7E6F08
+296:[ORIG_TOP] [PIZ_FS] 0x004b68f0("IconCube.dff") binding: found, length 1076
+297:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "IconCube.dff"): 1076 bytes from piz -> memory stream 0E7E7088
+300:[ORIG_TOP] [PIZ_FS] 0x004b68f0("lazer.dff") binding: found, length 972
+301:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "lazer.dff"): 972 bytes from piz -> memory stream 0E7E6F08
+302:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "LaserTower.dff"): 7956 bytes from piz -> memory stream 0E7E6F08
+309:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "Bomb.dff"): 7904 bytes from piz -> memory stream 0E7E6FC8
+313:[ORIG_TOP] [PIZ_FS] 0x004952f0 unmount d:\toastart\common\powerups\powerups.piz (depth 0)
+314:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\Panel\Panel.piz -> original/toastart/common/Panel/Panel.piz: OK, 15 entries (depth 1)
+320:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "startlights.dff"): 5838 bytes from piz -> memory stream 0E7E6FC8
+330:[ORIG_TOP] [PIZ_FS] 0x004952f0 unmount d:\toastart\common\Panel\Panel.piz (depth 0)
+332:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\ToastArt\common\perm.piz -> original/ToastArt/common/perm.piz: OK, 26 entries (depth 1)
+333:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "ToastArt/common/perm/Copters/Copters.txd"): 151840 bytes from piz -> memory stream 0E7E7028
+334:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_0.dff"): 7412 bytes from piz -> memory stream 0E7E6FC8
+337:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_2.dff"): 6188 bytes from piz -> memory stream 0E7E6F08
+338:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_3.dff"): 3524 bytes from piz -> memory stream 0E7E7028
+339:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_11.dff"): 7772 bytes from piz -> memory stream 0E7E6FC8
+340:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_25.dff"): 6476 bytes from piz -> memory stream 0E7E6F08
+341:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_26.dff"): 9068 bytes from piz -> memory stream 0E7E6FC8
+342:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_30.dff"): 2804 bytes from piz -> memory stream 0E7E6FC8
+343:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_33.dff"): 10436 bytes from piz -> memory stream 0E7E7028
+344:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_34.dff"): 6476 bytes from piz -> memory stream 0E7E6FC8
+345:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_36.dff"): 4532 bytes from piz -> memory stream 0E7E7058
+346:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_37.dff"): 8636 bytes from piz -> memory stream 0E7E6FC8
+347:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_38.dff"): 9788 bytes from piz -> memory stream 0E7E6FC8
+348:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "map_39.dff"): 5828 bytes from piz -> memory stream 0E7E7028
+349:[ORIG_TOP] [PIZ_FS] 0x004952f0 unmount d:\ToastArt\common\perm.piz (depth 0)
+350:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "toastart\pc\pc.txd"): 33272 bytes from disk -> memory stream 0E7E7058
+355:[RW_BIND] RwGlobals: MASHED_RWC_FRAME: 0x007d3ff8 01731518 -> the RW core's RwGlobals 01731518 (librw record not installed)
+447:[ORIG_TOP] frame 300 before 0x004929d0: DAT_00771968 1 -> 2 (DAT_0067ecb0=33 DAT_0067eca4=3 DAT_0063ba7c=0 DAT_0063ba78=0)
+448:[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+449:[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+450:[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 01731518 (PORT-OT-RACE)
+451:[ORIG_TOP] rva 0x00458c70: matched body PortTop_Bound_00458c70 entered, [0x007d3ff8] = 01731518, [+0xbc] = 017315D4, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+452:[ORIG_TOP] rva 0x00458c70: matched body returned, [+0xbc] = 0FE39DF0, [+0xc0] = 0FD31840, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+453:[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+454:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+455:[ORIG_TOP] [RW_FS] 0x004cc230(2, 1, "powerups_gold.dff"): 11902 bytes from piz -> memory stream 1001B560
+456:[ORIG_TOP] rva 0x00458DD0: race-load stop (PORT-OT-RACE), call 1, callers 0x00458e00, return 0004E427, exits
+457:[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x00458DD0 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0004E427
+458:[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001C9CE0; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+
+# extract of the invalid first launch (image missing): RO_ROLOADRWC-pr1_noimage.log
+2:[portstate-image] REFUSED(missing) mashed_image.bin: nothing written; the per-address seed runs instead
+459:[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+460:[ORIG_TOP] rva 0x0040d270: before: DAT_0063ba8c = 0, DAT_007f0fd0 (rule) = 0, DAT_0080332c = 00000000 (PORT-OT-RACE)
+461:[RWC_CORE] AV at 000166EC (exe+0x66EC) read 00000000; eax 00000001 ecx 00000000 edx 00000000 ebx 00000000 esi 005F2728 edi 00000000 esp 014FFE18
+462:[RWC_CORE] AV stack exe offsets: +0x5E2728 +0x1B9079 +0x5E2728 +0x3252F0 +0x325288 +0x5E2728 +0x6672 +0x5E2728 +0x63BC +0x1B434A +0x3226E4 +0x38BE +0x383E +0x1B4F51 +0x698DD +0x2E5959 +0x2EF932 +0x3CBFC0 +0x2EF982 +0x2CC9F1 +0x2CCA75 +0x2CCA75 +0x2CD930 +0x2CCA75 +0x390043 +0x56005C +0x4D0049 +0
+463:[RWC_CORE] AV raw stack: [esp+0]=0174F6D7(-) [esp+4]=005F2728(mashed_re_ddk.exe+0x5E2728) [esp+8]=00000000(-) [esp+C]=00000000(-) [esp+10]=14181511(-) [esp+14]=001C9079(mashed_re_ddk.exe+0x1B9079) [esp+18]=005F2728(mashed_re_ddk.exe+0x5E2728) [esp+1C]=00000000(-)
