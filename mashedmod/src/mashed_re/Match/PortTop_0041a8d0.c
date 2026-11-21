@@ -13,7 +13,7 @@
 #define FUN_0041f260 PortTop_RLStop_0041f260   // named stop
 #define FUN_0042a5d0 PortTop_Bound_0042a5d0
 #define FUN_004b51d0 Orig_004b51d0   // exe body (Match/PortTop_004b51d0.cpp)
-#define FUN_004b5260 PortTop_RLStop_004b5260   // named stop
+#define FUN_004b5260 PortTop_Bound_004b5260   // exe body (Match/PortTop_004b5260.cpp)
 #define FUN_004b52f0 RwCore_004b52f0   // exe body (RwCore/RwCore_004b52f0.cpp)
 #define FUN_004b6520 Orig_004b6520   // exe body (Match/PortTop_004b6520.cpp)
 #define FUN_004c39b0 RwCore_004c39b0   // exe body (RwCore/RwCore_004c39b0.cpp)

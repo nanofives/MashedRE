@@ -57,3 +57,4 @@
 005518f0	C2632 'char' seguido de 'bool' no es vÃ¡lido
 00557d90	C2632 'char' seguido de 'bool' no es vÃ¡lido
 0057c2e0	C2632 'char' seguido de 'bool' no es vÃ¡lido
+00451730	C2664 'float *RwCore_004c1740(float *,float *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'float *'

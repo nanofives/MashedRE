@@ -25,12 +25,12 @@
 #define FUN_0042a530 PortTop_Bound_0042a530
 #define FUN_0042a8d0 PortTop_Bound_0042a8d0
 #define FUN_0042f510 Vehicle0HandleGet   // exe body (Match/MatchS07_0042f510.cpp)
-#define FUN_00462950 PortTop_RLStop_00462950   // named stop
+#define FUN_00462950 PortTop_Bound_00462950
 #define FUN_004671a0 RwCore_004671a0   // exe body (RwCore/RwCore_004671a0.cpp)
 #define FUN_004715a0 PortTop_Bound_004715a0
-#define FUN_00478660 PortTop_RLStop_00478660   // named stop
-#define FUN_00479330 PortTop_RLStop_00479330   // named stop
-#define FUN_0047a020 PortTop_RLStop_0047a020   // named stop
+#define FUN_00478660 PortTop_Bound_00478660
+#define FUN_00479330 PortTop_Bound_00479330
+#define FUN_0047a020 PortTop_Bound_0047a020
 #define FUN_0047a0f0 PortTop_Bound_0047a0f0
 #define FUN_0047c0b0 PortTop_Bound_0047c0b0
 #define FUN_0047c0f0 PortTop_Bound_0047c0f0

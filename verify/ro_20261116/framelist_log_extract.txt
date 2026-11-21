@@ -1,0 +1,69 @@
+[portstate-image] range .rdata   va 0x005CC000 len 0x01D044 fnv1a32 0xEE647E46 copied
+[portstate-image] range .data    va 0x005EA000 len 0x04D000 fnv1a32 0x935B1E30 copied
+[portstate-image] range _rwdseg  va 0x00915000 len 0x000008 fnv1a32 0x9BE17165 copied
+[portstate-image] loaded D:/MashedWT/RACE-RWGLOBALS-FRAMELIST_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS
+[portstate-image] witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] RwGlobals 0x004c07b0 call: fault code C0000005 at exe+0x1F2F0C, access kind 1 (PORT-OT-RACE)
+[ORIG_TOP] RwGlobals 0x004c07b0 call: fault address 00000004, eax 00000000, ecx 007D45CC (PORT-OT-RACE)
+[ORIG_TOP] RwGlobals 0x004c07b0 call: edx 007D3E94, esi 007D3E88, edi 007D3E78 (PORT-OT-RACE)
+[portstate-image] range .rdata   va 0x005CC000 len 0x01D044 fnv1a32 0xEE647E46 copied
+[portstate-image] range .data    va 0x005EA000 len 0x04D000 fnv1a32 0x935B1E30 copied
+[portstate-image] range _rwdseg  va 0x00915000 len 0x000008 fnv1a32 0x9BE17165 copied
+[portstate-image] loaded D:/MashedWT/RACE-RWGLOBALS-FRAMELIST_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS
+[portstate-image] witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RW_BIND] RwGlobals [MASHED_OT_RACELOAD]: RW core frame-module open 0x004c07b0(record 011123E8, 0x164, 4) -> 011123E8; +0xbc 011124A4 +0xc0 011124A4 (record + 0xbc = 011124A4), +0x164 007D3E78, DAT_007d3e70 00000164, DAT_007d3e74 00000001, header 0x007d3e78 +0x0 000000A4 +0x4 00000032 +0x8 00000007 +0xc 00000004 +0x10 007D3E88 +0x14 007D3E88 +0x18 00000003
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames
+[portstate-image] range .rdata   va 0x005CC000 len 0x01D044 fnv1a32 0xEE647E46 copied
+[portstate-image] range .data    va 0x005EA000 len 0x04D000 fnv1a32 0x935B1E30 copied
+[portstate-image] range _rwdseg  va 0x00915000 len 0x000008 fnv1a32 0x9BE17165 copied
+[portstate-image] loaded D:\MashedWT\RACE-RWGLOBALS-FRAMELIST_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS
+[portstate-image] witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001C2110; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+[ORIG_TOP] [TRACE] self-test PASS (0 of 33294 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 8, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reached at tick 300 (N 903)
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 000189F0, 0x00493390 001C2110, 0x
+[portstate-image] range .rdata   va 0x005CC000 len 0x01D044 fnv1a32 0xEE647E46 copied
+[portstate-image] range .data    va 0x005EA000 len 0x04D000 fnv1a32 0x935B1E30 copied
+[portstate-image] range _rwdseg  va 0x00915000 len 0x000008 fnv1a32 0x9BE17165 copied
+[portstate-image] loaded D:\MashedWT\RACE-RWGLOBALS-FRAMELIST_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS
+[portstate-image] witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RW_BIND] RwGlobals [MASHED_OT_RACELOAD]: RW core frame-module open 0x004c07b0(record 0110F4B0, 0x164, 4) -> 0110F4B0; +0xbc 0110F56C +0xc0 0110F56C (record + 0xbc = 0110F56C), +0x164 007D3E78, DAT_007d3e70 00000164, DAT_007d3e74 00000001, header 0x007d3e78 +0x0 000000A4 +0x4 00000032 +0x8 00000007 +0xc 00000004 +0x10 007D3E88 +0x14 007D3E88 +0x18 00000003
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 0110F4B0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00458c70: matched body PortTop_Bound_00458c70 entered, [0x007d3ff8] = 0110F4B0, [+0xbc] = 0110F56C, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00458c70: matched body returned, [+0xbc] = 112427A0, [+0xc0] = 112409A0, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body returned    (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0047B860: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B416, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x0047B860 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0004B416
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001C2110; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+[portstate-image] range .rdata   va 0x005CC000 len 0x01D044 fnv1a32 0xEE647E46 copied
+[portstate-image] range .data    va 0x005EA000 len 0x04D000 fnv1a32 0x935B1E30 copied
+[portstate-image] range _rwdseg  va 0x00915000 len 0x000008 fnv1a32 0x9BE17165 copied
+[portstate-image] loaded D:\MashedWT\RACE-RWGLOBALS-FRAMELIST_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+[portstate-image] witness PortStateSeed: 272/272 entries equal, mem=5ecb7d52 want=5ecb7d52 PASS
+[portstate-image] witness RdataSeed 46/46, DInputSeed 2/2, CP_SEED 72/72 equal; CP_FIX slots holding the original target 188/188
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[RW_BIND] RwGlobals [MASHED_OT_RACELOAD]: RW core frame-module open 0x004c07b0(record 0110F4B0, 0x164, 4) -> 0110F4B0; +0xbc 0110F56C +0xc0 0110F56C (record + 0xbc = 0110F56C), +0x164 007D3E78, DAT_007d3e70 00000164, DAT_007d3e74 00000001, header 0x007d3e78 +0x0 000000A4 +0x4 00000032 +0x8 00000007 +0xc 00000004 +0x10 007D3E88 +0x14 007D3E88 +0x18 00000003
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 0110F4B0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00458c70: matched body PortTop_Bound_00458c70 entered, [0x007d3ff8] = 0110F4B0, [+0xbc] = 0110F56C, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00458c70: matched body returned, [+0xbc] = 11308660, [+0xc0] = 112FD230, DAT_0068b9a8 = 0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body returned    (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x0047B860: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B416, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00440BC0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047a020 0x0047a0f0 0x0047a130, return 0004B41A, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0047B8D0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B429, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004B7480: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b880, return 0004B3FB, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004A332B: race-load stop (PORT-OT-RACE), call 1, callers 0x00478200, return 00051619, returns 0 (MASHED_OT_RL_STOPS=count)

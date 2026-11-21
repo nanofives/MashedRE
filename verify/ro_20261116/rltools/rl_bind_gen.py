@@ -19,6 +19,10 @@ exec(compile(prefix, AUD, 'exec'), g)
 msrc, callees, reuse, ALIAS, EXTRA_PRE, EXTRA_IN = g['msrc'], g['callees'], g['reuse'], g['ALIAS'], g['EXTRA_PRE'], g['EXTRA_IN']
 LOCAL_SHARED, LOCAL_AS_BOUND, adm, rows = g['LOCAL_SHARED'], g['LOCAL_AS_BOUND'], g['adm'], g['rows']
 idx = g['idx']
+# PORT-OT-RACE-BIND-PROV4 (run 53): the four COURSE.LUA-path stops of checkpoint 2 bind their L-126 provisional sources
+# (re/match/PROVISIONAL.tsv rows of RACE-COURSELUA-BODIES, all NOT-PROVEN), knob path only, never C4. msrc() reads the
+# audio generator's PROV_BIND set, so it is extended in place here and the audio plan is not changed.
+g['PROV_BIND'] |= {'0047a020', '00479330', '00478660', '00462950'}
 FORCE = set(roots)
 # The exe's file layer on the top-down route (no RtFSManager): the piz mount stack of Match/PortTop_00402750_Pieces.cpp
 # (PIZ_FS) and the RW stream open / close bindings over it (Match/PortTop_RwStream04F.cpp, PORT-TOP-04F). The matched
@@ -35,7 +39,10 @@ ALIAS['00550b00'] = ('RwCoreBind_FsFileExists_00550b00', 'RwCore/RwCore_Bind_005
 ALIAS['0042fe30'] = ('RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp')
 # Checkpoint 3 (lead decision (b), 2026-11-16): 0x00458c70 stays the named counting stand-in. Its bound body faulted in
 # RwCore_004c15c0+0x85 (original 0x004c1645): [RwGlobals+0xbc] is 0 on the librw RwGlobals record of this arm.
-ALIAS['00458c70'] = ('PortTop_StandInRL_00458c70', 'Match/PortTop_StandInsRL.cpp')
+# RACE-RWGLOBALS-FRAMELIST (run 53): the RW core frame list now exists on the record under MASHED_OT_RACELOAD (RwApiBind.cpp
+# RaceLoadFrameOpen, 0x004c07b0). Callers bind PortTop_RL_00458c70, which runs the hand-written bound TU
+# Match/PortTop_00458c70.cpp (not this generator's: it is never removed by it) when [RwGlobals+0xbc] != 0.
+ALIAS['00458c70'] = ('PortTop_RL_00458c70', 'Match/PortTop_StandInsRL.cpp')
 # Exe bodies that exist but are not match-include PortTop bodies: an rh or extern "C" body compiled into the exe for the
 # same rva. Reused when the rva is matched (C4) and the body is a C function (no ::).
 def reuse_any(rva):
@@ -61,12 +68,28 @@ CALLEE_OVERRIDE = {
                                'declared deviation there, 2nd / 3rd passed as 0'),
 }
 NOT_LOCAL = {('0047bf70', '0047be80')}   # re/match/s13/0047bf70.c: 0x0047be80 HELD (86.4%), its copy is #ifndef MATCH_PORT
+# PORT-OT-RACE-BIND-PROV4: re/match/s12/00478660.c holds a HELD static copy of 0x004785e0 (C2) under #ifndef MATCH_PORT
+# (source lines 55-77); on the port it is an external callee.
+NOT_LOCAL |= {('00478660', '004785e0')}
+# PORT-OT-RACE-BIND-PROV4: rvas kept as named stops although a matched source exists, with the reason.
+FORCE_STOP = {
+    '004790e0': 'register-arg: world pointer in EAX (re/match/s12/004790e0.c header; caller 0x00479330 loads [ebx+0x105d4] '
+                'into EAX at 0x00479e2e), declared void(void) by re/match/s12/00479330.c under MATCH_PORT and static in its '
+                'own source; no exe body takes EAX',
+}
+# PORT-OT-RACE-BIND-PROV4: a source that defines its function under a name other than FUN_<rva>.
+NAME_DEF = {'004e5c30': 'RpWorldForAllAtomics'}   # re/match/rwl02/004e5c30.c line 34
+# PORT-OT-RACE-BIND-PROV4: non-FUN_ callee names in a source, bound to the exe body of that rva.
+EXTRA_DEF = {'0042a740': ['#define _strchr MashedCrt_strchr_004a2fd0   // the original CRT strchr 0x004a2fd0 '
+                          '(Match/PortTop_CrtString.cpp, BIND-CRT-STRING)']}
 plan = {}
 q = list(roots)
 while q:
     rva = q.pop(0)
     if rva in plan:
         continue
+    if rva in FORCE_STOP:
+        plan[rva] = ('stop', FORCE_STOP[rva]); continue
     if rva in UNCLEAN:
         plan[rva] = ('stop', 'cpp-unclean: ' + UNCLEAN[rva]); continue
     if rva in ALIAS:
@@ -138,6 +161,9 @@ for rva, p in sorted(plan.items()):
          '// by name; a callee with no matched or admitted body is a named stop (Match/PortTop_RaceLoadStops.cpp).',
          '// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#define MATCH_PORT 1',
          '#define FUN_%s PortTop_Bound_%s' % (rva, rva)]
+    if rva in NAME_DEF:
+        L.append('#define %s PortTop_Bound_%s   // the source names 0x%s %s' % (NAME_DEF[rva], rva, rva, NAME_DEF[rva]))
+    L += EXTRA_DEF.get(rva, [])
     for c in cs:
         if (rva, c) in CALLEE_OVERRIDE:
             L.append('#define FUN_%s %s   // %s' % ((c,) + CALLEE_OVERRIDE[(rva, c)]))

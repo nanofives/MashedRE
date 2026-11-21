@@ -135,18 +135,40 @@ PROFILES = {
             # 0x0042fe30: one exe body already compiled from re/match/s07/0042fe30.c (MATCH-S07 TU); a second copy would be
             # a dual copy of the rva in the exe.
             '0042fe30': ('RaceEndFlagIfEndMode', 'Match/MatchS07_0042fe30.cpp'),
-            # 0x00458c70 stays the named counting stand-in (lead decision (b), 2026-11-16): its bound body faulted in
-            # RwCore_004c15c0+0x85 (original 0x004c1645), [RwGlobals+0xbc] = 0 on the librw RwGlobals record.
-            '00458c70': ('PortTop_StandInRL_00458c70', 'Match/PortTop_StandInsRL.cpp')},
+            # 0x00458c70: checkpoint 3 (lead decision (b), 2026-11-16) kept the named counting stand-in, its bound body
+            # faulted in RwCore_004c15c0+0x85 (original 0x004c1645), [RwGlobals+0xbc] = 0 on the librw RwGlobals record.
+            # RACE-RWGLOBALS-FRAMELIST (run 53): the RW core frame list now exists on the record under MASHED_OT_RACELOAD
+            # (RwApiBind.cpp RaceLoadFrameOpen, 0x004c07b0). Callers bind PortTop_RL_00458c70, which runs the hand-written
+            # bound TU Match/PortTop_00458c70.cpp when [RwGlobals+0xbc] != 0 (rl_bind_gen.py at integration 34c823375).
+            '00458c70': ('PortTop_RL_00458c70', 'Match/PortTop_StandInsRL.cpp')},
         stop_force=set(), knob={},
+        # PORT-OT-RACE-BIND-PROV4 (run 53, carried from rl_bind_gen.py at integration 34c823375): the four COURSE.LUA-path
+        # stops of checkpoint 2 bind their L-126 provisional sources (PROVISIONAL.tsv rows of RACE-COURSELUA-BODIES, all
+        # NOT-PROVEN), knob path only, never C4. Profile-local: the audio plan is not changed.
+        prov_bind={'0047a020', '00479330', '00478660', '00462950'},
+        # PORT-OT-RACE-BIND-PROV4: rvas kept as named stops although a matched source exists, with the reason.
+        stop_reason={'004790e0': 'register-arg: world pointer in EAX (re/match/s12/004790e0.c header; caller 0x00479330 loads '
+                                 '[ebx+0x105d4] into EAX at 0x00479e2e), declared void(void) by re/match/s12/00479330.c under '
+                                 'MATCH_PORT and static in its own source; no exe body takes EAX'},
+        # PORT-OT-RACE-BIND-PROV4: a source that defines its function under a name other than FUN_<rva>
+        name_def={'004e5c30': 'RpWorldForAllAtomics'},   # re/match/rwl02/004e5c30.c line 34
+        # PORT-OT-RACE-BIND-PROV4: non-FUN_ callee names in a source, bound to the exe body of that rva
+        extra_def={'0042a740': ['#define _strchr MashedCrt_strchr_004a2fd0   // the original CRT strchr 0x004a2fd0 '
+                                '(Match/PortTop_CrtString.cpp, BIND-CRT-STRING)']},
         # a callee whose exe body takes another argument list than the caller's source declares binds to the forwarder
         callee_override={('0042a5d0', '004b3bf0'): ('MatchS06_0042a5d0_Call004b3bf0',
                          'Match/MatchS06_0042a5d0.cpp: the source passes 1 argument, Orig_004b3bf0 takes 3; '
                          'declared deviation there, 2nd / 3rd passed as 0')},
-        not_local={('0047bf70', '0047be80')},   # re/match/s13/0047bf70.c: 0x0047be80 HELD (86.4%), its copy is #ifndef MATCH_PORT
+        not_local={('0047bf70', '0047be80'),   # re/match/s13/0047bf70.c: 0x0047be80 HELD (86.4%), its copy is #ifndef MATCH_PORT
+                   # PORT-OT-RACE-BIND-PROV4: re/match/s12/00478660.c holds a HELD static copy of 0x004785e0 (C2) under
+                   # #ifndef MATCH_PORT (source lines 55-77); on the port it is an external callee
+                   ('00478660', '004785e0')},
         own_mark=RL_MARK, prune_stale=True, rwcore_fallback=True, reuse_any=True, force_old_binds=False,
         stop_prefix='PortTop_RLStop_', stop_file='Match/PortTop_RaceLoadStops.cpp',
         refs_file='Match/PortTop_BulkRefs.cpp',   # `refs` step (BIND-CUNCLEAN-AS-C): keeps caller-less bound bodies linked
+        # wrappers another generator wrote whose PortTop_Keep_<rva> anchors this refs file also carries:
+        # RACE-BIND-C4-BULK checkpoint 1 (verify/bindbulk_20261121, 100 anchors; its refs_gen.py is history only)
+        foreign_keep_marks=('// RACE-BIND-C4-BULK (2026-11-21): exe-only port body',),
         local_shared_note='   // the one exe copy', local_bound_note='   // this source carries its only exe copy',
         bindings_roots=None,   # roots of the plan, caller 0x0040d270 (see cmd_bindings)
         bindings_root_caller='0x0040d270',
@@ -290,7 +312,7 @@ class Binder:
             hits = glob.glob('re/match/*/%s.c' % rva)
             if len(hits) == 1:
                 return hits[0].replace(os.sep, '/'), 'replay'
-        if rva in PROV_BIND and rva in self.prov and os.path.exists(self.prov[rva][2]):
+        if (rva in PROV_BIND or rva in self.P.get('prov_bind', ())) and rva in self.prov and os.path.exists(self.prov[rva][2]):
             return self.prov[rva][2], 'provisional'
         if 'c4=match' in r[8] and ('BYTE-IDENTICAL' in r[8] or 'match evidence: identical' in r[8]
                                    or ('100.0%' in r[8] and 'relocheck OK' in r[8])):
@@ -345,6 +367,8 @@ class Binder:
                 continue
             if rva in P['stop_force']:
                 plan[rva] = ('stop',); continue
+            if rva in P.get('stop_reason', {}):
+                plan[rva] = ('stop', P['stop_reason'][rva]); continue
             if rva in self.unclean and rva not in self.cemit:
                 plan[rva] = ('stop', 'cpp-unclean: ' + self.unclean[rva]); continue
             if rva in self.alias:
@@ -468,6 +492,9 @@ class Binder:
             L.append('// with %s (state/%s/cpp_unclean.txt); cl compiles a .c as C, same exe symbol, C-linkage callees.'
                      % (self.unclean[rva].split()[0], self.name))
         L += ['// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#define MATCH_PORT 1', '#define FUN_%s PortTop_Bound_%s' % (rva, rva)]
+        if rva in P.get('name_def', {}):
+            L.append('#define %s PortTop_Bound_%s   // the source names 0x%s %s' % (P['name_def'][rva], rva, rva, P['name_def'][rva]))
+        L += P.get('extra_def', {}).get(rva, [])
         for c in cs:
             if (rva, c) in P['callee_override']:
                 L.append('#define FUN_%s %s   // %s' % ((c,) + P['callee_override'][(rva, c)]))
@@ -503,7 +530,7 @@ class Binder:
             L.append('#define FID_conflict__wprintf PortTop_Printf04G   // printf -> log (Match/PortTop_0040bbb0.cpp)')
         L += EXTRA_PRE.get(rva, [])
         keep = []
-        if rva in self.refs():
+        if rva in self.refs() and rva in self._refs_own:
             # `refs` step: no bound caller references this body yet, so /OPT:REF would drop it (ddkobj.py check: not-in-map).
             # The data anchor is named by Match/PortTop_BulkRefs.cpp's /include (decoration-free, works for a static body).
             a = 'void *PortTop_Keep_%s = (void *)PortTop_Bound_%s;' % (rva, rva)
@@ -524,6 +551,7 @@ class Binder:
         PortTop_Bound_<rva>. An rva drops out of the set (and its anchor out of its wrapper) once such a caller exists."""
         if getattr(self, '_refs', None) is not None:
             return self._refs
+        self._refs_own = set()
         if not self.P.get('refs_file'):
             self._refs = []
             return self._refs
@@ -533,6 +561,8 @@ class Binder:
         rf = os.path.normcase(os.path.join(SRC, self.P['refs_file']))
         hits = set()
         pat = re.compile(r'\bPortTop_Bound_([0-9a-f]{8})\b')
+        fmarks = tuple(self.P.get('foreign_keep_marks', ()))
+        foreign = set()
         for f in rsp_tus():
             p = os.path.join(SRC, f)
             if os.path.normcase(p) == rf or not os.path.exists(p):
@@ -540,8 +570,17 @@ class Binder:
             t = rd(p)
             if self.P['own_mark'] and t.startswith(self.P['own_mark']):
                 continue
+            if fmarks and t.startswith(fmarks):
+                # a foreign keep-alive group (RACE-BIND-C4-BULK checkpoint 1, its generator committed history only): its
+                # PortTop_Keep_<rva> anchors are listed like this profile's own caller-less binds. Calls inside the group
+                # do not count as a bound caller, because the group itself is kept only by this file.
+                foreign |= set(re.findall(r'\bPortTop_Keep_([0-9a-f]{8})\s*=', t))
+                continue
             hits |= set(pat.findall(t))
-        self._refs = [r for r in cand if r not in hits]
+        own = [r for r in cand if r not in hits]
+        self._refs_own = set(own)
+        # a foreign anchor leaves the list once a bound caller exists (a planned bind calls it, or another exe TU names it)
+        self._refs = sorted(set(own) | (foreign - called - hits - binds))
         return self._refs
 
     def refs_text(self):
@@ -1206,14 +1245,21 @@ def cmd_selftest(a):
             refs = list(b.refs())
             drop = 'n/a (empty set)'
             if refs:
-                r0 = refs[0]
-                k = next(k for k, v in sorted(b.plan.items()) if v[0] == 'bind' and k != r0)
-                saved = b.plan[k]
-                b.plan[k] = (saved[0], saved[1], saved[2], list(saved[3]) + [r0], saved[4]); b._refs = None
-                gone = r0 not in b.refs() and 'PortTop_Keep_%s' % r0 not in b.wrapper_text(r0)[1]
-                b.plan[k] = saved; b._refs = None
-                drop = ('0x%s drops out with a bound caller 0x%s' % (r0, k)) if gone else 'FAIL: 0x%s stays listed' % r0
-                bad += not gone
+                # one own rva (its wrapper loses the anchor) and one foreign-group rva (it leaves the list), when present
+                own = sorted(b._refs_own)
+                fgn = sorted(set(refs) - set(own))
+                parts = []
+                for r0, is_own in ([(own[0], True)] if own else []) + ([(fgn[0], False)] if fgn else []):
+                    k = next(k for k, v in sorted(b.plan.items()) if v[0] == 'bind' and k != r0)
+                    saved = b.plan[k]
+                    b.plan[k] = (saved[0], saved[1], saved[2], list(saved[3]) + [r0], saved[4]); b._refs = None
+                    gone = r0 not in b.refs() and (not is_own or 'PortTop_Keep_%s' % r0 not in b.wrapper_text(r0)[1])
+                    b.plan[k] = saved; b._refs = None
+                    parts.append(('0x%s (%s) drops out with a bound caller 0x%s' % (r0, 'own' if is_own else 'foreign', k))
+                                 if gone else 'FAIL: 0x%s stays listed' % r0)
+                    bad += not gone
+                b.refs()
+                drop = '; '.join(parts) + ' (own %d, foreign %d)' % (len(own), len(fgn))
             print('[selftest] %s refs: %d caller-less bound bodies, %s %s, %s' % (
                 prof, len(refs), b.P['refs_file'], 'IDENTICAL' if same else 'DIFFERENT', drop))
             bad += not same
