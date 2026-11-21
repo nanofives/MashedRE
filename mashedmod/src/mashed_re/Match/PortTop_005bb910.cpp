@@ -10,7 +10,7 @@
 #define FUN_005a7e70 PortTop_Bound_005a7e70
 #define FUN_005ac540 PortTop_AStop_005ac540   // named stop
 #define FUN_005bbdb0 PortTop_Bound_005bbdb0
-#define FUN_005c91f0 PortTop_AStop_005c91f0   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)
+#define FUN_005c91f0 PortTop_Bound_005c91f0   // exe body (Match/PortTop_005c91f0.cpp)
 extern "C" {
 #include "../../../../re/match/s27/005bb910.c"
 }
