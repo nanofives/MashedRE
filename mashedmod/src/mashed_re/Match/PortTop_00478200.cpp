@@ -1,0 +1,14 @@
+// PORT-OT-RACE (2026-11-16): exe-only port body of rva 0x00478200 = re/match/s12/00478200.c
+// (match.py BYTE-IDENTICAL, hooks.csv C4 c4=match). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_RACELOAD
+// through the race-load closure of 0x0040d270 (verify/ro_20261116/rltools/rl_bind_gen.py). Callees bind to exe bodies
+// by name; a callee with no matched or admitted body is a named stop (Match/PortTop_RaceLoadStops.cpp).
+// RVA-LINT: ORIGTOP-ONLY
+#ifdef MASHED_STANDALONE
+#define MATCH_PORT 1
+#define FUN_00478200 PortTop_Bound_00478200
+#define FUN_004987b0 DbgPrintf_004987b0   // exe body (Match/PortTop_004987b0.cpp)
+#define FUN_004a332b PortTop_RLStop_004a332b   // named stop
+extern "C" {
+#include "../../../../re/match/s12/00478200.c"
+}
+#endif // MASHED_STANDALONE

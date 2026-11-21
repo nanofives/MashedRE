@@ -128,11 +128,16 @@ int PortTop_Bound_00493540(int, int) {
 // select screen (walk_04: player 1's keyboard icon moves right), because its 0x007f0a40 table defaults survive the hand
 // init, which zeroes only 0x007f0f60.. and does not restore 0x007f0a40 from the save (exe_main.cpp:189). Diagnostic
 // switch MASHED_TOP04D_DATAZERO=1 runs it (verify/porttop_20261108/RESULT_PORT-TOP-04D.md).
+// [RACE-WRITER-0067EA74] MASHED_OT_RACELOAD=1 (default OFF, ORIG_TOP only) also runs the matched body: on the original
+// the writer of 0x0067ea74 at boot is 0x00431d00, called from 0x004924f0 (watch arm W1,
+// verify/ro_20261116/RESULT_RACE-WRITER-0067EA74.md); 0x0042fe30 returns that word, and the matched 0x004264d0 takes its
+// piz / clump branch only when it is non-zero.
 int PortTop_StandIn_004924f0(void) {
     const char* const v = std::getenv("MASHED_TOP04D_DATAZERO");
-    if (v && v[0] == '1') {
+    const char* const rl = std::getenv("MASHED_OT_RACELOAD");
+    if ((v && v[0] == '1') || (rl && rl[0] == '1')) {
         const int r = DataZeroFill();
-        PortTop_Log("0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1) returned %d", r);
+        PortTop_Log("0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1 or MASHED_OT_RACELOAD=1) returned %d", r);
         return r;
     }
     PortTop_Log("0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)");

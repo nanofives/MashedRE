@@ -53,7 +53,8 @@ foreach ($line in Get-Content $Rsp) {
     $t = $line.Trim()
     if ($t -eq '' -or $t.StartsWith('#') -or $t.StartsWith('REM ')) { continue }
     $t = $t.Trim('"')
-    if ($t -notmatch '\.cpp$') { throw "build_objs: non-.cpp entry in ${Rsp}: $t" }
+    # BIND-CUNCLEAN-AS-C (2026-11-21): a .c entry is a C unit (cl compiles it as C by its extension, same flags)
+    if ($t -notmatch '\.(cpp|c)$') { throw "build_objs: non-.cpp/.c entry in ${Rsp}: $t" }
     $sources += $t
 }
 if ($sources.Count -eq 0) { throw "build_objs: empty source list $Rsp" }
@@ -110,7 +111,7 @@ $objs  = @()
 foreach ($s in $sources) {
     $base = [System.IO.Path]::GetFileNameWithoutExtension($s)
     $obj  = Join-Path $ObjDir ($base + '.obj')
-    $dep  = Join-Path $ObjDir ($base + '.cpp.json')   # cl names it <basename>.cpp.json
+    $dep  = Join-Path $ObjDir ([System.IO.Path]::GetFileName($s) + '.json')   # cl names it <file name>.json (x.cpp.json, x.c.json)
     $objs += $obj
     $srcAbs = Join-Path $SrcRoot $s
     $objT = MTime $obj

@@ -138,9 +138,18 @@ def findings(scan=None) -> list[tuple[str, int, list[str], str]]:
     return out
 
 
+RE_SCAFFOLD = re.compile(r"^RwCore/RwCore_(?:Lifted_\d+|Hand)\.cpp$")
+
+
 def is_origtop(files, marked) -> bool:
     m = [f for f in files if f in marked]
-    return len(m) == 1 and len(files) > len(m)
+    if len(m) == 1 and len(files) > len(m):
+        return True
+    # L-178 dual body (BIND-CUNCLEAN-AS-C, 2026-11-21): two marked ORIG_TOP bodies, one of them the RW core's
+    # provisional scaffolding (L-137 lifted naked asm RwCore/RwCore_Lifted_NN.cpp, or RwCore/RwCore_Hand.cpp) and the
+    # other a matched unit of the same rva (ddkobj "dual body": byte-checked, pre-bound). Exactly one scaffold TU.
+    return (len(files) == 2 and len(m) == 2
+            and sum(1 for f in files if RE_SCAFFOLD.match(f.replace("\\", "/"))) == 1)
 
 
 def evaluate(found, allow: dict[str, bool], marked: set[str], asi_tus: set[str]):
@@ -170,7 +179,10 @@ def evaluate(found, allow: dict[str, bool], marked: set[str], asi_tus: set[str])
 
 def selftest() -> int:
     hand, ot, ot2, asi_hand = "Gameplay/Hand.cpp", "Match/OrigTop_Synth.cpp", "Match/OrigTop_Synth2.cpp", "Util/AsiOnly.cpp"
-    marked = {ot, ot2}
+    sc, sc2 = "RwCore/RwCore_Lifted_03.cpp", "RwCore/RwCore_Hand.cpp"   # L-178 dual body fixtures
+    marked = {ot, ot2, sc, sc2}
+    f_dual = ("DUP-IN-TARGET", 0x00401040, sorted([ot, sc]), "synthetic")
+    f_scsc = ("DUP-IN-TARGET", 0x00401050, sorted([sc, sc2]), "synthetic")
     f_pair = ("DUP-IN-TARGET", 0x00401000, sorted([hand, ot]), "synthetic")
     f_cross = ("CROSS-TARGET", 0x00401010, sorted([asi_hand, ot]), "synthetic")
     f_both = ("DUP-IN-TARGET", 0x00401020, sorted([ot, ot2]), "synthetic")
@@ -184,6 +196,10 @@ def selftest() -> int:
         ("unlisted ORIG_TOP pair is NEW", [f_pair], [], set(), (1, 0, 0, 0)),
         ("two marked bodies are not the class: tag fails", [f_both],
          [f"{OT_TAG} {key(*f_both[:3])}"], set(), (0, 0, 0, 1)),
+        ("L-178 dual body (marked unit + marked RW core scaffold) is the class", [f_dual],
+         [f"{OT_TAG} {key(*f_dual[:3])}"], set(), (0, 0, 1, 0)),
+        ("two marked scaffolds are not the class: tag fails", [f_scsc],
+         [f"{OT_TAG} {key(*f_scsc[:3])}"], set(), (0, 0, 0, 1)),
         ("tag on a plain dual copy fails", [f_plain], [f"{OT_TAG} {key(*f_plain[:3])}"], set(), (0, 0, 0, 1)),
         ("plain dual copy untagged stays D4 burn-down", [f_plain], [key(*f_plain[:3])], set(), (0, 1, 0, 0)),
         ("marker on an asi-compiled TU fails", [f_pair], [f"{OT_TAG} {key(*f_pair[:3])}"], {ot}, (0, 0, 1, 1)),
