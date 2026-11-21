@@ -1,0 +1,65 @@
+### ./RO_ROLOADRWC-pr1.log
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+103:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 017C24AC; RwGlobals 0179BD88, module offset 0x3F4, texdict freelist 007D4030, list head 0179C17C -> 017C24BC; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+136:[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+211:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 017C24DC; RwGlobals 0179BD88, module offset 0x3F4, texdict freelist 007D4030, list head 017C24D4 -> 017C24EC; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+454:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+456:[ORIG_TOP] rva 0x00458630: race-load stop (PORT-OT-RACE), call 1, callers 0x00458dd0, return 0005A32F, exits
+457:[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x00458630 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0005A32F
+458:[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001CA1F0; 0x00
+### ./RO_ROLOADRWCC-pr1.log
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+103:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 019267D4; RwGlobals 018FFBA8, module offset 0x3F4, texdict freelist 007D4030, list head 018FFF9C -> 019267E4; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+136:[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+211:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 01926804; RwGlobals 018FFBA8, module offset 0x3F4, texdict freelist 007D4030, list head 019267FC -> 01926814; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+454:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+456:[ORIG_TOP] rva 0x00458630: race-load stop (PORT-OT-RACE), call 1, callers 0x00458dd0, return 0005A32F, returns 0 (MASHED_OT_RL_STOPS=count)
+457:[ORIG_TOP] rva 0x004B4080: race-load stop (PORT-OT-RACE), call 1, callers 0x00458dd0, return 0005A339, returns 0 (MASHED_OT_RL_STOPS=count)
+### cp2/RO_ROLOADRWC-pr1.log
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+103:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 019B65D4; RwGlobals 01992000, module offset 0x3F4, texdict freelist 007D4030, list head 019923F4 -> 019B65E4; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+136:[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+211:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 019B6604; RwGlobals 01992000, module offset 0x3F4, texdict freelist 007D4030, list head 019B65FC -> 019B6614; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+454:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+456:[ORIG_TOP] rva 0x004E89A0: race-load stop (PORT-OT-RACE), call 1, callers 0x00474f90 0x004b4080, return 0005A50C, exits
+457:[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x004E89A0 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0005A50C
+458:[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001CA3C0; 0x00
+### cp2/RO_ROLOADRWCC-pr1.log
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+103:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0190090C; RwGlobals 018D9928, module offset 0x3F4, texdict freelist 007D4030, list head 018D9D1C -> 0190091C; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+136:[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+211:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 0190093C; RwGlobals 018D9928, module offset 0x3F4, texdict freelist 007D4030, list head 01900934 -> 0190094C; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+454:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+456:[ORIG_TOP] rva 0x004E89A0: race-load stop (PORT-OT-RACE), call 1, callers 0x00474f90 0x004b4080, return 0005A50C, returns 0 (MASHED_OT_RL_STOPS=count)
+### cp3/RO_ROLOADRWC-pr1.log
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+103:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0187522C; RwGlobals 0184C9F8, module offset 0x3F4, texdict freelist 007D4030, list head 0184CDEC -> 0187523C; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+136:[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+211:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 0187525C; RwGlobals 0184C9F8, module offset 0x3F4, texdict freelist 007D4030, list head 01875254 -> 0187526C; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+454:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+460:[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+461:[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 002586A5, exits
+462:[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x004B7330 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 002586A5
+463:[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001CA400; 0x00
+### cp3/RO_ROLOADRWCC-pr1.log
+7:[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+8:[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+64:[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+103:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 01886834; RwGlobals 01865008, module offset 0x3F4, texdict freelist 007D4030, list head 018653FC -> 01886844; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+136:[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+211:[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 01886864; RwGlobals 01865008, module offset 0x3F4, texdict freelist 007D4030, list head 0188685C -> 01886874; self-test PASS (0 of 11 checks failed, 0 failing calls so fa
+454:[ORIG_TOP] cfglog: Searching piz for powerups_gold.dff 
+460:[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+461:[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 002586A5, returns 0 (MASHED_OT_RL_STOPS=count)
+462:[ORIG_TOP] rva 0x004C0510: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 002586B0, returns 0 (MASHED_OT_RL_STOPS=count)
+463:[ORIG_TOP] rva 0x0047B980: race-load stop (PORT-OT-RACE), call 1, callers 0x00440bc0, return 00059EFF, returns 0 (MASHED_OT_RL_STOPS=count)

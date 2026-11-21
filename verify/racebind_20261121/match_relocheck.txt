@@ -1,0 +1,33 @@
+== re/match/tlr/00440bc0.c
+0x00440bc0 _FUN_00440bc0: 100.0% (regs 100.0%, ops 100.0%)  217/217 ins  flags=/O2 /GS tc=ddk
+   bytes: 1063 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00440bc0	OK	checked=204	unchecked=3	00440bc0.c	  unchecked: _LAB_0047ad30,_LAB_004917a0
+== re/match/s09/00458dd0.c
+0x00458dd0 _FUN_00458dd0: 100.0% (regs 100.0%, ops 100.0%)  17/17 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 38 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00458dd0	OK	checked=3	unchecked=0	00458dd0.c	
+== re/match/s13/0047b860.c
+0x0047b860 _FUN_0047b860: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 22 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047b860	OK	checked=3	unchecked=0	0047b860.c	
+== re/match/s13/0047b8d0.c
+0x0047b8d0 _FUN_0047b8d0: 100.0% (regs 100.0%, ops 100.0%)  50/50 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 168 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047b8d0	OK	checked=9	unchecked=3	0047b8d0.c	  unchecked: @__security_check_cookie@4,___security_cookie,__chkstk
+== re/match/s02/0040cea0.c
+   ! lea ebx, [ebx]                               | 
+   ! jl 0x90                                      | jl 0x40cf28
+   bytes: 166 B whole symbol, 109 differing unmasked bytes (first at +0x2)
+0x0040cea0	BAD	checked=12	unchecked=0	0040cea0.c	+0xa _FUN_004c5c80: ours 0x004c5c80 vs orig 0xe91c0205; +0xf const ??_C@_0BL@LJIJJCIG@toastart?1vehicles?1dirt?4piz?$AA@: ours 746f617374617274 vs orig@0x68000b8d 3c6f75747369646520696d6167653e; +0x14 _FUN_0042a8d0: ours 0x0042a8d0 vs orig 0xe8412b85; +0x1a _FUN_00495280: ours 0x00495280 vs orig 0xe890cebf; +0x2e _FUN_00404e00: ours 0x00404e00 vs orig 0x8c40ce51; +0x45 _FUN_00404e20: ours 0x00404e20 vs orig 0xc4c4cee8; +0x55 _FUN_004c5cb0: ours 0x004c5cb0 vs orig 0xc4c3cf04; +0x66 _FUN_004c5cb0: ours 0x004c5cb0 vs orig 0xc4c3cf15; +0x70 _FUN_004952f0: ours 0x004952f0 vs orig 0xdbc5cf1c; +0x78 _DAT_0063ba90: ours 0x0063ba90 vs orig 0x3d890063; +0x7e _DAT_0063ba94: ours 0x0063ba94 vs orig 0x17740063; +0x94 _FUN_0041ecc0: ours 0x0041ecc0 vs orig 0x7c45cdbb
+== re/match/s09/00458630.c
+0x00458630 _FUN_00458630: 100.0% (regs 100.0%, ops 100.0%)  79/79 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 360 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00458630	OK	checked=36	unchecked=0	00458630.c	
+== re/match/s18/004b4080.c
+0x004b4080 _FUN_004b4080: 100.0% (regs 100.0%, ops 100.0%)  20/20 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 53 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004b4080	OK	checked=3	unchecked=0	004b4080.c	
+== re/match/s18/004b4050.c
+0x004b4050 _FUN_004b4050: 100.0% (regs 100.0%, ops 100.0%)  14/14 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 29 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004b4050	OK	checked=1	unchecked=0	004b4050.c	
