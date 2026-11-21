@@ -15,6 +15,9 @@ prom = {r["rva"] for r in rd("PROMOTIONS.tsv")}
 E = json.loads((D / "esc_detail_ref1groups.json").read_text())
 state = [json.loads(l) for l in (D / "ws2_state.jsonl").read_text().splitlines() if l.strip()]
 single = {x["rvas"][0]: x for x in state if x["label"].startswith("s_")}
+wcut = {r["rva"]: r for r in rd("WS2_CUT.tsv")} if (H / "WS2_CUT.tsv").exists() else {}
+PROM2 = {r["rva"] for r in csv.DictReader(open(H.parents[1] / "re/promotions/PROV-INSITU-REF1-WS2.tsv"), delimiter="	")}
+HELD2 = {"0x0047def0": "not promoted: open STUB S-3728 names it (no-STUB leg)", "0x00469df0": "not promoted: open STUB S-2622 names it (no-STUB leg)", "0x0046ef70": "not promoted: standing long-race DIVERGED@408 on the unchanged source (PROVISIONAL.tsv refused)"}
 HOLD = {"0x00469aa0", "0x0046e9e0", "0x004709a0"}
 PRE = {"0x004ddcb0", "0x005abd30", "0x005ab410", "0x004e51e0", "0x005b2080", "0x005b04b0", "0x00405540"}
 DIRECT = re.compile(r"\[(esp|ebp)( [+-] 0x[0-9a-f]+)?\]")
@@ -65,9 +68,14 @@ for rv, v in ver.items():
                  "ref1_leg": leg, "ws2_class": cls, "ws2_subclass": sub,
                  "ws2_single": s["label"] if s else "", "ws2_single_replay": f"{s['verdict']} {s.get('identical_for', '')}".strip() if s else "",
                  "ws2_single_frames": (s.get("wlog") or {}).get("frames", "") if s else "",
-                 "ws2_single_other_thread_steps": (s.get("wlog") or {}).get("other_thread_steps", "") if s else ""})
+                 "ws2_single_other_thread_steps": (s.get("wlog") or {}).get("other_thread_steps", "") if s else "",
+                 "ws2_best_run": wcut.get(rv, {}).get("run", ""), "ws2_best_run_replay": wcut.get(rv, {}).get("run_replay", ""),
+                 "ws2_calls_stepped": wcut.get(rv, {}).get("calls_stepped", ""), "ws2_image": wcut.get(rv, {}).get("image", ""),
+                 "ws2_leg": wcut.get(rv, {}).get("leg", "not re-stepped"),
+                 "ws2_outcome": "promoted (PROV-INSITU-REF1-WS2.tsv)" if rv in PROM2 else HELD2.get(rv, "")})
 with open(H / "WS2_CLASSES.tsv", "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=list(rows[0]), delimiter="\t"); w.writeheader(); w.writerows(rows)
 print(len(rows), "bodies")
+print(collections.Counter((r["ws2_class"].split()[0], r["ws2_leg"]) for r in rows))
 for k, n in sorted(collections.Counter((r["ws2_class"], r["ws2_subclass"]) for r in rows).items()):
     print(n, k)

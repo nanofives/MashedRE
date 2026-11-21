@@ -1,0 +1,87 @@
+rva	name	class	run	run_replay	calls_stepped	stores	frame	image	verdict	leg	runs
+0x00407e20	FUN_00407e20	game	ws_g01_rep	DIVERGED 300	10	360	240	30	escapes	escapes	ws_g01_rep:escapes:10;ws_g01b:escapes:10;ws_g01ba:escapes:10;ws_g01baa:escapes:10;ws_g01baab:escapes:10
+0x00408b00	FUN_00408b00	game	s_00408b00	IDENTICAL-FOR-N 600	10	142	100	12	escapes	escapes	s_00408b00:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05ab:escapes:10
+0x0040aef0	FUN_0040aef0	game	st_g01	IDENTICAL-FOR-N 600	3952	3952	3952	0	covered	covered, frame only (L-40 stays)	ws_g01_rep:covered:10;ws_g01a:covered:10;ws_g01ab:covered:10;st_g01:covered:3952
+0x00412620	FUN_00412620	game	st_g02	IDENTICAL-FOR-N 600	1248	0	0	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03a:covered:10;ws_g03aa:covered:10;ws_g03aab:covered:10;ws_g03aabb:covered:10;ws_g03aabbb:covered:10;st_g02:covered:1248
+0x00414570	FUN_00414570	game	st_g02	IDENTICAL-FOR-N 600	2778	7668	7477	0	escapes	escapes	st_g02:escapes:2778
+0x00414c30	FUN_00414c30	game	st_g02	IDENTICAL-FOR-N 600	1904	40841	40841	0	covered	covered, frame only (L-40 stays)	st_g02:covered:1904
+0x00420050	PerPlayerViewportRender	game	s_00420050	DIVERGED 300	10	50	40	10	covered	covered+image, run diverged	s_00420050:covered:10;ws_g01_rep:covered:10;ws_g01a:covered:10;ws_g01aa:covered:10;ws_g01aab:covered:10;ws_g01aabb:covered:10;ws_g01aabbb:covered:10
+0x00420290	FUN_00420290	game	ws_g01_rep	DIVERGED 300	10	20	0	10	escapes	escapes	ws_g01_rep:escapes:10;ws_g01a:escapes:10;ws_g01ab:escapes:10
+0x00420870	FUN_00420870	game	ws_g01_rep	DIVERGED 300	10	84	40	40	escapes	escapes	ws_g01_rep:escapes:10;ws_g01a:escapes:10;ws_g01ab:escapes:10
+0x004228f0	FUN_004228f0	game	st_g01	IDENTICAL-FOR-N 600	3940	372082	372082	0	covered	covered, frame only (L-40 stays)	ws_g01_rep:covered:10;ws_g01b:covered:10;ws_g01bb:covered:10;st_g01:covered:3940
+0x00424eb0	FUN_00424eb0	game	st_g02	IDENTICAL-FOR-N 600	1249	2610	2610	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03a:covered:10;ws_g03ab:covered:10;st_g02:covered:1249
+0x00426810	sub_00426810	game	ws_g03_rep	DIVERGED 302	10	70	60	0	escapes	escapes	ws_g03_rep:escapes:10;ws_g03a:escapes:10;ws_g03ab:escapes:10
+0x00442e00	FUN_00442e00	game	s_00442e00	IDENTICAL-FOR-N 600	10	110	0	100	escapes	escapes	s_00442e00:escapes:10;ws_g05_rep:not-run:0;ws_g05b:not-run:0
+0x00445aa0	CamEntryType0Step445aa0	game	s_00445aa0	DIVERGED 302	10	271	72	140	escapes	escapes	s_00445aa0:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05aa:escapes:10;ws_g05aaa:escapes:10;ws_g05aaaa:escapes:10
+0x00448220	Frontend::PostRaceResultCamera	game	s_00448220	DIVERGED 302	10	60	0	60	covered	covered+image, run diverged	s_00448220:covered:10;ws_g03_rep:covered:10;ws_g03a:covered:10;ws_g03aa:covered:10;ws_g03aab:covered:10;ws_g03aabb:covered:10;ws_g03aabba:covered:10
+0x00454350	FUN_00454350	game	st_g00	DIVERGED 302	3616	0	0	0	covered	covered, frame only (L-40 stays)	st_g00:covered:3616
+0x00457100	FUN_00457100	game	st_g02	IDENTICAL-FOR-N 600	624	40560	40560	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03a:covered:10;ws_g03ab:covered:10;st_g02:covered:624
+0x00459000	FUN_00459000	game	st_g02	IDENTICAL-FOR-N 600	1248	60864	60858	6	covered	pass	ws_g03_rep:covered:10;ws_g03a:covered:10;ws_g03ab:covered:10;st_g02:covered:1248
+0x0045ac40	FUN_0045ac40	game	st_g00	DIVERGED 302	4520	31640	31640	0	covered	covered, frame only (L-40 stays)	st_g00:covered:4520
+0x0045ae80	FUN_0045ae80	game	st_g03	IDENTICAL-FOR-N 600	534	95052	95052	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03a:covered:10;ws_g03ab:covered:10;st_g03:covered:534
+0x0045efe0	FUN_0045efe0	game	st_g02	IDENTICAL-FOR-N 600	1252	0	0	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03a:covered:10;ws_g03aa:covered:10;ws_g03aab:covered:10;ws_g03aaba:covered:10;st_g02:covered:1252
+0x00463640	FUN_00463640	game	ws_g01_rep	DIVERGED 300	10	104	10	84	escapes	escapes	ws_g01_rep:escapes:10;ws_g01a:escapes:10;ws_g01ab:escapes:10
+0x00468980	VehicleAeroStabilizer	game	st_g01	IDENTICAL-FOR-N 600	3709	0	0	0	covered	covered, frame only (L-40 stays)	ws_g01_rep:covered:10;ws_g01b:covered:10;ws_g01ba:covered:10;ws_g01bab:covered:10;ws_g01babb:covered:10;st_g01:covered:3709
+0x00468d80	VehicleTerrainContactSolver	game	st_g00	DIVERGED 302	1812	126284	126272	12	covered	covered+image, run diverged	st_g00:covered:1812
+0x004694e0	VehicleObjectContactSolver	game	st_g00	DIVERGED 302	3622	7244	7244	0	covered	covered, frame only (L-40 stays)	st_g00:covered:3622
+0x00469df0	VehicleVehicleCollisionImpulse	game	st_g04	IDENTICAL-FOR-N 600	1487	80539	78266	2273	covered	pass	st_g04:covered:1487
+0x0046ddb0	VehicleWheelForceIntegrator	game	s_0046ddb0	IDENTICAL-FOR-N 600	10	660	200	460	covered	pass	s_0046ddb0:covered:10;ws_g01_rep:covered:10;ws_g01b:covered:10;ws_g01bb:covered:10
+0x0046ef70	FUN_0046ef70	game	s_0046ef70	IDENTICAL-FOR-N 600	10	170	160	10	covered	pass	s_0046ef70:covered:10;ws_g05_rep:not-run:0;ws_g05a:covered:10;ws_g05aa:covered:10;ws_g05aab:covered:10
+0x00470670	VehicleControlUpdate	game	ws_g01_rep	DIVERGED 300	10	120	0	110	escapes	escapes	ws_g01_rep:escapes:10;ws_g01b:escapes:10;ws_g01bb:escapes:10
+0x00471ec0	sub_00471ec0	game	st_g03	IDENTICAL-FOR-N 600	1069	1069	1069	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03b:covered:10;st_g03:covered:1069
+0x004752f0	FUN_004752f0	game	ws_g01_rep	DIVERGED 300	10	60	20	0	escapes	escapes	ws_g01_rep:escapes:10;ws_g01a:escapes:10;ws_g01ab:escapes:10
+0x00477be0	FUN_00477be0	game	s_00477be0	IDENTICAL-FOR-N 600	10	150	30	100	escapes	escapes	s_00477be0:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05ab:escapes:10
+0x00479100	FUN_00479100	game	ws_g03_rep	DIVERGED 302	10	70	60	0	escapes	escapes	ws_g03_rep:escapes:10;ws_g03b:escapes:10
+0x0047d640	FUN_0047d640	game	st_g03	IDENTICAL-FOR-N 600	1069	18423	18147	252	escapes	escapes	ws_g03_rep:covered:10;ws_g03b:covered:10;st_g03:escapes:1069
+0x0047def0	FUN_0047def0	game	st_g03	IDENTICAL-FOR-N 600	1069	14904	14568	336	covered	pass	ws_g03_rep:covered:10;ws_g03b:covered:10;st_g03:covered:1069
+0x0047eb30	VehiclePhysicsWorldStep	game	ws_g03_rep	DIVERGED 302	10	659	446	21	escapes	escapes	ws_g03_rep:escapes:10;ws_g03b:escapes:10
+0x00480d60	FUN_00480d60	game	s_00480d60	IDENTICAL-FOR-N 600	10	27	27	0	covered	covered, frame only (L-40 stays)	s_00480d60:covered:10;ws_g05_rep:not-run:0;ws_g05b:not-run:0
+0x00488e70	FUN_00488e70	game	ws_g03_rep	DIVERGED 302	10	33	30	1	escapes	escapes	ws_g03_rep:escapes:10;ws_g03b:escapes:10
+0x00489500	FUN_00489500	game	st_g03	IDENTICAL-FOR-N 600	71	8804	8804	0	covered	covered, frame only (L-40 stays)	st_g03:covered:71
+0x0048a130	FUN_0048a130	game	ws_g03_rep	DIVERGED 302	10	5180	0	20	escapes	escapes	ws_g03_rep:escapes:10;ws_g03b:escapes:10
+0x0048a780	FUN_0048a780	game	st_g03	IDENTICAL-FOR-N 600	1069	0	0	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03b:covered:10;st_g03:covered:1069
+0x00491340	FUN_00491340	game	st_g03	IDENTICAL-FOR-N 600	1069	0	0	0	covered	covered, frame only (L-40 stays)	ws_g03_rep:covered:10;ws_g03b:covered:10;st_g03:covered:1069
+0x004b42c0	FUN_004b42c0	game	st_g01	IDENTICAL-FOR-N 600	3940	11820	11820	0	covered	covered, frame only (L-40 stays)	ws_g01_rep:covered:10;ws_g01b:covered:10;ws_g01ba:covered:10;ws_g01bab:covered:10;ws_g01baba:covered:10;st_g01:covered:3940
+0x004c1f80	FUN_004c1f80	game	ws_g01_rep	DIVERGED 300	10	270	40	0	escapes	escapes	ws_g01_rep:escapes:10;ws_g01a:escapes:10;ws_g01aa:escapes:10;ws_g01aaa:escapes:10
+0x004c2620	FUN_004c2620	game	ws_g01_rep	DIVERGED 300	10	220	10	0	escapes	escapes	ws_g01_rep:escapes:10;ws_g01a:escapes:10;ws_g01aa:escapes:10;ws_g01aaa:escapes:10
+0x004c2a30	FUN_004c2a30	game	ws_g01_rep	DIVERGED 300	10	30	0	0	escapes	escapes	ws_g01_rep:escapes:10;ws_g01a:escapes:10;ws_g01aa:escapes:10;ws_g01aab:escapes:10;ws_g01aaba:escapes:10
+0x004c4a50	RwMatrixRotateInner	game	st_g00	DIVERGED 302	2996	12893	12893	0	covered	covered, frame only (L-40 stays)	st_g00:covered:2996
+0x004c4dc0	RwMatrixInvertEntry	game	st_g00	DIVERGED 302	7818	73490	0	18660	escapes	escapes	st_g00:escapes:7818
+0x004c52f0	RwMatrixCombine	game	st_g00	DIVERGED 302	3813	48652	588	0	escapes	escapes	st_g00:escapes:3813
+0x004cc5e0	FUN_004cc5e0	game	ws_g01_rep	DIVERGED 300	10	8	0	0	escapes	escapes	ws_g01_rep:escapes:10;ws_g01b:escapes:10;ws_g01bb:escapes:10
+0x004cf5a0	FUN_004cf5a0	RW core	s_004cf5a0	IDENTICAL-FOR-N 600	10	10	10	0	covered	covered, frame only (L-40 stays)	s_004cf5a0:covered:10;ws_g05_rep:not-run:0;ws_g05a:covered:10;ws_g05aa:covered:10;ws_g05aab:covered:10
+0x004cff20	FUN_004cff20	game	ws_g05_rep	DIVERGED 302	6	78	24	0	escapes	escapes	ws_g05_rep:escapes:6;ws_g05b:escapes:6
+0x004df120	FUN_004df120	RW core	ws_g05_rep	DIVERGED 302	6	344155	172088	0	escapes	escapes	ws_g05_rep:escapes:6;ws_g05b:escapes:6
+0x004e7060	RpAtomicStreamRead	RW core	s_004e7060	IDENTICAL-FOR-N 600	10	130	40	20	escapes	escapes	s_004e7060:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05ab:escapes:10
+0x004e8120	FUN_004e8120	RW core	s_004e8120	IDENTICAL-FOR-N 600	10	150	0	20	escapes	escapes	s_004e8120:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05aa:escapes:10;ws_g05aaa:escapes:10;ws_g05aaab:escapes:10
+0x004e8c70	FUN_004e8c70	RW core	s_004e8c70	IDENTICAL-FOR-N 600	10	888	20	0	escapes	escapes	s_004e8c70:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05ab:escapes:10
+0x004e9330	FUN_004e9330	RW core	s_004e9330	IDENTICAL-FOR-N 600	10	3425	709	0	escapes	escapes	s_004e9330:escapes:10;ws_g05_rep:not-run:0;ws_g05b:not-run:0
+0x004f0f10	FUN_004f0f10	RW core	s_004f0f10	IDENTICAL-FOR-N 600	10	1084	63	0	escapes	escapes	s_004f0f10:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05aa:escapes:10;ws_g05aab:escapes:10
+0x004f3e90	FUN_004f3e90	RW core	s_004f3e90	IDENTICAL-FOR-N 600	10	50	0	0	escapes	escapes	s_004f3e90:escapes:10;ws_g05_rep:not-run:0;ws_g05a:escapes:10;ws_g05ab:escapes:10
+0x004f6870	FUN_004f6870	game	st_g04	IDENTICAL-FOR-N 600	247	0	0	0	covered	covered, frame only (L-40 stays)	st_g04:covered:247
+0x005185a0	png_do_background	game	s_005185a0	IDENTICAL-FOR-N 600	3	12	3	0	escapes	escapes	s_005185a0:escapes:3
+0x00522ce0	FUN_00522ce0	game	ws_g05_rep	DIVERGED 302	10	19	0	0	escapes	escapes	ws_g05_rep:escapes:10;ws_g05b:escapes:10
+0x0052ab00	inflate	game	ws_g05_rep	DIVERGED 302	10	2005	921	0	escapes	escapes	ws_g05_rep:escapes:10;ws_g05b:escapes:10
+0x0053fbb0	FUN_0053fbb0	RW core	s_0053fbb0	IDENTICAL-FOR-N 600	10	34	0	0	escapes	escapes	s_0053fbb0:escapes:10;ws_g05_rep:not-run:0;ws_g05b:not-run:0
+0x00546e70	FUN_00546e70	game	ws_g01_rep	DIVERGED 300	10	114	0	0	escapes	escapes	ws_g01_rep:escapes:10;ws_g01b:escapes:10;ws_g01ba:escapes:10;ws_g01baa:escapes:10;ws_g01baaa:escapes:10
+0x00551d40	FUN_00551d40	RW core	ws_g03_rep	DIVERGED 302	10	530	400	0	escapes	escapes	ws_g03_rep:escapes:10;ws_g03b:escapes:10
+0x00564040	FUN_00564040	RW-Physics	st_g01	IDENTICAL-FOR-N 600	4077	4183	4130	0	escapes	escapes	ws_g01_rep:covered:10;ws_g01a:covered:10;ws_g01aa:covered:10;ws_g01aab:covered:10;ws_g01aabb:covered:10;ws_g01aabba:covered:10;st_g01:escapes:4077
+0x005667c0	FUN_005667c0	RW-Physics	st_g01	IDENTICAL-FOR-N 600	936	0	0	0	covered	covered, frame only (L-40 stays)	st_g01:covered:936
+0x00574ad0	FUN_00574ad0	RW-Physics	s_00574ad0	IDENTICAL-FOR-N 600	10	578	578	0	covered	covered, frame only (L-40 stays)	s_00574ad0:covered:10
+0x005752b0	FUN_005752b0	RW-Physics	s_005752b0	IDENTICAL-FOR-N 600	10	180	20	0	escapes	escapes	s_005752b0:escapes:10
+0x00576880	FUN_00576880	RW-Physics	s_00576880	IDENTICAL-FOR-N 600	10	1450	1445	0	escapes	escapes	s_00576880:escapes:10
+0x00577cb0	FUN_00577cb0	RW-Physics	s_00577cb0	IDENTICAL-FOR-N 600	10	30	20	0	escapes	escapes	s_00577cb0:escapes:10;ws_g05_rep:not-run:0;ws_g05b:not-run:0
+0x00577ec0	FUN_00577ec0	RW-Physics	ws_g01_rep	DIVERGED 300	10	24	0	0	escapes	escapes	ws_g01_rep:escapes:10;ws_g01b:escapes:10;ws_g01bb:escapes:10
+0x005a6f30	FUN_005a6f30	game	ws_g03_rep	DIVERGED 302	10	60	19	10	escapes	escapes	ws_g03_rep:escapes:10;ws_g03a:escapes:10;ws_g03aa:escapes:10;ws_g03aaa:escapes:10
+0x005aa0c0	AudioTreeWalkPredicateSearch	game	s_005aa0c0	IDENTICAL-FOR-N 600	10	40	0	0	escapes	escapes	s_005aa0c0:escapes:10;ws_g05_rep:not-run:0;ws_g05b:not-run:0
+0x005ab620	FUN_005ab620	game	s_005ab620	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005ab620:not-run:0
+0x005b1180	FUN_005b1180	game	s_005b1180	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005b1180:not-run:0
+0x005b2820	FUN_005b2820	game	s_005b2820	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005b2820:not-run:0
+0x005b29e0	FUN_005b29e0	game	s_005b29e0	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005b29e0:not-run:0
+0x005b2b00	FUN_005b2b00	game	s_005b2b00	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005b2b00:not-run:0
+0x005b3300	FUN_005b3300	game	s_005b3300	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005b3300:not-run:0
+0x005b3a00	FUN_005b3a00	game	st_g04	IDENTICAL-FOR-N 600	8	12	8	0	escapes	escapes	st_g04:escapes:8
+0x005b6b00	FUN_005b6b00	game	s_005b6b00	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005b6b00:not-run:0
+0x005b7980	FUN_005b7980	game	st_g01	IDENTICAL-FOR-N 600	4	0	0	0	covered	covered, frame only (L-40 stays)	ws_g01_rep:covered:2;ws_g01b:covered:2;ws_g01ba:covered:2;ws_g01bab:covered:2;ws_g01babb:covered:2;st_g01:covered:4
+0x005baf00	MusicGroupVolumeSet	game	ws_g03_rep	DIVERGED 302	10	262	0	0	escapes	escapes	ws_g03_rep:escapes:10;ws_g03a:escapes:10;ws_g03aa:escapes:10;ws_g03aaa:escapes:10
+0x005c8910	FUN_005c8910	game	s_005c8910	IDENTICAL-FOR-N 600	0	0			not-run	not-run	s_005c8910:not-run:0

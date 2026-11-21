@@ -1,204 +1,204 @@
-rva	name	class	ref1_ws_run	ref1_leg	ws2_class	ws2_subclass	ws2_single	ws2_single_replay	ws2_single_frames	ws2_single_other_thread_steps
-0x004d8300	FUN_004d8300	game	ws_g00	escapes	B escapes	heap/other				
-0x004e6100	RpAtomicGetWorldBoundingSphere	RW core	ws_g00	escapes	B escapes	heap/other				
-0x004c4a50	RwMatrixRotateInner	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x005c6b60	Delta5c6b60	game	ws_g00	escapes	B escapes	heap/other				
-0x004c5010	RwMatrixScale	game	ws_g00	escapes	B escapes	caller-stack through a pointer + heap/other				
-0x00535700	FUN_00535700	RW core	ws_g00	escapes	B escapes	caller-stack through a pointer + heap/other				
-0x004c52f0	RwMatrixCombine	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x0047ba20	FUN_0047ba20	game	ws_g00	escapes	B escapes	caller-stack through a pointer				
-0x004c4dc0	RwMatrixInvertEntry	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x005c7330	FUN_005c7330	game	ws_g00	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x005a75b0	FUN_005a75b0	game	ws_g00	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other + image-masked				
-0x0045ac40	FUN_0045ac40	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x005a9280	FUN_005a9280	game	ws_g00	escapes	B escapes	caller-stack through a pointer				
-0x005b6b00	FUN_005b6b00	game	ws_g00	not-run	E not-run	no main-thread call stepped	s_005b6b00	IDENTICAL-FOR-N 600	0	10
-0x0056ac40	FUN_0056ac40	RW-Physics	ws_g00	escapes	B escapes	caller-stack through a pointer				
-0x00454350	FUN_00454350	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00468d80	VehicleTerrainContactSolver	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x004694e0	VehicleObjectContactSolver	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00469aa0	VehicleContactScanUpdate	game	ws_g00	pass	A long-race hold	standing long-race DIVERGED on the current source (RESULT_PROV-INSITU-REF1)				
-0x0046e9e0	FUN_0046e9e0	game	ws_g00	pass	A long-race hold	standing long-race DIVERGED on the current source (RESULT_PROV-INSITU-REF1)				
-0x004c1f80	FUN_004c1f80	game	ws_g01	escapes	B escapes	heap/other				
-0x004c2620	FUN_004c2620	game	ws_g01	escapes	B escapes	heap/other				
-0x004c2a30	FUN_004c2a30	game	ws_g01	escapes	B escapes	heap/other				
-0x00564040	FUN_00564040	RW-Physics	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00420050	PerPlayerViewportRender	game	ws_g01	covered+image, run diverged	D covered+image, stepped run diverged		s_00420050	DIVERGED 300	10	0
-0x00463640	FUN_00463640	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x00420290	FUN_00420290	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x0040aef0	FUN_0040aef0	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00420870	FUN_00420870	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x004752f0	FUN_004752f0	game	ws_g01	escapes	B escapes	caller-stack through a pointer				
-0x00546e70	FUN_00546e70	game	ws_g01	escapes	B escapes	caller-stack through a pointer				
-0x00407e20	FUN_00407e20	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x004b42c0	FUN_004b42c0	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x005b7980	FUN_005b7980	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00468980	VehicleAeroStabilizer	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x0046ddb0	VehicleWheelForceIntegrator	game	ws_g01	covered+image, run diverged	D covered+image, stepped run diverged		s_0046ddb0	IDENTICAL-FOR-N 600	10	0
-0x00470670	VehicleControlUpdate	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x004228f0	FUN_004228f0	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00577ec0	FUN_00577ec0	RW-Physics	ws_g01	escapes	B escapes	caller-stack both				
-0x004cc5e0	FUN_004cc5e0	game	ws_g01	escapes	B escapes	caller-stack through a pointer				
-0x005667c0	FUN_005667c0	RW-Physics	ws_g02	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00578cb0	FUN_00578cb0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer				
-0x00414570	FUN_00414570	game	ws_g02	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00443dc0	FUN_00443dc0	game	ws_g02	escapes	B escapes	caller-stack through a pointer				
-0x004709a0	VehicleCollisionBroadPhase	game	ws_g02	pass	A long-race hold	standing long-race DIVERGED on the current source (RESULT_PROV-INSITU-REF1)				
-0x005b0cf0	FUN_005b0cf0	game	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00414c30	FUN_00414c30	game	ws_g02	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x0047bb10	FUN_0047bb10	game	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x005784a0	FUN_005784a0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer				
-0x00575120	FUN_00575120	RW-Physics	ws_g02	escapes	B escapes	heap/other				
-0x0053e430	FUN_0053e430	RW core	ws_g02	escapes	B escapes	caller-stack both + heap/other				
-0x00450b10	HudIm2DQuad	game	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x0056fad0	FUN_0056fad0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer				
-0x00578bd0	FUN_00578bd0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer				
-0x00575c60	FUN_00575c60	RW-Physics	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x004967e0	FUN_004967e0	game	ws_g02	escapes	B escapes	image-masked				
-0x004d8c40	FUN_004d8c40	game	ws_g02	escapes	B escapes	heap/other				
-0x0045d7a0	FUN_0045d7a0	game	ws_g02	escapes	B escapes	heap/other				
-0x0045dd60	FUN_0045dd60	game	ws_g02	escapes	B escapes	heap/other				
-0x005a6f30	FUN_005a6f30	game	ws_g03	escapes	B escapes	heap/other + image-masked				
-0x005baf00	MusicGroupVolumeSet	game	ws_g03	escapes	B escapes	heap/other				
-0x0045efe0	FUN_0045efe0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00448220	Frontend::PostRaceResultCamera	game	ws_g03	covered+image, run diverged	D covered+image, stepped run diverged		s_00448220	DIVERGED 302	10	0
-0x00412620	FUN_00412620	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00424eb0	FUN_00424eb0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00426810	sub_00426810	game	ws_g03	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x00457100	FUN_00457100	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00459000	FUN_00459000	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x0045ae80	FUN_0045ae80	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00471ec0	sub_00471ec0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00479100	FUN_00479100	game	ws_g03	escapes	B escapes	caller-stack through a pointer				
-0x0047d640	FUN_0047d640	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x0047def0	FUN_0047def0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x0047eb30	VehiclePhysicsWorldStep	game	ws_g03	escapes	B escapes	heap/other				
-0x00488e70	FUN_00488e70	game	ws_g03	escapes	B escapes	heap/other				
-0x0048a130	FUN_0048a130	game	ws_g03	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x0048a780	FUN_0048a780	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00491340	FUN_00491340	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00551d40	FUN_00551d40	RW core	ws_g03	escapes	B escapes	heap/other				
-0x00575880	FUN_00575880	RW-Physics	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00489500	FUN_00489500	game	ws_g04	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x00469df0	VehicleVehicleCollisionImpulse	game	ws_g04	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x004f6870	FUN_004f6870	game	ws_g04	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x0047f6d0	FUN_0047f6d0	game	ws_g04	escapes	B escapes	heap/other				
-0x00475f90	FUN_00475f90	game	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x0047f7d0	FUN_0047f7d0	game	ws_g04	escapes	B escapes	heap/other				
-0x00575fe0	FUN_00575fe0	RW-Physics	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00544bf0	FUN_00544bf0	RW core	ws_g04	escapes	B escapes	heap/other				
-0x005752b0	FUN_005752b0	RW-Physics	ws_g04	not-run	E not-run	no main-thread call stepped	s_005752b0	IDENTICAL-FOR-N 600	10	0
-0x00576880	FUN_00576880	RW-Physics	ws_g04	not-run	E not-run	no main-thread call stepped	s_00576880	IDENTICAL-FOR-N 600	10	0
-0x00574ad0	FUN_00574ad0	RW-Physics	ws_g04	not-run	E not-run	no main-thread call stepped	s_00574ad0	IDENTICAL-FOR-N 600	10	0
-0x004d8810	RwNativeRasterRead	RW core	ws_g04	escapes	B escapes	caller-stack through a pointer				
-0x004f71f0	FUN_004f71f0	game	ws_g04	escapes	B escapes	heap/other				
-0x004f57e0	FUN_004f57e0	game	ws_g04	escapes	B escapes	heap/other				
-0x00554940	LAB_00554940	game	ws_g04	escapes	B escapes	heap/other				
-0x00556e90	FUN_00556e90	game	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00575560	FUN_00575560	RW-Physics	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x00445aa0	CamEntryType0Step445aa0	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00445aa0	DIVERGED 302	10	0
-0x004e8120	FUN_004e8120	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e8120	IDENTICAL-FOR-N 600	10	0
-0x0046ef70	FUN_0046ef70	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_0046ef70	IDENTICAL-FOR-N 600	10	0
-0x004cf5a0	FUN_004cf5a0	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004cf5a0	IDENTICAL-FOR-N 600	10	0
-0x004f0f10	FUN_004f0f10	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004f0f10	IDENTICAL-FOR-N 600	10	0
-0x00408b00	FUN_00408b00	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00408b00	IDENTICAL-FOR-N 600	10	0
-0x00477be0	FUN_00477be0	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00477be0	IDENTICAL-FOR-N 600	10	0
-0x004e8c70	FUN_004e8c70	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e8c70	IDENTICAL-FOR-N 600	10	0
-0x004f3e90	FUN_004f3e90	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004f3e90	IDENTICAL-FOR-N 600	10	0
-0x004e7060	RpAtomicStreamRead	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e7060	IDENTICAL-FOR-N 600	10	0
-0x004e9330	FUN_004e9330	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e9330	IDENTICAL-FOR-N 600	10	0
-0x00480d60	FUN_00480d60	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)				
-0x005aa0c0	AudioTreeWalkPredicateSearch	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)				
-0x004cff20	FUN_004cff20	game	ws_g05	escapes	B escapes	caller-stack through a pointer + heap/other				
-0x004df120	FUN_004df120	RW core	ws_g05	escapes	B escapes	heap/other				
-0x00522ce0	FUN_00522ce0	game	ws_g05	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x0052ab00	inflate	game	ws_g05	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00442e00	FUN_00442e00	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)				
-0x0053fbb0	FUN_0053fbb0	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)				
-0x00577cb0	FUN_00577cb0	RW-Physics	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)				
-0x004ddcb0	FUN_004ddcb0	RW core	ws_g06	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped				
-0x00559c40	PhysicsSceneBodyRegister	RW-Physics	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00401da0	FUN_00401da0	game	ws_g06	escapes	B escapes	heap/other				
-0x00559ee0	FUN_00559ee0	RW-Physics	ws_g06	escapes	B escapes	heap/other				
-0x005c1f97	_strtod	game	ws_g06	escapes	B escapes	caller-stack through a pointer				
-0x005655a0	FUN_005655a0	RW-Physics	ws_g06	escapes	B escapes	caller-stack through a pointer				
-0x004b4550	Vec3Centroid	game	ws_g06	escapes	B escapes	caller-stack through a pointer				
-0x004d2340	rwD3D8RasterCreate	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x005ae800	AudioPoolBlockAlloc	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other + image-masked				
-0x0055ded0	FUN_0055ded0	RW-Physics	ws_g06	escapes	B escapes	heap/other				
-0x005c2300	_strncat	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x005abd30	FUN_005abd30	game	ws_g06	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped				
-0x00490020	FUN_00490020	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x004cc230	FUN_004cc230	game	ws_g06	escapes	B escapes	heap/other				
-0x005af8f0	FUN_005af8f0	game	ws_g06	escapes	B escapes	heap/other				
-0x005ab380	AudioRwsChunkHeaderRead	game	ws_g06	escapes	B escapes	caller-stack through a pointer				
-0x005b3a00	FUN_005b3a00	game	ws_g06	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)				
-0x005ab710	FUN_005ab710	game	ws_g06	escapes	B escapes	heap/other + image-masked				
-0x005aba20	FUN_005aba20	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x004b4eb0	FUN_004b4eb0	game	ws_g07	escapes	B escapes	caller-stack through a pointer				
-0x004e7420	RpClumpStreamRead	RW core	ws_g07	escapes	B escapes	heap/other				
-0x005c47e0	FUN_005c47e0	game	ws_g07	escapes	B escapes	caller-stack through a pointer + heap/other				
-0x004b5080	FUN_004b5080	game	ws_g07	escapes	B escapes	caller-stack through a pointer				
-0x005acaa0	FUN_005acaa0	game	ws_g07	escapes	B escapes	caller-stack through a pointer				
-0x005b92e0	FUN_005b92e0	game	ws_g07	escapes	B escapes	caller-stack through a pointer + heap/other				
-0x005ae920	AudioPoolFree	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x0046b540	VehicleSpawnInit	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x005aa560	FUN_005aa560	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x0053d460	FUN_0053d460	RW core	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x0053dba0	FUN_0053dba0	RW core	ws_g07	escapes	B escapes	heap/other				
-0x005ad0b0	FUN_005ad0b0	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x005aeda0	AudioShiftAddMul64	game	ws_g07	escapes	B escapes	caller-stack through a pointer				
-0x005ab410	AudioRwsChunkTypeSeek	game	ws_g07	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped				
-0x005b3760	FUN_005b3760	game	ws_g07	escapes	B escapes	caller-stack through a pointer				
-0x005ab1c0	FUN_005ab1c0	game	ws_g07	escapes	B escapes	heap/other				
-0x005b0f90	FUN_005b0f90	game	ws_g07	escapes	B escapes	heap/other				
-0x005ae4c0	FUN_005ae4c0	game	ws_g07	escapes	B escapes	heap/other				
-0x00441b30	CamEntryBuild441b30	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x004e6ab0	FUN_004e6ab0	RW core	ws_g08	escapes	B escapes	heap/other				
-0x005b2080	FUN_005b2080	game	ws_g08	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped				
-0x0052daf0	anim_stream_read_scheme_dispatch	RW core	ws_g08	escapes	B escapes	heap/other				
-0x00551460	FUN_00551460	RW core	ws_g08	escapes	B escapes	caller-stack through a pointer				
-0x005b2820	FUN_005b2820	game	ws_g08	not-run	E not-run	no main-thread call stepped				
-0x005b30e0	FUN_005b30e0	game	ws_g08	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00482140	FUN_00482140	game	ws_g08	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x004e8640	FUN_004e8640	RW core	ws_g08	escapes	B escapes	caller-stack through a pointer				
-0x004f36c0	FUN_004f36c0	RW core	ws_g08	escapes	B escapes	heap/other				
-0x00544a70	FUN_00544a70	RW core	ws_g08	escapes	B escapes	heap/other				
-0x00544ad0	FUN_00544ad0	RW core	ws_g08	escapes	B escapes	heap/other				
-0x00563840	FUN_00563840	RW-Physics	ws_g08	escapes	B escapes	heap/other				
-0x00563940	FUN_00563940	RW-Physics	ws_g08	escapes	B escapes	heap/other				
-0x005a8890	FUN_005a8890	game	ws_g08	escapes	B escapes	heap/other + image-masked				
-0x005ab090	FUN_005ab090	game	ws_g08	escapes	B escapes	heap/other				
-0x005afa00	FUN_005afa00	game	ws_g08	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x005afcf0	FUN_005afcf0	game	ws_g08	escapes	B escapes	heap/other				
-0x005b04b0	FUN_005b04b0	game	ws_g08	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped				
-0x005b0bb0	FUN_005b0bb0	game	ws_g09	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x004e51e0	FUN_004e51e0	RW core	ws_g09	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped				
-0x004e5300	RpWorldInstance	RW core	ws_g09	escapes	B escapes	heap/other				
-0x005a9e60	FUN_005a9e60	game	ws_g09	escapes	B escapes	image-masked				
-0x0041a400	FUN_0041a400	game	ws_g09	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)				
-0x005185a0	png_do_background	game	?	not-run	E not-run	not in a ws group (wired later, NOT-WIRED leg)				
-0x00525bd0	FUN_00525bd0	game	ws_g09	escapes	B escapes	heap/other				
-0x0052aa40	FUN_0052aa40	game	ws_g09	escapes	B escapes	heap/other				
-0x00535330	FUN_00535330	RW core	ws_g09	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x0054f8d0	FUN_0054f8d0	RW core	ws_g09	escapes	B escapes	heap/other				
-0x0055f520	FUN_0055f520	RW-Physics	ws_g09	escapes	B escapes	caller-stack through a pointer				
-0x005ae250	FUN_005ae250	game	ws_g09	escapes	B escapes	heap/other + image-masked				
-0x005b2b00	FUN_005b2b00	game	ws_g09	not-run	E not-run	no main-thread call stepped				
-0x00405540	FUN_00405540	game	ws_g09	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped				
-0x00462950	FUN_00462950	game	ws_g09	escapes	B escapes	heap/other + image-masked				
-0x00479330	FUN_00479330	game	ws_g09	escapes	B escapes	heap/other				
-0x0047d3c0	VehiclePhysicsWorldCreate	game	ws_g09	escapes	B escapes	heap/other				
-0x00558df0	FUN_00558df0	RW core	ws_g10	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x005595d0	FUN_005595d0	RW-Physics	ws_g10	escapes	B escapes	caller-stack both + heap/other				
-0x0055f670	FUN_0055f670	RW-Physics	ws_g10	escapes	B escapes	caller-stack through a pointer				
-0x005645b0	FUN_005645b0	RW-Physics	ws_g10	escapes	B escapes	caller-stack through a pointer + heap/other				
-0x00567350	FUN_00567350	RW-Physics	ws_g10	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x005676f0	FUN_005676f0	RW-Physics	ws_g10	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other				
-0x00568d20	FUN_00568d20	RW-Physics	ws_g10	escapes	B escapes	heap/other				
-0x005ab620	FUN_005ab620	game	ws_g10	not-run	E not-run	no main-thread call stepped				
-0x005ae650	AudioPoolConstruct	game	ws_g10	escapes	B escapes	image-masked				
-0x005b1180	FUN_005b1180	game	ws_g10	not-run	E not-run	no main-thread call stepped				
-0x005b29e0	FUN_005b29e0	game	ws_g10	not-run	E not-run	no main-thread call stepped				
-0x005b3300	FUN_005b3300	game	ws_g10	not-run	E not-run	no main-thread call stepped				
-0x005c8910	FUN_005c8910	game	ws_g10	not-run	E not-run	no main-thread call stepped				
+rva	name	class	ref1_ws_run	ref1_leg	ws2_class	ws2_subclass	ws2_single	ws2_single_replay	ws2_single_frames	ws2_single_other_thread_steps	ws2_best_run	ws2_best_run_replay	ws2_calls_stepped	ws2_image	ws2_leg	ws2_outcome
+0x004d8300	FUN_004d8300	game	ws_g00	escapes	B escapes	heap/other									not re-stepped	
+0x004e6100	RpAtomicGetWorldBoundingSphere	RW core	ws_g00	escapes	B escapes	heap/other									not re-stepped	
+0x004c4a50	RwMatrixRotateInner	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g00	DIVERGED 302	2996	0	covered, frame only (L-40 stays)	
+0x005c6b60	Delta5c6b60	game	ws_g00	escapes	B escapes	heap/other									not re-stepped	
+0x004c5010	RwMatrixScale	game	ws_g00	escapes	B escapes	caller-stack through a pointer + heap/other									not re-stepped	
+0x00535700	FUN_00535700	RW core	ws_g00	escapes	B escapes	caller-stack through a pointer + heap/other									not re-stepped	
+0x004c52f0	RwMatrixCombine	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g00	DIVERGED 302	3813	0	escapes	
+0x0047ba20	FUN_0047ba20	game	ws_g00	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x004c4dc0	RwMatrixInvertEntry	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g00	DIVERGED 302	7818	18660	escapes	
+0x005c7330	FUN_005c7330	game	ws_g00	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x005a75b0	FUN_005a75b0	game	ws_g00	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other + image-masked									not re-stepped	
+0x0045ac40	FUN_0045ac40	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g00	DIVERGED 302	4520	0	covered, frame only (L-40 stays)	
+0x005a9280	FUN_005a9280	game	ws_g00	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005b6b00	FUN_005b6b00	game	ws_g00	not-run	E not-run	no main-thread call stepped	s_005b6b00	IDENTICAL-FOR-N 600	0	10	s_005b6b00	IDENTICAL-FOR-N 600	0		not-run	
+0x0056ac40	FUN_0056ac40	RW-Physics	ws_g00	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x00454350	FUN_00454350	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g00	DIVERGED 302	3616	0	covered, frame only (L-40 stays)	
+0x00468d80	VehicleTerrainContactSolver	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g00	DIVERGED 302	1812	12	covered+image, run diverged	
+0x004694e0	VehicleObjectContactSolver	game	ws_g00	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g00	DIVERGED 302	3622	0	covered, frame only (L-40 stays)	
+0x00469aa0	VehicleContactScanUpdate	game	ws_g00	pass	A long-race hold	standing long-race DIVERGED on the current source (RESULT_PROV-INSITU-REF1)									not re-stepped	
+0x0046e9e0	FUN_0046e9e0	game	ws_g00	pass	A long-race hold	standing long-race DIVERGED on the current source (RESULT_PROV-INSITU-REF1)									not re-stepped	
+0x004c1f80	FUN_004c1f80	game	ws_g01	escapes	B escapes	heap/other					ws_g01_rep	DIVERGED 300	10	0	escapes	
+0x004c2620	FUN_004c2620	game	ws_g01	escapes	B escapes	heap/other					ws_g01_rep	DIVERGED 300	10	0	escapes	
+0x004c2a30	FUN_004c2a30	game	ws_g01	escapes	B escapes	heap/other					ws_g01_rep	DIVERGED 300	10	0	escapes	
+0x00564040	FUN_00564040	RW-Physics	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g01	IDENTICAL-FOR-N 600	4077	0	escapes	
+0x00420050	PerPlayerViewportRender	game	ws_g01	covered+image, run diverged	D covered+image, stepped run diverged		s_00420050	DIVERGED 300	10	0	s_00420050	DIVERGED 300	10	10	covered+image, run diverged	
+0x00463640	FUN_00463640	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)					ws_g01_rep	DIVERGED 300	10	84	escapes	
+0x00420290	FUN_00420290	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)					ws_g01_rep	DIVERGED 300	10	10	escapes	
+0x0040aef0	FUN_0040aef0	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g01	IDENTICAL-FOR-N 600	3952	0	covered, frame only (L-40 stays)	
+0x00420870	FUN_00420870	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)					ws_g01_rep	DIVERGED 300	10	40	escapes	
+0x004752f0	FUN_004752f0	game	ws_g01	escapes	B escapes	caller-stack through a pointer					ws_g01_rep	DIVERGED 300	10	0	escapes	
+0x00546e70	FUN_00546e70	game	ws_g01	escapes	B escapes	caller-stack through a pointer					ws_g01_rep	DIVERGED 300	10	0	escapes	
+0x00407e20	FUN_00407e20	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)					ws_g01_rep	DIVERGED 300	10	30	escapes	
+0x004b42c0	FUN_004b42c0	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g01	IDENTICAL-FOR-N 600	3940	0	covered, frame only (L-40 stays)	
+0x005b7980	FUN_005b7980	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g01	IDENTICAL-FOR-N 600	4	0	covered, frame only (L-40 stays)	
+0x00468980	VehicleAeroStabilizer	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g01	IDENTICAL-FOR-N 600	3709	0	covered, frame only (L-40 stays)	
+0x0046ddb0	VehicleWheelForceIntegrator	game	ws_g01	covered+image, run diverged	D covered+image, stepped run diverged		s_0046ddb0	IDENTICAL-FOR-N 600	10	0	s_0046ddb0	IDENTICAL-FOR-N 600	10	460	pass	promoted (PROV-INSITU-REF1-WS2.tsv)
+0x00470670	VehicleControlUpdate	game	ws_g01	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)					ws_g01_rep	DIVERGED 300	10	110	escapes	
+0x004228f0	FUN_004228f0	game	ws_g01	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g01	IDENTICAL-FOR-N 600	3940	0	covered, frame only (L-40 stays)	
+0x00577ec0	FUN_00577ec0	RW-Physics	ws_g01	escapes	B escapes	caller-stack both					ws_g01_rep	DIVERGED 300	10	0	escapes	
+0x004cc5e0	FUN_004cc5e0	game	ws_g01	escapes	B escapes	caller-stack through a pointer					ws_g01_rep	DIVERGED 300	10	0	escapes	
+0x005667c0	FUN_005667c0	RW-Physics	ws_g02	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g01	IDENTICAL-FOR-N 600	936	0	covered, frame only (L-40 stays)	
+0x00578cb0	FUN_00578cb0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x00414570	FUN_00414570	game	ws_g02	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g02	IDENTICAL-FOR-N 600	2778	0	escapes	
+0x00443dc0	FUN_00443dc0	game	ws_g02	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x004709a0	VehicleCollisionBroadPhase	game	ws_g02	pass	A long-race hold	standing long-race DIVERGED on the current source (RESULT_PROV-INSITU-REF1)									not re-stepped	
+0x005b0cf0	FUN_005b0cf0	game	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x00414c30	FUN_00414c30	game	ws_g02	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g02	IDENTICAL-FOR-N 600	1904	0	covered, frame only (L-40 stays)	
+0x0047bb10	FUN_0047bb10	game	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x005784a0	FUN_005784a0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x00575120	FUN_00575120	RW-Physics	ws_g02	escapes	B escapes	heap/other									not re-stepped	
+0x0053e430	FUN_0053e430	RW core	ws_g02	escapes	B escapes	caller-stack both + heap/other									not re-stepped	
+0x00450b10	HudIm2DQuad	game	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x0056fad0	FUN_0056fad0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x00578bd0	FUN_00578bd0	RW-Physics	ws_g02	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x00575c60	FUN_00575c60	RW-Physics	ws_g02	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x004967e0	FUN_004967e0	game	ws_g02	escapes	B escapes	image-masked									not re-stepped	
+0x004d8c40	FUN_004d8c40	game	ws_g02	escapes	B escapes	heap/other									not re-stepped	
+0x0045d7a0	FUN_0045d7a0	game	ws_g02	escapes	B escapes	heap/other									not re-stepped	
+0x0045dd60	FUN_0045dd60	game	ws_g02	escapes	B escapes	heap/other									not re-stepped	
+0x005a6f30	FUN_005a6f30	game	ws_g03	escapes	B escapes	heap/other + image-masked					ws_g03_rep	DIVERGED 302	10	10	escapes	
+0x005baf00	MusicGroupVolumeSet	game	ws_g03	escapes	B escapes	heap/other					ws_g03_rep	DIVERGED 302	10	0	escapes	
+0x0045efe0	FUN_0045efe0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g02	IDENTICAL-FOR-N 600	1252	0	covered, frame only (L-40 stays)	
+0x00448220	Frontend::PostRaceResultCamera	game	ws_g03	covered+image, run diverged	D covered+image, stepped run diverged		s_00448220	DIVERGED 302	10	0	s_00448220	DIVERGED 302	10	60	covered+image, run diverged	
+0x00412620	FUN_00412620	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g02	IDENTICAL-FOR-N 600	1248	0	covered, frame only (L-40 stays)	
+0x00424eb0	FUN_00424eb0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g02	IDENTICAL-FOR-N 600	1249	0	covered, frame only (L-40 stays)	
+0x00426810	sub_00426810	game	ws_g03	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)					ws_g03_rep	DIVERGED 302	10	0	escapes	
+0x00457100	FUN_00457100	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g02	IDENTICAL-FOR-N 600	624	0	covered, frame only (L-40 stays)	
+0x00459000	FUN_00459000	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g02	IDENTICAL-FOR-N 600	1248	6	pass	promoted (PROV-INSITU-REF1-WS2.tsv)
+0x0045ae80	FUN_0045ae80	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g03	IDENTICAL-FOR-N 600	534	0	covered, frame only (L-40 stays)	
+0x00471ec0	sub_00471ec0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g03	IDENTICAL-FOR-N 600	1069	0	covered, frame only (L-40 stays)	
+0x00479100	FUN_00479100	game	ws_g03	escapes	B escapes	caller-stack through a pointer					ws_g03_rep	DIVERGED 302	10	0	escapes	
+0x0047d640	FUN_0047d640	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g03	IDENTICAL-FOR-N 600	1069	252	escapes	
+0x0047def0	FUN_0047def0	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g03	IDENTICAL-FOR-N 600	1069	336	pass	not promoted: open STUB S-3728 names it (no-STUB leg)
+0x0047eb30	VehiclePhysicsWorldStep	game	ws_g03	escapes	B escapes	heap/other					ws_g03_rep	DIVERGED 302	10	21	escapes	
+0x00488e70	FUN_00488e70	game	ws_g03	escapes	B escapes	heap/other					ws_g03_rep	DIVERGED 302	10	1	escapes	
+0x0048a130	FUN_0048a130	game	ws_g03	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other					ws_g03_rep	DIVERGED 302	10	20	escapes	
+0x0048a780	FUN_0048a780	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g03	IDENTICAL-FOR-N 600	1069	0	covered, frame only (L-40 stays)	
+0x00491340	FUN_00491340	game	ws_g03	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g03	IDENTICAL-FOR-N 600	1069	0	covered, frame only (L-40 stays)	
+0x00551d40	FUN_00551d40	RW core	ws_g03	escapes	B escapes	heap/other					ws_g03_rep	DIVERGED 302	10	0	escapes	
+0x00575880	FUN_00575880	RW-Physics	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x00489500	FUN_00489500	game	ws_g04	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g03	IDENTICAL-FOR-N 600	71	0	covered, frame only (L-40 stays)	
+0x00469df0	VehicleVehicleCollisionImpulse	game	ws_g04	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g04	IDENTICAL-FOR-N 600	1487	2273	pass	not promoted: open STUB S-2622 names it (no-STUB leg)
+0x004f6870	FUN_004f6870	game	ws_g04	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g04	IDENTICAL-FOR-N 600	247	0	covered, frame only (L-40 stays)	
+0x0047f6d0	FUN_0047f6d0	game	ws_g04	escapes	B escapes	heap/other									not re-stepped	
+0x00475f90	FUN_00475f90	game	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x0047f7d0	FUN_0047f7d0	game	ws_g04	escapes	B escapes	heap/other									not re-stepped	
+0x00575fe0	FUN_00575fe0	RW-Physics	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x00544bf0	FUN_00544bf0	RW core	ws_g04	escapes	B escapes	heap/other									not re-stepped	
+0x005752b0	FUN_005752b0	RW-Physics	ws_g04	not-run	E not-run	no main-thread call stepped	s_005752b0	IDENTICAL-FOR-N 600	10	0	s_005752b0	IDENTICAL-FOR-N 600	10	0	escapes	
+0x00576880	FUN_00576880	RW-Physics	ws_g04	not-run	E not-run	no main-thread call stepped	s_00576880	IDENTICAL-FOR-N 600	10	0	s_00576880	IDENTICAL-FOR-N 600	10	0	escapes	
+0x00574ad0	FUN_00574ad0	RW-Physics	ws_g04	not-run	E not-run	no main-thread call stepped	s_00574ad0	IDENTICAL-FOR-N 600	10	0	s_00574ad0	IDENTICAL-FOR-N 600	10	0	covered, frame only (L-40 stays)	
+0x004d8810	RwNativeRasterRead	RW core	ws_g04	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x004f71f0	FUN_004f71f0	game	ws_g04	escapes	B escapes	heap/other									not re-stepped	
+0x004f57e0	FUN_004f57e0	game	ws_g04	escapes	B escapes	heap/other									not re-stepped	
+0x00554940	LAB_00554940	game	ws_g04	escapes	B escapes	heap/other									not re-stepped	
+0x00556e90	FUN_00556e90	game	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x00575560	FUN_00575560	RW-Physics	ws_g04	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x00445aa0	CamEntryType0Step445aa0	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00445aa0	DIVERGED 302	10	0	s_00445aa0	DIVERGED 302	10	140	escapes	
+0x004e8120	FUN_004e8120	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e8120	IDENTICAL-FOR-N 600	10	0	s_004e8120	IDENTICAL-FOR-N 600	10	20	escapes	
+0x0046ef70	FUN_0046ef70	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_0046ef70	IDENTICAL-FOR-N 600	10	0	s_0046ef70	IDENTICAL-FOR-N 600	10	10	pass	not promoted: standing long-race DIVERGED@408 on the unchanged source (PROVISIONAL.tsv refused)
+0x004cf5a0	FUN_004cf5a0	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004cf5a0	IDENTICAL-FOR-N 600	10	0	s_004cf5a0	IDENTICAL-FOR-N 600	10	0	covered, frame only (L-40 stays)	
+0x004f0f10	FUN_004f0f10	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004f0f10	IDENTICAL-FOR-N 600	10	0	s_004f0f10	IDENTICAL-FOR-N 600	10	0	escapes	
+0x00408b00	FUN_00408b00	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00408b00	IDENTICAL-FOR-N 600	10	0	s_00408b00	IDENTICAL-FOR-N 600	10	12	escapes	
+0x00477be0	FUN_00477be0	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00477be0	IDENTICAL-FOR-N 600	10	0	s_00477be0	IDENTICAL-FOR-N 600	10	100	escapes	
+0x004e8c70	FUN_004e8c70	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e8c70	IDENTICAL-FOR-N 600	10	0	s_004e8c70	IDENTICAL-FOR-N 600	10	0	escapes	
+0x004f3e90	FUN_004f3e90	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004f3e90	IDENTICAL-FOR-N 600	10	0	s_004f3e90	IDENTICAL-FOR-N 600	10	0	escapes	
+0x004e7060	RpAtomicStreamRead	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e7060	IDENTICAL-FOR-N 600	10	0	s_004e7060	IDENTICAL-FOR-N 600	10	20	escapes	
+0x004e9330	FUN_004e9330	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_004e9330	IDENTICAL-FOR-N 600	10	0	s_004e9330	IDENTICAL-FOR-N 600	10	0	escapes	
+0x00480d60	FUN_00480d60	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00480d60	IDENTICAL-FOR-N 600	10	0	s_00480d60	IDENTICAL-FOR-N 600	10	0	covered, frame only (L-40 stays)	
+0x005aa0c0	AudioTreeWalkPredicateSearch	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_005aa0c0	IDENTICAL-FOR-N 600	10	0	s_005aa0c0	IDENTICAL-FOR-N 600	10	0	escapes	
+0x004cff20	FUN_004cff20	game	ws_g05	escapes	B escapes	caller-stack through a pointer + heap/other					ws_g05_rep	DIVERGED 302	6	0	escapes	
+0x004df120	FUN_004df120	RW core	ws_g05	escapes	B escapes	heap/other					ws_g05_rep	DIVERGED 302	6	0	escapes	
+0x00522ce0	FUN_00522ce0	game	ws_g05	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other					ws_g05_rep	DIVERGED 302	10	0	escapes	
+0x0052ab00	inflate	game	ws_g05	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other					ws_g05_rep	DIVERGED 302	10	0	escapes	
+0x00442e00	FUN_00442e00	game	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00442e00	IDENTICAL-FOR-N 600	10	0	s_00442e00	IDENTICAL-FOR-N 600	10	100	escapes	
+0x0053fbb0	FUN_0053fbb0	RW core	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_0053fbb0	IDENTICAL-FOR-N 600	10	0	s_0053fbb0	IDENTICAL-FOR-N 600	10	0	escapes	
+0x00577cb0	FUN_00577cb0	RW-Physics	ws_g05	not-run	E not-run	ws_g05 write log full (2,097,152 records, 826,682 dropped; 0x004df120 took 2,083,048 steps)	s_00577cb0	IDENTICAL-FOR-N 600	10	0	s_00577cb0	IDENTICAL-FOR-N 600	10	0	escapes	
+0x004ddcb0	FUN_004ddcb0	RW core	ws_g06	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped									not re-stepped	
+0x00559c40	PhysicsSceneBodyRegister	RW-Physics	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x00401da0	FUN_00401da0	game	ws_g06	escapes	B escapes	heap/other									not re-stepped	
+0x00559ee0	FUN_00559ee0	RW-Physics	ws_g06	escapes	B escapes	heap/other									not re-stepped	
+0x005c1f97	_strtod	game	ws_g06	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005655a0	FUN_005655a0	RW-Physics	ws_g06	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x004b4550	Vec3Centroid	game	ws_g06	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x004d2340	rwD3D8RasterCreate	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x005ae800	AudioPoolBlockAlloc	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other + image-masked									not re-stepped	
+0x0055ded0	FUN_0055ded0	RW-Physics	ws_g06	escapes	B escapes	heap/other									not re-stepped	
+0x005c2300	_strncat	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x005abd30	FUN_005abd30	game	ws_g06	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped									not re-stepped	
+0x00490020	FUN_00490020	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x004cc230	FUN_004cc230	game	ws_g06	escapes	B escapes	heap/other									not re-stepped	
+0x005af8f0	FUN_005af8f0	game	ws_g06	escapes	B escapes	heap/other									not re-stepped	
+0x005ab380	AudioRwsChunkHeaderRead	game	ws_g06	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005b3a00	FUN_005b3a00	game	ws_g06	covered, frame only (L-40 stays)	C frame only (L-40)	race calls: stride re-step planned (ws2_STRIDE_PLAN.tsv)					st_g04	IDENTICAL-FOR-N 600	8	0	escapes	
+0x005ab710	FUN_005ab710	game	ws_g06	escapes	B escapes	heap/other + image-masked									not re-stepped	
+0x005aba20	FUN_005aba20	game	ws_g06	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x004b4eb0	FUN_004b4eb0	game	ws_g07	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x004e7420	RpClumpStreamRead	RW core	ws_g07	escapes	B escapes	heap/other									not re-stepped	
+0x005c47e0	FUN_005c47e0	game	ws_g07	escapes	B escapes	caller-stack through a pointer + heap/other									not re-stepped	
+0x004b5080	FUN_004b5080	game	ws_g07	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005acaa0	FUN_005acaa0	game	ws_g07	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005b92e0	FUN_005b92e0	game	ws_g07	escapes	B escapes	caller-stack through a pointer + heap/other									not re-stepped	
+0x005ae920	AudioPoolFree	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x0046b540	VehicleSpawnInit	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x005aa560	FUN_005aa560	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x0053d460	FUN_0053d460	RW core	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x0053dba0	FUN_0053dba0	RW core	ws_g07	escapes	B escapes	heap/other									not re-stepped	
+0x005ad0b0	FUN_005ad0b0	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x005aeda0	AudioShiftAddMul64	game	ws_g07	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005ab410	AudioRwsChunkTypeSeek	game	ws_g07	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped									not re-stepped	
+0x005b3760	FUN_005b3760	game	ws_g07	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005ab1c0	FUN_005ab1c0	game	ws_g07	escapes	B escapes	heap/other									not re-stepped	
+0x005b0f90	FUN_005b0f90	game	ws_g07	escapes	B escapes	heap/other									not re-stepped	
+0x005ae4c0	FUN_005ae4c0	game	ws_g07	escapes	B escapes	heap/other									not re-stepped	
+0x00441b30	CamEntryBuild441b30	game	ws_g07	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x004e6ab0	FUN_004e6ab0	RW core	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x005b2080	FUN_005b2080	game	ws_g08	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped									not re-stepped	
+0x0052daf0	anim_stream_read_scheme_dispatch	RW core	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x00551460	FUN_00551460	RW core	ws_g08	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005b2820	FUN_005b2820	game	ws_g08	not-run	E not-run	no main-thread call stepped	s_005b2820	IDENTICAL-FOR-N 600	0	5	s_005b2820	IDENTICAL-FOR-N 600	0		not-run	
+0x005b30e0	FUN_005b30e0	game	ws_g08	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x00482140	FUN_00482140	game	ws_g08	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x004e8640	FUN_004e8640	RW core	ws_g08	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x004f36c0	FUN_004f36c0	RW core	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x00544a70	FUN_00544a70	RW core	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x00544ad0	FUN_00544ad0	RW core	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x00563840	FUN_00563840	RW-Physics	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x00563940	FUN_00563940	RW-Physics	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x005a8890	FUN_005a8890	game	ws_g08	escapes	B escapes	heap/other + image-masked									not re-stepped	
+0x005ab090	FUN_005ab090	game	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x005afa00	FUN_005afa00	game	ws_g08	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x005afcf0	FUN_005afcf0	game	ws_g08	escapes	B escapes	heap/other									not re-stepped	
+0x005b04b0	FUN_005b04b0	game	ws_g08	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped									not re-stepped	
+0x005b0bb0	FUN_005b0bb0	game	ws_g09	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x004e51e0	FUN_004e51e0	RW core	ws_g09	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped									not re-stepped	
+0x004e5300	RpWorldInstance	RW core	ws_g09	escapes	B escapes	heap/other									not re-stepped	
+0x005a9e60	FUN_005a9e60	game	ws_g09	escapes	B escapes	image-masked									not re-stepped	
+0x0041a400	FUN_0041a400	game	ws_g09	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative)									not re-stepped	
+0x005185a0	png_do_background	game	?	not-run	E not-run	not in a ws group (wired later, NOT-WIRED leg)	s_005185a0	IDENTICAL-FOR-N 600	3	0	s_005185a0	IDENTICAL-FOR-N 600	3	0	escapes	
+0x00525bd0	FUN_00525bd0	game	ws_g09	escapes	B escapes	heap/other									not re-stepped	
+0x0052aa40	FUN_0052aa40	game	ws_g09	escapes	B escapes	heap/other									not re-stepped	
+0x00535330	FUN_00535330	RW core	ws_g09	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x0054f8d0	FUN_0054f8d0	RW core	ws_g09	escapes	B escapes	heap/other									not re-stepped	
+0x0055f520	FUN_0055f520	RW-Physics	ws_g09	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005ae250	FUN_005ae250	game	ws_g09	escapes	B escapes	heap/other + image-masked									not re-stepped	
+0x005b2b00	FUN_005b2b00	game	ws_g09	not-run	E not-run	no main-thread call stepped	s_005b2b00	IDENTICAL-FOR-N 600	0	2	s_005b2b00	IDENTICAL-FOR-N 600	0		not-run	
+0x00405540	FUN_00405540	game	ws_g09	covered, frame only (L-40 stays)	C frame only (L-40)	all calls before the race anchor or every call already stepped									not re-stepped	
+0x00462950	FUN_00462950	game	ws_g09	escapes	B escapes	heap/other + image-masked									not re-stepped	
+0x00479330	FUN_00479330	game	ws_g09	escapes	B escapes	heap/other									not re-stepped	
+0x0047d3c0	VehiclePhysicsWorldCreate	game	ws_g09	escapes	B escapes	heap/other									not re-stepped	
+0x00558df0	FUN_00558df0	RW core	ws_g10	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x005595d0	FUN_005595d0	RW-Physics	ws_g10	escapes	B escapes	caller-stack both + heap/other									not re-stepped	
+0x0055f670	FUN_0055f670	RW-Physics	ws_g10	escapes	B escapes	caller-stack through a pointer									not re-stepped	
+0x005645b0	FUN_005645b0	RW-Physics	ws_g10	escapes	B escapes	caller-stack through a pointer + heap/other									not re-stepped	
+0x00567350	FUN_00567350	RW-Physics	ws_g10	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x005676f0	FUN_005676f0	RW-Physics	ws_g10	escapes	B escapes	caller-stack own-arg-slot (esp/ebp-relative) + heap/other									not re-stepped	
+0x00568d20	FUN_00568d20	RW-Physics	ws_g10	escapes	B escapes	heap/other									not re-stepped	
+0x005ab620	FUN_005ab620	game	ws_g10	not-run	E not-run	no main-thread call stepped	s_005ab620	IDENTICAL-FOR-N 600	0	1	s_005ab620	IDENTICAL-FOR-N 600	0		not-run	
+0x005ae650	AudioPoolConstruct	game	ws_g10	escapes	B escapes	image-masked									not re-stepped	
+0x005b1180	FUN_005b1180	game	ws_g10	not-run	E not-run	no main-thread call stepped	s_005b1180	IDENTICAL-FOR-N 600	0	1	s_005b1180	IDENTICAL-FOR-N 600	0		not-run	
+0x005b29e0	FUN_005b29e0	game	ws_g10	not-run	E not-run	no main-thread call stepped	s_005b29e0	IDENTICAL-FOR-N 600	0	1	s_005b29e0	IDENTICAL-FOR-N 600	0		not-run	
+0x005b3300	FUN_005b3300	game	ws_g10	not-run	E not-run	no main-thread call stepped	s_005b3300	IDENTICAL-FOR-N 600	0	1	s_005b3300	IDENTICAL-FOR-N 600	0		not-run	
+0x005c8910	FUN_005c8910	game	ws_g10	not-run	E not-run	no main-thread call stepped	s_005c8910	IDENTICAL-FOR-N 600	0	1	s_005c8910	IDENTICAL-FOR-N 600	0		not-run	
