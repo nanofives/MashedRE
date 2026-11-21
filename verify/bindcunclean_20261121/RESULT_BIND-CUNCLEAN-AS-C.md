@@ -463,3 +463,54 @@ hunks, and every one belongs to this branch.
 | **selftest additions** | 1097-1105 (CUNCLEAN_ROOTS, SELFTEST raceload += the 34, SELFTEST_ROOTS_ONLY); 1107-1200 (VCVARS, `cl_compile` :1110, `selftest_cemit` :1130); 1215 (`roots_only=` in the selftest Binder); 1240-1267 (refs leg: file IDENTICAL + drop-out for one own and one foreign rva, lines 1248-1262) |
 
 The audio profile, BINDINGS and the rest of `build_plan` / `callees` / `reuse` are unchanged from BIND-TOOL.
+
+### 11.3 0x00495870 listed provisional (cherry-pick of PROV-INSITU-REF1 ec3d6a012)
+
+- **Source commit:** `git -c merge.autoStash=false cherry-pick -x ec3d6a012` (orch/PROV-INSITU-REF1). It lands here as debc3aa59.
+  This row wrote no row of its own.
+- **Conflicts:**
+  - `re/match/PROVISIONAL.tsv`: adjacency with this row's 0x0041a400 line. Both lines kept. 0x00495870 is listed exactly once
+    (line 957).
+  - `verify/provinsitu_ref1_20261121/add_prov_495870.py`: git's directory-rename detection placed it under `re/census/`. Moved back
+    to its own path. Its content equals ec3d6a012's apart from CRLF.
+- **Row:** `0x00495870 FUN_00495870 re/match/s16/00495fe0.c /O2 /GS /Ob1 98.9 NOT-PROVEN`, status `provisional`, evidence
+  `verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1.md`.
+- **Verdict line, copied:** `indirect-call-esp-reset: orig: ESP restored from a register in a function with a call through
+  ld32(M00(),(ld32(M00(),ld32(M00(),esi_in))+0x64)). equiv.py tool commit 1ed7ceb1a (= orch/integration a9e5b4c8a copy, no diff)`.
+
+**It changes what ddkobj links, so the object build and check were re-run.** Lock status at 06:47: HELD by PROV-INSITU-REF1 (game
+run, pid 18952), no PRIORITY-HOLD, no SOLO, no other Mashed build, commit 19.5 GB. Object build 06:47 to 06:51, `link rc=0`,
+`=== Build OK ===`, rva-lint OK (450 known).
+
+- Before, at b74d1000d: the unit `re/match/s16/00495fe0.c` was `ok`. 0x00495870 was linked through a register adapter
+  (`___ddkreg_00495870`, DIFFERENT), and 0x00495fe0 was IDENTICAL.
+- After: 0x00495870 is a provisional function inside a linked unit, so ddkobj keeps its VS2022 body and makes the DDK copy non-static.
+  That fails: `fail:externalized-static-register-convention`, evidence `FUN_00495870: bytes differ when non-static (1552 vs 1552 B);
+  forwarder refused: the forwarder drops _V2LenSq`. The whole unit falls back to VS2022. **0x00495fe0, C4 and IDENTICAL before, loses
+  its DDK object.**
+- **New ddkobj line: `IDENTICAL 1943/2003  DIFFERENT 29  not-in-map 31  units linked 1934/2171  refusals 12
+  (externalized-static-register-convention=8, wrapper-redefines-globals=4)  provisional kept VS2022 225 units + 6 fns  dual body 32`.**
+- Against b74d1000d (1944/2005, DIFFERENT 30, refusals 11), the BYTECHECK diff is exactly 2 rows: 0x00495870 DIFFERENT -> absent,
+  and 0x00495fe0 IDENTICAL -> absent. DIFFERENT is now cp1's 30 minus 0x00495870.
+
+**Listed unit -> 100% neighbour that lost its DDK object and fell back to VS2022** (`ddkobj_build.json`, units with
+`fail:externalized-static-register-convention` whose failing helper is a listed provisional function):
+
+| listed provisional (score, verdict) | 100% neighbour that fell back | unit | evidence |
+|---|---|---|---|
+| 0x00401690 (60.2%, NOT-PROVEN branch-condition) | 0x004025f0 | `re/match/s01/00401690.c` | bytes differ when non-static (1280 vs 1296 B); forwarder refused: changes _FUN_004025f0's bytes |
+| 0x00498810 (86.7%, NOT-PROVEN call-regargs) | 0x00498860 | `re/match/s16/00498810.c` | bytes differ when non-static (80 vs 80 B); forwarder refused: changes _FUN_00498860's bytes |
+| **0x00495870 (98.9%, NOT-PROVEN indirect-call-esp-reset, this cherry-pick)** | **0x00495fe0** | `re/match/s16/00495fe0.c` | bytes differ when non-static (1552 vs 1552 B); forwarder refused: drops _V2LenSq |
+
+- The first two existed before this follow-up (`ddkobj_build_pre495870.json`). The third is new with the row.
+- The other 5 `externalized-static-register-convention` units have no listed member: 0x00427e00, 0x00427f00, 0x00427ff0,
+  0x00428140 and 0x00458920, refused by decision L-156. The 4 `wrapper-redefines-globals` units have no provisional member either.
+- 0x004036a0 -> 0x00403910 (L0's example) is not in this tree: neither rva is in any unit of `ddkobj_build.json`, and
+  neither has a PROVISIONAL.tsv row on this branch.
+
+| raw file (`D:/MashedWT/BIND-CUNCLEAN-AS-C_data`) | SHA-256 |
+|---|---|
+| build_ddkobj_prov495870.log | 970e15c084106ef07b98f7fe65425273d37ae7f1b4fc4cac4b21bfd03a53d622 |
+| BYTECHECK_prov495870.tsv | 7d9c465f748796bbea2b1ecd9996e962c2b02093e9985e80304f79f5a1ae7f44 |
+| ddkobj_build_prov495870.json | 2bf48d4b62e3fae0610f538ebfe5c7486fce77ba2b0c6f22fd34f0481e6fb589 |
+| ddkobj_build_pre495870.json (b74d1000d build) | 3742508edc4e89bbad62d62af8045454ed0a8b8bf118f9617826b39649dd7e8a |
