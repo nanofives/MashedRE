@@ -1,0 +1,6 @@
+# RACE-RWCORE-RACELOAD-ENGINE step 1: the ROLOAD replay arm on the RW core frame route (MASHED_RWC_CORE + MASHED_RWC_FRAME,
+# both default OFF). FRAME_N lifts the default end-after-first-present (RwCore/RwCore_Knob.cpp:437), as the run-52 frameT arms did.
+@ROLOAD
+MASHED_RWC_CORE=1
+MASHED_RWC_FRAME=1
+MASHED_RWC_FRAME_N=100000
