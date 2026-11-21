@@ -39,6 +39,7 @@ PROV_BIND |= {'005bad30'}   # PORT-TOP-AUDIO-5AEF30-KNOB: census 58, source from
 PROV_BIND |= {'005b9ea0', '005b85e0', '005c7a00', '005c6c20', '005a7fe0', '005c80a0', '005b7440', '005b6b80', '005bce20'}   # PORT-TOP-AUDIO-5A8F30-STOPS: table 0x00635194 entries walked by 0x005bbb20 (77.1% to 91.1%, EQUIV-IF-CALLERS-IGNORE(EAX), walker 0x005ad080 reads; PROVISIONAL.tsv + decision row, L-171 class)
 PROV_BIND |= {'005ba1d0'}   # PORT-TOP-AUDIO-5BA1D0-STOPS: census 71, stored code pointer of 0x005b9f30 (+0x28), source from the listing 40.1% (PROVISIONAL.tsv)
 PROV_BIND |= {'005a7b60', '005a71f0'}   # RO-AUDIOINIT-45D460-REACH: 0x0045d460's two named stops (0x005a7b60 existing PROVISIONAL.tsv row 60.9%, replay IDENTICAL-FOR-2724 in PROV-FIX-9; 0x005a71f0 47.9%, checked against the listing)
+PROV_BIND |= {'005bb910', '005bba30', '005bba60', '005bbac0'}   # RO-AUDIOINIT-45D460-REACH: the four code pointers 0x005bb850 stores (+0xc .. +0x18), new sources from the listings (PROVISIONAL.tsv)
 PROV_BIND |= {'005b3760'}   # RO-AUDIOINIT-45D460-REACH: converter path search of 0x005b3a00 / 0x005b3b80 (fixed against the listing; PROVISIONAL.tsv)
 PROV_BIND |= {'005b3a00', '005b3b80'}   # RO-AUDIOINIT-45D460-REACH: format converters of 0x005abd30 / 0x005acd10 (checked / fixed against the listings; PROVISIONAL.tsv)
 PROV_BIND |= {'005acaa0'}   # RO-AUDIOINIT-45D460-REACH: 0x005ac210's format decoder (60.4%, checked against the listing; PROVISIONAL.tsv)
@@ -150,6 +151,7 @@ STOP_FORCE = set()
 # 0x005bf610 binds with it and leaves STOP_FORCE. Previous line, kept as history:
 # STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
 STOP_FORCE |= {'005aef30'}   # PORT-TOP-AUDIO-5A8F30-STOPS: reached now through 0x005a8060 (0x005a8328); it calls __beginthread (0x005c2e79, no exe body; the census bulk bind left it out for the LNK2019) and starts the second thread, census order 42: a stop until the init stops are done
+STOP_FORCE |= {'005c91f0'}   # RO-AUDIOINIT-45D460-REACH: C4 match, but listed in run53_bindlists/bulk_cp1.tsv (BIND lane owns it, one owner per RVA): kept a named stop here; reached only on 0x005bb910's device-flag-8 path
 # PORT-TOP-AUDIO-5AEF30-KNOB (L-174 (c)): a caller of a KNOB rva calls this exe function instead of the stop thunk. Knob off
 # it calls the stop thunk (unchanged stop); knob on it is the stand-in (Match/PortTop_Knob_005aef30.cpp, MASHED_OT_AUDIOTHREAD_STANDIN).
 KNOB = {'005aef30': ('PortTop_Knob_005aef30', 'Match/PortTop_Knob_005aef30.cpp')}

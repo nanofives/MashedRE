@@ -271,3 +271,8 @@ mashedmod/src/mashed_re/Match/PortTop_005b36f0.cpp
 mashedmod/src/mashed_re/Match/PortTop_005b3760.cpp
 mashedmod/src/mashed_re/Match/PortTop_005b3a00.cpp
 mashedmod/src/mashed_re/Match/PortTop_005b3b80.cpp
+mashedmod/src/mashed_re/Match/PortTop_005bb910.cpp
+mashedmod/src/mashed_re/Match/PortTop_005bba30.cpp
+mashedmod/src/mashed_re/Match/PortTop_005bba60.cpp
+mashedmod/src/mashed_re/Match/PortTop_005bbac0.cpp
+mashedmod/src/mashed_re/Match/PortTop_005c9220.cpp

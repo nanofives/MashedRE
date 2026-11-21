@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S27 0x005bba60: 64.9% (regs 100.0% renamed). Hand: 4-arg cdecl callees, args forwarded. Residual (a): original loads b,c,d then pushes d before computing [esi+0x4c]/lea (arg schedule + register choice); struct form, r= merge, return-a-first, permuter 84 compiles did not move it. */
+/* MATCH-S27 0x005bba60: RO-AUDIOINIT-45D460-REACH (2026-11-21), new source from the listing; 0x005bb850 stores its address at +0x14 (0x005bb89b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -22,16 +22,19 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char byte;
+/* listing 0x005bba60..0x005bbab6 */
 int FUN_005abd30(int p0, int p1, int p2, int p3);
 int FUN_005bc050(int p0, int p1, int p2, int p3);
 // MATCH: 0x005bba60 FUN_005bba60
-int FUN_005bba60(int a, int b, int c, int d)
+int FUN_005bba60(int param_1,int param_2,int param_3,int param_4)
 {
-  if (*(byte *)(*(int *)(*(int *)(a + 0x58) + 0x20) + 0x50) & 8) {
-    if (FUN_005abd30(*(int *)(a + 0x4c), b, c, d) == 0) return 0;
-  } else {
-    if (FUN_005bc050(a + 0x5c, b, c, d) == 0) return 0;
+  if ((*(byte *)(*(int *)(*(int *)(param_1 + 0x58) + 0x20) + 0x50) & 8) != 0) {
+    if (FUN_005abd30(*(int *)(param_1 + 0x4c),param_2,param_3,param_4) == 0) {   /* 0x005bba84 */
+      return 0;
+    }
   }
-  return a;
+  else if (FUN_005bc050(param_1 + 0x5c,param_2,param_3,param_4) == 0) {      /* 0x005bbaa5 */
+    return 0;
+  }
+  return param_1;
 }

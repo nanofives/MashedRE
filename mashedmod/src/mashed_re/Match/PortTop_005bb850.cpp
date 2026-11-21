@@ -11,10 +11,10 @@
 #define FUN_005ac7b0 PortTop_Bound_005ac7b0
 #define FUN_005ac7e0 PortTop_Bound_005ac7e0
 #define FUN_005aca40 PortTop_Bound_005aca40
-#define FUN_005bb910 PortTop_AStop_005bb910   // named stop
-#define FUN_005bba30 PortTop_AStop_005bba30   // named stop
-#define FUN_005bba60 PortTop_AStop_005bba60   // named stop
-#define FUN_005bbac0 PortTop_AStop_005bbac0   // named stop
+#define FUN_005bb910 PortTop_Bound_005bb910
+#define FUN_005bba30 PortTop_Bound_005bba30
+#define FUN_005bba60 PortTop_Bound_005bba60
+#define FUN_005bbac0 PortTop_Bound_005bbac0
 extern "C" {
 #include "../../../../re/match/s27/005bb850.c"
 }
