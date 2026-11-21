@@ -1,10 +1,10 @@
 # RESULT BIND-CUNCLEAN-AS-C (run 53, 2026-11-21)
 
-Verdict: **DECISION for L0 (section 4).** The C emit, the build path and the `refs` step all work. All 34 of cp1's units bind,
-compile as C and link, and the self-test passes. But only 2 of the 34 come out IDENTICAL in `ddkobj.py check` on this branch. The other 32 are
-`skip:provisional`, because `re/match/PROVISIONAL.tsv` lists their rvas for a different exe body: the L-137 lifted naked-asm scaffolding,
-`RwCore/RwCore_Lifted_NN.cpp`. I ran a scratch experiment, not merged, that drops those rows. In it all 34 are IDENTICAL, and no other
-unit changes. Run 52's 24 are race-owned, so this row does not bind them. Each of the 24 is emitted as a C unit and all 24 compile.
+Verdict: **GREEN, after the L-178 follow-up (section 10).** All 34 of cp1's units bind as C units and compile, link and come out
+**IDENTICAL** in `ddkobj.py check`. ddkobj now keys a PROVISIONAL row by (rva, listed source). The self-tests pass (binder, ddkobj,
+rva-lint). Both builds are OK, and rva-lint shows NEW 0. Run 52's 24 are race-owned, so this row does not bind them. Each of the 24 is
+emitted as a C unit and all 24 compile. Sections 1 to 9 are the first pass (verdict DECISION at ad029a0ed). Section 10 is the
+follow-up and supersedes the section 3 and 4 numbers.
 Row kind: top-down tooling. Worker: claude2 until the `.ps1` edit, then claude3 (`move_self`, approved by the lead).
 
 Branch `orch/BIND-CUNCLEAN-AS-C`, based on `orch/BIND-TOOL` 482e87efb. **BIND-TOOL and PORT-OT-RACE-BIND-PROV4 have since merged into
@@ -199,9 +199,86 @@ Scratch scripts (not committed): `waitbuild.py`, `cc34.py`, `calls.py`, `provsco
 
 ## 9. Next
 
-- L0 decides section 4: (a), (b) or (c). After (a) or (b) the 34 are IDENTICAL with no rebind.
+- Section 4 is answered by L-178 (section 10). The 34 are IDENTICAL on the branch with no rebind.
 - PORT-OT-RACE-BIND-PROV4's race handler chain (0x0047b860, 0x00440bc0, 0x0047b8d0, 0x00451730) is cpp-unclean. That row binds it with
   this C emit: delete the rva's line in `c_hold.txt` (0x00451730 needs a `cpp_unclean.txt` line) and run `write`. The four C units
   compile in the self-test path.
 - RACE-BIND-C4-BULK checkpoints on the tool pass the 34 as roots too (cumulative), or `prune` removes them, and regenerate `PortTop_BulkRefs.cpp` with `refs`.
 - Rebase onto `orch/integration`, which now has BIND-TOOL and PORT-OT-RACE-BIND-PROV4: the lead's call.
+
+## 10. L-178 follow-up (2026-11-21, 04:3x to 05:43, base ad029a0ed, no rebase)
+
+**1. ddkobj provisional skip keyed by (rva, listed source).** Commit 5aa004f5d, on its own.
+- `load_provisional` (re/tools/ddkobj/ddkobj.py:291) now returns {rva: keys}. `_prov_key` (:318) keys a row whose listed source is a
+  re/match/ file as `*`, which skips every unit of that rva exactly as before. Any other listed source keys as that source.
+- `prov_applies` (:323) and `is_prov(r, src)` (:474) apply a row to a unit only when its key is `*` or equals the unit's source. All
+  three call sites pass the unit's source (:570, :591, :801).
+- Effect on the tree: the 695 rows that list `RwCore/RwCore_Lifted_NN.cpp` (679) or `RwCore/RwCore_Hand.cpp` (16) no longer skip a
+  matched re/match unit of the same rva.
+- ddkobj selftest gets 3 new cases, all PASS, and the self-test reports `OK: 0 failure(s)`
+  (`D:/MashedWT/BIND-CUNCLEAN-AS-C_data/ddkobj_selftest2.txt`):
+  - lifted rows (listed source RwCore/RwCore_Lifted_NN.cpp) + matched unit -> checked (ok)
+  - row listing the re/match source -> still skip:provisional
+  - prov_applies / dual body unit case
+- Etiquette slip: this self-test ran at 04:39 while the merge train held PRIORITY-HOLD (pid 12192, printed just before). It compiles
+  only the fixture units, but the rule says no ddkobj run during a hold, and I did not wait.
+
+**2. Dual-body count.** `check` adds `dual_body_rvas` to `ddkobj_summary.json` and prints `dual body N` (:1476, :1486, `_dual` :1490).
+N counts IDENTICAL functions whose rva also has a listed provisional body with another source. These are pre-bound and are never
+reported as "the path runs matched bytes".
+- Result: **dual body 32**, exactly the 32 C units (all of the 34 except 0x0041a8d0 and 0x005518f0, which have no lifted row).
+- rva-lint shows them under ORIGTOP-ONLY with **NEW 0** (commit cc0b0d2db). That took two changes:
+  - `scripts/rva_body_scan.py` gets a FIFTH PASS (:158, `RE_HAND_LINE` :171) that reads `// HAND-LIFT 0x<rva> <sym>` and
+    `// HAND 0x<rva> <sym>` lines as bodies. Without it the lint saw no lifted body.
+  - `scripts/lint_rva_bodies.py` `is_origtop` (:141-152): two marked ORIG_TOP bodies are the class when exactly one is the RW core
+    scaffold (`RE_SCAFFOLD`). The lint selftest gets 2 new cases, both PASS, `OK (0 failing)`.
+- The new pass also shows 8 dual copies that already existed and that this row did not create: 0x00532b80, 0x0053d2b0, 0x00557a60 and
+  0x005cb2a0 (DUP-IN-TARGET against hand-path bodies), and 0x004d8090, 0x004dcf90, 0x004dcff0 and 0x004dd050 (CROSS-TARGET against
+  asi bodies). All 40 are allowlisted with their own citations (`re/tools/dual_copy_allowlist.txt` +40).
+- rva-lint now reads `424 finding(s) | allowlisted=424 NEW=0`, `D4 burn-down=6 ORIGTOP-ONLY=418`. Before this commit it was 384
+  findings, ORIGTOP-ONLY 378, D4 burn-down 6.
+
+**3. Before and after on the same exe sources.** The exe sources did not change between ad029a0ed and the head: only ddkobj.py,
+PROVISIONAL.tsv, the lint and the allowlist did.
+
+| | IDENTICAL | DIFFERENT | not-in-map | units linked | skip:provisional |
+|---|---|---|---|---|---|
+| before (ad029a0ed, section 3) | 1769/1823 | 29 | 25 | 1761/2025 | 253 |
+| after (head, object build 05:24-05:29, check 05:29) | **1801/1854** | **28** | 25 | 1793/2025 | 221 |
+
+- **The units that moved, 32**, from skip:provisional to IDENTICAL: 0x00472330, 0x004cac10, 0x004d3450, 0x004d34d0, 0x004e3bd0,
+  0x004e3e70, 0x004e3ea0, 0x004eb320, 0x004f4540, 0x005142d0, 0x005142f0, 0x0052e4e0, 0x0052e500, 0x00533840, 0x00534ad0,
+  0x00534af0, 0x005386b0, 0x00538c30, 0x0053d3e0, 0x0053ec40, 0x0053ec60, 0x0053f9b0, 0x0053fa90, 0x005444a0, 0x00544e00,
+  0x00544f10, 0x005492d0, 0x00549310, 0x0054a000, 0x0054a0f0, 0x00557d90, 0x0057c2e0.
+- With 0x0041a8d0 and 0x005518f0, **34 of 34 are IDENTICAL**.
+- DIFFERENT went from 29 to 28. That is not unchanged, and the cause is item 4: 0x0041a400 is now listed provisional, so inside its
+  mixed unit it keeps its VS2022 body (DDKOBJ-PROV-MIXED-UNIT) and is no longer byte-checked. The 28 are, rva for rva, BIND-TOOL's 28
+  (`comm` against `D:/MashedWT/BIND-TOOL_data/BYTECHECK.tsv`: 0 lines).
+- The count 1801/1854 here and 1801/1855 in the experiment differ by that one function, 0x0041a400.
+- ddkobj prints `dual body 32`.
+
+**4. 0x0041a400 in PROVISIONAL.tsv.** Commit 75ad5cacb, `re/match/PROVISIONAL.tsv` line 956, status provisional, class P3.
+- `py -3.12 re/tools/match/equiv.py re/match/s03/h1_0041a4a0.c --only 0x0041a400`, run with equiv.py at tool commit 1ed7ceb1a. That
+  is the base's copy, and it is identical to `orch/integration`'s (`git diff HEAD orch/integration -- re/tools/match/equiv.py` is empty).
+  Verdict line, copied into the row:
+  `0x0041a400 NOT-PROVEN call-args: region ours +0x0 / orig 0x0041a400 call 0x4b6520 arg 0: (esp0+-0x18) | (esp0+-0x1c) (fallback: argument-area address escapes (passed to a callee))`.
+- `prov_drop.py` keeps the row: `KEEP not-byte-identical`, 76.4%.
+
+**5. Commit 296c82aca is untouched.** It is decode-only (`re/tools/ddkobj/ddkobj.py`, 7 insertions and 3 deletions, recompile_wrappers).
+
+Other checks on the head:
+- `porttop_bind.py selftest`: PASS.
+- VS2022 build at 05:43: `[rva-lint] OK -- no NEW duplicate bodies (424 known)`, `=== Build OK ===`, `mashed_re.exe` SHA-256 78f37bb7.
+  No exe source changed since the knob boot of section 5 (rc 0, 3000 frames), so that boot still stands.
+- Status before the object build at 05:24: lock held by PROV-INSITU-REF1 (game run), PRIORITY-LINGER only, no hold, commit 23.5 GB,
+  no other Mashed build.
+
+| raw file (`D:/MashedWT/BIND-CUNCLEAN-AS-C_data`) | SHA-256 |
+|---|---|
+| build_ddkobj_l178.log | 9c8e02214f1b9c1fa0d0ddf24f90f15395b6883f69985a350d6ba05c62dd7eab |
+| ddkobj_check_l178.log | cec400bc1efb7236b9c51e32e89dbfe722855f11c8ef8fd45b779c1222a1c805 |
+| BYTECHECK.tsv (head, `mashedmod/build/ddkobj/`) | 0c07ec2c964f5a8198a66b353e3afad5a4ca5ced217c5326d70bd413f528cc5b |
+| equiv_0041a400.txt | d36cebc6385f3868e7a2d2241b9e0500746355ed1231197b24e281e9361dc1c2 |
+| ddkobj_selftest2.txt | cab6301a762a6551a5751d68c7460bbdf25a4104a64a2bf3c6525e2a82088d53 |
+| lint_selftest.txt | 1eecf6a3b337d84104eccccec932a7cf04b5680c2194456aacd4b90087c2e8e9 |
+| build_vs2022_l178.log | 733a5f181a417ce24af7eff8708ee74d7a36512c73f390b6a5dbc3256c7579c0 |
