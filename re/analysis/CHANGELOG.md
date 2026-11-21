@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-21  0x00420870  FUN_00420870  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md
+2026-11-21  0x00470670  VehicleControlUpdate  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md
+2026-11-21  0x0046b540  VehicleSpawnInit  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md
+2026-11-21  0x00441b30  CamEntryBuild441b30  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md
+2026-11-21  0x0041a400  FUN_0041a400  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md
 2026-11-21  0x00420420  FUN_00420420  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420420.c; evidence: verify/fix_00420420_crash_20261121/RESULT_FIX-00420420-CRASH.md
 2026-11-21  0x0046ddb0  VehicleWheelForceIntegrator  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1-WS2.md; evidence: verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1-WS2.md
 2026-11-21  0x00459000  FUN_00459000  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1-WS2.md; evidence: verify/provinsitu_ref1_20261121/RESULT_PROV-INSITU-REF1-WS2.md
