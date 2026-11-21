@@ -1,0 +1,4 @@
+# PORT-OT-RACE-BIND-HANDLER (run 54): ROLOADRWC (race-load on the RW core frame route) with the race-load stops in
+# count mode (log the first call, return 0), to list every stop on the core in one arm.
+@ROLOADRWC
+MASHED_OT_RL_STOPS=count

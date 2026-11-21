@@ -46,3 +46,31 @@ not_local	0047bf70	0047be80
 # PORT-OT-RACE-BIND-PROV4: re/match/s12/00478660.c holds a HELD static copy of 0x004785e0 (C2) under #ifndef MATCH_PORT
 # (source lines 55-77); on the port it is an external callee
 not_local	00478660	004785e0
+#
+# PORT-OT-RACE-BIND-HANDLER (run 54): C units 0x0047b860 / 0x0047b8d0. In C the source MGLOBAL is `extern T n` (LNK2019
+# in the VS2022 exe build), so the wrapper supplies the preamble with MGLOBAL emptied and each global as a #define at
+# its original address (ddkobj.py DEFABS_RE reads the same lines); Ghidra thunk_ names bind the jump targets' RwCore bodies.
+extra_pre	0047b860	#define MATCH_PREAMBLE 1   // C unit: the source preamble is replaced by these lines (its MGLOBAL is `extern T n` in C, unresolved in the exe)
+extra_pre	0047b860	typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+extra_pre	0047b860	typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+extra_pre	0047b860	typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+extra_pre	0047b860	typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+extra_pre	0047b860	typedef unsigned short word; typedef unsigned int dword; typedef long double float10; typedef unsigned char bool;
+extra_pre	0047b860	#define MGLOBAL(T, n, a) enum { mglobal_##n }   // the name is a #define at its original address below
+extra_pre	0047b860	#define MGLOBALA(T, n, N, a) enum { mglobala_##n }
+extra_pre	0047b860	#define DAT_006bf1e0 (*(undefined4 *)0x006bf1e0u)   // 0x0047b868 mov [0x6bf1e0], eax
+extra_pre	0047b8d0	#define MATCH_PREAMBLE 1   // C unit: the source preamble is replaced by these lines (its MGLOBAL is `extern T n` in C, unresolved in the exe)
+extra_pre	0047b8d0	typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+extra_pre	0047b8d0	typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+extra_pre	0047b8d0	typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+extra_pre	0047b8d0	typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+extra_pre	0047b8d0	typedef unsigned short word; typedef unsigned int dword; typedef long double float10; typedef unsigned char bool;
+extra_pre	0047b8d0	#define MGLOBAL(T, n, a) enum { mglobal_##n }   // the name is a #define at its original address below
+extra_pre	0047b8d0	#define MGLOBALA(T, n, N, a) enum { mglobala_##n }
+extra_pre	0047b8d0	#define DAT_00616038 (*(uint *)0x00616038u)
+extra_pre	0047b8d0	#define DAT_005cf010 (*(undefined1 *)0x005cf010u)   // 0x0047b905 push 0x5cf010
+extra_pre	0047b8d0	#define thunk_FUN_005507b0 RwCore_005507b0   // 0x0047b90b call 0x4b5360; 0x004b5360 jmp 0x5507b0
+extra_pre	0047b8d0	#define thunk_FUN_005509b0 RwCore_005509b0   // 0x0047b917 / 0x0047b929 call 0x4b5390; 0x004b5390 jmp 0x5509b0
+extra_pre	0047b8d0	#define thunk_FUN_00550bc0 RwCore_00550bc0   // 0x0047b91d call 0x4b53a0; 0x004b53a0 jmp 0x550bc0
+extra_pre	0047b8d0	#define thunk_FUN_00550950 RwCore_00550950   // 0x0047b937 call 0x4b5380; 0x004b5380 jmp 0x550950
+extra_pre	0047b8d0	#define thunk_FUN_00550910 RwCore_00550910   // 0x0047b93f call 0x4b5370; 0x004b5370 jmp 0x550910

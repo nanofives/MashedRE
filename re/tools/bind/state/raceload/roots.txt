@@ -40,3 +40,10 @@
 005518f0
 00557d90
 0057c2e0
+# PORT-OT-RACE-BIND-HANDLER (run 54): COURSE.LUA handler chain (C emit) + the RW core engine arm's first stop 0x00458dd0
+# (verify/raceload_20261121/RESULT_RACE-RWCORE-RACELOAD-ENGINE.md) + 0x0040cea0 (c4=frida-replay, L-175)
+00440bc0
+00458dd0
+0047b860
+0047b8d0
+0040cea0
