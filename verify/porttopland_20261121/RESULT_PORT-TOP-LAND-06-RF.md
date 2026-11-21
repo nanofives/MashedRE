@@ -255,3 +255,26 @@ The original calls it from its piz reader 0x004b6610 during loads (gate rank `lo
 
 Executed at run time: 0 of these. Every closure sits behind a default-OFF sub-knob (`MASHED_OT_RACEFRAME`,
 `MASHED_OT_RENDERFRAME`, `MASHED_OT_RL_D110`, `MASHED_OT_TITLETICK`) on paths a 3000-frame menu boot does not reach.
+
+## 11. L-181 (A) merge bar: audio untouched, selftest a subset of the head's audio failures
+
+**(1) Audio profile byte-identical to e1b17eba3.** Paths checked (`audio_paths_checked.txt`, 389): every file under
+`re/tools/bind/state/audio/` at e1b17eba3 (plan.json, profile.json, rules.tsv, newfiles.txt), `Match/PortTop_AudioStops.cpp`,
+and the wrapper `Match/PortTop_<rva>.cpp` of every bind in e1b17eba3's audio plan (384), all present at e1b17eba3.
+
+    git diff e1b17eba3 cd1a9c9f3 -- $(cat verify/porttopland_20261121/audio_paths_checked.txt)   -> empty (0 lines)
+
+Shared generated files: BINDINGS.tsv rows of every rva in e1b17eba3's audio plan: 0 changed (script in this section's commit
+log, `git show` of both refs). Lines this branch removes from shared files, none audio: BINDINGS.tsv 2 (0x004111c0, 0x00428450,
+superseded by the PORT-TOP-06 / RENDERFRAME records), `dual_copy_allowlist.txt` 3 (0x004c0ad0, 0x004d52d0, 0x004d5480: the same
+lines re-added with the `ORIGTOP-HELD` prefix), `PortTop_BulkRefs.cpp` 3 anchors (0x0040d110, 0x004744a0, 0x004e6680: now with bound
+callers; none is an audio plan rva). `exe_sources.rsp` and `PROVISIONAL.tsv`: additions only. **(1) holds.**
+
+**(2) Selftest failures a subset of the head's.** Selftest on e1b17eba3 (detached temp worktree, removed after):
+`selftest_head_e1b17eba3.txt`, FAIL 19 = audio (plan DIFFERENT 14 rows, files DIFFERENT 13) + raceload (12 lines). On this
+branch at cd1a9c9f3 (`selftest_cp3.txt`): FAIL 14, 27 detail lines, all audio. Line by line (`selftest_subset.tsv`):
+27 audio lines present at both, byte-identical; 0 lines on the branch that are not at the head; the head's 12 raceload lines
+are gone. **(2) holds: 0 new.**
+
+**(3)** raceload, bulk, raceframe, renderframe: plan IDENTICAL, wrappers + stops IDENTICAL, bulk moves all named, at
+cd1a9c9f3. **(3) holds.**
