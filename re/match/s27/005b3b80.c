@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-// MATCH-S27 0x005b3b80: 43.4% (regs 53.0%). Struct copies (S7 for the 7-int copies), intrinsic memcpy for the two byte copies (31.8 -> 39.0%), permuter 300 s (-> 43.4%). Prototypes fixed for C++ (code typedef, uint* args). Residual: stack-aliased local_38[(int)param_1 - 4] indexing kept from Ghidra, 238 vs 249 ins, loop and slot layout. Class: b.
+// MATCH-S27 0x005b3b80: 43.4% (regs 53.0%). Struct copies (S7 for the 7-int copies), intrinsic memcpy for the two byte copies (31.8 -> 39.0%), permuter 300 s (-> 43.4%). Prototypes fixed for C++ (code typedef, uint* args). Residual: stack-aliased local_48[(int)param_1] indexing kept from Ghidra, 238 vs 249 ins, loop and slot layout. Class: b.
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -111,13 +111,13 @@ uint FUN_005b3b80(uint *param_1,undefined4 *param_2,undefined4 param_3,uint *par
   if (uVar7 != 0) {
     do {
       puVar9 = puVar5;
-      FUN_005ac980(*(undefined4 *)(*(int *)local_38[(int)param_1 - 4] + 4),local_38,1);
-      if (!((*(byte *)(*(int *)local_38[(int)param_1 - 4] + 8) & 1) == 0)) {
+      FUN_005ac980(*(undefined4 *)(*(int *)local_48[(int)param_1] + 4),local_38,1);
+      if (!((*(byte *)(*(int *)local_48[(int)param_1] + 8) & 1) == 0)) {
         local_38[0] = *param_4;
       } else {
         local_38[0] = local_1c[0];
       }
-      local_38[2] = (*(code *)((int *)local_38[(int)param_1 - 4])[1])
+      local_38[2] = (*(code *)((int *)local_48[(int)param_1])[1])
                               (local_1c,param_2,param_3,local_38,0,&uStack_4c);
       puVar5 = puVar10;
       if (local_38[2] > local_5c) {
@@ -129,10 +129,10 @@ uint FUN_005b3b80(uint *param_1,undefined4 *param_2,undefined4 param_3,uint *par
         local_5c = local_38[2];
       }
       uVar1 = local_38[2];
-      uVar6 = (**(code **)(local_38[(int)param_1 - 4] + 4))(local_1c,puVar9,0,local_38,puVar5,0);
-      uVar8 = param_4[4];
+      uVar8 = param_4[4];                                       /* 0x005b3d7b / 0x005b3d7e: read before the second call */
       local_28 = uVar8;
       local_24 = param_4[5];
+      uVar6 = (**(code **)(local_48[(int)param_1] + 4))(local_1c,puVar9,0,local_38,puVar5,0);   /* 0x005b3daf */
       if (uVar1 != uVar6) {
         if (puVar5 != (undefined4 *)0x0) {
           FUN_004522d0(puVar5);

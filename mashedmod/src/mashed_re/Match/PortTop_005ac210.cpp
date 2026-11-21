@@ -17,7 +17,7 @@
 #define FUN_005ac900 PortTop_Bound_005ac900
 #define FUN_005ac980 AudioFmtDescCopy   // exe body (Audio/AudioRwsLeaves.cpp)
 #define FUN_005aca80 AudioFmtSizeCalc   // exe body (Audio/AudioRwsLeaves.cpp)
-#define FUN_005acaa0 PortTop_AStop_005acaa0   // named stop
+#define FUN_005acaa0 PortTop_Bound_005acaa0
 #define FUN_005acd10 PortTop_Bound_005acd10
 #define FUN_005adf30 AudioFmtKeyCompare   // exe body (Audio/AudioFmtKey.cpp)
 #define FUN_005ae0c0 PortTop_Bound_005ae0c0

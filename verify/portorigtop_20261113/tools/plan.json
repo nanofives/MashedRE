@@ -4674,7 +4674,19 @@
 []
 ],
 "005b3b80": [
-"stop"
+"bind",
+"re/match/s27/005b3b80.c",
+"provisional",
+[
+"004522d0",
+"005ac5f0",
+"005ac740",
+"005ac980",
+"005aea50",
+"005b36f0",
+"005b3760"
+],
+[]
 ],
 "005aba20": [
 "bind",
@@ -4723,7 +4735,15 @@
 "Audio/AudioRwsLeaves.cpp"
 ],
 "005acaa0": [
-"stop"
+"bind",
+"re/match/s26/005acaa0.c",
+"provisional",
+[
+"005acd60",
+"005ae0c0",
+"005aeca0"
+],
+[]
 ],
 "005acd10": [
 "bind",
@@ -4912,7 +4932,35 @@
 "stop"
 ],
 "005b3a00": [
-"stop"
+"bind",
+"re/match/s27/005b3a00.c",
+"provisional",
+[
+"005ac5f0",
+"005ac980",
+"005b36f0",
+"005b3760"
+],
+[]
+],
+"005b36f0": [
+"bind",
+"re/match/s27/005b36f0.c",
+"match",
+[
+"005ac9e0"
+],
+[]
+],
+"005b3760": [
+"bind",
+"re/match/s27/005b3760.c",
+"provisional",
+[
+"005ac5f0",
+"005ac980"
+],
+[]
 ],
 "005a7b00": [
 "bind",
@@ -4927,6 +4975,15 @@
 "005ac930": [
 "bind",
 "re/match/tlr/005ac930.c",
+"match",
+[
+"005adf30"
+],
+[]
+],
+"005acd60": [
+"bind",
+"re/match/s26/005acd60.c",
 "match",
 [
 "005adf30"
