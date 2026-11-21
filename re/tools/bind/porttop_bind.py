@@ -13,7 +13,9 @@ re/tools/bind/state/<profile>/ (copied from the old verify/ folders at BIND-TOOL
 BIND-PROFILE-DATA (2026-11-21): profiles and rule tables are data, not code. A profile is state/<profile>/profile.json
 (settings) + rules.tsv (per-rva rules) + roots.txt (roots); state/_shared/rules.tsv holds the rules every profile reads.
 A binding row adds lines there and never edits this file (KICKOFF_run54 rule 1). Profiles: raceload, audio, raceframe
-(PORT-TOP-06), renderframe (PORT-TOP-RENDERFRAME-492E90).
+(PORT-TOP-06), renderframe (PORT-TOP-RENDERFRAME-492E90), bulk (BIND-BULK-PROFILE: RACE-BIND-C4-BULK checkpoint 1, was
+verify/bindbulk_20261121/tools/bulk_bind_gen.py; after `write --profile bulk` run `refs --profile raceload`, which owns
+Match/PortTop_BulkRefs.cpp, and `sync --profile bulk`).
 
 Run from the worktree root. Usage (full walk-through: .claude/skills/roadmap-loop/SKILL.md, "Binding checkpoints"):
   py -3.12 re/tools/bind/porttop_bind.py plan    --profile raceload --roots 00426e10,004264d0      # dry run, listing
@@ -76,7 +78,20 @@ PROFILE_DEFAULTS = dict(
     refs_file=None, foreign_keep_marks=[], stop_reasons=None, static_stop=False, group_same_source=False,
     held_external=False, thunk_names=False, bindings_keep_missing=False, root_external={},
     local_shared_note='', local_bound_note='', bindings_roots=None, bindings_root_caller=None,
-    selftest_order=99, selftest_roots_only=False, selftest_bindings=False)
+    selftest_order=99, selftest_roots_only=False, selftest_bindings=False,
+    # BIND-BULK-PROFILE (2026-11-21), the keys the RACE-BIND-C4-BULK cp1 generator (bulk_bind_gen.py) needed:
+    #   force_roots false        a root that already has an exe body is reused, never bound twice
+    #   roots_only_reason <fmt>  a matched callee that is not a root is a named stop with this reason (%s = its source)
+    #   bound_wins true          a PortTop body another profile bound (exe index, own wrappers left out) is reused
+    #                            before any stop rule (cpp-unclean, stop_reason, roots-only); stop_force still wins
+    #   samesrc_reuse true       a planned bind whose source another exe .cpp TU already #includes reuses that TU
+    #   group_primary lowest     group_same_source: the lowest rva carries the shared source (default: the file's rva)
+    #   drop_local_copies true   a planned bind that is a file-local copy in another bind's source becomes a stop
+    #   stop_sym_foreign true    a stop's callers name another profile's existing stop function when one exists
+    #   wrapper_style bulk       wrapper text of the bulk generator (always a PortTop_Keep_<rva> anchor, group members)
+    #   selftest_history {listing, moved}   selftest: the listing against a frozen listing, moved lines named in moved
+    force_roots=True, roots_only_reason=None, bound_wins=False, samesrc_reuse=False, group_primary='own',
+    drop_local_copies=False, stop_sym_foreign=False, wrapper_style='default', selftest_history=None)
 
 
 def read_rules(path):
@@ -254,7 +269,8 @@ class Binder:
             self.force = set(self.P['force']) | {k for k, v in self.old_plan.items() if v and v[0] == 'bind'}
             self.force -= set(self.alias)
         else:
-            self.force = set(self.roots) | set(self.P['force'])
+            self.force = (set(self.roots) if self.P['force_roots'] else set()) | set(self.P['force'])
+        self.refused = {}   # samesrc_reuse / drop_local_copies: root -> why it ends up unbound (disposition.json)
         self.unclean = {}
         up = os.path.join(self.sd, 'cpp_unclean.txt')
         if os.path.exists(up):
@@ -355,6 +371,12 @@ class Binder:
                 continue
             if rva in P['stop_force']:
                 plan[rva] = ('stop',); continue
+            if P['bound_wins'] and rva not in self.force and rva not in self.alias:
+                # BIND-BULK-PROFILE: a body another profile bound wins over every stop rule below (the audio profile's
+                # PortTop_Bound_005aba20 under the bulk 0x005c91f0 wrapper; raceload's C units of cpp-unclean rvas)
+                pt = [(s_, f_) for s_, f_, h_ in self.idx.get(rva, []) if f_.startswith('Match/PortTop_') and h_ == 'match-include']
+                if pt:
+                    plan[rva] = ('reuse',) + pt[0]; continue
             if rva in P['stop_reason']:
                 plan[rva] = ('stop', P['stop_reason'][rva]); continue
             if rva in self.unclean and rva not in self.cemit:
@@ -367,6 +389,8 @@ class Binder:
             if ru:
                 plan[rva] = ('reuse', ru[0], ru[1]); continue
             s, kind = self.msrc(rva)
+            if s and P['roots_only_reason'] and rva not in self.roots:
+                plan[rva] = ('stop', P['roots_only_reason'] % s); continue
             if s and self.roots_only and rva not in self.roots and (self.old_plan.get(rva) or ['x'])[0] != 'bind':
                 plan[rva] = ('stop', 'not bound here (--roots-only): matched source %s' % s); continue
             if s and rva in self.reasons and rva not in self.force:
@@ -392,20 +416,57 @@ class Binder:
                         plan[rva] = ('reuse', sym, f); break
                 continue
             plan[rva] = ('stop',)
+        if P['samesrc_reuse']:
+            # BIND-BULK-PROFILE (bulk_bind_gen.py pass 1): the matched source is already compiled by an exe .cpp TU outside
+            # this profile's own wrappers: that TU carries the rva, a second copy would duplicate it (rva-lint)
+            inc = {}
+            for tu in rsp_tus():
+                p_ = os.path.join(SRC, tu)
+                if not tu.endswith('.cpp') or not os.path.exists(p_):
+                    continue
+                t_ = rd(p_)
+                if P['own_mark'] and t_.startswith(P['own_mark']):
+                    continue
+                for m_ in re.finditer(r'#include\s+"(?:\.\./)+(re/match/[^"]+)"', t_):
+                    inc.setdefault(m_.group(1), []).append((tu, t_))
+            for rva, p in list(plan.items()):
+                if p[0] != 'bind':
+                    continue
+                for tu, t_ in inc.get(p[1], []):
+                    m_ = re.search(r'#define\s+FUN_%s\s+(\w+)' % rva, t_)
+                    plan[rva] = ('reuse', m_.group(1) if m_ else 'FUN_%s' % rva, tu)
+                    if rva in self.roots:
+                        self.refused[rva] = 'already carried by %s (same source %s)' % (tu, p[1])
+                    break
         if P['group_same_source']:
             groups = {}
-            for k, v in plan.items():
+            for k, v in sorted(plan.items()) if P['group_primary'] == 'lowest' else plan.items():
                 if v[0] == 'bind':
                     groups.setdefault(v[1], []).append(k)
             for s, ks in sorted(groups.items()):
                 if len(ks) < 2:
                     continue
-                own = [k for k in ks if re.search(r'[/_]%s\.c$' % k, s)] or sorted(ks)
+                own = sorted(ks) if P['group_primary'] == 'lowest' else \
+                    ([k for k in ks if re.search(r'[/_]%s\.c$' % k, s)] or sorted(ks))
                 o = own[0]
                 for m_ in sorted(ks):
                     if m_ != o and m_ not in self.force:
                         plan[m_] = ('reuse', 'PortTop_Bound_%s' % m_, 'Match/PortTop_%s.cpp' % o)
                         self.group_bound.add((o, m_))
+        if P['drop_local_copies']:
+            # BIND-BULK-PROFILE (bulk_bind_gen.py pass 3): one body per RVA. A planned bind that the source of another
+            # planned bind carries as a file-local copy becomes a named stop (iterates the plan as it was before the pass)
+            for rva, p in list(plan.items()):
+                if p[0] != 'bind':
+                    continue
+                for c in p[4]:
+                    if (rva, c) in self.local_shared or (rva, c) in self.local_as_bound or (rva, c) in self.group_bound:
+                        continue
+                    if plan.get(c, ('x',))[0] == 'bind':
+                        plan[c] = ('stop', 'file-local copy of this rva in the source of 0x%s (one body per RVA)' % rva)
+                        if c in self.roots:
+                            self.refused[c] = ('file-local static copy inside the source of 0x%s; a second body of the rva '
+                                               'would fail rva-lint' % rva)
         self.plan = plan
         return plan
 
@@ -447,7 +508,22 @@ class Binder:
             if rva in self.P['root_external']:
                 return self.P['root_external'][rva]['sym']
             return 'PortTop_Bound_%s' % rva
+        if self.P['stop_sym_foreign']:
+            return self.foreign_stops().get(rva) or self.P['stop_prefix'] + rva
         return self.P['stop_prefix'] + rva
+
+    def foreign_stops(self):
+        """stop_sym_foreign (bulk_bind_gen.py existing_stop): rva -> the first `PortTop_*Stop*_<rva>(` function another
+        Match/PortTop_*.cpp file defines or calls (glob order, first file wins), this profile's own stop file left out."""
+        if getattr(self, '_fstops', None) is None:
+            own = os.path.normcase(os.path.join(SRC, self.P['stop_file']))
+            self._fstops = {}
+            for f in glob.glob(SRC + '/Match/PortTop_*.cpp'):
+                if os.path.normcase(f) == own:
+                    continue
+                for m in re.finditer(r'\b(PortTop_\w*Stop\w*_([0-9a-f]{8}))\s*\(', rd(f)):
+                    self._fstops.setdefault(m.group(2), m.group(1))
+        return self._fstops
 
     def listing(self):
         plan = self.plan
@@ -508,8 +584,67 @@ class Binder:
             L += [l % fill for l in H['missing']]
         return L
 
+    def wrapper_text_bulk(self, rva):
+        """wrapper_style bulk (bulk_bind_gen.py, RACE-BIND-C4-BULK checkpoint 1): the profile's hdr lines, callees by name,
+        group members of the same source defined here, the source's one thunk_FUN_ body name, and a PortTop_Keep_<rva>
+        anchor for the rva and each group member (the raceload refs file /includes them while no bound caller exists)."""
+        P = self.P
+        _, src, kind, cs, local = self.plan[rva]
+        fn = self.wrapper_path(rva)
+        fill = dict(mark=P['own_mark'], rva=rva, src=src, ev=self.evidence_text(rva, kind))
+        L = [l % fill for l in P['hdr']]
+        L += ['// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#define MATCH_PORT 1', '#define FUN_%s PortTop_Bound_%s' % (rva, rva)]
+        for c in cs:
+            if (rva, c) in P['callee_override']:
+                L.append('#define FUN_%s %s   // %s' % ((c,) + P['callee_override'][(rva, c)]))
+                continue
+            pc = self.plan[c]
+            note = {'reuse': '   // exe body (%s)' % (pc[2] if pc[0] == 'reuse' else ''), 'bind': '', 'stop': '   // named stop'}[pc[0]]
+            L.append('#define FUN_%s %s%s' % (c, self.sym(c), note))
+        for c in local:
+            if (rva, c) in self.local_shared:
+                L.append('#define FUN_%s %s%s' % (c, self.local_shared[(rva, c)], P['local_shared_note']))
+            elif (rva, c) in self.local_as_bound:
+                L.append('#define FUN_%s PortTop_Bound_%s%s' % (c, c, P['local_bound_note']))
+            else:
+                L.append('#define FUN_%s PortTop_Local_%s_%s   // file-local in this source' % (c, rva, c))
+        st = rd(src)
+        fundef = r'^[A-Za-z_][^\n;=(]*\bFUN_%s\s*\([^;{]*\)\s*\{'
+        done = {rva} | set(cs) | set(local)
+        if not re.search(fundef % rva, st, re.I | re.M):
+            th = re.findall(r'^[A-Za-z_][^\n;=(]*\b(thunk_FUN_[0-9a-fA-F]{8})\s*\([^;{]*\)\s*\{', st, re.I | re.M)
+            if len(th) == 1:
+                L.append('#define %s PortTop_Bound_%s   // the source names this body %s (a jump thunk)' % (th[0], rva, th[0]))
+        members = sorted(m_ for o_, m_ in self.group_bound if o_ == rva)
+        for c in members:
+            L.append('#define FUN_%s PortTop_Bound_%s   // member of this source, its only exe copy' % (c, c))
+            done.add(c)
+        for c in sorted(set(x.lower() for x in re.findall(r'FUN_([0-9a-fA-F]{8})', st)) - done):
+            if re.search(fundef % c, st, re.I | re.M):
+                L.append('#define FUN_%s PortTop_Local_%s_%s   // defined in this source, not a bound rva' % (c, rva, c))
+        if 'FID_conflict__wprintf' in st:
+            L.append('#define FID_conflict__wprintf PortTop_Printf04G   // printf -> log (Match/PortTop_0040bbb0.cpp)')
+        L += self.extra_pre.get(rva, [])
+        L.append('extern "C" {')
+        L += self.extra_in.get(rva, [])
+        L += ['#include "../../../../%s"' % src, '}']
+        # a body the matched source defines `static` has no external symbol and no caller in its own TU, so the compiler
+        # drops it: take its address once (the object build then promotes it, ddkobj.py "externalized static")
+        for c in [rva] + members:
+            L.append('extern "C" { void *PortTop_Keep_%s = (void *)PortTop_Bound_%s; }   // anchor: BulkRefs /include%s' % (
+                c, c, ' (the source defines it static)' if re.search(r'^\s*static\b[^\n;{(]*\bFUN_%s\s*\(' % c, st, re.I | re.M) else ''))
+        L.append('#endif // MASHED_STANDALONE')
+        return fn, NL.join(L) + NL
+
+    def keep_list(self):
+        """wrapper_style bulk: every bound rva and group member carries a PortTop_Keep_<rva> anchor."""
+        return sorted({r for r, p in self.plan.items() if p[0] == 'bind' and r not in self.P['root_external']}
+                      | {m_ for _, m_ in self.group_bound})
+
     def wrapper_text(self, rva):
         P = self.P
+        if P['wrapper_style'] == 'bulk':
+            return self.wrapper_text_bulk(rva)
         _, src, kind, cs, local = self.plan[rva]
         is_c = rva in self.cemit
         fn = self.wrapper_path(rva)
@@ -775,7 +910,7 @@ class Binder:
 
 
     def write(self):
-        changed, out = [], []
+        changed, out, P_ = [], [], self.P
         if self.P['prune_stale']:
             # remove this profile's wrappers whose rva is no longer bound (and their exe_sources.rsp lines)
             rr = open(RSP, 'rb').read(); nl = '\r\n' if b'\r\n' in rr else '\n'
@@ -817,6 +952,12 @@ class Binder:
             extra.append(rf)
             print('refs', len(self.refs()), 'bound bodies with no bound caller ->', rf)
         json.dump({k: list(v) for k, v in self.plan.items()}, open(self.plan_path, 'w'), indent=0)
+        if P_['wrapper_style'] == 'bulk':   # bulk_bind_gen.py's disposition_cp.json: unbound roots, groups, anchors
+            grp = {}
+            for o_, m_ in sorted(self.group_bound):
+                grp.setdefault(o_, []).append(m_)
+            json.dump({'refused': self.refused, 'group': grp, 'keep': self.keep_list(), 'unclean': self.unclean},
+                      open(os.path.join(self.sd, 'disposition.json'), 'w'), indent=0)
         open(os.path.join(self.sd, 'newfiles.txt'), 'w').write(NL.join(out + extra) + NL)
         print('wrote', len(out), 'bind files +', len(stops), 'stops;', len(changed), 'files changed')
         for f in changed:
@@ -1207,6 +1348,10 @@ def cmd_index(a):
 
 def cmd_plan(a, write):
     b = Binder(a.profile, (a.roots or profile_roots(a.profile)).split(','), roots_only=a.roots_only)
+    if a.index:   # debug / history check: plan against a frozen exe index (`index --out` json) instead of the live one
+        if write:
+            sys.exit('--index is for plan only (a write needs the live exe index)')
+        b.idx = {k: [tuple(x) for x in v] for k, v in json.load(open(a.index)).items()}
     b.build_plan()
     lst = b.listing()
     if a.listing:
@@ -1320,6 +1465,42 @@ def selftest_cemit(b):
     return bad
 
 
+def history_moves(b):
+    """listing lines of the current plan against the frozen listing named by profile.json selftest_history.listing:
+    [(rva or 'totals', old line, new line)] for every line that differs (keyed by the rva, the first word)."""
+    h = b.P['selftest_history']
+    old = [l.rstrip('\r\n') for l in open(h['listing'], encoding='utf-8')
+           if l.strip() and not l.startswith('wrote ')]   # the old writer's last print line is not a plan line
+    new = b.listing()
+    ko = {'totals': old[0]}; ko.update({l.split(' ', 1)[0]: l for l in old[1:]})
+    kn = {'totals': new[0]}; kn.update({l.split(' ', 1)[0]: l for l in new[1:]})
+    return [(k, ko.get(k, '-'), kn.get(k, '-')) for k in sorted(set(ko) | set(kn)) if ko.get(k) != kn.get(k)]
+
+
+def selftest_history(b):
+    """BIND-BULK-PROFILE: every line by which the plan's listing moved from the frozen listing (bulk: RACE-BIND-C4-BULK
+    checkpoint 1's last_plan.txt) is named, with its cause, in state/<profile>/<moved>; no unnamed or stale row."""
+    h = b.P['selftest_history']
+    mv = history_moves(b)
+    named = {}
+    mp = os.path.join(b.sd, h['moved'])
+    for l in (open(mp, encoding='utf-8') if os.path.exists(mp) else []):
+        f = l.rstrip('\r\n').split('\t')
+        if len(f) >= 3 and not l.startswith('#') and f[0] != 'rva':
+            named[f[0]] = (f[1], f[2])
+    cur = {k: (o, n) for k, o, n in mv}
+    unnamed = sorted(k for k in cur if named.get(k) != cur[k])
+    stale = sorted(k for k in named if k not in cur)
+    for k in unnamed:
+        print('   moved, not named:', k, '|', cur[k][0], '->', cur[k][1])
+    for k in stale:
+        print('   named, not moved:', k)
+    print('[selftest] %s listing vs %s: %d lines moved, %s' % (
+        b.name, h['listing'], len(mv), 'all named in state/%s/%s' % (b.name, h['moved']) if not unnamed and not stale
+        else 'FAIL %d unnamed, %d stale' % (len(unnamed), len(stale))))
+    return len(unnamed) + len(stale)
+
+
 def cmd_selftest(a):
     bad = 0
     for prof in sorted(PROFILES, key=lambda p: (PROFILES[p]['selftest_order'], p)):
@@ -1367,6 +1548,8 @@ def cmd_selftest(a):
         for d in diffs:
             print('   file', d)
         bad += (not same_plan) + len(diffs)
+        if b.P['selftest_history']:
+            bad += selftest_history(b)
         if b.P.get('refs_file'):
             # refs: the committed file equals the generated text; and the drop-out rule: give one listed rva a bound
             # caller (in memory) and it must leave the set, its wrapper losing the anchor
@@ -1428,6 +1611,7 @@ def main():
         s.add_argument('-v', '--verbose', action='store_true')
         s.add_argument('--roots-only', action='store_true',
                        help='newly bind only the roots: other matched callees not bound by the previous plan are named stops')
+        s.add_argument('--index', help='plan only: read the exe body index from this json (`index --out`) instead of the tree')
     s = sp.add_parser('externs'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
     s.add_argument('--apply', action='store_true'); s.add_argument('src', nargs='*')
     s = sp.add_parser('sync'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
