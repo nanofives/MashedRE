@@ -1,0 +1,8 @@
+# RO-AUDIOINIT-45D460-REACH: the matched 0x004669b0 audio init on the RO replay arm (MASHED_OT_AUDIOINIT, default OFF), with the
+# knobs the init arms need to get past 0x005aef30 (MASHED_OT_AUDIOTHREAD_STANDIN) and 0x00551330 (MASHED_ORIG_TOP_RWMOD), and the
+# code-pointer slots bound to exe bodies (MASHED_OT_CODEPTR). Target: 0x00604604 at record 0 against ref1 (RO-ORACLE-GATE: ref 4, run 0).
+@ROIMG
+MASHED_OT_AUDIOINIT=1
+MASHED_OT_AUDIOTHREAD_STANDIN=1
+MASHED_ORIG_TOP_RWMOD=1
+MASHED_OT_CODEPTR=1

@@ -38,8 +38,13 @@ typedef int code(KR);
 typedef void *HWND;
 #define CONCAT11(a,b) ((ushort)(((uint)(uchar)(a)<<8)|(uchar)(b)))
 MGLOBAL(undefined1, DAT_005e6424, 0x005e6424);
-MGLOBAL(int, UNK_00000000, 0x00000000);
-undefined4 DirectSoundCreate8(KR);
+int __stdcall FUN_005c1920(int p0, int **p1, int p2);   /* 0x005ba2c5: import thunk jmp [0x5cc01c] (DSOUND.dll ordinal 11) */
+/* COM methods are __stdcall (callee pops: no add esp after the calls at 0x005ba308 / 0x005ba371 / 0x005ba3e5 / 0x005ba46b / 0x005ba5b3 / 0x005ba600 / 0x005ba610 / 0x005ba62c) */
+typedef int (__stdcall *PFN1_005ba1d0)(int *);
+typedef int (__stdcall *PFN2_005ba1d0)(int *, void *);
+typedef int (__stdcall *PFN3_005ba1d0)(int *, int, int);
+typedef int (__stdcall *PFN5_005ba1d0)(int *, int, int, int, int);
+typedef int (__stdcall *PFN8_005ba1d0)(int *, int, int, int, int, int, int, int);
 undefined4 FUN_005ba720(int p0);
 void FUN_005ba760(int p0);
 undefined4 FUN_005bac00(int p0);
@@ -55,39 +60,27 @@ undefined4 FUN_005bbfc0(int p0);
 undefined4 FUN_005bc400(void * p0, undefined4 * p1);
 undefined4 FUN_005c7990(void * p0, undefined4 p1, undefined4 p2, undefined4 p3);
 __declspec(dllimport) HWND __stdcall GetForegroundWindow(void);
-MGLOBAL(int, stack0xffffff5b, 0xffffff5b);
-MGLOBAL(int, stack0xffffff60, 0xffffff60);
-MGLOBAL(int, stack0xffffff5a, 0xffffff5a);
-MGLOBAL(int, stack0xffffff5c, 0xffffff5c);
-MGLOBAL(int, iRam00000000, 0x00000000);
 // MATCH: 0x005ba1d0 FUN_005ba1d0
 int FUN_005ba1d0(int param_1,undefined4 param_2,undefined4 *param_3)
 
 {
-  byte bVar1;
+
   int iVar2;
   HWND pHVar3;
   int iVar4;
   uint uVar5;
   int *piVar6;
   undefined4 uVar7;
-  ushort uVar8;
+  uint uVar8;
   undefined4 *puVar9;
   int *piVar10;
-  int iStack_9c;
-  undefined *puStack_98;
-  undefined4 uStack_94;
-  undefined4 uStack_90;
-  undefined4 uStack_8c;
-  undefined4 uStack_88;
-  uint uStack_84;
-  undefined4 uStack_80;
-  undefined4 uStack_7c;
-  undefined4 uStack_78;
-  undefined4 uStack_74;
-  undefined4 uStack_70;
-  undefined4 auStack_6c [14];
-  int iStack_34;
+  struct { int a; undefined *b; undefined4 c; undefined4 d; undefined4 e; undefined4 f; uint g;
+           undefined4 h; undefined4 i; undefined4 j; undefined4 k; undefined4 l; } blk;   /* [esp+0x1c], 12 dwords */
+  undefined4 auStack_6c [0x18];   /* [esp+0x4c], 0x60 bytes: 0x005ba3c5 clears 0x18 dwords */
+  int iStack_rate;
+  int *piStack_q;
+  byte bStack_bits;
+  byte bStack_2;
   
   iVar2 = FUN_005ba720(param_1);
   if (iVar2 == 0) {
@@ -134,7 +127,7 @@ LAB_005ba27f:
   *(undefined4 *)(param_1 + 0xa0) = 0;
   *(undefined4 *)(param_1 + 0xa4) = 0;
   FUN_005bb000(param_1,0);
-  iVar2 = DirectSoundCreate8(param_3[1],puVar9,0);
+  iVar2 = FUN_005c1920(param_3[1],(int **)puVar9,0);
   if (iVar2 < 0) {
     FUN_005ba760(param_1);
     return 0;
@@ -143,31 +136,38 @@ LAB_005ba27f:
   if (pHVar3 == (HWND)0x0) {
     pHVar3 = GetForegroundWindow();
   }
-  (**(code **)(*(int *)*puVar9 + 0x18))
-            ((int *)*puVar9,pHVar3,2 - (uint)((*(uint *)(param_1 + 0x78) & 0x400) != 0));
+  (*(PFN3_005ba1d0 *)(*(int *)*puVar9 + 0x18))
+            ((int *)*puVar9,(int)pHVar3,((*(uint *)(param_1 + 0x78) & 0x400) ? 1 : 2));
   if ((*(uint *)(param_1 + 0x78) & 0x400) == 0) {
-    uVar7 = param_3[5];
-    bVar1 = *(byte *)(param_3 + 6);
-    iVar2 = FUN_005bbc10(*(undefined4 *)(param_1 + 0x7c),(byte *)&stack0xffffff5b,&stack0xffffff60,
-                         (byte *)&stack0xffffff5a,param_3[4] == 0,(int **)&stack0xffffff5c);
+    /* 0x005ba313..0x005ba374 (listing): locals [esp+0x18] = param_3[5], byte [esp+0x12] = byte param_3[6],
+       byte [esp+0x13] = 2, [esp+0x14] = 0; their addresses are the five pointer args. */
+    iStack_rate = param_3[5];
+    bStack_bits = *(byte *)(param_3 + 6);
+    bStack_2 = 2;
+    piStack_q = (int *)0x0;
+    iVar2 = FUN_005bbc10(*(undefined4 *)(param_1 + 0x7c),&bStack_2,&iStack_rate,
+                         &bStack_bits,param_3[4] == 0,&piStack_q);
     if (iVar2 == 0) goto LAB_005ba376;
-    *(undefined4 *)(param_1 + 0x2c) = uVar7;
-    *(ushort *)(param_1 + 0x2a) = (ushort)bVar1;
-    (**(code **)(iRam00000000 + 8))(0);
+    *(int *)(param_1 + 0x2c) = iStack_rate;
+    *(ushort *)(param_1 + 0x2a) = (ushort)bStack_bits;
+    (*(PFN1_005ba1d0 *)(*piStack_q + 8))(piStack_q);
   }
   else {
 LAB_005ba376:
     *(undefined4 *)(param_1 + 0x2c) = param_3[5];
     *(undefined2 *)(param_1 + 0x2a) = *(undefined2 *)(param_3 + 6);
   }
-  iStack_9c = *(int *)(param_1 + 0x2c);
+  /* 0x005ba384..0x005ba3bf: byte stores at [esp+0x34] / [esp+0x35] / [esp+0x28] / [esp+0x29] */
   uVar8 = 0x80;
-  uStack_84 = uStack_84 & 0xffff0000;
-  uStack_8c = 0;
-  uStack_88 = 0;
-  puStack_98 = &DAT_005e6424;
-  uStack_94 = 4;
-  (*(ushort *)((char *)&uStack_90 + 0)) = CONCAT11(1,*(undefined1 *)(param_1 + 0x2a));
+  ((byte *)&blk.g)[0] = 0;
+  ((byte *)&blk.g)[1] = 0;
+  blk.e = 0;
+  blk.f = 0;
+  blk.b = &DAT_005e6424;
+  ((byte *)&blk.d)[0] = *(byte *)(param_1 + 0x2a);
+  blk.c = 4;
+  ((byte *)&blk.d)[1] = 1;
+  blk.a = *(int *)(param_1 + 0x2c);
   if (param_3[2] == 0) {
     puVar9 = auStack_6c;
     for (iVar2 = 0x18; iVar2 != 0; iVar2 = iVar2 + -1) {
@@ -175,9 +175,9 @@ LAB_005ba376:
       puVar9 = puVar9 + 1;
     }
     auStack_6c[0] = 0x60;
-    iVar2 = (**(code **)(**(int **)(param_1 + 0x7c) + 0x10))(*(int **)(param_1 + 0x7c),auStack_6c);
+    iVar2 = (*(PFN2_005ba1d0 *)(**(int **)(param_1 + 0x7c) + 0x10))(*(int **)(param_1 + 0x7c),auStack_6c);
     if (iVar2 < 0) goto LAB_005ba5d5;
-    if (iStack_34 == 0) {
+    if (auStack_6c[14] == 0) {
       *(uint *)(param_1 + 0x78) = *(uint *)(param_1 + 0x78) | 0x20;
     }
     else {
@@ -188,17 +188,17 @@ LAB_005ba376:
     uVar8 = uVar8 | 8;
   }
   if ((*(uint *)(param_1 + 0x78) & 0x400) != 0) {
-    uVar8 = CONCAT11(0x80,(char)uVar8);
+    uVar8 = uVar8 | 0x8000;
   }
   iVar2 = param_1 + 0x80;
-  iVar4 = FUN_005bbdb0(*(undefined4 *)(param_1 + 0x7c),&iStack_9c,1,1,uVar8,(undefined4 *)iVar2);
+  iVar4 = FUN_005bbdb0(*(undefined4 *)(param_1 + 0x7c),&blk.a,1,1,uVar8,(undefined4 *)iVar2);
   if (iVar4 == 0) {
     if ((uVar8 & 4) != 0) {
-      uVar8 = uVar8 & 0xfffb | 8;
+      uVar8 = uVar8 & 0xfffffffb | 8;
     }
-    iVar4 = FUN_005bbdb0(*(undefined4 *)(param_1 + 0x7c),&iStack_9c,1,1,uVar8,(undefined4 *)iVar2);
+    iVar4 = FUN_005bbdb0(*(undefined4 *)(param_1 + 0x7c),&blk.a,1,1,uVar8,(undefined4 *)iVar2);
     if (iVar4 == 0) {
-      (**(code **)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
+      (*(PFN1_005ba1d0 *)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
       FUN_005ba760(param_1);
       return 0;
     }
@@ -211,10 +211,10 @@ LAB_005ba376:
     }
   }
   FUN_005bbf30(iVar2);
-  iVar4 = FUN_005bbdb0(*(undefined4 *)(param_1 + 0x7c),&iStack_9c,
+  iVar4 = FUN_005bbdb0(*(undefined4 *)(param_1 + 0x7c),&blk.a,
                        ~*(uint *)(param_1 + 0x78) >> 6 & 1,1,uVar8,(undefined4 *)iVar2);
   if (iVar4 == 0) {
-    (**(code **)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
+    (*(PFN1_005ba1d0 *)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
     FUN_005ba760(param_1);
     return 0;
   }
@@ -225,15 +225,15 @@ LAB_005ba376:
     *(undefined4 *)(param_1 + 0x11c) = 0;
   }
   else {
-    uStack_94 = param_3[5];
-    puStack_98 = (undefined *)(uint)*(ushort *)((int)param_3 + 0x1a);
-    uStack_90 = (uint)param_3[7] >> 1;
-    iStack_9c = param_1;
-    iVar4 = FUN_005c7990(&iStack_9c,4,0,0);
+    blk.c = param_3[5];
+    blk.b = (undefined *)(uint)*(ushort *)((int)param_3 + 0x1a);
+    blk.d = (uint)param_3[7] >> 1;
+    blk.a = param_1;
+    iVar4 = FUN_005c7990(&blk.a,4,0,0);
     *(int *)(param_1 + 0x11c) = iVar4;
     if (iVar4 == 0) {
       FUN_005bbf30(iVar2);
-      (**(code **)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
+      (*(PFN1_005ba1d0 *)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
       FUN_005ba760(param_1);
       return 0;
     }
@@ -255,19 +255,19 @@ LAB_005ba62f:
     }
     if ((*(byte *)(param_1 + 0x78) & 0xf) != 0) {
       uVar5 = *(uint *)(param_1 + 0x78);
-      iStack_9c = -10000;
-      puStack_98 = (undefined *)0xffffd8f0;
-      uStack_94 = 0;
-      uStack_90 = 0x3fbeb852;
-      uStack_8c = 0x3f547ae1;
-      uStack_88 = 0xfffff5d6;
-      uStack_84 = 0x3be56042;
-      uStack_80 = 200;
-      uStack_7c = 0x3c343958;
-      uStack_78 = 0x42c80000;
-      uStack_74 = 0x42c80000;
-      uStack_70 = 0x459c4000;
-      piVar6 = &iStack_9c;
+      blk.a = -10000;
+      blk.b = (undefined *)0xffffd8f0;
+      blk.c = 0;
+      blk.d = 0x3fbeb852;
+      blk.e = 0x3f547ae1;
+      blk.f = 0xfffff5d6;
+      blk.g = 0x3be56042;
+      blk.h = 200;
+      blk.i = 0x3c343958;
+      blk.j = 0x42c80000;
+      blk.k = 0x42c80000;
+      blk.l = 0x459c4000;
+      piVar6 = &blk.a;
       piVar10 = (int *)(param_1 + 0x44);
       for (iVar2 = 0xc; iVar2 != 0; iVar2 = iVar2 + -1) {
         *piVar10 = *piVar6;
@@ -285,18 +285,18 @@ LAB_005ba62f:
   if (piVar6 != (int *)0x0) {
     puVar9 = (undefined4 *)(param_1 + 0x8c);
     iVar2 = FUN_005bc400(piVar6,puVar9);
-    (**(code **)(*piVar6 + 8))(piVar6);
+    (*(PFN1_005ba1d0 *)(*piVar6 + 8))(piVar6);
     if (iVar2 != 0) {
-      (**(code **)(*(int *)*puVar9 + 0x30))((int *)*puVar9,0x3f800000,0);
-      (**(code **)(*(int *)*puVar9 + 0x40))((int *)*puVar9,0,0,0,0);
-      (**(code **)(*(int *)*puVar9 + 0x34))((int *)*puVar9,0,0,0x3f800000,0,0x3f800000,0,0);
+      (*(PFN3_005ba1d0 *)(*(int *)*puVar9 + 0x30))((int *)*puVar9,0x3f800000,0);
+      (*(PFN5_005ba1d0 *)(*(int *)*puVar9 + 0x40))((int *)*puVar9,0,0,0,0);
+      (*(PFN8_005ba1d0 *)(*(int *)*puVar9 + 0x34))((int *)*puVar9,0,0,0x3f800000,0,0x3f800000,0,0);
       goto LAB_005ba62f;
     }
   }
   FUN_005bb000(param_1,0);
   FUN_005bbf30(param_1 + 0x80);
 LAB_005ba5d5:
-  (**(code **)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
+  (*(PFN1_005ba1d0 *)(**(int **)(param_1 + 0x7c) + 8))(*(int **)(param_1 + 0x7c));
   FUN_005ba760(param_1);
   return 0;
 }

@@ -142,8 +142,8 @@ LAB_005b390b:
         param_9 = param_9 + 1;
         iVar1 = DAT_007ddcac * 0x4c;
         FUN_005ac980((undefined4 *)param_1,(undefined4 *)(&DAT_007ddb30 + iVar1),1);
-        *(int *)(&iVar1 + DAT_007ddb4c) = param_4;
         FUN_005ac980((undefined4 *)param_3,(undefined4 *)(&DAT_007ddb4c + iVar1),1);
+        *(int *)(&DAT_007ddb4c + iVar1) = param_4;   /* 0x005b3965: entry+0x1c, after the 0x005ac980 call into it (the Ghidra form stored to &iVar1 + DAT_007ddb4c before it) */
         (&DAT_007ddb68)[iVar2 * 0x13] = param_9;
         *(int *)(&DAT_007ddb30 + iVar1) = param_2;
         if (param_9 != 0) {
