@@ -173,3 +173,32 @@ match_new.py). Raw, not committed:
 | D:/MashedWT/PORT-TOP-LAND-06-RF_data/build_vs2022.log | d4fd8260ecd40f81fff3f1fb3432b35e1499cadda6d32d3f63a4d64e07713764 |
 | D:/MashedWT/PORT-TOP-LAND-06-RF_data/build_ddkobj.log | 737fcde969d6e1c14675a3e1dd22fba3bfe9f1abe65cb96b84f646beecdf2c99 |
 | D:/MashedWT/PORT-TOP-LAND-06-RF_data/knob_vs_cp1.log | a0dcc9a0efbe20cdf7f5b70b341c033f7ce55b4a5426d192c28dbc2700038ed7 |
+
+## 8. Checkpoint 2: 0x0040d110 caller swap (PREREG `PREREG_PORT-TOP-LAND-06-RF_cp2.md`, committed with the landing)
+
+- `Match/PortTop_0040d270.cpp`: `FUN_0040d110` -> `PortTop_RL_0040d110` (was `PortTop_StandInRL_0040d110`). The matched
+  0x0040d270 calls 0x0040d110 at `re/match/top07/0040d270.c:107` and `:115`.
+- `Match/PortTop_StandInsRL.cpp`: `PortTop_RL_0040d110`, the selector on the new sub-knob `MASHED_OT_RL_D110` (default
+  off = the counting stand-in, unchanged). `=1` = `PortTop_Bound_0040d110` (`Match/PortTop_0040d110.cpp`,
+  `re/match/topm01/0040d110.c`, c4=match, bound by RACE-BIND-C4-BULK cp1), logged on entry and return.
+- `refs --profile raceload`: 0x0040d110 has a bound caller now, its keep-alive anchor leaves `Match/PortTop_BulkRefs.cpp`
+  (131 -> 130).
+- No binder change, no new TU. rva-lint NEW=0.
+
+| check | result |
+|---|---|
+| VS2022 build | `=== Build OK ===`, rva-lint NEW=0 |
+| object build | `=== Build OK ===` |
+| `ddkobj.py check` (`ddkobj_check_cp2.log`) | IDENTICAL 2322/2421, DIFFERENT 71, not-in-map 28, the same as the landing tree. 0x0040d110 `_PortTop_Bound_0040d110` IDENTICAL, 0x0040d270 `_Orig_0040d270` IDENTICAL. No newly DIFFERENT unit against the landing |
+| arm 1, knob off (`knob_cp2_off.out`) | rc 0 after 30.1 s, `WinMain 0x00492370 returned 0 after 3000 frames` |
+| arm 2, `MASHED_OT_RL_D110=1 MASHED_OT_RL_STOPS=count` (`knob_cp2_on.out`) | rc 0 after 31.4 s, same end line |
+| selftest (`selftest_cp2.txt`) | FAIL 14, the same 14 audio lines as the landing; raceload refs IDENTICAL (130) |
+
+Executed: no. Neither log carries a 0x0040d270 or 0x0040d110 line. 0x0040d270 runs only through the race load
+(`PortTop_Bound_0040d270`, `[0x005f2770]` set), and a 3000-frame boot to the menus does not reach it. Built and linked
+behind the knob, not executed. A race-load arm with the file-backed .data image (`MASHED_PORTSTATE_IMAGE`) is what would
+run it: next row.
+
+Binding numbers after cp2: the closure of 0x0040d110 (RACE-BIND-C4-BULK cp1's bind and its callees, `state/bulk/plan.json`)
+moves from "pre-bound keep-alive only" to "reachable from a bound caller" (the matched 0x0040d270, under the sub-knob).
+Keep-alive anchors 131 -> 130.

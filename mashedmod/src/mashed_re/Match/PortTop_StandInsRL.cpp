@@ -179,6 +179,29 @@ void PortTop_RL_004264d0(int param_1) {
     RlCall004264d0(param_1);
     RlLog("rva 0x004264d0: matched body returned%c%c%c", ' ', ' ', ' ');
 }
+// PORT-TOP-LAND-06-RF checkpoint 2 (PREREG verify/porttopland_20261121/PREREG_PORT-TOP-LAND-06-RF_cp2.md): what the matched
+// 0x0040d270 calls for 0x0040d110 (re/match/top07/0040d270.c:107, :115). Sub-knob MASHED_OT_RL_D110, default OFF: the
+// counting stand-in above, unchanged. =1: the byte-matched body PortTop_Bound_0040d110 (Match/PortTop_0040d110.cpp,
+// re/match/topm01/0040d110.c, RACE-BIND-C4-BULK cp1); its callees 0x0040cea0 / 0x0041a8d0 / 0x00420420 are named stops of
+// Match/PortTop_BulkStops.cpp (exit code = rva, or log and return 0 under MASHED_OT_RL_STOPS=count).
+void PortTop_Bound_0040d110(int** param_1, int param_2);
+static int RlD110Knob() {
+    static int s = -1;
+    if (s < 0) {
+        const char* const v = std::getenv("MASHED_OT_RL_D110");
+        s = (v && v[0] == '1') ? 1 : 0;
+    }
+    return s;
+}
+static unsigned s_d110Bound = 0;
+void PortTop_RL_0040d110(int p1, int p2) {
+    if (!RlD110Knob()) { PortTop_StandInRL_0040d110(p1, p2); return; }
+    ++s_d110Bound;
+    RlLog("rva 0x0040d110: matched body PortTop_Bound_0040d110(%08X, %u) entered, call %u", static_cast<unsigned>(p1),
+          static_cast<unsigned>(p2), s_d110Bound);
+    PortTop_Bound_0040d110(reinterpret_cast<int**>(p1), p2);
+    RlLog("rva 0x0040d110: matched body returned, call %u%c%c", s_d110Bound, ' ', ' ');
+}
 // Guard for the RwCore_004ccde0 call: that body walks the list at 0x007d45cc until it returns to &0x007d45cc (re/match source, RwCore/RwCore_004ccde0.cpp).
 // A head of 0 is an uninitialised list: the walk would read address 0. Skipped and counted then.
 void PortTop_RL_004ccde0(void) {

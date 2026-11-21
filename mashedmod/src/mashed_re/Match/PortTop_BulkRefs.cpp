@@ -5,7 +5,6 @@
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #pragma comment(linker, "/include:_PortTop_Keep_004074a0")
-#pragma comment(linker, "/include:_PortTop_Keep_0040d110")
 #pragma comment(linker, "/include:_PortTop_Keep_00411750")
 #pragma comment(linker, "/include:_PortTop_Keep_00411d90")
 #pragma comment(linker, "/include:_PortTop_Keep_0041a8d0")
