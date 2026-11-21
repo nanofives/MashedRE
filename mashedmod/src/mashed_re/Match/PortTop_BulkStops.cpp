@@ -30,7 +30,7 @@ unsigned PortTop_Bulk_StopHits(void) { return g_bulkStopHits; }
 int PortTop_BulkStop_00401da0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x00401da0u, "", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00401da0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0040cea0: declared void by 0x0040d110; no matched or admitted source
+// stop rva 0040cea0: declared void by 0x0040d110; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s02/0040cea0.c
 int PortTop_BulkStop_0040cea0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0040cea0u, "0x0040d110", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0040cea0u, 0u, _ReturnAddress()); return 0; }
@@ -66,10 +66,6 @@ int PortTop_BulkStop_004299d0(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_00430820(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x00430820u, "0x00411d90", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00430820u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00472330: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00472330(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00472330u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00472330u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0047f290: declared void by 0x004074a0; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s13/0047f290.c
 int PortTop_BulkStop_0047f290(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0047f290u, "0x004074a0", n, _ReturnAddress(), ex);
@@ -510,46 +506,6 @@ int PortTop_BulkStop_004bfa60(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_004c06c0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x004c06c0u, "", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004c06c0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004cac10: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004cac10(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004cac10u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004cac10u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004d3450: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004d3450(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004d3450u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004d3450u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004d34d0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004d34d0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004d34d0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004d34d0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004e3bd0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004e3bd0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004e3bd0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004e3bd0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004e3e70: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004e3e70(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004e3e70u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004e3e70u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004e3ea0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004e3ea0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004e3ea0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004e3ea0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004eb320: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004eb320(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004eb320u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004eb320u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004f4540: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_004f4540(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004f4540u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004f4540u, 0u, _ReturnAddress()); return 0; }
-// stop rva 005142d0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_005142d0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x005142d0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x005142d0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 005142f0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_005142f0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x005142f0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x005142f0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00515680: declared int by 0x00517da0; no matched or admitted source
 int PortTop_BulkStop_00515680(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x00515680u, "0x00517da0", n, _ReturnAddress(), ex);
@@ -782,102 +738,14 @@ int PortTop_BulkStop_0052bf20(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_0052c660(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0052c660u, "0x0052b820", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0052c660u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0052e4e0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0052e4e0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0052e4e0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0052e4e0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0052e500: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0052e500(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0052e500u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0052e500u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00533840: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00533840(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00533840u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00533840u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00534ad0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00534ad0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00534ad0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00534ad0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00534af0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00534af0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00534af0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00534af0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00535700: declared int / return by 0x00487e20; no matched or admitted source
 int PortTop_BulkStop_00535700(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x00535700u, "0x00487e20", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00535700u, 0u, _ReturnAddress()); return 0; }
-// stop rva 005386b0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_005386b0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x005386b0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x005386b0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00538c30: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00538c30(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00538c30u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00538c30u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0053d3e0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0053d3e0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0053d3e0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0053d3e0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0053d460: declared int by 0x0053d400; no matched or admitted source
 int PortTop_BulkStop_0053d460(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0053d460u, "0x0053d400", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0053d460u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0053ec40: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0053ec40(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0053ec40u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0053ec40u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0053ec60: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0053ec60(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0053ec60u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0053ec60u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0053f9b0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0053f9b0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0053f9b0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0053f9b0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0053fa90: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0053fa90(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0053fa90u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0053fa90u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00543bb0: declared int / return by 0x00543b90; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/rwl04/00543bb0.c
-int PortTop_BulkStop_00543bb0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00543bb0u, "0x00543b90", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00543bb0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 005444a0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_005444a0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x005444a0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x005444a0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00544e00: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00544e00(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00544e00u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00544e00u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00544f10: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00544f10(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00544f10u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00544f10u, 0u, _ReturnAddress()); return 0; }
-// stop rva 005492d0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_005492d0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x005492d0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x005492d0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00549310: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00549310(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00549310u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00549310u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0054a000: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0054a000(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0054a000u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0054a000u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0054a0f0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0054a0f0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0054a0f0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0054a0f0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 005518f0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_005518f0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x005518f0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x005518f0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00557d90: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_00557d90(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00557d90u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00557d90u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0055b940: declared float by 0x004218b0; no matched or admitted source
 int PortTop_BulkStop_0055b940(void) { BulkStopLog(0x0055b940u, "0x004218b0", 1u, _ReturnAddress(), 1); PortTop_AudioCalleeStop(0x0055b940u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0055dff0: declared void by 0x00421a90; no matched or admitted source
@@ -912,14 +780,6 @@ int PortTop_BulkStop_005651b0(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_0057c210(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0057c210u, "", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0057c210u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0057c2e0: declared (none found) by ; cpp-unclean: C2632 'char' seguido de 'bool' no es vÃ¡lido
-int PortTop_BulkStop_0057c2e0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x0057c2e0u, "", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0057c2e0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 005aba20: declared int by 0x005c91f0; no matched or admitted source
-int PortTop_BulkStop_005aba20(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x005aba20u, "0x005c91f0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x005aba20u, 0u, _ReturnAddress()); return 0; }
 // stop rva 005c1f1c: declared (none found) by ; no matched or admitted source
 int PortTop_BulkStop_005c1f1c(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x005c1f1cu, "", n, _ReturnAddress(), ex);

@@ -121,8 +121,11 @@ those any more). It plans a call closure from roots and writes one exe-only wrap
 (`Match/PortTop_<rva>.cpp`: `#define FUN_<callee> <exe symbol>` lines, then `#include` of the matched source under
 `MATCH_PORT`), plus a named-stop file for callees with no body. Run from the worktree root. A **profile** is one
 closure: `raceload` (race-load closure of 0x0040d270, stops `Match/PortTop_RaceLoadStops.cpp`, `MASHED_OT_RACELOAD`),
-`audio` (audio-tick / audio-init closure, stops `Match/PortTop_AudioStops.cpp`), `raceframe` (PORT-TOP-06) and
-`renderframe` (PORT-TOP-RENDERFRAME-492E90). **Profiles and rules are data, not code (BIND-PROFILE-DATA, KICKOFF_run54
+`audio` (audio-tick / audio-init closure, stops `Match/PortTop_AudioStops.cpp`), `raceframe` (PORT-TOP-06),
+`renderframe` (PORT-TOP-RENDERFRAME-492E90) and `bulk` (RACE-BIND-C4-BULK cp1 list, stops `Match/PortTop_BulkStops.cpp`,
+BIND-BULK-PROFILE: binds only its listed roots, reuses an rva's existing exe body, and a body any other profile bound
+wins over a bulk stop; after `write --profile bulk` run `refs --profile raceload`, which owns `PortTop_BulkRefs.cpp`;
+its selftest also checks the listing against cp1's `last_plan.txt`, every moved line named in `state/bulk/moved.tsv`). **Profiles and rules are data, not code (BIND-PROFILE-DATA, KICKOFF_run54
 rule 1): a binding row never edits `porttop_bind.py`.** It adds lines to:
 - `re/tools/bind/state/<profile>/profile.json`: the profile's settings (own mark / tag, stop file and prefix, header and
   stop text, flags such as `c_emit`, `static_stop`, `group_same_source`, `root_external`, allowlist text, selftest order).

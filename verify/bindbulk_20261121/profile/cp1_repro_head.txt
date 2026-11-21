@@ -1,0 +1,4 @@
+plan     IDENTICAL, key order IDENTICAL (505 entries)
+listing  DIFFERENT vs last_plan.txt (506 lines)
+wrappers IDENTICAL (97 binds)
+stops    IDENTICAL

@@ -1,0 +1,21 @@
+# Profile `bulk` rules (format: state/_shared/rules.tsv header). Carried from verify/bindbulk_20261121/tools/bulk_bind_gen.py
+# (RACE-BIND-C4-BULK checkpoint 1) by BIND-BULK-PROFILE 2026-11-21. The roots are not forced (profile.json force_roots
+# false): a listed rva that already has an exe body is reused, never bound twice.
+#
+# The exe's file layer on the top-down route (no RtFSManager): the piz mount stack and the RW stream open / close
+# bindings over it (PORT-TOP-04F).
+alias	00495280	PortTop_PizFs_Mount_00495280	Match/PortTop_00402750_Pieces.cpp
+alias	004952f0	PortTop_PizFs_Unmount_004952f0	Match/PortTop_00402750_Pieces.cpp
+alias	004cc230	PortTop_RwStreamOpen_004cc230	Match/PortTop_RwStream04F.cpp
+alias	004cc160	PortTop_RwStreamClose_004cc160	Match/PortTop_RwStream04F.cpp
+alias	00550b00	RwCoreBind_FsFileExists_00550b00	RwCore/RwCore_Bind_00550b00.cpp
+# 0x0042fe30: one exe body already compiled from re/match/s07/0042fe30.c (MATCH-S07 TU)
+alias	0042fe30	RaceEndFlagIfEndMode	Match/MatchS07_0042fe30.cpp
+# 0x00458c70: the named counting stand-in as cp1 bound it (the raceload profile now aliases PortTop_RL_00458c70)
+alias	00458c70	PortTop_StandInRL_00458c70	Match/PortTop_StandInsRL.cpp
+# a callee whose exe body takes another argument list than the caller's source declares binds to the forwarder
+callee_override	0042a5d0	004b3bf0	MatchS06_0042a5d0_Call004b3bf0	Match/MatchS06_0042a5d0.cpp: the source passes 1 argument, Orig_004b3bf0 takes 3; declared deviation there, 2nd / 3rd passed as 0
+# re/match/s13/0047bf70.c: 0x0047be80 HELD (86.4%), its copy is #ifndef MATCH_PORT
+not_local	0047bf70	0047be80
+# re/match/topm01/00411d90.c: 0x00411350 is only forward-declared under MATCH_PORT
+not_local	00411d90	00411350
