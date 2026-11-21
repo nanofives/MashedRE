@@ -1330,10 +1330,14 @@ def recompile_wrappers(wrappers, vsdir: pathlib.Path, out: pathlib.Path):
     body += "popd" + NL + "exit /b 0" + NL
     bat = out / "vsrc_compile.bat"
     bat.write_text(body)
-    r = subprocess.run(["cmd", "/c", str(bat)], capture_output=True, text=True)
-    (out / "vsrc_compile.log").write_text(r.stdout + r.stderr)
+    # cl output read as bytes and decoded with replace. With text=True under PYTHONUTF8=1 a non-UTF-8 cl message
+    # (the Spanish cl, OEM codepage) raised in the reader thread, r.stdout stayed None and the log write raised TypeError.
+    r = subprocess.run(["cmd", "/c", str(bat)], capture_output=True)
+    so = (r.stdout or b"").decode("mbcs", errors="replace")
+    se = (r.stderr or b"").decode("mbcs", errors="replace")
+    (out / "vsrc_compile.log").write_text(so + se, encoding="utf-8")
     if r.returncode != 0:
-        raise SystemExit("wrapper recompile failed:" + NL + r.stdout[-3000:] + r.stderr[-2000:])
+        raise SystemExit("wrapper recompile failed:" + NL + so[-3000:] + se[-2000:])
 
 
 def do_link(out: pathlib.Path):
