@@ -1,0 +1,619 @@
+rva	class	route	calls	hooks_level	source	best_pct	name	subsystem	binding	in_provisional	insitu_verdict
+0x005cb2a0	game code	replay inside the original on ref1, then provisional bind	2445685	C3	re/match/s28/005cb2a0.c	15.6	RwDeviceMatrixMultiply	render	exe-body	1	
+0x004d8300	game code	replay inside the original on ref1, then provisional bind	894664	C2	re/match/s21/004d8300.c	51.6	FUN_004d8300	render	exe-body	1	
+0x004e6100	RenderWare core	L-124 route (matched RW core on d3d9)	707030	C2	re/match/rwl02/004e6100.c	31.7	RpAtomicGetWorldBoundingSphere	third-party-library[renderware]	unbound	1	
+0x00547450	game code	replay inside the original on ref1, then provisional bind	523931	C2	re/match/s24/00547450.c	66.8	FUN_00547450	track	unbound	0	
+0x004c39b0	game code	replay inside the original on ref1, then provisional bind	408231	C2	re/match/s19/004c39b0.c	69.9	RwV3dNormalize	render	rw-lib	1	
+0x004721e0	no hooks.csv row	discovery first (function + C1 row), then by class	248644	none					unbound	0	
+0x004c4a50	game code	replay inside the original on ref1, then provisional bind	243330	C3	re/match/s19/004c4a50.c	77.8	RwMatrixRotateInner	render	exe-body	1	IDENTICAL-FOR-2724
+0x004dc4a0	RenderWare core	L-124 route (matched RW core on d3d9)	213518	C2	re/match/rwl01/004dc4a0.c	8.8	FUN_004dc4a0	third-party-library[renderware]	unbound	1	
+0x004c51a0	game code	replay inside the original on ref1, then provisional bind	213046	C3	re/match/s19/004c51a0.c	14.7	RwMatrixTranslate	render	exe-body	1	DIVERGED@1
+0x004c3c60	game code	replay inside the original on ref1, then provisional bind	194622	C3	re/match/s19/004c3c60.c	97.3	Vec2Normalize	render	exe-body	0	
+0x004dc410	RenderWare core	L-124 route (matched RW core on d3d9)	191952	C2	re/match/rwl01/004dc410.c	2.2	FUN_004dc410	third-party-library[renderware]	exe-body	1	
+0x004dc370	RenderWare core	L-124 route (matched RW core on d3d9)	187307	C2	re/match/rwl01/004dc370.c	2.0	FUN_004dc370	third-party-library[renderware]	exe-body	1	
+0x005c6b60	game code	replay inside the original on ref1, then provisional bind	136978	C3	re/match/s28/005c6b60.c	54.8	Delta5c6b60	boot	unbound	0	
+0x005405c0	RenderWare core	L-124 route (matched RW core on d3d9)	136752	C2	re/match/rwl03/005405c0.c	23.8	FUN_005405c0	third-party-library[renderware]	unbound	1	
+0x00468b80	no hooks.csv row	discovery first (function + C1 row), then by class	114486	none					unbound	0	
+0x004c5010	game code	replay inside the original on ref1, then provisional bind	109827	C3	re/match/s19/004c5010.c	84.7	RwMatrixScale	render	exe-body	1	
+0x00535700	RenderWare core	L-124 route (matched RW core on d3d9)	99214	C2	re/match/rwl03/00535700.c	51.7	FUN_00535700	third-party-library[renderware]	unbound	0	
+0x004a2be9	game code	replay inside the original on ref1, then provisional bind	90879	C2	re/match/s17/004a2be9.c	50.0	__security_check_cookie	boot	hand-port	0	
+0x004c52f0	game code	replay inside the original on ref1, then provisional bind	90225	C3	re/match/s19/004c52f0.c	12.6	RwMatrixCombine	render	exe-body	0	IDENTICAL-FOR-2724
+0x005c70d0	no hooks.csv row	discovery first (function + C1 row), then by class	90034	none					unbound	0	
+0x005b8c40	game code	replay inside the original on ref1, then provisional bind	81491	C2	re/match/s27/005b8c40.c	30.0	FUN_005b8c40	audio	unbound	0	
+0x0047ba20	game code	replay inside the original on ref1, then provisional bind	74268	C2	re/match/s13/0047ba20.c	60.8	FUN_0047ba20	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x004c4dc0	game code	replay inside the original on ref1, then provisional bind	71648	C3	re/match/s19/004c4dc0.c	91.2	RwMatrixInvertEntry	util	exe-body	1	IDENTICAL-FOR-2724
+0x005c7330	game code	replay inside the original on ref1, then provisional bind	68463	C2	re/match/s28/005c7330.c	29.3	FUN_005c7330	audio	unbound	0	
+0x004a3384	game code	replay inside the original on ref1, then provisional bind	60144	C2			CRT::acos	util	unbound	0	
+0x004cca80	RenderWare core	L-124 route (matched RW core on d3d9)	55906	C1			FUN_004cca80	third-party-library[renderware]	exe-body	1	
+0x005a75b0	game code	replay inside the original on ref1, then provisional bind	55839	C2	re/match/s25/005a75b0.c	51.6	FUN_005a75b0	audio	stop	1	CRASH
+0x0045ac40	game code	replay inside the original on ref1, then provisional bind	54380	C2	re/match/s09/0045ac40.c	61.5	FUN_0045ac40	gameplay	unbound	0	
+0x0053e6d0	RenderWare core	L-124 route (matched RW core on d3d9)	53004	C1			FUN_0053e6d0	third-party-library[renderware]	unbound	0	
+0x0055c2d0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	51046	C3	re/match/rwl05/0055c2d0.c	89.2	FUN_0055c2d0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004af340	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	50960	C2			FUN_004af340	third-party-library[msvc-crt-main]	unbound	0	
+0x00484360	no hooks.csv row	discovery first (function + C1 row), then by class	50879	none					unbound	0	
+0x00564310	RW-Physics	replay inside the original, then PORT-RWP-WIRE	48983	C3	re/match/rwl05/00564310.c	15.4	FUN_00564310	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005a9280	game code	replay inside the original on ref1, then provisional bind	47843	C2	re/match/s25/005a9280.c	38.0	FUN_005a9280	audio	unbound	0	
+0x005412d0	RenderWare core	L-124 route (matched RW core on d3d9)	37764	C2	re/match/rwl04/005412d0.c	44.2	FUN_005412d0	third-party-library[renderware]	unbound	1	
+0x00539ec0	RenderWare core	L-124 route (matched RW core on d3d9)	36865	C2	re/match/rwl03/00539ec0.c	12.4	FUN_00539ec0	third-party-library[renderware]	unbound	0	
+0x004c4680	game code	replay inside the original on ref1, then provisional bind	31704	C2	re/match/s19/004c4680.c	34.5	FUN_004c4680	render	unbound	1	
+0x004c1de0	RenderWare core	L-124 route (matched RW core on d3d9)	28953	C1			FUN_004c1de0	third-party-library[renderware]	exe-body	1	
+0x005b6b00	game code	replay inside the original on ref1, then provisional bind	28728	C3	re/match/s27/005b6b00.c	26.8	FUN_005b6b00	audio	unbound	0	
+0x00595f10	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	28440	C2			FUN_00595f10	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x0056ac40	RW-Physics	replay inside the original, then PORT-RWP-WIRE	27791	C2	re/match/rwl06/0056ac40.c	4.1	FUN_0056ac40	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004ca160	RenderWare core	L-124 route (matched RW core on d3d9)	26228	C1			FUN_004ca160	third-party-library[renderware]	unbound	1	
+0x004cab30	RenderWare core	L-124 route (matched RW core on d3d9)	26228	C1			FUN_004cab30	third-party-library[renderware]	unbound	1	
+0x0056adb0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	23316	C2	re/match/rwl06/0056adb0.c	10.6	FUN_0056adb0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004b6cd0	no hooks.csv row	discovery first (function + C1 row), then by class	22480	none					unbound	0	
+0x0046f6c0	game code	replay inside the original on ref1, then provisional bind	21823	C2	re/match/s11/0046f6c0.c	50.7	VehicleWheelContactSolver	vehicle	unbound	1	DIVERGED@1
+0x00454350	game code	replay inside the original on ref1, then provisional bind	21752	C2	re/match/s09/00454350.c	98.2	FUN_00454350	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x00468d80	game code	replay inside the original on ref1, then provisional bind	21556	C2	re/match/s11/00468d80.c	82.1	VehicleTerrainContactSolver	vehicle	unbound	1	DIVERGED@408
+0x004694e0	game code	replay inside the original on ref1, then provisional bind	21556	C2	re/match/s11/004694e0.c	46.5	VehicleObjectContactSolver	vehicle	unbound	0	IDENTICAL-FOR-2724
+0x00469aa0	game code	replay inside the original on ref1, then provisional bind	21556	C2	re/match/s11/00469aa0.c	60.0	VehicleContactScanUpdate	vehicle	unbound	1	DIVERGED@385
+0x0046e9e0	game code	replay inside the original on ref1, then provisional bind	21556	C2	re/match/s11/0046e9e0.c	81.7	FUN_0046e9e0	vehicle	unbound	1	DIVERGED@116
+0x00578b20	RW-Physics	replay inside the original, then PORT-RWP-WIRE	20175	C3	re/match/rwl06/00578b20.c	90.6	FUN_00578b20	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00547bf0	game code	replay inside the original on ref1, then provisional bind	18797	C2	re/match/s24/00547bf0.c	46.0	FUN_00547bf0	track	unbound	0	
+0x004b49b0	no hooks.csv row	discovery first (function + C1 row), then by class	18034	none					unbound	0	
+0x004c1f80	game code	replay inside the original on ref1, then provisional bind	16093	C2	re/match/s19/004c1f80.c	17.4	FUN_004c1f80	render	exe-body	1	
+0x00538d60	RenderWare core	L-124 route (matched RW core on d3d9)	14878	C2			FUN_00538d60	third-party-library[renderware]	unbound	0	
+0x00568990	RW-Physics	replay inside the original, then PORT-RWP-WIRE	14377	C3	re/match/rwl06/00568990.c	40.6	FUN_00568990	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004c9290	RenderWare core	L-124 route (matched RW core on d3d9)	13166	C1			FUN_004c9290	third-party-library[renderware]	unbound	1	
+0x004c2620	game code	replay inside the original on ref1, then provisional bind	12860	C2	re/match/s19/004c2620.c	19.0	FUN_004c2620	render	exe-body	1	
+0x004c2a30	game code	replay inside the original on ref1, then provisional bind	12860	C2	re/match/s19/004c2a30.c	49.6	FUN_004c2a30	render	exe-body	1	
+0x0046d3a0	no hooks.csv row	discovery first (function + C1 row), then by class	12812	none					unbound	0	
+0x00443440	game code	replay inside the original on ref1, then provisional bind	12104	C2	re/match/s08/00443440.c	58.4	FUN_00443440	ai	unbound	1	DIVERGED@196
+0x0055bae0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	12000	C3	re/match/rwl05/0055bae0.c	39.2	FUN_0055bae0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00564040	RW-Physics	replay inside the original, then PORT-RWP-WIRE	11776	C3	re/match/rwl05/00564040.c	19.4	FUN_00564040	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00420050	game code	replay inside the original on ref1, then provisional bind	10900	C2	re/match/s05/00420050.c	99.3	PerPlayerViewportRender	render	unbound	0	IDENTICAL-FOR-2724
+0x00463640	game code	replay inside the original on ref1, then provisional bind	10896	C2	re/match/s10/00463640.c	94.3	FUN_00463640	audio	stop	0	IDENTICAL-FOR-2724
+0x00420290	game code	replay inside the original on ref1, then provisional bind	10880	C2	re/match/s05/00420290.c	86.7	FUN_00420290	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x0040aef0	game code	replay inside the original on ref1, then provisional bind	10876	C2	re/match/racepath/0040aef0.c	97.6	FUN_0040aef0	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x00420870	game code	replay inside the original on ref1, then provisional bind	10876	C2	re/match/s05/00420870.c	72.1	FUN_00420870	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x004752f0	game code	replay inside the original on ref1, then provisional bind	10876	C2	re/match/s12/004752f0.c	95.0	FUN_004752f0	render	unbound	0	IDENTICAL-FOR-2724
+0x00546e70	game code	replay inside the original on ref1, then provisional bind	10876	C2	re/match/s24/00546e70.c	87.0	FUN_00546e70	vehicle	unbound	0	IDENTICAL-FOR-2724
+0x004a5984	game code	replay inside the original on ref1, then provisional bind	10721	C2			CrtSehProlog	boot	unbound	0	
+0x00407e20	game code	replay inside the original on ref1, then provisional bind	10663	C2	re/match/s01/00407e20.c	76.6	FUN_00407e20	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x004b42c0	game code	replay inside the original on ref1, then provisional bind	10635	C2	re/match/s18/004b42c0.c	89.0	FUN_004b42c0	render	unbound	0	IDENTICAL-FOR-2724
+0x005b7980	game code	replay inside the original on ref1, then provisional bind	10620	C2	re/match/s27/005b7980.c	62.5	FUN_005b7980	audio	unbound	0	
+0x00467650	game code	replay inside the original on ref1, then provisional bind	10263	C3	re/match/s11/00467650.c	56.1	VehicleWheelDrivetrainUpdate	vehicle	unbound	0	
+0x00468980	game code	replay inside the original on ref1, then provisional bind	10263	C3	re/match/s11/00468980.c	90.1	VehicleAeroStabilizer	vehicle	unbound	0	
+0x0046ddb0	game code	replay inside the original on ref1, then provisional bind	10263	C3	re/match/s11/0046ddb0.c	81.7	VehicleWheelForceIntegrator	vehicle	unbound	0	
+0x00470670	game code	replay inside the original on ref1, then provisional bind	10263	C3	re/match/s11/00470670.c	98.0	VehicleControlUpdate	vehicle	unbound	0	
+0x004228f0	game code	replay inside the original on ref1, then provisional bind	10135	C2	re/match/s05/004228f0.c	79.2	FUN_004228f0	render	unbound	0	IDENTICAL-FOR-2724
+0x00577ec0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	9336	C3	re/match/rwl06/00577ec0.c	15.1	FUN_00577ec0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0058ee50	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	9216	C2			FUN_0058ee50	third-party-library[qhull-2002.1]	unbound	0	
+0x004b2eb0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	7943	C2			FUN_004b2eb0	third-party-library[msvc-crt-main]	unbound	0	
+0x004b6b10	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	7943	C2			__stricmp	third-party-library[msvc-crt]	unbound	0	
+0x004cc5e0	game code	replay inside the original on ref1, then provisional bind	7761	C2	re/match/s20/004cc5e0.c	59.8	FUN_004cc5e0	render	rw-lib	1	
+0x005667c0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	7479	C3	re/match/rwl06/005667c0.c	73.7	FUN_005667c0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00578cb0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	6720	C3	re/match/rwl06/00578cb0.c	78.4	FUN_00578cb0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004ccef0	RenderWare core	L-124 route (matched RW core on d3d9)	6259	C1			FUN_004ccef0	third-party-library[renderware]	stop	1	
+0x00414570	game code	replay inside the original on ref1, then provisional bind	6052	C2	re/match/racepath/00414570.c	93.0	FUN_00414570	ai	unbound	0	IDENTICAL-FOR-2724
+0x00416250	game code	replay inside the original on ref1, then provisional bind	6052	C2	re/match/t01g/00416250.c	88.9	FUN_00416250	ai	unbound	0	IDENTICAL-FOR-2724
+0x00443dc0	game code	replay inside the original on ref1, then provisional bind	6052	C2	re/match/s08/00443dc0.c	57.5	FUN_00443dc0	ai	unbound	1	DIVERGED@2
+0x004b6630	no hooks.csv row	discovery first (function + C1 row), then by class	5500	none					unbound	0	
+0x004709a0	game code	replay inside the original on ref1, then provisional bind	5438	C2	re/match/s11/004709a0.c	55.7	VehicleCollisionBroadPhase	vehicle	unbound	1	DIVERGED@321
+0x0056b310	RW-Physics	replay inside the original, then PORT-RWP-WIRE	5436	C1			FUN_0056b310	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005aac00	no hooks.csv row	discovery first (function + C1 row), then by class	5378	none					stop	0	
+0x005834a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	5088	C2			FUN_005834a0	third-party-library[qhull-2002.1]	unbound	0	
+0x0059c470	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	5064	C2			FUN_0059c470	third-party-library[qhull-2002.1]	unbound	0	
+0x005b0cf0	game code	replay inside the original on ref1, then provisional bind	4672	C3	re/match/s26/005b0cf0.c	43.9	FUN_005b0cf0	audio	stop	0	IDENTICAL-FOR-2724
+0x004128f0	game code	replay inside the original on ref1, then provisional bind	4562	C2			FUN_004128f0	hud	unbound	0	
+0x0056a7a0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	4475	C2	re/match/rwl06/0056a7a0.c	7.0	FUN_0056a7a0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005b10a0	game code	replay inside the original on ref1, then provisional bind	4432	C3	re/match/s26/005b10a0.c	42.9	AudioTableDispatchAt4	audio	unbound	0	
+0x00414c30	game code	replay inside the original on ref1, then provisional bind	4251	C2	re/match/racepath/00414c30.c	96.5	FUN_00414c30	ai	unbound	0	IDENTICAL-FOR-2724
+0x0047bb10	game code	replay inside the original on ref1, then provisional bind	4126	C2	re/match/s13/0047bb10.c	79.8	FUN_0047bb10	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x005784a0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	4067	C3	re/match/rwl06/005784a0.c	69.6	FUN_005784a0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00536e90	RenderWare core	L-124 route (matched RW core on d3d9)	3935	C1	re/match/rwl03/00536e90.c	0.0	FUN_00536e90	third-party-library[renderware]	unbound	1	
+0x00583150	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	3912	C2			FUN_00583150	third-party-library[qhull-2002.1]	unbound	0	
+0x00407a90	no hooks.csv row	discovery first (function + C1 row), then by class	3503	none					unbound	0	
+0x00575120	RW-Physics	replay inside the original, then PORT-RWP-WIRE	3464	C3	re/match/rwl06/00575120.c	86.7	FUN_00575120	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004b4bb0	no hooks.csv row	discovery first (function + C1 row), then by class	3409	none					unbound	0	
+0x0053e430	RenderWare core	L-124 route (matched RW core on d3d9)	3324	C2	re/match/rwl03/0053e430.c	44.2	FUN_0053e430	third-party-library[renderware]	unbound	0	
+0x00450b10	game code	replay inside the original on ref1, then provisional bind	3141	C3	re/match/s08/00450b10.c	86.6	HudIm2DQuad	hud	exe-body	1	IDENTICAL-FOR-2724
+0x0056fad0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	3075	C3	re/match/rwl06/0056fad0.c	85.3	FUN_0056fad0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00578bd0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2972	C3	re/match/rwl06/00578bd0.c	50.0	FUN_00578bd0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00575c60	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2878	C3	re/match/rwl06/00575c60.c	4.4	FUN_00575c60	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004967e0	game code	replay inside the original on ref1, then provisional bind	2829	C2	re/match/s16/004967e0.c	98.8	FUN_004967e0	input	stand-in	0	IDENTICAL-FOR-2724
+0x004d8c40	game code	replay inside the original on ref1, then provisional bind	2829	C3	re/match/s21/004d8c40.c	69.4	FUN_004d8c40	frontend	exe-body	1	
+0x004dc8a0	RenderWare core	L-124 route (matched RW core on d3d9)	2829	C2	re/match/rwl01/004dc8a0.c	58.3	FUN_004dc8a0	third-party-library[renderware]	unbound	1	
+0x005a6ea0	game code	replay inside the original on ref1, then provisional bind	2829	C2	re/match/s25/005a6ea0.c	38.9	FUN_005a6ea0	audio	provisional	1	IDENTICAL-FOR-2724
+0x0045d7a0	game code	replay inside the original on ref1, then provisional bind	2828	C2	re/match/s10/0045d7a0.c	52.6	FUN_0045d7a0	util	stop	0	IDENTICAL-FOR-2724
+0x0045dd60	game code	replay inside the original on ref1, then provisional bind	2828	C2	re/match/s10/0045dd60.c	78.7	FUN_0045dd60	audio	stop	0	IDENTICAL-FOR-2724
+0x005a6f30	game code	replay inside the original on ref1, then provisional bind	2828	C2	re/match/s25/005a6f30.c	65.4	FUN_005a6f30	audio	provisional	1	NOT-WIRED
+0x005ba7f0	game code	replay inside the original on ref1, then provisional bind	2828	C2	re/match/s27/005ba7f0.c	18.9	FUN_005ba7f0	audio	unbound	0	
+0x005baf00	game code	replay inside the original on ref1, then provisional bind	2828	C3	re/match/s27/005baf00.c	82.6	MusicGroupVolumeSet	audio	unbound	0	IDENTICAL-FOR-2724
+0x00582f70	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2804	C2			FUN_00582f70	third-party-library[qhull-2002.1]	unbound	0	
+0x0045efe0	game code	replay inside the original on ref1, then provisional bind	2724	C2	re/match/s10/0045efe0.c	89.8	FUN_0045efe0	audio	stop	0	IDENTICAL-FOR-2724
+0x00448220	game code	replay inside the original on ref1, then provisional bind	2722	C2	re/match/s08/00448220.c	97.0	Frontend::PostRaceResultCamera	frontend	unbound	1	DIVERGED@1116
+0x00412620	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/racepath/00412620.c	49.4	FUN_00412620	render	unbound	0	IDENTICAL-FOR-2724
+0x00424eb0	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s05/00424eb0.c	98.6	FUN_00424eb0	util	unbound	1	DIVERGED@1108
+0x00426810	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s06/00426810.c	97.9	sub_00426810	render	unbound	0	IDENTICAL-FOR-2724
+0x00457100	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/pilot/a2_00457100.c	97.7	FUN_00457100	gameplay	unbound	0	
+0x00459000	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s09/00459000.c	92.7	FUN_00459000	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x0045ae80	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s09/0045ae80.c	80.7	FUN_0045ae80	gameplay	unbound	0	
+0x00470c70	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s11/00470c70.c	69.8	FUN_00470c70	vehicle	unbound	0	CRASH
+0x00471ec0	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s11/00471ec0.c	44.4	sub_00471ec0	camera	unbound	0	IDENTICAL-FOR-2724
+0x00474f50	no hooks.csv row	discovery first (function + C1 row), then by class	2719	none					unbound	0	
+0x00479100	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s12/00479100.c	69.1	FUN_00479100	render	unbound	1	DIVERGED@161
+0x0047d640	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s13/0047d640.c	45.7	FUN_0047d640	hud	unbound	0	IDENTICAL-FOR-2724
+0x0047def0	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s13/0047def0.c	85.3	FUN_0047def0	hud	unbound	0	IDENTICAL-FOR-2724
+0x0047eb30	game code	replay inside the original on ref1, then provisional bind	2719	C3	re/match/s13/0047eb30.c	92.8	VehiclePhysicsWorldStep	vehicle	unbound	0	IDENTICAL-FOR-2724
+0x00481a30	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s13/00481a30.c	63.3	FUN_00481a30	vehicle	unbound	1	CRASH
+0x00488e70	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/racepath/00488e70.c	99.6	FUN_00488e70	util	unbound	0	IDENTICAL-FOR-2724
+0x0048a130	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s14/0048a130.c	93.0	FUN_0048a130	particle	unbound	0	
+0x0048a780	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s14/0048a780.c	49.1	FUN_0048a780	particle	unbound	0	IDENTICAL-FOR-2724
+0x00491340	game code	replay inside the original on ref1, then provisional bind	2719	C2	re/match/s15/00491340.c	98.1	FUN_00491340	render	unbound	0	IDENTICAL-FOR-2724
+0x0052e0e0	RenderWare core	L-124 route (matched RW core on d3d9)	2719	C2	re/match/rwl03/0052e0e0.c	36.6	FUN_0052e0e0	third-party-library[renderware]	unbound	0	
+0x00551d40	RenderWare core	L-124 route (matched RW core on d3d9)	2719	C2	re/match/rwl04/00551d40.c	41.5	FUN_00551d40	third-party-library[renderware]	unbound	0	
+0x0056a450	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2718	C3	re/match/rwl06/0056a450.c	3.3	FUN_0056a450	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0056dd40	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2718	C3			FUN_0056dd40	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00559040	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2713	C3	re/match/rwl05/00559040.c	11.4	FUN_00559040	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00597350	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2536	C2			FUN_00597350	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x005976c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2536	C2			FUN_005976c0	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x00597c10	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2536	C2			FUN_00597c10	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x00591710	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2532	C2			FUN_00591710	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x005960d0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2512	C2			FUN_005960d0	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x00575880	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2508	C3	re/match/rwl06/00575880.c	59.1	FUN_00575880	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00578610	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2508	C3	re/match/rwl06/00578610.c	22.1	FUN_00578610	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00489500	game code	replay inside the original on ref1, then provisional bind	2484	C2	re/match/racepath/00489500.c	48.8	FUN_00489500	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x00469df0	game code	replay inside the original on ref1, then provisional bind	2402	C2	re/match/s11/00469df0.c	63.1	VehicleVehicleCollisionImpulse	vehicle	unbound	1	DIVERGED@385
+0x004f6870	game code	replay inside the original on ref1, then provisional bind	2378	C2	re/match/s22/004f6870.c	23.9	FUN_004f6870	render	unbound	1	
+0x005c89a0	no hooks.csv row	discovery first (function + C1 row), then by class	2303	none					unbound	0	
+0x0047f6d0	game code	replay inside the original on ref1, then provisional bind	2276	C2	re/match/s13/0047f6d0.c	97.9	FUN_0047f6d0	gameplay	unbound	0	
+0x0055c230	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2266	C3	re/match/rwl05/0055c230.c	93.4	FUN_0055c230	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004a9410	game code	replay inside the original on ref1, then provisional bind	2213	C2			_strlen	boot	unbound	0	
+0x005af690	game code	replay inside the original on ref1, then provisional bind	2207	C2	re/match/s26/005af690.c	88.9	FUN_005af690	audio	unbound	0	
+0x004ea9a0	RenderWare core	L-124 route (matched RW core on d3d9)	2117	C2	re/match/rwl02/004ea9a0.c	30.1	FUN_004ea9a0	third-party-library[renderware]	unbound	1	
+0x00475f90	game code	replay inside the original on ref1, then provisional bind	2069	C2	re/match/s12/00475f90.c	96.4	FUN_00475f90	render	unbound	0	IDENTICAL-FOR-2724
+0x00582930	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1944	C2			FUN_00582930	third-party-library[qhull-2002.1]	unbound	0	
+0x0059cd70	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1892	C2			FUN_0059cd70	third-party-library[qhull-2002.1]	unbound	0	
+0x0056c8e0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1876	C3	re/match/rwl06/0056c8e0.c	21.1	FUN_0056c8e0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004f2420	no hooks.csv row	discovery first (function + C1 row), then by class	1836	none					exe-body	1	
+0x0047f7d0	game code	replay inside the original on ref1, then provisional bind	1745	C1	re/match/tlr/0047f7d0.c	76.5	FUN_0047f7d0	physics	unbound	0	
+0x00539900	RenderWare core	L-124 route (matched RW core on d3d9)	1745	C2	re/match/rwl03/00539900.c	12.4	FUN_00539900	third-party-library[renderware]	unbound	0	
+0x00575fe0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1745	C3	re/match/rwl06/00575fe0.c	13.9	FUN_00575fe0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00583070	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1692	C2			FUN_00583070	third-party-library[qhull-2002.1]	unbound	0	
+0x00561f40	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1656	C1			FUN_00561f40	third-party-library[RenderWare-Physics-3.7]	exe-body	1	
+0x0059b7b0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1644	C2			FUN_0059b7b0	third-party-library[qhull-2002.1]	unbound	0	
+0x0053e5d0	RenderWare core	L-124 route (matched RW core on d3d9)	1628	C2	re/match/rwl03/0053e5d0.c	59.4	FUN_0053e5d0	third-party-library[renderware]	unbound	0	
+0x0059c1a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1628	C2			FUN_0059c1a0	third-party-library[qhull-2002.1]	unbound	0	
+0x00441d40	game code	replay inside the original on ref1, then provisional bind	1626	C2	re/match/s08/00441d40.c	69.2	FUN_00441d40	util	unbound	1	DIVERGED@2
+0x00544bf0	RenderWare core	L-124 route (matched RW core on d3d9)	1420	C2	re/match/rwl04/00544bf0.c	74.3	FUN_00544bf0	third-party-library[renderware]	unbound	0	
+0x0059cca0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1380	C2			FUN_0059cca0	third-party-library[qhull-2002.1]	unbound	0	
+0x00499d90	game code	replay inside the original on ref1, then provisional bind	1330	C2	re/match/s16/00499d90.c	43.9	FUN_00499d90	render	unbound	0	IDENTICAL-FOR-2724
+0x0055b750	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1139	C3	re/match/rwl05/0055b750.c	42.4	FUN_0055b750	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005752b0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1133	C2	re/match/rwl06/005752b0.c	56.0	FUN_005752b0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00576880	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1133	C2	re/match/rwl06/00576880.c	23.9	FUN_00576880	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00574ad0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1095	C2	re/match/rwl06/00574ad0.c	21.0	FUN_00574ad0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00486630	no hooks.csv row	discovery first (function + C1 row), then by class	1091	none					unbound	0	
+0x005aa8d0	no hooks.csv row	discovery first (function + C1 row), then by class	1090	none					unbound	0	
+0x004ba1b0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1086	C2			FUN_004ba1b0	third-party-library[lua-4.0]	unbound	0	
+0x004d8810	RenderWare core	L-124 route (matched RW core on d3d9)	1082	C2	re/match/rwl01/004d8810.c	50.7	RwNativeRasterRead	third-party-library[renderware]	exe-body	1	
+0x00544de0	RenderWare core	L-124 route (matched RW core on d3d9)	1018	C1			FUN_00544de0	third-party-library[renderware]	unbound	1	
+0x004ac560	game code	replay inside the original on ref1, then provisional bind	995	C2			FUN_004ac560	boot	unbound	0	
+0x00585ee0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	936	C2			FUN_00585ee0	third-party-library[qhull-2002.1]	unbound	0	
+0x004f71f0	game code	replay inside the original on ref1, then provisional bind	934	C2	re/match/s22/004f71f0.c	34.7	FUN_004f71f0	render	unbound	1	
+0x004e8a10	RenderWare core	L-124 route (matched RW core on d3d9)	892	C2	re/match/rwl02/004e8a10.c	58.6	FUN_004e8a10	third-party-library[renderware]	exe-body	1	
+0x0040be50	game code	replay inside the original on ref1, then provisional bind	871	C2			FUN_0040be50	gameplay	unbound	0	
+0x00533820	RenderWare core	L-124 route (matched RW core on d3d9)	869	C1			FUN_00533820	third-party-library[renderware]	unbound	1	
+0x0058f010	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	836	C2			FUN_0058f010	third-party-library[qhull-2002.1]	unbound	0	
+0x004f57e0	game code	replay inside the original on ref1, then provisional bind	772	C2	re/match/s22/004f57e0.c	14.2	FUN_004f57e0	render	unbound	1	
+0x0052e560	RenderWare core	L-124 route (matched RW core on d3d9)	714	C1			FUN_0052e560	third-party-library[renderware]	unbound	1	
+0x005492b0	RenderWare core	L-124 route (matched RW core on d3d9)	714	C1			FUN_005492b0	third-party-library[renderware]	unbound	1	
+0x0053dea0	RenderWare core	L-124 route (matched RW core on d3d9)	672	C2			FUN_0053dea0	third-party-library[renderware]	unbound	0	
+0x004c4eb0	game code	replay inside the original on ref1, then provisional bind	658	C3	re/match/s19/004c4eb0.c	47.7	RwMatrixInvert_CofactorPath	render	exe-body	1	IDENTICAL-FOR-2724
+0x004b4070	no hooks.csv row	discovery first (function + C1 row), then by class	635	none					unbound	0	
+0x00554940	game code	replay inside the original on ref1, then provisional bind	616	C2	re/match/s24/00554940.c	12.5	LAB_00554940	hud	exe-body	1	
+0x00556e90	game code	replay inside the original on ref1, then provisional bind	616	C2	re/match/s24/00556e90.c	97.5	FUN_00556e90	render	stand-in	1	IDENTICAL-FOR-2724
+0x004a4739	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	562	C2			FUN_004a4739	third-party-library[msvc-crt-main]	unbound	0	
+0x00514760	no hooks.csv row	discovery first (function + C1 row), then by class	558	none					unbound	0	
+0x00575560	RW-Physics	replay inside the original, then PORT-RWP-WIRE	554	C2	re/match/rwl06/00575560.c	31.2	FUN_00575560	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00445aa0	game code	replay inside the original on ref1, then provisional bind	542	C3	re/match/s08/00445aa0.c	67.4	CamEntryType0Step445aa0	util	exe-body	1	DIVERGED@2
+0x00578ff0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	532	C2	re/match/rwl06/00578ff0.c	13.8	FUN_00578ff0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005516c0	RenderWare core	L-124 route (matched RW core on d3d9)	505	C1			FUN_005516c0	third-party-library[renderware]	unbound	1	
+0x004e8120	RenderWare core	L-124 route (matched RW core on d3d9)	499	C2	re/match/rwl02/004e8120.c	50.2	FUN_004e8120	third-party-library[renderware]	exe-body	1	
+0x00583e40	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	492	C2			FUN_00583e40	third-party-library[qhull-2002.1]	unbound	0	
+0x004c4220	RenderWare core	L-124 route (matched RW core on d3d9)	491	C2	re/match/rwl01/004c4220.c	40.7	FUN_004c4220	third-party-library[renderware]	exe-body	1	
+0x0046ef70	game code	replay inside the original on ref1, then provisional bind	486	C2	re/match/s11/0046ef70.c	43.9	FUN_0046ef70	vehicle	unbound	1	DIVERGED@408
+0x004cf5a0	RenderWare core	L-124 route (matched RW core on d3d9)	475	C2	re/match/rwl01/004cf5a0.c	59.4	FUN_004cf5a0	third-party-library[renderware]	exe-body	1	
+0x0055c000	RW-Physics	replay inside the original, then PORT-RWP-WIRE	468	C3	re/match/rwl05/0055c000.c	43.8	RwpGjkSupportMap	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005c2f84	game code	replay inside the original on ref1, then provisional bind	468	C2	re/match/s28/005c2f84.c	2.4	FUN_005c2f84	boot	unbound	0	
+0x004bf260	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	467	C2			lcode_getprevinstr	third-party-library[lua-4.0]	unbound	0	
+0x00583f80	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	460	C2			FUN_00583f80	third-party-library[qhull-2002.1]	unbound	0	
+0x0055b650	RW-Physics	replay inside the original, then PORT-RWP-WIRE	458	C3	re/match/rwl05/0055b650.c	31.6	FUN_0055b650	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00590dc0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	456	C2			FUN_00590dc0	third-party-library[qhull-2002.1]	unbound	0	
+0x005808a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	452	C2			FUN_005808a0	third-party-library[qhull-2002.1]	unbound	0	
+0x00584950	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	452	C2			FUN_00584950	third-party-library[qhull-2002.1]	unbound	0	
+0x0058fd40	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	452	C2			FUN_0058fd40	third-party-library[qhull-2002.1]	unbound	0	
+0x00590930	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	452	C2			FUN_00590930	third-party-library[qhull-2002.1]	unbound	0	
+0x00591a80	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	452	C2			FUN_00591a80	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x0059ced0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	452	C2			FUN_0059ced0	third-party-library[qhull-2002.1]	unbound	0	
+0x004baba0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	433	C2			FUN_004baba0	third-party-library[lua-4.0]	unbound	0	
+0x004bc590	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	433	C2			FUN_004bc590	third-party-library[lua-4.0]	unbound	0	
+0x004f0f10	RenderWare core	L-124 route (matched RW core on d3d9)	433	C2	re/match/rwl03/004f0f10.c	9.3	FUN_004f0f10	third-party-library[renderware]	unbound	1	
+0x00408b00	game code	replay inside the original on ref1, then provisional bind	416	C2	re/match/s01/00408b00.c	97.0	FUN_00408b00	util	unbound	1	IDENTICAL-FOR-2724
+0x00477be0	game code	replay inside the original on ref1, then provisional bind	416	C2	re/match/s12/00477be0.c	93.2	FUN_00477be0	render	unbound	0	IDENTICAL-FOR-2724
+0x004b9ef0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	410	C2			FUN_004b9ef0	third-party-library[lua-4.0]	unbound	0	
+0x004e8c70	RenderWare core	L-124 route (matched RW core on d3d9)	392	C2	re/match/rwl02/004e8c70.c	28.9	FUN_004e8c70	third-party-library[renderware]	exe-body	1	
+0x005451f0	RenderWare core	L-124 route (matched RW core on d3d9)	392	C1			FUN_005451f0	third-party-library[renderware]	unbound	1	
+0x00549fe0	RenderWare core	L-124 route (matched RW core on d3d9)	392	C1			FUN_00549fe0	third-party-library[renderware]	unbound	1	
+0x004f3e90	RenderWare core	L-124 route (matched RW core on d3d9)	389	C2	re/match/rwl03/004f3e90.c	26.5	FUN_004f3e90	third-party-library[renderware]	exe-body	1	
+0x00544100	RenderWare core	L-124 route (matched RW core on d3d9)	388	C1			FUN_00544100	third-party-library[renderware]	unbound	1	
+0x004e7060	RenderWare core	L-124 route (matched RW core on d3d9)	386	C2	re/match/rwl02/004e7060.c	39.5	RpAtomicStreamRead	third-party-library[renderware]	exe-body	1	
+0x004e9330	RenderWare core	L-124 route (matched RW core on d3d9)	386	C2	re/match/rwl02/004e9330.c	51.5	FUN_004e9330	third-party-library[renderware]	exe-body	1	
+0x0052e5c0	RenderWare core	L-124 route (matched RW core on d3d9)	386	C1			FUN_0052e5c0	third-party-library[renderware]	unbound	1	
+0x00549350	RenderWare core	L-124 route (matched RW core on d3d9)	386	C1			FUN_00549350	third-party-library[renderware]	unbound	1	
+0x004b6ba0	no hooks.csv row	discovery first (function + C1 row), then by class	383	none					unbound	0	
+0x0056f350	RW-Physics	replay inside the original, then PORT-RWP-WIRE	370	C2	re/match/rwl06/0056f350.c	15.0	FUN_0056f350	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004b9950	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	367	C2			FUN_004b9950	third-party-library[lua-4.0]	unbound	0	
+0x004b9a10	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	367	C2			FUN_004b9a10	third-party-library[lua-4.0]	unbound	0	
+0x00480d60	game code	replay inside the original on ref1, then provisional bind	366	C2	re/match/s13/00480d60.c	72.8	FUN_00480d60	vehicle	unbound	0	IDENTICAL-FOR-2724
+0x004a34b0	game code	replay inside the original on ref1, then provisional bind	349	C2			_strncpy	boot	stop	0	
+0x00533900	RenderWare core	L-124 route (matched RW core on d3d9)	336	C1			FUN_00533900	third-party-library[renderware]	unbound	1	
+0x005441f0	RenderWare core	L-124 route (matched RW core on d3d9)	336	C1			FUN_005441f0	third-party-library[renderware]	unbound	1	
+0x00589080	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	336	C2			FUN_00589080	third-party-library[qhull-2002.1]	unbound	0	
+0x004b9aa0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	332	C2			FUN_004b9aa0	third-party-library[lua-4.0]	unbound	0	
+0x004eba70	no hooks.csv row	discovery first (function + C1 row), then by class	328	none					unbound	1	
+0x00472360	no hooks.csv row	discovery first (function + C1 row), then by class	322	none					unbound	1	
+0x0052e5a0	RenderWare core	L-124 route (matched RW core on d3d9)	322	C1			FUN_0052e5a0	third-party-library[renderware]	unbound	1	
+0x0053f9d0	RenderWare core	L-124 route (matched RW core on d3d9)	322	C1			FUN_0053f9d0	third-party-library[renderware]	unbound	1	
+0x00557cb0	RenderWare core	L-124 route (matched RW core on d3d9)	322	C1			FUN_00557cb0	third-party-library[renderware]	unbound	1	
+0x004e3dc0	RenderWare core	L-124 route (matched RW core on d3d9)	304	C1			FUN_004e3dc0	third-party-library[renderware]	unbound	1	
+0x0052e580	RenderWare core	L-124 route (matched RW core on d3d9)	304	C1			FUN_0052e580	third-party-library[renderware]	unbound	1	
+0x00597090	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	292	C2			FUN_00597090	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x00487280	game code	replay inside the original on ref1, then provisional bind	276	C2			FUN_00487280	render	unbound	0	
+0x004bfa80	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	276	C2			lcode_codeABC_core	third-party-library[lua-4.0]	unbound	0	
+0x005aa0c0	game code	replay inside the original on ref1, then provisional bind	276	C3	re/match/s25/005aa0c0.c	56.2	AudioTreeWalkPredicateSearch	audio	provisional	1	CRASH
+0x004b9a50	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	275	C2			FUN_004b9a50	third-party-library[lua-4.0]	unbound	0	
+0x004cff20	game code	replay inside the original on ref1, then provisional bind	264	C2	re/match/s20/004cff20.c	62.5	FUN_004cff20	render	unbound	1	
+0x004df120	RenderWare core	L-124 route (matched RW core on d3d9)	264	C2	re/match/rwl01/004df120.c	46.3	FUN_004df120	third-party-library[renderware]	unbound	1	
+0x004bfe30	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	260	C2			FUN_004bfe30	third-party-library[lua-4.0]	unbound	0	
+0x00522ce0	game code	replay inside the original on ref1, then provisional bind	256	C2	re/match/s23/00522ce0.c	66.6	FUN_00522ce0	util	unbound	0	
+0x0052ab00	game code	replay inside the original on ref1, then provisional bind	256	C2	re/match/s23/0052ab00.c	32.2	inflate	util	unbound	0	
+0x004a3860	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	255	C2			FUN_004a3860	third-party-library[msvc-crt-main]	unbound	0	
+0x00474d30	no hooks.csv row	discovery first (function + C1 row), then by class	241	none					exe-body	0	
+0x00442e00	game code	replay inside the original on ref1, then provisional bind	200	C2	re/match/s08/00442e00.c	65.1	FUN_00442e00	util	unbound	1	DIVERGED@1132
+0x004bf600	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	199	C2			lcode_dischargevars	third-party-library[lua-4.0]	unbound	0	
+0x004bf6e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	199	C2			lcode_codearith	third-party-library[lua-4.0]	unbound	0	
+0x0053fbb0	RenderWare core	L-124 route (matched RW core on d3d9)	196	C2	re/match/rwl03/0053fbb0.c	68.5	FUN_0053fbb0	third-party-library[renderware]	rw-lib	1	
+0x00577cb0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	192	C2	re/match/rwl06/00577cb0.c	29.8	FUN_00577cb0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004bf230	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	191	C2			lcode_hasjumps	third-party-library[lua-4.0]	unbound	0	
+0x004b7ff0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	190	C2			FUN_004b7ff0	third-party-library[lua-4.0]	unbound	0	
+0x004befa0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	190	C2			lfunc_freeclosure	third-party-library[lua-4.0]	unbound	0	
+0x004acd00	game code	replay inside the original on ref1, then provisional bind	186	C2			_memmove	boot	unbound	0	
+0x004bc7c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	165	C2			FUN_004bc7c0	third-party-library[lua-4.0]	unbound	0	
+0x00583560	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	156	C2			FUN_00583560	third-party-library[qhull-2002.1]	unbound	0	
+0x005836a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	156	C2			FUN_005836a0	third-party-library[qhull-2002.1]	unbound	0	
+0x004bb160	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	155	C2			FUN_004bb160	third-party-library[lua-4.0]	unbound	0	
+0x004bc5e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	151	C2			FUN_004bc5e0	third-party-library[lua-4.0]	unbound	0	
+0x004bcce0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	140	C2			FUN_004bcce0	third-party-library[lua-4.0]	unbound	0	
+0x004bcda0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	140	C2			FUN_004bcda0	third-party-library[lua-4.0]	unbound	0	
+0x004bda10	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	140	C2			FUN_004bda10	third-party-library[lua-4.0]	unbound	0	
+0x004bda30	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	140	C2			FUN_004bda30	third-party-library[lua-4.0]	unbound	0	
+0x0053f3c0	RenderWare core	L-124 route (matched RW core on d3d9)	140	C1			FUN_0053f3c0	third-party-library[renderware]	unbound	1	
+0x004b2e15	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	137	C2			FUN_004b2e15	third-party-library[msvc-crt-main]	unbound	0	
+0x004ddcb0	RenderWare core	L-124 route (matched RW core on d3d9)	136	C2	re/match/rwl01/004ddcb0.c	46.2	FUN_004ddcb0	third-party-library[renderware]	unbound	1	
+0x00547230	RenderWare core	L-124 route (matched RW core on d3d9)	132	C2	re/match/rwl04/00547230.c	28.4	FUN_00547230	third-party-library[renderware]	unbound	0	
+0x0055b080	RW-Physics	replay inside the original, then PORT-RWP-WIRE	128	C3	re/match/rwl05/0055b080.c	14.5	FUN_0055b080	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004b6ff0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	124	C2			FUN_004b6ff0	third-party-library[lua-4.0]	unbound	0	
+0x00559c40	RW-Physics	replay inside the original, then PORT-RWP-WIRE	124	C3	re/match/rwl05/00559c40.c	42.4	PhysicsSceneBodyRegister	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x004a2fd0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	111	C2			FUN_004a2fd0	third-party-library[msvc-crt-main]	crt-lib	0	
+0x004bb1b0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	106	C2			FUN_004bb1b0	third-party-library[lua-4.0]	unbound	0	
+0x00401da0	game code	replay inside the original on ref1, then provisional bind	104	C2	re/match/s01/00401da0.c	93.5	FUN_00401da0	frontend	unbound	0	IDENTICAL-FOR-2724
+0x00487180	game code	replay inside the original on ref1, then provisional bind	96	C1	re/match/tlr/00487180.c	11.7	FUN_00487180	render	unbound	1	DIVERGED@0
+0x00559ee0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	96	C3	re/match/rwl05/00559ee0.c	43.9	FUN_00559ee0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00577be0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	96	C2	re/match/rwl06/00577be0.c	60.8	FUN_00577be0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005aa180	no hooks.csv row	discovery first (function + C1 row), then by class	96	none					unbound	0	
+0x004bcfe0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	94	C2			FUN_004bcfe0	third-party-library[lua-4.0]	unbound	0	
+0x004acc4b	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	90	C2			FUN_004acc4b	third-party-library[msvc-crt-main]	unbound	0	
+0x004b0609	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	90	C2			FUN_004b0609	third-party-library[msvc-crt-main]	unbound	0	
+0x004b7d60	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	90	C2			FUN_004b7d60	third-party-library[lua-4.0]	unbound	0	
+0x004bb260	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	90	C2			FUN_004bb260	third-party-library[lua-4.0]	unbound	0	
+0x004bd0b0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	90	C2			FUN_004bd0b0	third-party-library[lua-4.0]	unbound	0	
+0x005c1f97	game code	replay inside the original on ref1, then provisional bind	90	C2	re/match/s28/005c1f97.c	69.4	_strtod	boot	unbound	0	
+0x004b7090	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	89	C2			lua_tonumber	third-party-library[lua-4.0]	unbound	0	
+0x004a2d18	game code	replay inside the original on ref1, then provisional bind	86	C2			FUN_004a2d18	render	unbound	0	
+0x004b2bdd	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	83	C2			FUN_004b2bdd	third-party-library[msvc-crt-main]	unbound	0	
+0x005655a0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	80	C3	re/match/rwl06/005655a0.c	14.8	FUN_005655a0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00582840	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	80	C2			FUN_00582840	third-party-library[qhull-2002.1]	unbound	0	
+0x004b4d60	no hooks.csv row	discovery first (function + C1 row), then by class	77	none					unbound	0	
+0x004bc7f0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	77	C2			FUN_004bc7f0	third-party-library[lua-4.0]	unbound	0	
+0x0053a7a0	RenderWare core	L-124 route (matched RW core on d3d9)	77	C2			FUN_0053a7a0	third-party-library[renderware]	unbound	0	
+0x004ad03d	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	75	C2			FUN_004ad03d	third-party-library[msvc-crt-main]	unbound	0	
+0x004ad16e	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	75	C2			FUN_004ad16e	third-party-library[msvc-crt-main]	unbound	0	
+0x004b0525	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	75	C2			FUN_004b0525	third-party-library[msvc-crt-main]	unbound	0	
+0x004b0a43	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	75	C2			FUN_004b0a43	third-party-library[msvc-crt-main]	unbound	0	
+0x004b6b20	game code	replay inside the original on ref1, then provisional bind	75	C2	re/match/s18/004b6b20.c	71.4	FUN_004b6b20	render	unbound	0	
+0x004bc840	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	75	C2			FUN_004bc840	third-party-library[lua-4.0]	unbound	0	
+0x004b4550	game code	replay inside the original on ref1, then provisional bind	74	C3	re/match/s18/004b4550.c	63.3	Vec3Centroid	util	unbound	0	IDENTICAL-FOR-2724
+0x004bd040	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	74	C2			FUN_004bd040	third-party-library[lua-4.0]	unbound	0	
+0x004bd0f0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	74	C2			FUN_004bd0f0	third-party-library[lua-4.0]	unbound	0	
+0x004bd140	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	74	C2			FUN_004bd140	third-party-library[lua-4.0]	unbound	0	
+0x004bd2c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	74	C2			FUN_004bd2c0	third-party-library[lua-4.0]	unbound	0	
+0x004bd570	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	74	C2			FUN_004bd570	third-party-library[lua-4.0]	unbound	0	
+0x004cfdd0	RenderWare core	L-124 route (matched RW core on d3d9)	68	C1			FUN_004cfdd0	third-party-library[renderware]	exe-body	1	
+0x004d2340	game code	replay inside the original on ref1, then provisional bind	68	C2	re/match/s20/004d2340.c	37.3	rwD3D8RasterCreate	render	unbound	1	
+0x004dee40	RenderWare core	L-124 route (matched RW core on d3d9)	68	C2	re/match/rwl01/004dee40.c	22.5	FUN_004dee40	third-party-library[renderware]	unbound	1	
+0x004df030	RenderWare core	L-124 route (matched RW core on d3d9)	68	C1			FUN_004df030	third-party-library[renderware]	unbound	1	
+0x005ae800	game code	replay inside the original on ref1, then provisional bind	67	C3	re/match/s26/005ae800.c	38.2	AudioPoolBlockAlloc	audio	provisional	1	IDENTICAL-FOR-2724
+0x00550130	RenderWare core	L-124 route (matched RW core on d3d9)	66	C2	re/match/rwl04/00550130.c	18.3	FUN_00550130	third-party-library[renderware]	unbound	1	
+0x0055ded0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	64	C3	re/match/rwl05/0055ded0.c	98.4	FUN_0055ded0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00582a60	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	64	C2			FUN_00582a60	third-party-library[qhull-2002.1]	unbound	0	
+0x005833c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	64	C2			FUN_005833c0	third-party-library[qhull-2002.1]	unbound	0	
+0x00583a40	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	64	C2			FUN_00583a40	third-party-library[qhull-2002.1]	unbound	0	
+0x00583c50	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	64	C2			FUN_00583c50	third-party-library[qhull-2002.1]	unbound	0	
+0x005c2300	game code	replay inside the original on ref1, then provisional bind	64	C2	re/match/s28/005c2300.c	4.1	_strncat	boot	unbound	0	
+0x004ba570	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	63	C2			FUN_004ba570	third-party-library[lua-4.0]	unbound	0	
+0x004ac570	game code	replay inside the original on ref1, then provisional bind	62	C2			FUN_004ac570	boot	unbound	0	
+0x005abd30	game code	replay inside the original on ref1, then provisional bind	62	C2	re/match/s25/005abd30.c	52.3	FUN_005abd30	audio	unbound	0	IDENTICAL-FOR-2724
+0x004b7570	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	61	C2			FUN_004b7570	third-party-library[lua-4.0]	unbound	0	
+0x004b7740	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	61	C2			FUN_004b7740	third-party-library[lua-4.0]	unbound	0	
+0x00490020	game code	replay inside the original on ref1, then provisional bind	60	C2	re/match/s15/00490020.c	90.9	FUN_00490020	render	unbound	0	IDENTICAL-FOR-2724
+0x004b78e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	59	C2			FUN_004b78e0	third-party-library[lua-4.0]	unbound	0	
+0x004bca50	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	59	C2			FUN_004bca50	third-party-library[lua-4.0]	unbound	0	
+0x004bd4d0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	59	C2			FUN_004bd4d0	third-party-library[lua-4.0]	unbound	0	
+0x004be220	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	59	C2			lparser_exprstat	third-party-library[lua-4.0]	unbound	0	
+0x004b6c00	no hooks.csv row	discovery first (function + C1 row), then by class	50	none					unbound	0	
+0x004b6f60	no hooks.csv row	discovery first (function + C1 row), then by class	50	none					unbound	0	
+0x004cc230	game code	replay inside the original on ref1, then provisional bind	49	C2	re/match/s20/004cc230.c	48.0	FUN_004cc230	frontend	shim	1	
+0x00582f30	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	48	C2			FUN_00582f30	third-party-library[qhull-2002.1]	unbound	0	
+0x00596f60	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	48	C2			FUN_00596f60	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x004e9e40	RenderWare core	L-124 route (matched RW core on d3d9)	47	C2	re/match/rwl02/004e9e40.c	34.4	FUN_004e9e40	third-party-library[renderware]	unbound	0	
+0x00538800	RenderWare core	L-124 route (matched RW core on d3d9)	47	C1			FUN_00538800	third-party-library[renderware]	unbound	1	
+0x005af8f0	game code	replay inside the original on ref1, then provisional bind	46	C2	re/match/s26/005af8f0.c	90.8	FUN_005af8f0	audio	unbound	0	
+0x005c1926	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	46	C2			FUN_005c1926	third-party-library[msvc-crt-tail]	unbound	0	
+0x004ea220	RenderWare core	L-124 route (matched RW core on d3d9)	44	C2	re/match/rwl02/004ea220.c	46.5	FUN_004ea220	third-party-library[renderware]	unbound	0	
+0x004a5c8a	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	43	C2			FUN_004a5c8a	third-party-library[msvc-crt-main]	unbound	0	
+0x0055b4a0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	40	C3	re/match/rwl05/0055b4a0.c	50.8	FUN_0055b4a0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0055b940	RW-Physics	replay inside the original, then PORT-RWP-WIRE	40	C3	re/match/rwl05/0055b940.c	23.4	PhysicsBodySetMass	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0055bbf0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	40	C3	re/match/rwl05/0055bbf0.c	15.9	FUN_0055bbf0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0058f350	no hooks.csv row	discovery first (function + C1 row), then by class	40	none					unbound	0	
+0x005ab380	game code	replay inside the original on ref1, then provisional bind	38	C3	re/match/s25/005ab380.c	75.0	AudioRwsChunkHeaderRead	audio	unbound	0	IDENTICAL-FOR-2724
+0x004e3e40	RenderWare core	L-124 route (matched RW core on d3d9)	36	C1			FUN_004e3e40	third-party-library[renderware]	unbound	1	
+0x00520930	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	36	C2			png_free	third-party-library[libpng]	unbound	0	
+0x0058ed00	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	36	C2			FUN_0058ed00	third-party-library[qhull-2002.1]	unbound	0	
+0x005b3a00	game code	replay inside the original on ref1, then provisional bind	36	C2	re/match/s27/005b3a00.c	84.7	FUN_005b3a00	audio	unbound	0	IDENTICAL-FOR-2724
+0x004b70d0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	35	C2			FUN_004b70d0	third-party-library[lua-4.0]	unbound	0	
+0x004bb7a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	35	C2			FUN_004bb7a0	third-party-library[lua-4.0]	unbound	0	
+0x004bcfc0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	35	C2			FUN_004bcfc0	third-party-library[lua-4.0]	unbound	0	
+0x005b15e0	no hooks.csv row	discovery first (function + C1 row), then by class	34	none					unbound	0	
+0x005ab710	game code	replay inside the original on ref1, then provisional bind	33	C2	re/match/s25/005ab710.c	44.9	FUN_005ab710	audio	unbound	0	
+0x004a5cf2	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_004a5cf2	third-party-library[msvc-crt-main]	unbound	0	
+0x00582550	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_00582550	third-party-library[qhull-2002.1]	unbound	0	
+0x00585660	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_00585660	third-party-library[qhull-2002.1]	unbound	0	
+0x00585890	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_00585890	third-party-library[qhull-2002.1]	unbound	0	
+0x00585d70	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_00585d70	third-party-library[qhull-2002.1]	unbound	0	
+0x00586040	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_00586040	third-party-library[qhull-2002.1]	unbound	0	
+0x00588a90	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_00588a90	third-party-library[qhull-2002.1]	unbound	0	
+0x0059b6d0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	32	C2			FUN_0059b6d0	third-party-library[qhull-2002.1]	unbound	0	
+0x005aba20	game code	replay inside the original on ref1, then provisional bind	32	C2	re/match/s25/005aba20.c	81.9	FUN_005aba20	audio	unbound	1	HANG
+0x004ccf00	RenderWare core	L-124 route (matched RW core on d3d9)	31	C1			FUN_004ccf00	third-party-library[renderware]	exe-body	1	
+0x005bba60	game code	replay inside the original on ref1, then provisional bind	31	C2	re/match/s27/005bba60.c	64.9	FUN_005bba60	audio	unbound	0	
+0x004785e0	game code	replay inside the original on ref1, then provisional bind	30	C2	re/match/s12/004785e0.c	97.8	FUN_004785e0	util	unbound	0	
+0x004b4eb0	game code	replay inside the original on ref1, then provisional bind	30	C1	re/match/tlr/004b4eb0.c	70.9	FUN_004b4eb0	render	unbound	0	
+0x004e7420	RenderWare core	L-124 route (matched RW core on d3d9)	30	C2	re/match/rwl02/004e7420.c	37.9	RpClumpStreamRead	third-party-library[renderware]	unbound	1	
+0x005c47e0	game code	replay inside the original on ref1, then provisional bind	30	C2	re/match/s28/005c47e0.c	80.0	FUN_005c47e0	boot	exe-body	1	
+0x004b5080	game code	replay inside the original on ref1, then provisional bind	28	C2	re/match/s18/004b5080.c	85.4	FUN_004b5080	render	unbound	0	IDENTICAL-FOR-2724
+0x004cf2b0	RenderWare core	L-124 route (matched RW core on d3d9)	28	C2	re/match/rwl01/004cf2b0.c	47.8	FUN_004cf2b0	third-party-library[renderware]	unbound	0	
+0x00592fc0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	28	C2			FUN_00592fc0	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x005acaa0	game code	replay inside the original on ref1, then provisional bind	28	C2	re/match/s26/005acaa0.c	60.4	FUN_005acaa0	audio	unbound	0	IDENTICAL-FOR-2724
+0x005c192c	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	28	C2			FUN_005c192c	third-party-library[msvc-crt-tail]	unbound	0	
+0x005b92e0	game code	replay inside the original on ref1, then provisional bind	27	C2	re/match/s27/005b92e0.c	31.6	FUN_005b92e0	audio	unbound	0	
+0x005208c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	26	C2			FUN_005208c0	third-party-library[libpng]	unbound	0	
+0x004222f0	no hooks.csv row	discovery first (function + C1 row), then by class	24	none					unbound	0	
+0x005ae920	game code	replay inside the original on ref1, then provisional bind	24	C3	re/match/s26/005ae920.c	96.8	AudioPoolFree	audio	admitted	0	IDENTICAL-FOR-2724
+0x005ab100	no hooks.csv row	discovery first (function + C1 row), then by class	21	none					unbound	0	
+0x0046b540	game code	replay inside the original on ref1, then provisional bind	20	C3	re/match/s11/0046b540.c	59.2	VehicleSpawnInit	vehicle	unbound	0	
+0x00596850	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	20	C2			FUN_00596850	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x005aa560	game code	replay inside the original on ref1, then provisional bind	20	C2	re/match/s25/005aa560.c	79.8	FUN_005aa560	audio	provisional	1	IDENTICAL-FOR-2724
+0x004b53b0	game code	replay inside the original on ref1, then provisional bind	18	C2	re/match/s18/004b53b0.c	45.4	FUN_004b53b0	render	unbound	0	
+0x005516e0	RenderWare core	L-124 route (matched RW core on d3d9)	17	C1			FUN_005516e0	third-party-library[renderware]	unbound	1	
+0x004bdd50	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			lparser_new_localvar	third-party-library[lua-4.0]	unbound	0	
+0x004bdda0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			lparser_registerlocalvar	third-party-library[lua-4.0]	unbound	0	
+0x004bdea0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			lparser_adjustlocalvars	third-party-library[lua-4.0]	unbound	0	
+0x004be0a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			lparser_localstat	third-party-library[lua-4.0]	unbound	0	
+0x004be110	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			lparser_adjust_assign	third-party-library[lua-4.0]	unbound	0	
+0x0053d460	RenderWare core	L-124 route (matched RW core on d3d9)	16	C2	re/match/rwl03/0053d460.c	41.5	FUN_0053d460	third-party-library[renderware]	unbound	0	
+0x0053dba0	RenderWare core	L-124 route (matched RW core on d3d9)	16	C2	re/match/rwl03/0053dba0.c	66.2	FUN_0053dba0	third-party-library[renderware]	unbound	0	
+0x0057de60	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			FUN_0057de60	third-party-library[qhull-2002.1]	unbound	0	
+0x005826d0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			FUN_005826d0	third-party-library[qhull-2002.1]	unbound	0	
+0x00584d80	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			FUN_00584d80	third-party-library[qhull-2002.1]	unbound	0	
+0x005874f0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			FUN_005874f0	third-party-library[qhull-2002.1]	unbound	0	
+0x00587e00	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			FUN_00587e00	third-party-library[qhull-2002.1]	unbound	0	
+0x005886e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			FUN_005886e0	third-party-library[qhull-2002.1]	unbound	0	
+0x0059bda0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	16	C2			FUN_0059bda0	third-party-library[qhull-2002.1]	unbound	0	
+0x005a9f10	game code	replay inside the original on ref1, then provisional bind	16	C2	re/match/s25/005a9f10.c	73.9	FUN_005a9f10	audio	stop	1	CRASH
+0x005ad0b0	game code	replay inside the original on ref1, then provisional bind	16	C2	re/match/s26/005ad0b0.c	56.2	FUN_005ad0b0	audio	unbound	1	CRASH
+0x005aeda0	game code	replay inside the original on ref1, then provisional bind	16	C3	re/match/s26/005aeda0.c	90.0	AudioShiftAddMul64	audio	unbound	0	
+0x0045a3a0	game code	replay inside the original on ref1, then provisional bind	12	C2	re/match/s09/0045a3a0.c	81.0	FUN_0045a3a0	gameplay	provisional	1	
+0x004b95c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	12	C2			FUN_004b95c0	third-party-library[lua-4.0]	unbound	0	
+0x004e4650	RenderWare core	L-124 route (matched RW core on d3d9)	12	C1			FUN_004e4650	third-party-library[renderware]	unbound	1	
+0x00523110	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	12	C3			LoadBE523110	third-party-library[libpng-1.0.12]	unbound	0	
+0x005ab410	game code	replay inside the original on ref1, then provisional bind	12	C3	re/match/s25/005ab410.c	75.4	AudioRwsChunkTypeSeek	audio	unbound	0	IDENTICAL-FOR-2724
+0x005abfa0	game code	replay inside the original on ref1, then provisional bind	12	C3	re/match/s25/005abfa0.c	62.9	FUN_005abfa0	audio	unbound	1	CRASH
+0x005ac210	game code	replay inside the original on ref1, then provisional bind	12	C2	re/match/s25/005ac210.c	57.1	FUN_005ac210	audio	unbound	0	CRASH
+0x004b9e20	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	10	C2			FUN_004b9e20	third-party-library[lua-4.0]	unbound	0	
+0x004c4360	game code	replay inside the original on ref1, then provisional bind	10	C3	re/match/s19/004c4360.c	65.2	MatrixIdentityResidual4c4360	render	exe-body	1	
+0x005b3760	game code	replay inside the original on ref1, then provisional bind	10	C2	re/match/s27/005b3760.c	57.1	FUN_005b3760	audio	unbound	0	IDENTICAL-FOR-2724
+0x005ab1c0	game code	replay inside the original on ref1, then provisional bind	9	C2	re/match/s25/005ab1c0.c	88.9	FUN_005ab1c0	audio	unbound	0	
+0x005b0f90	game code	replay inside the original on ref1, then provisional bind	9	C3	re/match/s26/005b0f90.c	71.8	FUN_005b0f90	audio	unbound	0	
+0x0040eee0	game code	replay inside the original on ref1, then provisional bind	8	C2			FUN_0040eee0	frontend	unbound	0	
+0x00583f10	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	8	C2			FUN_00583f10	third-party-library[qhull-2002.1]	unbound	0	
+0x005a8640	no hooks.csv row	discovery first (function + C1 row), then by class	8	none					unbound	0	
+0x005ae4c0	game code	replay inside the original on ref1, then provisional bind	8	C3	re/match/s26/005ae4c0.c	35.5	FUN_005ae4c0	audio	unbound	0	IDENTICAL-FOR-2724
+0x005af140	no hooks.csv row	discovery first (function + C1 row), then by class	8	none					unbound	0	
+0x005b73b0	game code	replay inside the original on ref1, then provisional bind	8	C3	re/match/s27/005b73b0.c	82.4	AudioFindExtension	audio	unbound	0	
+0x00441b30	game code	replay inside the original on ref1, then provisional bind	7	C3	re/match/s08/00441b30.c	86.7	CamEntryBuild441b30	camera	exe-body	0	IDENTICAL-FOR-2724
+0x004a3a90	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	6	C2			FUN_004a3a90	third-party-library[msvc-crt-main]	unbound	0	
+0x004aaf90	game code	replay inside the original on ref1, then provisional bind	6	C2			_memset	boot	unbound	0	
+0x004b7be0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	6	C2			FUN_004b7be0	third-party-library[lua-4.0]	unbound	0	
+0x004b9fe0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	6	C2			FUN_004b9fe0	third-party-library[lua-4.0]	unbound	0	
+0x004ba090	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	6	C2			FUN_004ba090	third-party-library[lua-4.0]	unbound	0	
+0x004e6ab0	RenderWare core	L-124 route (matched RW core on d3d9)	6	C2	re/match/rwl02/004e6ab0.c	46.1	FUN_004e6ab0	third-party-library[renderware]	rw-lib	1	
+0x005b2080	game code	replay inside the original on ref1, then provisional bind	6	C2	re/match/s27/005b2080.c	82.6	FUN_005b2080	audio	unbound	0	
+0x005b2190	game code	replay inside the original on ref1, then provisional bind	6	C2	re/match/s27/005b2190.c	61.0	FUN_005b2190	audio	unbound	0	
+0x004b5300	no hooks.csv row	discovery first (function + C1 row), then by class	5	none					shim	0	
+0x0052daf0	RenderWare core	L-124 route (matched RW core on d3d9)	5	C2	re/match/rwl03/0052daf0.c	42.5	anim_stream_read_scheme_dispatch	third-party-library[renderware]	unbound	1	
+0x00551460	RenderWare core	L-124 route (matched RW core on d3d9)	5	C2	re/match/rwl04/00551460.c	37.9	FUN_00551460	third-party-library[renderware]	stop	0	
+0x005b2820	game code	replay inside the original on ref1, then provisional bind	5	C2	re/match/s27/005b2820.c	42.6	FUN_005b2820	audio	unbound	0	
+0x005b3020	game code	replay inside the original on ref1, then provisional bind	5	C2	re/match/s27/005b3020.c	53.5	FUN_005b3020	audio	unbound	0	
+0x005b30e0	game code	replay inside the original on ref1, then provisional bind	5	C2	re/match/s27/005b30e0.c	16.7	FUN_005b30e0	audio	unbound	0	
+0x0040e590	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/t01g/0040e590.c	84.6	FUN_0040e590	util	unbound	0	IDENTICAL-FOR-2724
+0x00412190	game code	replay inside the original on ref1, then provisional bind	4	C2			FUN_00412190	render	unbound	0	
+0x00420420	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s05/00420420.c	79.8	FUN_00420420	track	unbound	0	
+0x00481e00	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s13/00481e00.c	86.5	FUN_00481e00	vehicle	unbound	1	DIVERGED@2
+0x00482140	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s13/00482140.c	76.8	FUN_00482140	vehicle	unbound	0	IDENTICAL-FOR-2724
+0x004b6ed0	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x004b9dc0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_004b9dc0	third-party-library[lua-4.0]	unbound	0	
+0x004ba3a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_004ba3a0	third-party-library[lua-4.0]	unbound	0	
+0x004beef0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			lfunc_sizeproto	third-party-library[lua-4.0]	unbound	0	
+0x004e8640	RenderWare core	L-124 route (matched RW core on d3d9)	4	C2	re/match/rwl02/004e8640.c	77.9	FUN_004e8640	third-party-library[renderware]	unbound	0	
+0x004f36c0	RenderWare core	L-124 route (matched RW core on d3d9)	4	C2	re/match/rwl03/004f36c0.c	32.0	FUN_004f36c0	third-party-library[renderware]	exe-body	1	
+0x004f38c0	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					exe-body	1	
+0x005207c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			png_create_struct_2	third-party-library[libpng]	unbound	0	
+0x00520870	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00520870	third-party-library[libpng]	unbound	0	
+0x00544a70	RenderWare core	L-124 route (matched RW core on d3d9)	4	C2	re/match/rwl04/00544a70.c	58.1	FUN_00544a70	third-party-library[renderware]	unbound	0	
+0x00544ad0	RenderWare core	L-124 route (matched RW core on d3d9)	4	C2	re/match/rwl04/00544ad0.c	46.0	FUN_00544ad0	third-party-library[renderware]	unbound	0	
+0x00563840	RW-Physics	replay inside the original, then PORT-RWP-WIRE	4	C2	re/match/rwl05/00563840.c	70.3	FUN_00563840	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00563940	RW-Physics	replay inside the original, then PORT-RWP-WIRE	4	C2	re/match/rwl05/00563940.c	56.4	FUN_00563940	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0057c670	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057c670	third-party-library[qhull-2002.1]	unbound	0	
+0x0057ca30	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057ca30	third-party-library[qhull-2002.1]	unbound	0	
+0x0057ce90	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057ce90	third-party-library[qhull-2002.1]	unbound	0	
+0x0057d370	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057d370	third-party-library[qhull-2002.1]	unbound	0	
+0x0057d990	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057d990	third-party-library[qhull-2002.1]	unbound	0	
+0x0057e820	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057e820	third-party-library[qhull-2002.1]	unbound	0	
+0x0057ee00	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057ee00	third-party-library[qhull-2002.1]	unbound	0	
+0x0057f970	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0057f970	third-party-library[qhull-2002.1]	unbound	0	
+0x005803a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_005803a0	third-party-library[qhull-2002.1]	unbound	0	
+0x00581320	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00581320	third-party-library[qhull-2002.1]	unbound	0	
+0x005824a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_005824a0	third-party-library[qhull-2002.1]	unbound	0	
+0x00583960	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00583960	third-party-library[qhull-2002.1]	unbound	0	
+0x005898d0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_005898d0	third-party-library[qhull-2002.1]	unbound	0	
+0x00589b00	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00589b00	third-party-library[qhull-2002.1]	unbound	0	
+0x00589e20	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00589e20	third-party-library[qhull-2002.1]	unbound	0	
+0x00589fa0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00589fa0	third-party-library[qhull-2002.1]	unbound	0	
+0x0058d810	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0058d810	third-party-library[qhull-2002.1]	unbound	0	
+0x0058e7b0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0058e7b0	third-party-library[qhull-2002.1]	unbound	0	
+0x0058e940	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0058e940	third-party-library[qhull-2002.1]	unbound	0	
+0x0058f0a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0058f0a0	third-party-library[qhull-2002.1]	unbound	0	
+0x0058f160	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0058f160	third-party-library[qhull-2002.1]	unbound	0	
+0x0058f240	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0058f240	third-party-library[qhull-2002.1]	unbound	0	
+0x0058f520	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0058f520	third-party-library[qhull-2002.1]	unbound	0	
+0x005903e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_005903e0	third-party-library[qhull-2002.1]	unbound	0	
+0x005929c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_005929c0	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x00593e30	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00593e30	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x005940e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_005940e0	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x00596ff0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_00596ff0	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x0059abe0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	4	C2			FUN_0059abe0	third-party-library[qhull-2002.1-continuation]	unbound	0	
+0x005a8680	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005a8890	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s25/005a8890.c	88.2	FUN_005a8890	audio	admitted	0	IDENTICAL-FOR-2724
+0x005ab090	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s25/005ab090.c	85.7	FUN_005ab090	audio	unbound	0	
+0x005ae170	game code	replay inside the original on ref1, then provisional bind	4	C3	re/match/s26/005ae170.c	61.9	FUN_005ae170	audio	unbound	0	
+0x005aead0	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					stop	0	
+0x005aeb90	game code	replay inside the original on ref1, then provisional bind	4	C3	re/match/s26/005aeb90.c	43.3	FUN_005aeb90	audio	exe-body	0	
+0x005af780	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005afa00	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s26/005afa00.c	74.7	FUN_005afa00	audio	unbound	0	
+0x005afcf0	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s26/005afcf0.c	31.4	FUN_005afcf0	audio	unbound	0	
+0x005b03e0	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s26/005b03e0.c	85.9	FUN_005b03e0	audio	unbound	0	
+0x005b04b0	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s26/005b04b0.c	30.6	FUN_005b04b0	audio	unbound	0	
+0x005b09c0	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s26/005b09c0.c	79.7	FUN_005b09c0	audio	unbound	0	
+0x005b0a70	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005b0bb0	game code	replay inside the original on ref1, then provisional bind	4	C3	re/match/s26/005b0bb0.c	58.8	FUN_005b0bb0	audio	unbound	0	
+0x005b1240	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005b1260	game code	replay inside the original on ref1, then provisional bind	4	C2	re/match/s27/005b1260.c	63.0	FUN_005b1260	audio	unbound	0	
+0x005b7750	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005b7a90	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005b8200	game code	replay inside the original on ref1, then provisional bind	4	C2			FUN_005b8200	audio	unbound	0	
+0x005b8910	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005b92d0	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005c6f50	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x005c83a0	no hooks.csv row	discovery first (function + C1 row), then by class	4	none					unbound	0	
+0x004e51e0	RenderWare core	L-124 route (matched RW core on d3d9)	3	C2	re/match/rwl02/004e51e0.c	90.7	FUN_004e51e0	third-party-library[renderware]	unbound	0	
+0x004e5300	RenderWare core	L-124 route (matched RW core on d3d9)	3	C2	re/match/rwl02/004e5300.c	27.9	RpWorldInstance	third-party-library[renderware]	unbound	1	
+0x004e99b0	RenderWare core	L-124 route (matched RW core on d3d9)	3	C2	re/match/rwl02/004e99b0.c	45.5	FUN_004e99b0	third-party-library[renderware]	unbound	0	
+0x0053d2b0	RenderWare core	L-124 route (matched RW core on d3d9)	3	C1			FUN_0053d2b0	third-party-library[renderware]	unbound	1	
+0x0053d820	RenderWare core	L-124 route (matched RW core on d3d9)	3	C2	re/match/rwl03/0053d820.c	66.7	FUN_0053d820	third-party-library[renderware]	unbound	1	
+0x005a9e60	game code	replay inside the original on ref1, then provisional bind	3	C2	re/match/s25/005a9e60.c	75.4	FUN_005a9e60	audio	stop	0	IDENTICAL-FOR-2724
+0x0041a400	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s03/h1_0041a4a0.c	76.4	FUN_0041a400	gameplay	unbound	0	
+0x00424b80	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s05/00424b80.c	88.7	FUN_00424b80	frontend	unbound	0	IDENTICAL-FOR-2724
+0x0047be80	game code	replay inside the original on ref1, then provisional bind	2	C2			FUN_0047be80	track	unbound	0	
+0x004b7330	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b7330	third-party-library[lua-4.0]	unbound	0	
+0x004b73e0	no hooks.csv row	discovery first (function + C1 row), then by class	2	none					unbound	0	
+0x004b7480	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b7480	third-party-library[lua-4.0]	unbound	0	
+0x004b79c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b79c0	third-party-library[lua-4.0]	unbound	0	
+0x004b7a70	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b7a70	third-party-library[lua-4.0]	unbound	0	
+0x004b7aa0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b7aa0	third-party-library[lua-4.0]	unbound	0	
+0x004b87e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b87e0	third-party-library[lua-4.0]	unbound	0	
+0x004b9570	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b9570	third-party-library[lua-4.0]	unbound	0	
+0x004b9600	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b9600	third-party-library[lua-4.0]	unbound	0	
+0x004b9650	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b9650	third-party-library[lua-4.0]	unbound	0	
+0x004b96c0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b96c0	third-party-library[lua-4.0]	unbound	0	
+0x004b9730	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004b9730	third-party-library[lua-4.0]	unbound	0	
+0x004ba210	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba210	third-party-library[lua-4.0]	unbound	0	
+0x004ba250	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba250	third-party-library[lua-4.0]	unbound	0	
+0x004ba290	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba290	third-party-library[lua-4.0]	unbound	0	
+0x004ba2d0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba2d0	third-party-library[lua-4.0]	unbound	0	
+0x004ba310	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba310	third-party-library[lua-4.0]	unbound	0	
+0x004ba3e0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba3e0	third-party-library[lua-4.0]	unbound	0	
+0x004ba470	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba470	third-party-library[lua-4.0]	unbound	0	
+0x004ba9a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004ba9a0	third-party-library[lua-4.0]	unbound	0	
+0x004bc500	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004bc500	third-party-library[lua-4.0]	unbound	0	
+0x004bc600	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004bc600	third-party-library[lua-4.0]	unbound	0	
+0x004bc670	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004bc670	third-party-library[lua-4.0]	unbound	0	
+0x004bc750	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004bc750	third-party-library[lua-4.0]	unbound	0	
+0x004bc790	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_004bc790	third-party-library[lua-4.0]	unbound	0	
+0x004beec0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			lfunc_setcodesize	third-party-library[lua-4.0]	unbound	0	
+0x004bef20	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			lfunc_freeproto	third-party-library[lua-4.0]	unbound	0	
+0x004bf320	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			lcode_patchlist	third-party-library[lua-4.0]	unbound	0	
+0x004bf360	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			lcode_patchlistaux	third-party-library[lua-4.0]	unbound	0	
+0x004e6630	RenderWare core	L-124 route (matched RW core on d3d9)	2	C1			FUN_004e6630	third-party-library[renderware]	unbound	1	
+0x00514330	RenderWare core	L-124 route (matched RW core on d3d9)	2	C2			FUN_00514330	third-party-library[renderware]	rw-lib	0	
+0x00515fd0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_00515fd0	third-party-library[libpng-1.0.12]	unbound	0	
+0x005163a0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_005163a0	third-party-library[libpng-1.0.12]	unbound	0	
+0x00516870	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C2			FUN_00516870	third-party-library[libpng-1.0.12]	unbound	0	
+0x005185a0	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s23/005185a0.c	27.3	png_do_background	util	unbound	0	
+0x00525bd0	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s23/00525bd0.c	72.6	FUN_00525bd0	util	unbound	0	
+0x0052aa40	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s23/0052aa40.c	89.3	FUN_0052aa40	util	unbound	0	
+0x00534d00	RenderWare core	L-124 route (matched RW core on d3d9)	2	C2	re/match/rwl03/00534d00.c	23.4	FUN_00534d00	third-party-library[renderware]	unbound	1	
+0x00535330	RenderWare core	L-124 route (matched RW core on d3d9)	2	C2	re/match/rwl03/00535330.c	30.1	FUN_00535330	third-party-library[renderware]	unbound	1	
+0x0054f8d0	RenderWare core	L-124 route (matched RW core on d3d9)	2	C2	re/match/rwl04/0054f8d0.c	54.9	FUN_0054f8d0	third-party-library[renderware]	shim	1	
+0x0055f520	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2	C3	re/match/rwl05/0055f520.c	44.7	FUN_0055f520	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005672c0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	2	C3	re/match/rwl06/005672c0.c	18.8	FUN_005672c0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005a7b40	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	2	C3			AudioCtxSwap5a7b40	third-party-library[msvc-crt]	unbound	0	
+0x005ae250	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s26/005ae250.c	64.9	FUN_005ae250	audio	unbound	0	IDENTICAL-FOR-2724
+0x005af670	no hooks.csv row	discovery first (function + C1 row), then by class	2	none					unbound	0	
+0x005b2b00	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s27/005b2b00.c	42.3	FUN_005b2b00	audio	unbound	0	
+0x005b3b80	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s27/005b3b80.c	43.4	FUN_005b3b80	audio	unbound	0	CRASH
+0x005b6710	game code	replay inside the original on ref1, then provisional bind	2	C2	re/match/s27/005b6710.c	87.5	FUN_005b6710	audio	unbound	0	
+0x00405540	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s01/00405540.c	93.4	FUN_00405540	gameplay	unbound	0	IDENTICAL-FOR-2724
+0x0040cea0	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s02/0040cea0.c	82.8	FUN_0040cea0	track	unbound	0	
+0x0045de80	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s10/0045de80.c	52.9	FUN_0045de80	render	unbound	0	
+0x00462950	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s10/00462950.c	88.8	FUN_00462950	render	unbound	1	
+0x004783f0	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/pilot/a4_004783f0.c	90.8	FUN_004783f0	ai	unbound	0	
+0x00478660	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s12/00478660.c	79.1	FUN_00478660	ai	unbound	1	
+0x00479330	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s12/00479330.c	97.2	FUN_00479330	track	unbound	1	
+0x0047a020	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s12/0047a020.c	92.2	FUN_0047a020	vehicle	unbound	1	
+0x0047d3c0	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s13/0047d3c0.c	96.5	VehiclePhysicsWorldCreate	vehicle	unbound	0	IDENTICAL-FOR-2724
+0x004883b0	game code	replay inside the original on ref1, then provisional bind	1	C2			FUN_004883b0	sky	unbound	0	
+0x00489dc0	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s14/00489dc0.c	36.1	FUN_00489dc0	particle	unbound	0	
+0x00558cb0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C2	re/match/rwl05/00558cb0.c	78.4	FUN_00558cb0	third-party-library[RenderWare-Physics-3.7]	unbound	1	
+0x00558df0	RenderWare core	L-124 route (matched RW core on d3d9)	1	C2	re/match/rwl05/00558df0.c	39.7	FUN_00558df0	third-party-library[renderware]	unbound	0	
+0x00559560	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl05/00559560.c	68.3	FUN_00559560	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005595d0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl05/005595d0.c	57.5	FUN_005595d0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0055f670	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl05/0055f670.c	56.0	FUN_0055f670	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0055f800	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl05/0055f800.c	65.3	FUN_0055f800	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005645b0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl05/005645b0.c	27.5	FUN_005645b0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00567350	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl06/00567350.c	8.2	FUN_00567350	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005676f0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl06/005676f0.c	4.0	FUN_005676f0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00568d20	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl06/00568d20.c	51.4	FUN_00568d20	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00574920	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl06/00574920.c	12.5	FUN_00574920	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x005749b0	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl06/005749b0.c	8.0	FUN_005749b0	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x00574a20	RW-Physics	replay inside the original, then PORT-RWP-WIRE	1	C3	re/match/rwl06/00574a20.c	48.1	FUN_00574a20	third-party-library[RenderWare-Physics-3.7]	unbound	0	
+0x0057c4b0	library (Lua/qhull/CRT)	library build, outside the port count (L-67/L-70/L-97)	1	C2			FUN_0057c4b0	third-party-library[qhull-2002.1]	unbound	0	
+0x005a7b60	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s25/005a7b60.c	53.5	FUN_005a7b60	audio	stop	1	CRASH
+0x005ab620	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s25/005ab620.c	49.3	FUN_005ab620	audio	unbound	0	
+0x005ae650	game code	replay inside the original on ref1, then provisional bind	1	C3	re/match/s26/005ae650.c	74.1	AudioPoolConstruct	audio	provisional	1	IDENTICAL-FOR-2724
+0x005b1180	game code	replay inside the original on ref1, then provisional bind	1	C3	re/match/s27/005b1180.c	46.4	FUN_005b1180	audio	unbound	0	
+0x005b29e0	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s27/005b29e0.c	73.3	FUN_005b29e0	audio	unbound	0	
+0x005b3300	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s27/005b3300.c	53.8	FUN_005b3300	audio	unbound	0	
+0x005c8910	game code	replay inside the original on ref1, then provisional bind	1	C2	re/match/s28/005c8910.c	37.8	FUN_005c8910	audio	unbound	0	

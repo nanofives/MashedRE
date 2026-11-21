@@ -1,0 +1,50 @@
+== RO_ROIMG-pr1
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] [REPLAY] pins at anchor (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] normalisation at anchor: 299 PIN dwords written, 1 changed
+[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001C1D50; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+[ORIG_TOP] [TRACE] self-test PASS (0 of 33294 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 8, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reached at tick 300 (N 903)
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 000189F0, 0x00493390 001C1D50, 0x
+== RO_ROLOAD-pr1
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 0110F468 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("pc/COURSE.LUA") call 1: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("COURSE.LUA") call 2: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] rva 0x0047B860: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B416, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x0047B860 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0004B416
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001C1D50; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+== RO_ROLOADC-pr1
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 0, DAT_007d3ff8 = 0110F468 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("pc/COURSE.LUA") call 1: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("COURSE.LUA") call 2: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 1
+[ORIG_TOP] rva 0x0047B860: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B416, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x00440BC0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047a020 0x0047a0f0 0x0047a130, return 0004B41A, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0047B8D0: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b9b0, return 0004B429, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004B7480: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b880, return 0004B3FB, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] cfglog: Searching piz for .bsp 
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("pc/.bsp") call 8: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00(".bsp") call 9: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("xbox/.bsp") call 10: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("ps2/.bsp") call 11: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[RWC_CORE] [RWC-FRAME-TITLE-LOGO] 0x00550b00("gamecube/.bsp") call 12: RtFS manager [0x007dc75c] = 0 -> piz/disk (0x004b5350 shim) = 0
+[ORIG_TOP] cfglog: Unable to find .bsp in piz
+[ORIG_TOP] rva 0x004A332B: race-load stop (PORT-OT-RACE), call 1, callers 0x00478200, return 00051509, returns 0 (MASHED_OT_RL_STOPS=count)
+== knob_rl_on (VS2022 exe, menu boot)
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames

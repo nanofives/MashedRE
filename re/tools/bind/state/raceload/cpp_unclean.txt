@@ -1,0 +1,25 @@
+# PORT-OT-RACE checkpoint 2: matched sources that fail to compile as C++ (MATCH_PORT, VS2022) in the exe build; first error.
+00409680	C2632 'char' seguido de 'bool' no es v lido
+00409710	C2632 'char' seguido de 'bool' no es v lido
+00425bf0	C2664 'void PortTop_PizFs_Mount_00495280(undefined4)': el argumento 1 no puede convertirse de 'const char [28]' a 'u
+00440bc0	C2632 'char' seguido de 'bool' no es v lido
+00458dd0	C2664 'int *Orig_004e8090(int *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a1b0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a540	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a580	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a5b0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a5e0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a6b0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a6f0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047a880	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047aa50	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047aaa0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047aad0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047acd0	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047ad00	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047b230	C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+0047b250	C2664 'int PortTop_Bound_00458e00(float *,int)': el argumento 1 no puede convertirse de 'undefined1 *' a 'float *'
+0047b860	C2660 'PortTop_RLStop_004b7330': la funci¢n no acepta 1 argumentos
+0047b8d0	C2664 'void Orig_004b6520(undefined4,undefined4)': el argumento 1 no puede convertirse de 'undefined1 [32768]' a 'un
+004c3d90	C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
+004e89a0	C2440 'inicializando': no se puede realizar la conversi¢n de 'int' a 'void *'

@@ -113,6 +113,52 @@ Tell each lead the kind of every row it gets, and put the kind in the worker tas
   called, `scripts/backfill_port.py`): it builds, runs the gates and goes through the train like any source row. A body
   swap that moves a gate hash is a real port divergence: file it as an L-n decision, not a failure.
 
+## Binding checkpoints: `re/tools/bind/porttop_bind.py` (BIND-TOOL, 2026-11-21)
+
+One binder for every top-down binding row (RACE-BIND-C4-BULK and later race / audio closures). It replaces
+`rl_bind_gen.py`, `audiotick_bind_gen.py`, `bindings_update.py` and their helpers in the `verify/` folders (do not run
+those any more). It plans a call closure from roots and writes one exe-only wrapper per bound rva
+(`Match/PortTop_<rva>.cpp`: `#define FUN_<callee> <exe symbol>` lines, then `#include` of the matched source under
+`MATCH_PORT`), plus a named-stop file for callees with no body. Run from the worktree root. Two **profiles** hold each
+closure's rule tables: `raceload` (race-load closure of 0x0040d270, stops `Match/PortTop_RaceLoadStops.cpp`,
+`MASHED_OT_RACELOAD`) and `audio` (audio-tick / audio-init closure, stops `Match/PortTop_AudioStops.cpp`). State per
+profile: `re/tools/bind/state/<profile>/` (`plan.json`, `newfiles.txt`, `cpp_unclean.txt`). Commit the state with the
+wrappers.
+
+Body choice per rva, in order: forced stop, cpp-unclean stop, profile alias, an existing exe body (CRT, PortTop / RwCore
+match-include, a leaf source's body), bind from the source (`c4=match` BYTE-IDENTICAL, branch promotion TSV,
+`c4=frida-replay`, `PROVISIONAL.tsv` only for rvas in `PROV_BIND`, `ADMITTED.tsv`), otherwise a named stop. Roots are
+always rebound. The tool leaves its own profile's wrappers out of the exe body index, so a re-run plans them again
+instead of reusing them.
+
+One checkpoint (RACE-BIND-C4-BULK: add the new C4 roots to the cumulative root list, 85 to 120 binds per call):
+1. `py -3.12 re/tools/bind/porttop_bind.py plan --profile raceload --roots <all roots, comma> --listing <file>`: dry run
+   (counts by bind / reuse / stop, one line per rva). Commit the listing as evidence.
+2. `... samesrc --profile raceload` after a write (or on the listing's plan): a planned bind whose source another TU
+   already compiles under `FUN_<rva>` gives the rva a second exe copy. Add an alias in `PROFILES` or accept it as a
+   separate bound copy and say so in the RESULT.
+3. `... write --profile raceload --roots <same>`: wrappers, stop file, `plan.json`. It deletes this profile's wrappers that
+   are no longer bound. A file that only differs in CRLF is not rewritten.
+4. **Extern-guard step**: `... externs --profile raceload` lists bound sources with a plain `extern <T> DAT_/LAB_<addr>;`
+   (the exe cannot link it). `--apply` puts each under `#ifdef MATCH_PORT` (address define) / `#else` (the extern) and runs
+   `re/tools/match/match.py <src> --bytes` on each. Every one must stay BYTE-IDENTICAL, or revert that source.
+5. `... sync --profile raceload --step <ROW> --evidence <RESULT path>`: `exe_sources.rsp` lines for the new TUs and the
+   `ORIGTOP-ONLY` allowlist lines the rva lint seeds. An `UNTAGGABLE` line is a real dual copy: resolve it, do not tag it.
+6. VS2022 build (`cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"`). **cpp-unclean list**: a matched source that
+   does not compile as C++ is recorded with `... unclean --profile raceload <build log>` (first error per TU), then
+   repeat 3 and 5: those rvas become named stops with the error in the stop file.
+7. `... prune --profile raceload --step <ROW>` (dry run, `--apply` writes): allowlist lines of rvas no longer bound
+   (file-local functions of bound sources are kept).
+8. `... bindings --profile raceload --step <ROW>` (`--dry` first): `verify/porttop_20261108/BINDINGS.tsv` rows from the
+   plan (only `missing` rows are updated, new rvas appended with level and caller).
+9. Object build (`set MASHED_DDKOBJ=1&&` before the same build), `py -3.12 re/tools/ddkobj/ddkobj.py check`: report
+   IDENTICAL / DIFFERENT / refusals against the previous count. Every bound unit IDENTICAL in `BYTECHECK.tsv`.
+
+`... selftest` rebinds both profiles on the current tree (raceload from the PORT-OT-RACE checkpoint 3 roots, audio from
+the roots of its `plan.json`) and passes only when plan, wrappers, stop files and BINDINGS.tsv come out unchanged. Run it
+after editing the tool or a profile. A new closure is a new `PROFILES` entry (copy `raceload`, change `own_mark`, the stop
+file and prefix, the allowlist text), not a new script.
+
 ## Spawning (decisions 1 and 2): always the auto-permission pattern
 1. `spawn_child` with `account`, `model`, `effort` and the holding prompt
    `"Roadmap loop <role> for <section>. Reply with the single word READY and stop. Your real

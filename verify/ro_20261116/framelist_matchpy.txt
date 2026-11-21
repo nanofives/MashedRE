@@ -1,0 +1,6 @@
+0x00458c70 _FUN_00458c70: 100.0% (regs 100.0%, ops 100.0%)  44/44 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 136 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00458c70	OK	checked=4	unchecked=0	00458c70.c	
+0x004c07b0 _FUN_004c07b0: 100.0% (regs 100.0%, ops 100.0%)  32/32 ins  flags=/O2 /GS /Ob1 /G5 tc=ddk
+   bytes: 124 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004c07b0	OK	checked=13	unchecked=0	004c07b0.c	
