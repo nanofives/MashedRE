@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S28 h1 0x005bf670 : 40.0% (regs 40). Original: mov eax,[esp+4]; add eax,4; mov [esp+4],eax; jmp [InterlockedIncrement import]. This is the C++ multiple-inheritance this-adjustor thunk shape (arg rewritten in place, tail jump); the DDK C compiler emits push/call/ret for every C spelling tried (param reassign, cast, temp). Residual class (c): tail call with modified arg is not reachable from C. */
+/* MATCH-S28 0x005bf670: 100.0% BYTE-IDENTICAL (17 B, relocheck OK checked=0, unchecked = the InterlockedIncrement import) since PORT-TOP-AUDIO-5BA1D0-STOPS (2026-11-21): declared __stdcall, the DDK emits the this-adjust tail jump (mov eax,[esp+4]; add eax,4; mov [esp+4],eax; jmp [import]). Earlier note: 40.0% as cdecl (push/call/ret). */
 
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -26,7 +26,7 @@ typedef unsigned char bool;
 
 __declspec(dllimport) long __stdcall InterlockedIncrement(long *p);
 // MATCH: 0x005bf670 FUN_005bf670
-void FUN_005bf670(long *param_1)
+void __stdcall FUN_005bf670(long *param_1)   /* stdcall: 0x005bf67b tail-jumps to InterlockedIncrement (pops 4); 0x005bf610 has no add esp after 0x005bf655 */
 {
   param_1 = (long *)((char *)param_1 + 4);
   InterlockedIncrement(param_1);

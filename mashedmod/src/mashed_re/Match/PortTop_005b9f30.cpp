@@ -9,7 +9,7 @@
 #define FUN_005b9f30 PortTop_Bound_005b9f30
 #define FUN_005a9e10 PortTop_Bound_005a9e10
 #define FUN_005aee20 PortTop_Bound_005aee20
-#define FUN_005ba1d0 PortTop_AStop_005ba1d0   // named stop
+#define FUN_005ba1d0 PortTop_Bound_005ba1d0
 #define FUN_005ba780 PortTop_Bound_005ba780
 #define FUN_005ba7f0 PortTop_AStop_005ba7f0   // named stop
 #define FUN_005bad30 PortTop_Bound_005bad30

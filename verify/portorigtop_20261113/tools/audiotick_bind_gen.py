@@ -37,6 +37,11 @@ PROV_BIND |= {'005aa200'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: census order 5, 0x005
 PROV_BIND |= {'005a9f10'}   # PORT-TOP-AUDIO-5AEF30-KNOB: census 69, existing PROVISIONAL.tsv row (81.0%, NOT-PROVEN, PROV-FIX-9)
 PROV_BIND |= {'005bad30'}   # PORT-TOP-AUDIO-5AEF30-KNOB: census 58, source from the listing 94.4%, NOT-PROVEN (call-target tool limit at the import call; clamp block order); PROVISIONAL.tsv
 PROV_BIND |= {'005b9ea0', '005b85e0', '005c7a00', '005c6c20', '005a7fe0', '005c80a0', '005b7440', '005b6b80', '005bce20'}   # PORT-TOP-AUDIO-5A8F30-STOPS: table 0x00635194 entries walked by 0x005bbb20 (77.1% to 91.1%, EQUIV-IF-CALLERS-IGNORE(EAX), walker 0x005ad080 reads; PROVISIONAL.tsv + decision row, L-171 class)
+PROV_BIND |= {'005ba1d0'}   # PORT-TOP-AUDIO-5BA1D0-STOPS: census 71, stored code pointer of 0x005b9f30 (+0x28), source from the listing 40.1% (PROVISIONAL.tsv)
+PROV_BIND |= {'005a7b60', '005a71f0'}   # RO-AUDIOINIT-45D460-REACH: 0x0045d460's two named stops (0x005a7b60 existing PROVISIONAL.tsv row 60.9%, replay IDENTICAL-FOR-2724 in PROV-FIX-9; 0x005a71f0 47.9%, checked against the listing)
+PROV_BIND |= {'005c7d30', '005a91b0'}   # PORT-TOP-AUDIO-5BA1D0-STOPS: census 79 / 92, new sources from the listings (stored code pointers of 0x005c7a90 / 0x005a8f30 at +0x28; PROVISIONAL.tsv)
+PROV_BIND |= {'005bc470', '005ae250'}   # PORT-TOP-AUDIO-5BA1D0-STOPS: census 81 (0x005bb000's callee, hand rebuild from the asm 29.7%) and census 74 (64.9%); behaviour checked against the listings (PROVISIONAL.tsv)
+PROV_BIND |= {'005bb000', '005bbc10', '005bbd50', '005baf00', '005bbfc0'}   # PORT-TOP-AUDIO-5BA1D0-STOPS: 0x005ba1d0's callees (census 75 / 76 / 77 / 88 / 87); 0x005bb000 and 0x005bbd50 rewritten from the listing (PROVISIONAL.tsv)
 # PORT-TOP-RWAUDIO-TABLE-632BA8: a match promotion committed on a branch (re/promotions/<ID>.tsv, HB-TRACKER-AT-MERGE) is
 # not in hooks.csv until the merge train applies it; its route-match source binds like a hooks.csv c4=match row.
 PEND = {}
@@ -135,7 +140,9 @@ INIT_ROOT = '004627f0'
 # The copy sits under #ifndef MATCH_PORT_SHARED_0045c4e0 (DDK object unchanged, match.py --bytes BYTE-IDENTICAL), so the
 # port defines that macro and binds the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
 STOP_FORCE = set()
-STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
+# PORT-TOP-AUDIO-5BA1D0-STOPS: 0x005bf670 is BYTE-IDENTICAL as __stdcall (re/promotions/PORT-TOP-AUDIO-5BA1D0-STOPS.tsv), so
+# 0x005bf610 binds with it and leaves STOP_FORCE. Previous line, kept as history:
+# STOP_FORCE |= {'005bf610'}   # PORT-TOP-AUDIO-5AA3D0-STOPS: its callee 0x005bf670 is declared __stdcall (re/match/s28/005bf610.c line 28) and has no body; the generated cdecl stop thunk does not link (LNK2019 _PortTop_AStop_005bf670@4)
 STOP_FORCE |= {'005aef30'}   # PORT-TOP-AUDIO-5A8F30-STOPS: reached now through 0x005a8060 (0x005a8328); it calls __beginthread (0x005c2e79, no exe body; the census bulk bind left it out for the LNK2019) and starts the second thread, census order 42: a stop until the init stops are done
 # PORT-TOP-AUDIO-5AEF30-KNOB (L-174 (c)): a caller of a KNOB rva calls this exe function instead of the stop thunk. Knob off
 # it calls the stop thunk (unchanged stop); knob on it is the stand-in (Match/PortTop_Knob_005aef30.cpp, MASHED_OT_AUDIOTHREAD_STANDIN).

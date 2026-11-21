@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_005c7fb0 PortTop_Bound_005c7fb0
 #define FUN_004522d0 RwCore_004522d0   // exe body (RwCore/RwCore_004522d0.cpp)
-#define FUN_005bb000 PortTop_AStop_005bb000   // named stop
+#define FUN_005bb000 PortTop_Bound_005bb000
 #define FUN_005c7f80 PortTop_Bound_005c7f80
 extern "C" {
 #include "../../../../re/match/s28/005c7fb0.c"

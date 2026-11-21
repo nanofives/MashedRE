@@ -31,7 +31,7 @@ void FUN_005baf00(int param_1, float param_2)
   *(float *)(param_1 + 0x38) = param_2;
   puVar1 = *(float **)(param_1 + 0xc);
   for (; puVar1 != (float *)(param_1 + 0xc); puVar1 = *(float **)puVar1) {
-    puVar1[7] = puVar1[7];
+    puVar1[7] = *(volatile float *)(puVar1 + 7);   /* 0x005baf16 fld / 0x005baf1f fstp [eax+0x1c] */
     ((uint *)puVar1)[5] = ((uint *)puVar1)[5] | 0x40;
   }
   if (*(int *)(param_1 + 0x11c) != 0) {

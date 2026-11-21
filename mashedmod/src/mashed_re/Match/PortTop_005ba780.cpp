@@ -10,7 +10,7 @@
 #define FUN_005aaa00 PortTop_Bound_005aaa00
 #define FUN_005ba760 PortTop_Bound_005ba760
 #define FUN_005baf40 AudioRendererField3cSet   // exe body (Audio/AudioLeaves_ab3.cpp)
-#define FUN_005bb000 PortTop_AStop_005bb000   // named stop
+#define FUN_005bb000 PortTop_Bound_005bb000
 #define FUN_005bbf30 PortTop_Bound_005bbf30
 extern "C" {
 #include "../../../../re/match/s27/005ba780.c"
