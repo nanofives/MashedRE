@@ -1,0 +1,33 @@
+{
+  "_doc": "Profile raceload: race-load closure of 0x0040d270 (was verify/ro_20261116/rltools/rl_bind_gen.py). Settings here, per-rva rules in rules.tsv, roots in roots.txt (BIND-PROFILE-DATA 2026-11-21).",
+  "selftest_order": 1,
+  "selftest_roots_only": true,
+  "own_mark": "// PORT-OT-RACE (2026-11-16): exe-only port body",
+  "own_tag": "PORT-OT-RACE",
+  "prune_stale": true,
+  "rwcore_fallback": true,
+  "reuse_any": true,
+  "force_old_binds": false,
+  "c_emit": true,
+  "listing": "full",
+  "stop_prefix": "PortTop_RLStop_",
+  "stop_file": "Match/PortTop_RaceLoadStops.cpp",
+  "stops": {"style": "count"},
+  "hdr": [
+    "%(mark)s of rva 0x%(rva)s = %(src)s",
+    "// (%(ev)s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_RACELOAD",
+    "// through the race-load closure of 0x0040d270 (verify/ro_20261116/rltools/rl_bind_gen.py). Callees bind to exe bodies",
+    "// by name; a callee with no matched or admitted body is a named stop (Match/PortTop_RaceLoadStops.cpp)."
+  ],
+  "refs_file": "Match/PortTop_BulkRefs.cpp",
+  "_refs_file": "`refs` step (BIND-CUNCLEAN-AS-C): keeps caller-less bound bodies linked",
+  "foreign_keep_marks": ["// RACE-BIND-C4-BULK (2026-11-21): exe-only port body"],
+  "_foreign_keep_marks": "wrappers another generator wrote whose PortTop_Keep_<rva> anchors this refs file also carries: RACE-BIND-C4-BULK checkpoint 1 (verify/bindbulk_20261121, 100 anchors; its refs_gen.py is history only)",
+  "local_shared_note": "   // the one exe copy",
+  "local_bound_note": "   // this source carries its only exe copy",
+  "bindings_roots": null,
+  "bindings_root_caller": "0x0040d270",
+  "bindings_tag": "PORT-OT-RACE",
+  "allow_text": "%(step)s (L-111 (a), L-126), %(date)s: the matched / replay-C4 body runs only on MASHED_ORIG_TOP + MASHED_OT_RACELOAD (race-load closure of 0x0040d270, %(tool)s); deleted at the ORIG_TOP flip. Evidence: %(evidence)s.",
+  "allow_default": {"step": "PORT-OT-RACE", "date": "2026-11-16", "evidence": "verify/ro_20261116/RESULT_PORT-OT-RACE.md", "tool": "verify/ro_20261116/rltools/rl_bind_gen.py"}
+}

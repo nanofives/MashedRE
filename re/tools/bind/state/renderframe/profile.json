@@ -1,0 +1,56 @@
+{
+  "_doc": "Profile renderframe (PORT-TOP-RENDERFRAME-492E90, 2026-11-21): the frame-render closure of 0x00492e90 (MATCH-S15 source re/match/s15/00492e90.c, 100%), called by the run loop 0x00492290 through PortTop_StandIn_00492e90 (Match/PortTop_00492370.cpp) only under the sub-knob MASHED_OT_RENDERFRAME (Match/PortTop_RenderFrameKnob.cpp; default off = the hand RenderFrame / the RWC-FRAME-492E90 route). Rvas other run-53 rows own or unmerged branches bind are named stops with the reason (stop_reasons.tsv, verify/porttoprenderframe_20261121/tools/make_stop_reasons.py). Settings moved out of porttop_bind.py by BIND-PROFILE-DATA; plan.json / stop_reasons.tsv / cpp_unclean.txt come with orch/PORT-TOP-RENDERFRAME-492E90.",
+  "selftest_order": 4,
+  "own_mark": "// PORT-TOP-RENDERFRAME-492E90 (2026-11-21): exe-only port body",
+  "own_tag": "PORT-TOP-RENDERFRAME-492E90",
+  "prune_stale": true,
+  "rwcore_fallback": true,
+  "reuse_any": true,
+  "force_old_binds": false,
+  "c_emit": false,
+  "_c_emit": "PORT-TOP-RENDERFRAME-492E90 was written before BIND-CUNCLEAN-AS-C: its cpp_unclean.txt rvas are named stops, not C units",
+  "listing": "full",
+  "stop_reasons": "stop_reasons.tsv",
+  "static_stop": true,
+  "group_same_source": true,
+  "held_external": true,
+  "thunk_names": true,
+  "bindings_keep_missing": true,
+  "root_external": {
+    "00492e90": {
+      "_doc": "the root keeps its one exe body, the RW core TU (RWC-FRAME-492E90); its callees go through knob selectors",
+      "tu": "RwCore/RwCore_00492e90.cpp",
+      "sym": "RwCore_00492e90",
+      "sel_file": "Match/PortTop_RenderFrameSel.cpp",
+      "sel_prefix": "PortTop_RRSel_",
+      "knob": "MASHED_OT_RENDERFRAME",
+      "gate": "RwCore_FrameRoute, MASHED_RWC_FRAME",
+      "closure": "frame-render"
+    }
+  },
+  "stop_prefix": "PortTop_RRStop_",
+  "stop_file": "Match/PortTop_RenderFrameStops.cpp",
+  "stops": {"style": "count"},
+  "stops_subst": [
+    ["// PORT-OT-RACE (2026-11-16): named stops of the race-load closure of 0x0040d270 (verify/ro_20261116/rltools/rl_bind_gen.py).",
+     "// PORT-TOP-RENDERFRAME-492E90 (2026-11-21): named stops of the frame-render closure of 0x00492e90 (re/tools/bind/porttop_bind.py --profile renderframe)."],
+    ["MASHED_OT_RL_STOPS", "MASHED_OT_RR_STOPS"],
+    ["PortTop_RL_StopHits", "PortTop_RR_StopHits"],
+    ["PortTop_RLStop_", "PortTop_RRStop_"],
+    ["race-load stop (PORT-OT-RACE)", "frame-render stop (PORT-TOP-RENDERFRAME-492E90)"],
+    ["so the load", "so the frame render"]
+  ],
+  "hdr": [
+    "%(mark)s of rva 0x%(rva)s = %(src)s",
+    "// (%(ev)s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_RENDERFRAME",
+    "// through the frame-render closure of 0x00492e90 (re/tools/bind/porttop_bind.py --profile renderframe). Callees bind to",
+    "// exe bodies by name; a callee with no matched or admitted body is a named stop (Match/PortTop_RenderFrameStops.cpp)."
+  ],
+  "local_shared_note": "   // the one exe copy",
+  "local_bound_note": "   // this source carries its only exe copy",
+  "bindings_roots": null,
+  "bindings_root_caller": "0x00492290",
+  "bindings_tag": "PORT-TOP-RENDERFRAME-492E90",
+  "allow_text": "%(step)s (L-111 (a), L-126), %(date)s: the matched body runs only on MASHED_ORIG_TOP + MASHED_OT_RENDERFRAME (frame-render closure of 0x00492e90, %(tool)s); deleted at the ORIG_TOP flip. Evidence: %(evidence)s.",
+  "allow_default": {"step": "PORT-TOP-RENDERFRAME-492E90", "date": "2026-11-21", "evidence": "verify/porttoprenderframe_20261121/RESULT_PORT-TOP-RENDERFRAME-492E90.md", "tool": "re/tools/bind/porttop_bind.py --profile renderframe"}
+}

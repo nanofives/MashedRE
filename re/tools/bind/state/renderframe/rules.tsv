@@ -1,0 +1,7 @@
+# Profile `renderframe` rules (format: state/_shared/rules.tsv, state/raceload/rules.tsv, state/raceframe/rules.tsv).
+stop_why	0041b540	link: re/match/s04/0041b540.c calls FUN_0041af50_body (:48), which has no exe body (LNK2019)
+alias	0045bba0	Orig_0045bba0	Match/PortTop_0045bae0.cpp
+alias	0045bf30	Orig_0045bf30	Match/PortTop_0045bae0.cpp
+# re/match/s01/00401340.c needs MASHED_RE_PORT and its prototypes (Match/MatchS01.cpp:42-99): the exe's one body of it
+# there is reused, not a second copy (PortTop_00401340.cpp failed LNK2019 on its 4 externs)
+alias	00401340	CupSpinSpeedAndColor	Match/MatchS01.cpp

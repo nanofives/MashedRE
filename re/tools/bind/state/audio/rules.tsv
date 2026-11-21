@@ -1,0 +1,13 @@
+# Profile `audio` rules (format: state/_shared/rules.tsv header). Profile-only kinds:
+#   force <rva>                      always planned as a bind (never reused)
+#   stop_force <rva>                 always a named stop
+#   knob <rva> <symbol> <TU>         a stop callee bound to a knob stand-in (default off = the named stop)
+force	00466b50
+force	0045d3f0
+force	0045d430
+# its callee 0x005bf670 is __stdcall with no body: the cdecl stop thunk does not link (LNK2019)
+stop_force	005bf610
+# PORT-TOP-AUDIO-5A8F30-STOPS: calls __beginthread (0x005c2e79), census order 42
+stop_force	005aef30
+# L-174 (c)
+knob	005aef30	PortTop_Knob_005aef30	Match/PortTop_Knob_005aef30.cpp

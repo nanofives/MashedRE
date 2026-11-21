@@ -1,0 +1,103 @@
+# Shared binder rules (re/tools/bind/porttop_bind.py, BIND-PROFILE-DATA 2026-11-21). Every profile reads this file, then
+# its own state/<profile>/rules.tsv. One rule per line, fields separated by TAB; a line starting with # is a comment.
+# A binding row adds lines here or in its profile's rules.tsv, never code (KICKOFF_run54 rule 1). Kinds:
+#   prov_bind  <rva>                       L-126 provisional body binds on the knob path (PROVISIONAL.tsv row needed)
+#   extra_pre  <rva> <line>                line put before the source include of rva's wrapper (in file order)
+#   extra_in   <rva> <line>                line put inside the include block of rva's wrapper (in file order)
+#   alias      <rva> <symbol> <TU>         callers of rva bind this existing exe body (reuse)
+#   local_shared   <caller> <callee> <symbol>   a file-local callee bound to the one exe copy named
+#   local_as_bound <caller> <callee>            this source carries the only exe copy of callee (PortTop_Bound_<callee>)
+#
+# L-126 provisional bodies bind on the knob path only for the rvas named here (kept narrow so the closure grows one
+# reached stop at a time); c4=frida-replay rows (L-128) bind from their one re/match source with no line here.
+# PORT-TOP-AUDIO-HWINIT-4627F0: 004627f0 + its reached callee 005aa0c0
+prov_bind	005a6ea0
+prov_bind	005a6f30
+prov_bind	004627f0
+prov_bind	005aa0c0
+# PORT-TOP-RWAUDIO-TABLE-632BA8: table slot 0x00632ba8 (tail-merge layout, PROVISIONAL.tsv)
+prov_bind	005a5e70
+# PORT-TOP-AUDIOPOOL-5AE650: AudioPoolConstruct (prologue placement, PROVISIONAL.tsv)
+prov_bind	005ae650
+# PORT-TOP-AUDIOSTOP-5ADC10: 0x005add60's callee, register-only residual 92.2% (PROVISIONAL.tsv)
+prov_bind	005adc10
+# PORT-TOP-AUDIO-BODY-45D460: 0x004669b0's permdict loader, register-only residual 94.2% (PROVISIONAL.tsv)
+prov_bind	0045d460
+# PORT-TOP-AUDIOSTOP-5A61B0: 0x005ad770's stops (PROVISIONAL.tsv)
+prov_bind	005a61b0
+prov_bind	005b35a0
+prov_bind	005ae800
+# PORT-TOP-AUDIOINIT-SPLIT-5A9970: 0x005a9970's stop (67.9%, EQUIV-IF-CALLERS-IGNORE(ECX), callers read)
+prov_bind	005a9ab0
+# PORT-TOP-AUDIOINIT-SPLIT-5A9970: table entry 7 0x005aa480's stop (79.8%, NOT-PROVEN call-args at 0x005aa593)
+prov_bind	005aa560
+# PORT-TOP-AUDIO-5AA3D0-STOPS: 0x005a9c50's other stop (54.7%, NOT-PROVEN call-args at 0x005aa350)
+prov_bind	005aa330
+# PORT-TOP-AUDIO-5AA3D0-STOPS: shared callee of the 0x00632c2c entries (74.5%, NOT-PROVEN at 0x005ad4e5)
+prov_bind	005ad420
+# PORT-TOP-AUDIO-5AA3D0-STOPS: table 0x00632c28 entry (77.6%, EQUIV-IF-CALLERS-IGNORE(EAX), caller 0x005ad080 reads)
+prov_bind	005a8ea0
+# PORT-TOP-AUDIO-5AA3D0-STOPS: census order 5, 0x005a62b0's callee (66.1%, NOT-PROVEN at 0x005aa271)
+prov_bind	005aa200
+# PORT-TOP-AUDIO-5AEF30-KNOB: census 69, existing PROVISIONAL.tsv row (81.0%, NOT-PROVEN, PROV-FIX-9)
+prov_bind	005a9f10
+# PORT-TOP-AUDIO-5AEF30-KNOB: census 58, source from the listing 94.4%, NOT-PROVEN
+prov_bind	005bad30
+# PORT-TOP-AUDIO-5A8F30-STOPS: table 0x00635194 entries walked by 0x005bbb20 (L-171 class)
+prov_bind	005b9ea0
+prov_bind	005b85e0
+prov_bind	005c7a00
+prov_bind	005c6c20
+prov_bind	005a7fe0
+prov_bind	005c80a0
+prov_bind	005b7440
+prov_bind	005b6b80
+prov_bind	005bce20
+#
+extra_pre	004645c0	// The source declares its globals extern under #ifndef MATCH_PORT; the port reads them at their original addresses.
+extra_pre	004645c0	#define DAT_00604a10 (*(int *)0x00604a10u)
+extra_pre	004645c0	#define DAT_0068f640 ((Slot *)0x0068f640u)
+extra_pre	0045d250	// The source declares its globals extern under #ifndef MATCH_PORT; the port reads them at their original addresses.
+extra_pre	0045d250	#define DAT_007f0fd0 (*(int *)0x007f0fd0u)
+extra_pre	0045d250	#define DAT_0088fbc0 (*(int *)0x0088fbc0u)
+extra_pre	00407600	// MASHED_RE_PORT drops the source extern block (same as Match/MatchS01.cpp); the table is read at its original address.
+extra_pre	00407600	#define MASHED_RE_PORT 1
+extra_pre	00407600	#define DAT_00639d80 ((Rec639d80 *)0x00639d80u)
+extra_pre	005ab040	#pragma comment(lib, "winmm.lib")   // timeGetTime (the original imports it from WINMM.dll)
+extra_pre	005aafe0	#define thunk_FUN_005ab010 PortTop_Bound_005aafe0   // re/match/s30/005aafe0.c names its body after the jump target (Ghidra thunk name)
+extra_pre	005ac590	// LAB_005ac5c0 is a code address the body stores, not called here: the port stores the original address (no exe body;
+extra_pre	005ac590	// a later call through it is reported by MASHED_CODE_TRAP, image design (b)).
+extra_pre	005ac590	#define LAB_005ac5c0 (*(undefined1 *)0x005ac5c0u)
+extra_pre	005ae330	#define thunk_FUN_004522d0 RwCore_004522d0   // Ghidra thunk_ name of the jump to 0x004522d0 (re/match/s26/005ae330.c)
+extra_pre	005ab180	#define thunk_FUN_005ab620 PortTop_Bound_005ab180   // PORT-TOP-AUDIO-5A8F30-STOPS: re/match/s25/005ab180.c names its body after the jump target (Ghidra thunk name)
+extra_pre	005b7880	#define thunk_FUN_005b1500 PortTop_Bound_005b1500   // PORT-TOP-AUDIO-5A8F30-STOPS: Ghidra thunk_ name of 0x005b15d0 (jmp 0x005b1500, called at 0x005b789a); the port calls the target body
+# BIND-CUNCLEAN-AS-C: C units whose sources call a callee by an RW API name or a site alias (relocheck leaves these
+# names unchecked); the target is read from the original listing (capstone on original/MASHED.exe.unpatched).
+extra_pre	004e3e70	#define RwFrameAddChild RwCore_004e4450   // the one call, 0x004e3e88: call 0x004e4450
+extra_pre	005386b0	#define RpWorldForAllWorldSectors RwCore_004e5c70   // 0x00538762: call 0x004e5c70 (as RwCore/RwCore_00538bd0.cpp:12)
+extra_pre	005444a0	#define FUN_004cc790_site2 RwCore_004cc790   // the case-2 read: the 9 direct calls of 0x005444a0 target 0x004cc790 (7) and 0x004cbd30 (2)
+# re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 under #ifndef MATCH_PORT_SHARED_0045c4e0: the port binds
+# the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
+extra_pre	0045cbe0	#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp
+# PORT-TOP-06 (raceframe; on orch/PORT-TOP-06 these were code lines of porttop_bind.py)
+extra_pre	00401570	// PORT-TOP-06: MASHED_RE_PORT drops the source extern block (same as Match/MatchS01.cpp:42 / :77-78); the table and
+extra_pre	00401570	// the current-entry pointer are read at their original addresses.
+extra_pre	00401570	#define MASHED_RE_PORT 1
+extra_pre	00401570	#define DAT_00636578 ((Entry636578*)0x00636578u)
+extra_pre	00401570	#define DAT_00636ac0 (*(Entry636578**)0x00636ac0u)
+#
+extra_in	00407600	char *FUN_0047d150(int h);   // declared here: the source declares it only outside MASHED_RE_PORT
+extra_in	00401570	void FUN_00401da0(void);   // PORT-TOP-06: re/match/s01/00401570.c declares these two only outside MASHED_RE_PORT
+extra_in	00401570	void FUN_004e6680(void *e);   // the source passes Entry636578 * (typedef declared later in the source)
+#
+local_shared	0045cbe0	0045c4e0	PortTop_Local_0045cb20_0045c4e0
+# re/match/s10/0045c6b0.c carries the only exe copy of 0x0045c640
+local_as_bound	0045c6b0	0045c640
+#
+alias	0045c640	PortTop_Bound_0045c640	Match/PortTop_0045c6b0.cpp
+# one ORIGTOP-only exe copy per rva (RWC-FRAME-492E90)
+alias	004671a0	RwCore_004671a0	RwCore/RwCore_004671a0.cpp
+# printf (CRT, L-67), PORT-TOP-AUDIO-BODY-45D460
+alias	004a2cbd	PortTop_Crt_004a2cbd	Match/PortTop_00493710.cpp
+# DSOUND ordinal 11 import thunk
+alias	005c1920	PortTop_Imp_005c1920	Match/PortTop_Imp_005c1920.cpp

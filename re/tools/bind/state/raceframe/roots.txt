@@ -1,0 +1,2 @@
+# Roots of the raceframe closure (PORT-TOP-06, verify/porttop06_20261121/RESULT_PORT-TOP-06.md), one rva per line.
+004111c0

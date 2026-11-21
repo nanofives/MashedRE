@@ -119,15 +119,28 @@ One binder for every top-down binding row (RACE-BIND-C4-BULK and later race / au
 `rl_bind_gen.py`, `audiotick_bind_gen.py`, `bindings_update.py` and their helpers in the `verify/` folders (do not run
 those any more). It plans a call closure from roots and writes one exe-only wrapper per bound rva
 (`Match/PortTop_<rva>.cpp`: `#define FUN_<callee> <exe symbol>` lines, then `#include` of the matched source under
-`MATCH_PORT`), plus a named-stop file for callees with no body. Run from the worktree root. Two **profiles** hold each
-closure's rule tables: `raceload` (race-load closure of 0x0040d270, stops `Match/PortTop_RaceLoadStops.cpp`,
-`MASHED_OT_RACELOAD`) and `audio` (audio-tick / audio-init closure, stops `Match/PortTop_AudioStops.cpp`). State per
-profile: `re/tools/bind/state/<profile>/` (`plan.json`, `newfiles.txt`, `cpp_unclean.txt`). Commit the state with the
-wrappers.
+`MATCH_PORT`), plus a named-stop file for callees with no body. Run from the worktree root. A **profile** is one
+closure: `raceload` (race-load closure of 0x0040d270, stops `Match/PortTop_RaceLoadStops.cpp`, `MASHED_OT_RACELOAD`),
+`audio` (audio-tick / audio-init closure, stops `Match/PortTop_AudioStops.cpp`), `raceframe` (PORT-TOP-06) and
+`renderframe` (PORT-TOP-RENDERFRAME-492E90). **Profiles and rules are data, not code (BIND-PROFILE-DATA, KICKOFF_run54
+rule 1): a binding row never edits `porttop_bind.py`.** It adds lines to:
+- `re/tools/bind/state/<profile>/profile.json`: the profile's settings (own mark / tag, stop file and prefix, header and
+  stop text, flags such as `c_emit`, `static_stop`, `group_same_source`, `root_external`, allowlist text, selftest order).
+  A new closure is a new folder with a `profile.json` (copy `raceload`'s).
+- `re/tools/bind/state/<profile>/rules.tsv`: per-rva rules, one per line (`force`, `stop_force`, `knob`, `alias`,
+  `not_local`, `prov_bind`, `stop_reason`, `stop_why`, `name_def`, `extra_def`, `callee_override`, ...; kinds and fields in
+  the header of `state/_shared/rules.tsv`).
+- `re/tools/bind/state/_shared/rules.tsv`: rules every profile reads (`prov_bind`, `extra_pre`, `extra_in`, `alias`,
+  `local_shared`, `local_as_bound`).
+- `re/tools/bind/state/<profile>/roots.txt`: the cumulative roots (`plan` / `write` default when `--roots` is left out,
+  and the selftest's roots).
+These line tables take `merge=union` (`.gitattributes`). Generated state (`plan.json`, `newfiles.txt`, the wrappers, the
+stop file, `Match/PortTop_BulkRefs.cpp`) is regenerated with `write` / `refs` on the merged head, never hand-merged.
+Commit the state with the wrappers.
 
 Body choice per rva, in order: forced stop, cpp-unclean stop, profile alias, an existing exe body (CRT, PortTop / RwCore
 match-include, a leaf source's body), bind from the source (`c4=match` BYTE-IDENTICAL, branch promotion TSV,
-`c4=frida-replay`, `PROVISIONAL.tsv` only for rvas in `PROV_BIND`, `ADMITTED.tsv`), otherwise a named stop. Roots are
+`c4=frida-replay`, `PROVISIONAL.tsv` only for rvas with a `prov_bind` rule, `ADMITTED.tsv`), otherwise a named stop. Roots are
 always rebound. The tool leaves its own profile's wrappers out of the exe body index, so a re-run plans them again
 instead of reusing them.
 
@@ -135,7 +148,7 @@ One checkpoint (RACE-BIND-C4-BULK: add the new C4 roots to the cumulative root l
 1. `py -3.12 re/tools/bind/porttop_bind.py plan --profile raceload --roots <all roots, comma> --listing <file>`: dry run
    (counts by bind / reuse / stop, one line per rva). Commit the listing as evidence.
 2. `... samesrc --profile raceload` after a write (or on the listing's plan): a planned bind whose source another TU
-   already compiles under `FUN_<rva>` gives the rva a second exe copy. Add an alias in `PROFILES` or accept it as a
+   already compiles under `FUN_<rva>` gives the rva a second exe copy. Add an `alias` line to the profile's `rules.tsv` or accept it as a
    separate bound copy and say so in the RESULT.
 3. `... write --profile raceload --roots <same>`: wrappers, stop file, `plan.json`. It deletes this profile's wrappers that
    are no longer bound. A file that only differs in CRLF is not rewritten.
@@ -154,10 +167,10 @@ One checkpoint (RACE-BIND-C4-BULK: add the new C4 roots to the cumulative root l
 9. Object build (`set MASHED_DDKOBJ=1&&` before the same build), `py -3.12 re/tools/ddkobj/ddkobj.py check`: report
    IDENTICAL / DIFFERENT / refusals against the previous count. Every bound unit IDENTICAL in `BYTECHECK.tsv`.
 
-`... selftest` rebinds both profiles on the current tree (raceload from the PORT-OT-RACE checkpoint 3 roots, audio from
-the roots of its `plan.json`) and passes only when plan, wrappers, stop files and BINDINGS.tsv come out unchanged. Run it
-after editing the tool or a profile. A new closure is a new `PROFILES` entry (copy `raceload`, change `own_mark`, the stop
-file and prefix, the allowlist text), not a new script.
+`... selftest` rebinds every profile that has a `plan.json` on the current tree (roots from its `roots.txt`, else the
+roots of its `plan.json`) and passes only when plan, wrappers, stop files and BINDINGS.tsv come out unchanged. Run it
+after editing the tool or a profile. A new closure is a new `state/<profile>/` folder (copy `raceload`'s `profile.json`,
+change `own_mark`, `own_tag`, the stop file and prefix, the allowlist text), not a new script and not a code edit.
 
 ## Spawning (decisions 1 and 2): always the auto-permission pattern
 1. `spawn_child` with `account`, `model`, `effort` and the holding prompt

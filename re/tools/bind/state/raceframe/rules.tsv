@@ -1,0 +1,15 @@
+# Profile `raceframe` rules (format: state/_shared/rules.tsv and state/raceload/rules.tsv headers). Extra kind:
+#   stop_why <rva> <text>   named stop with the reason when a matched source exists (checked after reuse, overrides
+#                           stop_reasons.tsv); stop_reasons.tsv in this folder lists rvas other rows own (same effect)
+# re/match/t01g/004111c0.c: 0x004103a0 (HELD, :301) and the five extent members 0x0040dd80 / 0x0040ddf0 / 0x0040feb0 /
+# 0x00410130 / 0x00410ab0 (HIDDEN, :347) are #ifndef MATCH_PORT: external on the port.
+not_local	004111c0	004103a0
+not_local	004111c0	0040dd80
+not_local	004111c0	0040ddf0
+not_local	004111c0	0040feb0
+not_local	004111c0	00410130
+not_local	004111c0	00410ab0
+stop_why	0041b540	link: re/match/s04/0041b540.c calls FUN_0041af50_body (:48), which has no exe body (LNK2019)
+# members of sources another top-down TU already compiles under an exe name (samesrc): one exe body per rva
+alias	0045bba0	Orig_0045bba0	Match/PortTop_0045bae0.cpp
+alias	0045bf30	Orig_0045bf30	Match/PortTop_0045bae0.cpp
