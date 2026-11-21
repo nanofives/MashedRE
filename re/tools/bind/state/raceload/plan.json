@@ -505,6 +505,42 @@
 ],
 []
 ],
+"00458630": [
+"bind",
+"re/match/s09/00458630.c",
+"match",
+[
+"004c5c00"
+],
+[]
+],
+"004b4080": [
+"bind",
+"re/match/s18/004b4080.c",
+"match",
+[
+"004b4050",
+"004b4070",
+"004e89a0"
+],
+[]
+],
+"004b4050": [
+"bind",
+"re/match/s18/004b4050.c",
+"match",
+[
+"004b3f90"
+],
+[]
+],
+"004e89a0": [
+"bind",
+"re/match/rwl02/004e89a0.c",
+"match",
+[],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -1379,14 +1415,6 @@
 "stop",
 "not bound here (--roots-only): matched source re/match/s15/00491a70.c"
 ],
-"00458630": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s09/00458630.c"
-],
-"004b4080": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s18/004b4080.c"
-],
 "004b7330": [
 "stop"
 ],
@@ -1447,6 +1475,21 @@
 "RwCore_004c5cb0",
 "RwCore/RwCore_004c5cb0.cpp"
 ],
+"004c5c00": [
+"reuse",
+"RwCore_004c5c00",
+"RwCore/RwCore_004c5c00.cpp"
+],
+"004b4070": [
+"reuse",
+"RwCore_004b4070",
+"RwCore/RwCore_004b4070.cpp"
+],
+"004b3f90": [
+"reuse",
+"RwCore_004b3f90",
+"RwCore/RwCore_004b3f90.cpp"
+],
 "0047cdc0": [
 "bind",
 "re/match/s13/0047cdc0.c",
@@ -1477,11 +1520,6 @@
 "0057c550"
 ],
 []
-],
-"004b3f90": [
-"reuse",
-"RwCore_004b3f90",
-"RwCore/RwCore_004b3f90.cpp"
 ],
 "00423480": [
 "bind",
@@ -1853,11 +1891,6 @@
 "004c4d20"
 ],
 []
-],
-"004c5c00": [
-"reuse",
-"RwCore_004c5c00",
-"RwCore/RwCore_004c5c00.cpp"
 ],
 "004e4450": [
 "reuse",
@@ -2864,10 +2897,6 @@
 "match",
 [],
 []
-],
-"004e89a0": [
-"stop",
-"cpp-unclean: C2440 'inicializando': no se puede realizar la conversi\u00a2n de 'int' a 'void *'"
 ],
 "00565590": [
 "bind",

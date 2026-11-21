@@ -8,8 +8,8 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_00458dd0 PortTop_Bound_00458dd0
-#define FUN_00458630 PortTop_RLStop_00458630   // named stop
-#define FUN_004b4080 PortTop_RLStop_004b4080   // named stop
+#define FUN_00458630 PortTop_Bound_00458630
+#define FUN_004b4080 PortTop_Bound_004b4080
 #define FUN_004e8090 Orig_004e8090   // exe body (Match/PortTop_004e8090.cpp)
 #include "../../../../re/match/s09/00458dd0.c"
 #endif // MASHED_STANDALONE

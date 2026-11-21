@@ -54,10 +54,6 @@ int PortTop_RLStop_00425bf0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_00451730(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00451730u, "0x00485460", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00451730u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00458630: declared undefined4 by 0x00458dd0; not bound here (--roots-only): matched source re/match/s09/00458630.c
-int PortTop_RLStop_00458630(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00458630u, "0x00458dd0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00458630u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0045de80: declared void by 0x00462950; no matched or admitted source
 int PortTop_RLStop_0045de80(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0045de80u, "0x00462950", n, _ReturnAddress(), ex);
@@ -370,10 +366,6 @@ int PortTop_RLStop_004a332b(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_004b3f50(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004b3f50u, "0x00480340", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004b3f50u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004b4080: declared undefined4 by 0x00458dd0; not bound here (--roots-only): matched source re/match/s18/004b4080.c
-int PortTop_RLStop_004b4080(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004b4080u, "0x00458dd0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004b4080u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004b4550: declared void by 0x00478660 0x00479030; no matched or admitted source
 int PortTop_RLStop_004b4550(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004b4550u, "0x00478660 0x00479030", n, _ReturnAddress(), ex);
@@ -414,10 +406,6 @@ int PortTop_RLStop_004cf2b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_004cf7d0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004cf7d0u, "0x004b3d20", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004cf7d0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004e89a0: declared void by 0x00474f90; cpp-unclean: C2440 'inicializando': no se puede realizar la conversi¢n de 'int' a 'void *'
-int PortTop_RLStop_004e89a0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004e89a0u, "0x00474f90", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004e89a0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004e99b0: declared undefined4 by 0x004b3c60; no matched or admitted source
 int PortTop_RLStop_004e99b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004e99b0u, "0x004b3c60", n, _ReturnAddress(), ex);

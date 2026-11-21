@@ -47,3 +47,9 @@
 0047b860
 0047b8d0
 0040cea0
+# PORT-OT-RACE-BIND-HANDLER cp2: next stops on the RW core arm after 0x00458dd0 (0x00458630 / 0x004b4080 its callees, 0x004b4050 the callee of 0x004b4080; all in race_owned.txt)
+00458630
+004b4080
+004b4050
+# PORT-OT-RACE-BIND-HANDLER cp3: next stop after 0x004b4080 (RW, race_owned.txt, C unit)
+004e89a0
