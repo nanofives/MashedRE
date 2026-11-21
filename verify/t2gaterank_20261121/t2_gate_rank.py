@@ -29,6 +29,10 @@ stand / unbound. Per gate:
                   node except lib / hand): every path from the top to them passes through the gate
 Ranking: released_tool, then its T2 calls, then behind.
 Output: verify/t2gaterank_20261121/T2_GATE_RANK.tsv (every gate with behind > 0 or released_tool > 0), summary on stdout.
+
+--all-knobs (run 55, GATERANK-ALLKNOBS): the route view with every default-OFF sub-knob ON, not only MASHED_OT_RACELOAD=1.
+Default output is unchanged. The all-knobs view writes T2_GATE_RANK.tsv into --out (default
+log/orch/run55_gaterank/all_knobs), never into the committed verify/ copy. See KNOBS below for each knob's file:line.
 """
 from __future__ import annotations
 
@@ -51,6 +55,20 @@ T2PH = ("race-load", "race-tick")
 EXE_DEF = pathlib.Path(r"C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe.unpatched")
 
 
+# knob -> (the rva(s) it switches from a stand-in or stop to a bound body, wrapper source file:line of the getenv)
+KNOBS = [
+    ("MASHED_OT_RACELOAD=1", "0x0040d270 -> Orig_0040d270", "Match/PortTop_StandInsRL.cpp:22 (also Match/PortTop_00492370.cpp:137)"),
+    ("MASHED_OT_RACEFRAME=1", "0x004111c0 -> PortTop_Bound_004111c0 (raceframe plan.json)", "Match/PortTop_RaceFrameKnob.cpp:26"),
+    ("MASHED_OT_RENDERFRAME=1 (+ MASHED_RWC_FRAME)", "direct callees of 0x00492e90 -> walked bodies; root 0x00492e90 = RwCore_00492e90 (renderframe plan.json)",
+     "Match/PortTop_RenderFrameSel.cpp:14; root route Match/PortTop_00492370.cpp:313 (RwCore_FrameRoute)"),
+    ("MASHED_OT_RL_D110=1", "0x0040d110 -> PortTop_Bound_0040d110 (bulk plan.json)", "Match/PortTop_StandInsRL.cpp:191"),
+    ("MASHED_OT_TITLETICK=1", "0x00429290 -> PortTop_Bound_00429290 (renderframe plan.json)", "Match/PortTop_00402750_Pieces.cpp:239"),
+]
+KNOB_FORCE = {0x004111c0: "MASHED_OT_RACEFRAME=1", 0x00492e90: "MASHED_OT_RENDERFRAME=1", 0x0040d110: "MASHED_OT_RL_D110=1",
+              0x00429290: "MASHED_OT_TITLETICK=1"}
+EXTRA_PLANS = ("bulk", "raceframe", "renderframe")   # re/tools/bind/state/<profile>/plan.json
+
+
 def h8(a):
     return "0x%08x" % a
 
@@ -63,6 +81,14 @@ def tsv_rows(path):
 
 def main(argv):
     exe = pathlib.Path(argv[argv.index("--exe") + 1]) if "--exe" in argv else EXE_DEF
+    allk = "--all-knobs" in argv
+    outdir = HERE
+    if allk:
+        outdir = pathlib.Path(argv[argv.index("--out") + 1]) if "--out" in argv else ROOT / "log/orch/run55_gaterank/all_knobs"
+        outdir.mkdir(parents=True, exist_ok=True)
+        print("ALL-KNOBS view; knobs on:")
+        for k, what, where in KNOBS:
+            print("  %s: %s  [%s]" % (k, what, where))
     ent, bounds = O.load_bounds()
     fset = set(ent)
     dedge = O.direct_edges()
@@ -129,6 +155,23 @@ def main(argv):
             st[a] = "stop" if v[0] == "stop" else "run"
             why[a] = "%s %s%s" % (p.parent.name if p.parent.name != "rltools" else "raceload", v[0],
                                   (" " + v[2]) if v[0] == "bind" else (" " + v[1][:60] if len(v) > 1 and v[1] else ""))
+
+    if allk:   # extra plans: a plan `run` entry wins; a plan `stop` only sets an rva no earlier layer made run
+        nplan = collections.Counter()
+        for prof in EXTRA_PLANS:
+            pp = ROOT / "re/tools/bind/state" / prof / "plan.json"
+            for k, v in json.loads(pp.read_text(encoding="utf-8")).items():
+                a = int(k, 16)
+                s2 = "stop" if v[0] == "stop" else "run"
+                if s2 == "stop" and st.get(a) == "run":
+                    continue
+                if st.get(a) != s2:
+                    nplan[prof] += 1
+                st[a] = s2
+                why[a] = "%s %s%s" % (prof, v[0], (" " + v[2]) if v[0] == "bind" else (" " + v[1][:60] if len(v) > 1 and v[1] else ""))
+        for a, kn in KNOB_FORCE.items():
+            st[a], why[a] = "run", "knob %s -> bound body (%s)" % (kn, why.get(a, "plan"))
+        print("all-knobs plan layer: states changed per profile", dict(nplan))
 
     # third layer, only for rvas the plans and BINDINGS do not name: the `#define FUN_<rva> <target>` aliases of the
     # ORIGTOP wrapper TUs in mashedmod/exe_sources.rsp (how a compiled matched body's callee is wired). Knob-on view:
@@ -291,7 +334,7 @@ def main(argv):
     cols = ["rank", "rva", "name", "cls", "rel_tool", "rel_tool_calls", "rel_alone", "rel_alone_calls", "behind",
             "behind_calls", "g_t2", "g_calls", "route_state", "route_src", "level", "subsystem", "source", "best_pct",
             "insitu", "next_stops", "next_stop_list", "callers_on_path"]
-    out = HERE / "T2_GATE_RANK.tsv"
+    out = outdir / "T2_GATE_RANK.tsv"
     with open(out, "w", newline="", encoding="utf-8") as f:
         f.write("\t".join(cols) + "\n")
         for i, d in enumerate(rows, 1):

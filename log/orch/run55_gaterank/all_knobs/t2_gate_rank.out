@@ -1,0 +1,57 @@
+ALL-KNOBS view; knobs on:
+  MASHED_OT_RACELOAD=1: 0x0040d270 -> Orig_0040d270  [Match/PortTop_StandInsRL.cpp:22 (also Match/PortTop_00492370.cpp:137)]
+  MASHED_OT_RACEFRAME=1: 0x004111c0 -> PortTop_Bound_004111c0 (raceframe plan.json)  [Match/PortTop_RaceFrameKnob.cpp:26]
+  MASHED_OT_RENDERFRAME=1 (+ MASHED_RWC_FRAME): direct callees of 0x00492e90 -> walked bodies; root 0x00492e90 = RwCore_00492e90 (renderframe plan.json)  [Match/PortTop_RenderFrameSel.cpp:14; root route Match/PortTop_00492370.cpp:313 (RwCore_FrameRoute)]
+  MASHED_OT_RL_D110=1: 0x0040d110 -> PortTop_Bound_0040d110 (bulk plan.json)  [Match/PortTop_StandInsRL.cpp:191]
+  MASHED_OT_TITLETICK=1: 0x00429290 -> PortTop_Bound_00429290 (renderframe plan.json)  [Match/PortTop_00402750_Pieces.cpp:239]
+all-knobs plan layer: states changed per profile {'bulk': 418, 'raceframe': 123, 'renderframe': 64}
+define layer: 2338 rvas aliased, 225 added (not in plans/BINDINGS), 155 alias conflicts across TUs (highest kept)
+graph: executed functions 3377, T2 census 2450 (calls 54357823), reloc tables 78
+route states at head: {'stand': 37, 'run': 1353, 'unbound': 1492, 'hand': 73, 'stop': 367, 'lib': 55}
+executed path R: 1093 functions, T2 census in R 817 (calls 17845310)
+T2 census reachable from top in the full-follow graph: 1303; not attached to the top: 1147
+gates on R: 231 (stop 120, stand 33, unbound 78); with census behind or released: 197
+T2 census reachable only through hand exe bodies (BINDINGS port / define to a named exe body), not ranked: 543
+hand exe bodies on R: 0x00404e00 0x00404e20 0x0040fc00 0x004102f0 0x0041c380 0x0041f8f0 0x0041faf0 0x0041fcc0 0x00420de0 0x00421720 0x00421c50 0x0042ae10 0x0042c1c0 0x0042c1d0 0x0042c220 0x0042c2e0 0x00432080 0x0045c4e0 0x0045c510 0x0045c550 0x00472640 0x00476ae0 0x00476be0 0x00476c10 0x00476cb0 0x004773f0 0x004778e0 0x0047bcc0 0x004844a0 0x004927c0 0x004935a0 0x004935d0 0x004951e0 0x004a2be9 0x004a3ac9 0x004b302f 0x004b3eb0 0x004b64e0
+runtime first stop 0x0047b860 (PORT-OT-RACE-BIND-PROV4 exit code): rank 63, c4=match cpp-unclean
+class tally of ranked gates: {'C4 frida-replay with source': 9, 'C2 with a source': 19, 'c4=match cpp-unclean': 9, 'c4=match bindable': 84, 'C3 with a source': 13, 'no source': 9, 'hand stand-in': 25, 'C4 no bindable source': 26, 'C1 with a source': 3}
+  1 0x005a7b60 FUN_005a7b60                 C4 frida-replay with source                      tool=41/3290 alone=41 behind=42/3291
+  2 0x00448220 Frontend::PostRaceResultCame C2 with a source (97.0%, in-situ DIVERGED@1116)  tool=34/2488993 alone=6 behind=17/117110
+  3 0x00440bc0 FUN_00440bc0                 c4=match cpp-unclean                             tool=30/241 alone=27 behind=32/367
+  4 0x00420420 FUN_00420420                 C2 with a source (79.8%)                         tool=27/2379852 alone=22 behind=33/878816
+  5 0x004103a0 SubStateHeldCountdown5       c4=match bindable                                tool=20/148932 alone=7 behind=41/940740
+  6 0x0055f800 FUN_0055f800                 C3 with a source (65.3%)                         tool=15/31504 alone=13 behind=26/68237
+  7 0x00487280 FUN_00487280                 no source (C2)                                   tool=12/2150108 alone=8 behind=4/732
+  8 0x0048ae00 FUN_0048ae00                 hand stand-in                                    tool=11/1574016 alone=5 behind=1/1420
+  9 0x004e99b0 FUN_004e99b0                 C2 with a source (45.5%)                         tool=10/46124 alone=9 behind=6/5553
+ 10 0x00409710 FUN_00409710                 c4=match cpp-unclean                             tool=10/10119 alone=1 behind=2/2
+ 11 0x004d8570 RwEngineRegisterStringFuncti c4=match bindable                                tool=9/109749 alone=7 behind=5/51402
+ 12 0x0046f6c0 VehicleWheelContactSolver    C2 with a source (50.7%, in-situ DIVERGED@1)     tool=8/2177526 alone=4 behind=5/300267
+ 13 0x004e7420 RpClumpStreamRead            C2 with a source (37.9%)                         tool=8/13124 alone=6 behind=8/1846
+ 14 0x00425bf0 FUN_00425bf0                 c4=match cpp-unclean                             tool=8/260 alone=0 behind=1/1
+ 15 0x004568d0 FUN_004568d0                 C4 frida-replay with source                      tool=7/2130894 alone=6 behind=18/84538
+ 16 0x0041def0 FUN_0041def0                 hand stand-in                                    tool=7/1572584 alone=2 behind=0/0
+ 17 0x0047b8d0 FUN_0047b8d0                 c4=match cpp-unclean                             tool=7/73597 alone=6 behind=14/73611
+ 18 0x00408b00 FUN_00408b00                 C2 with a source (97.0%, in-situ IDENTICAL-FOR-2 tool=6/490508 alone=6 behind=3/65256
+ 19 0x004b6570 FUN_004b6570                 c4=match bindable                                tool=6/146 alone=1 behind=7/153
+ 20 0x0041eaa0 FUN_0041eaa0                 hand stand-in                                    tool=5/81477 alone=0 behind=1/66
+ 21 0x0041bec0 FUN_0041bec0                 hand stand-in                                    tool=5/12990 alone=0 behind=0/0
+ 22 0x0041d6e0 FUN_0041d6e0                 hand stand-in                                    tool=5/12990 alone=0 behind=0/0
+ 23 0x004cce20 FUN_004cce20                 c4=match bindable                                tool=5/6381 alone=4 behind=3/6294
+ 24 0x0041b4d0 FUN_0041b4d0                 c4=match bindable                                tool=5/3136 alone=1 behind=2/5
+ 25 0x004275d0 FUN_004275d0                 hand stand-in                                    tool=4/1983812 alone=0 behind=1/616
+ 26 0x00538c80 FUN_00538c80                 c4=match bindable                                tool=4/1926855 alone=3 behind=6/649704
+ 27 0x0045b990 FUN_0045b990                 c4=match bindable                                tool=4/1881542 alone=3 behind=4/10900
+ 28 0x0041cb10 FUN_0041cb10                 hand stand-in                                    tool=4/1572488 alone=0 behind=0/0
+ 29 0x004775b0 FUN_004775b0                 hand stand-in                                    tool=4/1572488 alone=0 behind=0/0
+ 30 0x004783f0 FUN_004783f0                 C4 frida-replay with source                      tool=4/188876 alone=3 behind=2/32
+ 31 0x004e5850 RpWorldCreate                C2 with a source (57.4%)                         tool=4/29331 alone=3 behind=0/0
+ 32 0x00419760 FUN_00419760                 c4=match bindable                                tool=4/11058 alone=2 behind=5/11060
+ 33 0x0041a1e0 FUN_0041a1e0                 hand stand-in                                    tool=4/9954 alone=2 behind=0/0
+ 34 0x0041d8b0 FUN_0041d8b0                 hand stand-in                                    tool=4/9954 alone=2 behind=0/0
+ 35 0x0041db90 FUN_0041db90                 hand stand-in                                    tool=4/9954 alone=2 behind=0/0
+ 36 0x00558240 FUN_00558240                 hand stand-in                                    tool=4/794 alone=4 behind=4/794
+ 37 0x0045be90 FUN_0045be90                 c4=match bindable                                tool=4/156 alone=1 behind=2/2
+ 38 0x00402240 ClumpGeom401fe0Create        hand stand-in                                    tool=3/1562630 alone=0 behind=0/0
+ 39 0x00402590 ClumpGeom4022a0Create        hand stand-in                                    tool=3/1562630 alone=0 behind=0/0
+ 40 0x0041ebb0 FUN_0041ebb0                 c4=match bindable                                tool=3/256027 alone=3 behind=1/2725
