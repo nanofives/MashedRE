@@ -21,8 +21,16 @@ if /i "%~1"=="clean" (
 
 REM HB-LOCK-ENFORCE: wait while mashed_lock status shows PRIORITY-HOLD or SOLO (prints a line).
 REM MASHED_LOCK_SKIP_WAIT=1 skips it (the hold owner's own children).
-py -3.12 "%ROOT%..\re\orchestrator\mashed_lock.py" wait-clear --label build.bat
-if errorlevel 1 (echo [ERROR] mashed_lock wait-clear failed & exit /b 1)
+REM HB-LOCK-PUBLISH-FIX: the LAN release builds from a git archive with no re/orchestrator, so publish.sh sets
+REM MASHED_LOCK_WAIT=off (named opt-out, no fail-open): the wait is skipped only when it is set. Without it a missing
+REM mashed_lock.py is an error that names the path.
+if /i "%MASHED_LOCK_WAIT%"=="off" (
+    echo [mashed_lock] wait skipped: MASHED_LOCK_WAIT=off ^(archive build^)
+) else (
+    if not exist "%ROOT%..\re\orchestrator\mashed_lock.py" (echo [ERROR] mashed_lock.py not found at "%ROOT%..\re\orchestrator\mashed_lock.py" ^(MASHED_LOCK_WAIT=off is only for the archive build^) & exit /b 1)
+    py -3.12 "%ROOT%..\re\orchestrator\mashed_lock.py" wait-clear --label build.bat
+    if errorlevel 1 (echo [ERROR] mashed_lock wait-clear failed & exit /b 1)
+)
 
 call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)

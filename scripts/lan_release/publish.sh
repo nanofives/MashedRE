@@ -51,6 +51,7 @@ if [ "$NO_BUILD" = 0 ]; then
     # shellcheck disable=SC2086
     git archive "$REF" $paths | tar -x -C "$BUILD"
     export MASHED_NO_DEPLOY=1
+    export MASHED_LOCK_WAIT=off   # HB-LOCK-PUBLISH-FIX: the archive has no re/orchestrator/mashed_lock.py
     cmd //c "$(cygpath -w "$BUILD/mashedmod/build.bat")"
 fi
 [ -f "$APP/mashed_re.exe" ] || { echo "[!] no $APP/mashed_re.exe (build failed?)"; exit 1; }
