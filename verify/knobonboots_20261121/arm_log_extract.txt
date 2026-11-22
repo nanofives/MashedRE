@@ -1,0 +1,77 @@
+### ROLOADRWC
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] frame 0 rendered by 0x00492e90 (matched, RW core) = 1, phase 1
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 01723DE8 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D415, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x004B7330 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0026D415
+### G5D110
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] frame 0 rendered by 0x00492e90 (matched, RW core) = 1, phase 1
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 01723178 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D415, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x004B7330 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0026D415
+### G5D110C
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] frame 0 rendered by 0x00492e90 (matched, RW core) = 1, phase 1
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 017E8A30 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D415, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004C0510: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D420, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0047B980: race-load stop (PORT-OT-RACE), call 1, callers 0x00440bc0, return 0005A9EF, returns 0 (MASHED_OT_RL_STOPS=count)
+### G5TT
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] frame 0 rendered by 0x00492e90 (matched, RW core) = 1, phase 1
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 01978248 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D415, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x004B7330 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0026D415
+### G5TTC
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] frame 0 rendered by 0x00492e90 (matched, RW core) = 1, phase 1
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 018F5E00 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D415, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004C0510: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D420, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0047B980: race-load stop (PORT-OT-RACE), call 1, callers 0x00440bc0, return 0005A9EF, returns 0 (MASHED_OT_RL_STOPS=count)
+### G5RF
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] frame 0 rendered by 0x00492e90 (matched, RW core) = 1, phase 1
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 0191D198 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D415, exits
+[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x004B7330 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 0026D415
+### G5RFC
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] frame 0 rendered by 0x00492e90 (matched, RW core) = 1, phase 1
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 017685B0 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x00426e10: matched course load PortTop_Bound_00426e10(track 30) entered   (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004B7330: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D415, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x004C0510: race-load stop (PORT-OT-RACE), call 1, callers 0x0047b860, return 0026D420, returns 0 (MASHED_OT_RL_STOPS=count)
+[ORIG_TOP] rva 0x0047B980: race-load stop (PORT-OT-RACE), call 1, callers 0x00440bc0, return 0005A9EF, returns 0 (MASHED_OT_RL_STOPS=count)
+### G5RFP
+[ORIG_TOP] frame 0: 0x00492d30 (matched) returned 1, phase 1, 0x0043dfd0 stand-in calls 1, 0x004111c0 calls 0
+[ORIG_TOP] rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)
+[ORIG_TOP] rva 0x004264d0: matched body PortTop_Bound_004264d0(0000001E) entered, DAT_0067ea74 = 1, DAT_007d3ff8 = 01141BA8 (PORT-OT-RACE)
+### G5RFN
+[RWC_CORE] bring-up probe done: RwEngineStop 0x004c2f60() = 1; returning 0 from RwEngineStart so 0x00493710 runs its failure path (the rest of the top-down path is not on the RW core yet)
+[ORIG_TOP] WinMain 0x00492370 returned -1 after 0 frames
+### RUNLOG
+2026-11-21 21:04:46 RO_ROLOADRWC-pr1 exe=476f7d43 pid=21648 exit=4944688 self_exited=True secs=42 | MASHED_DET
+2026-11-21 21:05:01 RO_G5D110-pr1 exe=476f7d43 pid=24892 exit=4944688 self_exited=True secs=15 | MASHED_DETERM
+2026-11-21 21:05:40 RO_G5D110C-pr1 exe=476f7d43 pid=7164 exit=3221225477 self_exited=True secs=6 | MASHED_DETE
+2026-11-21 21:05:47 RO_G5TT-pr1 exe=476f7d43 pid=20908 exit=4944688 self_exited=True secs=6 | MASHED_DETERMINI
+2026-11-21 21:05:55 RO_G5TTC-pr1 exe=476f7d43 pid=14048 exit=3221225477 self_exited=True secs=6 | MASHED_DETER
+2026-11-21 21:06:02 RO_G5RF-pr1 exe=476f7d43 pid=25192 exit=4944688 self_exited=True secs=6 | MASHED_DETERMINI
+2026-11-21 21:06:09 RO_G5RFC-pr1 exe=476f7d43 pid=18440 exit=3221225477 self_exited=True secs=6 | MASHED_DETER
+2026-11-21 21:06:10 RO_G5RFN-pr1 exe=476f7d43 pid=2432 exit=4294967295 self_exited=True secs=0 | MASHED_DETERM
+2026-11-21 21:06:11 RO_G5RFNC-pr1 exe=476f7d43 pid=20572 exit=4294967295 self_exited=True secs=0 | MASHED_DETE
+2026-11-21 21:08:03 RO_G5RFP-pr1 exe=476f7d43 pid=16864 exit=3221225477 self_exited=True secs=5 | MASHED_DETER
