@@ -1,0 +1,30 @@
+=== RO_ROLOADRWC-pr1 (465 lines)
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 017CDE5C; RwGlobals 017ACDB8, module offset 0x3F4, texdict freelist 007D4030, list head 017AD1AC -> 017CDE6C; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 017CDE8C; RwGlobals 017ACDB8, module offset 0x3F4, texdict freelist 007D4030, list head 017CDE84 -> 017CDE9C; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[ORIG_TOP] rva 0x0047b9b0: deviation L-114, hand runner Save::RunTrackPowerupsScript on the span 0x007f0a40: 4925 bytes, 39 Set_Track_Powerups calls, 0 statements skipped, from piz (POWERUPINIT-A)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[ORIG_TOP] rva 0x0047B980: race-load stop (PORT-OT-RACE), call 1, callers 0x00440bc0, return 0005A9EF, exits
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 2990 checks failed), 0x00493480 calls 300, 0x004926c0 calls 0, audio branch 0, DAT_007f1010 in the VS2022 double-rounding form 0, calls skipped for the replay warp 1; bodies at 00018B70 / 00018A90 / 001EB140; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at 00018E60 / 00018F70 / 00018F40
+=== RO_ROLOADRWCC-pr1 (507 lines)
+[portstate-image] per-address seeds skipped (PortStateSeed, RdataSeed, DInputSeed bytes, CP_SEED); self-test PASS (0 of 8 checks failed)
+[OT_CODEPTR] applied: 188 slots (31 bound to an exe body, 157 to a stop thunk), 72 data seeds (288 B), 0 outside the pad (table: 188 slots, 72 seeds); self-test PASS (0 of 367 checks failed)
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 0192189C; RwGlobals 018FACB8, module offset 0x3F4, texdict freelist 007D4030, list head 018FB0AC -> 019218AC; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480 
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 2 on the RW core (RwCore_004c5890) = 019218CC; RwGlobals 018FACB8, module offset 0x3F4, texdict freelist 007D4030, list head 019218C4 -> 019218DC; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[ORIG_TOP] rva 0x0047b9b0: deviation L-114, hand runner Save::RunTrackPowerupsScript on the span 0x007f0a40: 4925 bytes, 39 Set_Track_Powerups calls, 0 statements skipped, from piz (POWERUPINIT-A)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+[ORIG_TOP] rva 0x0047B980: race-load stop (PORT-OT-RACE), call 1, callers 0x00440bc0, return 0005A9EF, returns 0 (MASHED_OT_RL_STOPS=count)
+[RWC_CORE] AV at 0002E824 (exe+0x1E824) read 00000038; eax 00000000 ecx 00000010 edx 00000061 ebx 0153FCC0 esi 0037E820 edi 00000000 esp 01537C60
+[RWC_CORE] AV stack exe offsets: +0x268BEF +0x36E820 +0x5BF010 +0x634378 +0x634158
+[RWC_CORE] AV raw stack: [esp+0]=00278BEF(mashed_re_ddk.exe+0x268BEF) [esp+4]=00000000(-) [esp+8]=00000000(-) [esp+C]=00000002(-) [esp+10]=0037E820(mashed_re_ddk.exe+0x36E820) [esp+14]=005CF010(mashed_re_ddk.exe+0x5BF010) [esp+18]=01537C8C(-) [esp+1C]=00008000(-)
+2026-11-21 23:15:03 RO_ROLOADRWC-pr1 exe=90cc34af pid=13840 exit=4700544 self_exited=True secs=9 | MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=600 MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_PORTSTATE_IMAGE=1 MASHED_REPLAY=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\RACE-LOAD-LUA\verify\replayoracle_20261113\replay_trace.json MASHED_REPLAY_TRACE=D:\MashedWT\RACE-LOAD-LUA_data\RO_ROLOADRWC-pr1 MASHED_REPLAY_TRACE_CKPT=0,1,17,18,299,301,600 MASHED_RWC_CORE=1 MASHED_RWC_FRAME=1 MASHED_RWC_FRAME_N=100000 MASHED_WIN_POS=primary-bl | ticks.bin:4276:187410ee meta.json:25:70da28c2
+2026-11-21 23:15:09 RO_ROLOADRWCC-pr1 exe=90cc34af pid=10584 exit=3221225477 self_exited=True secs=6 | MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=600 MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_OT_RL_STOPS=count MASHED_PORTSTATE_IMAGE=1 MASHED_REPLAY=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\RACE-LOAD-LUA\verify\replayoracle_20261113\replay_trace.json MASHED_REPLAY_TRACE=D:\MashedWT\RACE-LOAD-LUA_data\RO_ROLOADRWCC-pr1 MASHED_REPLAY_TRACE_CKPT=0,1,17,18,299,301,600 MASHED_RWC_CORE=1 MASHED_RWC_FRAME=1 MASHED_RWC_FRAME_N=100000 MASHED_WIN_POS=primary-bl | ticks.bin:4041:55ba456d meta.json:25:8cafce32
