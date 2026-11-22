@@ -561,6 +561,69 @@ def solo_end(token, name=DEFAULT_NAME, quiet=False):
     return ok
 
 
+# HB-LOCK-ENFORCE (run 55): a plain (non-priority) acquirer and the build/check/selftest wrappers
+# used to look only at the solo window and pending priority marks, so with the game lock free a
+# PRIORITY-HOLD (held=true linger, the merge train's pass) did not stop them: arm ws_00412190
+# (stalker_write_surface.py:168, plain MashedLock) started under the hold. hold_blockers() is the
+# rule every wrapper shares: wait while status would show PRIORITY-HOLD or SOLO.
+SKIP_WAIT_ENV = 'MASHED_LOCK_SKIP_WAIT'   # set by the hold owner for its own children
+
+
+def _ancestor_pids():
+    try:
+        import psutil
+        out, p = set(), psutil.Process(os.getpid())
+        while p is not None:
+            out.add(p.pid)
+            p = p.parent()
+        return out
+    except Exception:
+        return {os.getpid()}
+
+
+def hold_blockers(name=DEFAULT_NAME):
+    """Held priority records and the open solo window that make `status` print PRIORITY-HOLD or
+    SOLO, as strings. A hold whose owner is an ancestor of this process, or a solo window whose
+    token this process carries, does not block it. Empty list = clear."""
+    out = []
+    anc = None
+    for pl in prio_lingering(name):
+        if not pl.get('held'):
+            continue
+        if anc is None:
+            anc = _ancestor_pids()
+        if pl.get('pid') in anc:
+            continue
+        out.append(f"PRIORITY-HOLD '{name}' pid={pl.get('pid')} label={pl.get('label')} since={pl.get('at')}")
+    so = solo_owner(name)
+    if so is not None and not _solo_admits_me(so):
+        out.append(f"SOLO '{name}' label={so.get('label')} since={so.get('at')}")
+    return out
+
+
+def wait_clear(label='', name=DEFAULT_NAME, poll=3.0, wait=None, quiet=False):
+    """Block while hold_blockers() is non-empty, printing one line when it first waits and one
+    when it clears. wait=None waits without limit (the hold owner's death or release, or the
+    solo expiry, ends it); a number raises TimeoutError past it. MASHED_LOCK_SKIP_WAIT=1 skips.
+    Returns the seconds waited."""
+    if os.environ.get(SKIP_WAIT_ENV) == '1':
+        return 0.0
+    t0 = time.time()
+    noted = False
+    while True:
+        bl = hold_blockers(name)
+        if not bl:
+            if noted and not quiet:
+                print(f"[mashed-lock] clear after {int(time.time() - t0)}s ({label})", flush=True)
+            return time.time() - t0
+        if not noted and not quiet:
+            print(f"[mashed-lock] WAITING ({label}) — {bl[0]}", flush=True)
+        noted = True
+        if wait is not None and time.time() - t0 > wait:
+            raise TimeoutError(f"waited {wait}s for '{name}' to clear: {bl[0]}")
+        time.sleep(poll)
+
+
 class MashedLock:
     def __init__(self, label='', name=DEFAULT_NAME, wait=1800, poll=3.0, quiet=False,
                  priority=0):
@@ -594,6 +657,7 @@ class MashedLock:
         waited_note = False
         solo_note = False
         prio_note = False
+        hold_note = False
         while True:
             so = solo_owner(self.name)
             if so is not None and not _solo_admits_me(so):
@@ -613,6 +677,15 @@ class MashedLock:
                         prio_note = True
                     time.sleep(self.poll)
                     start = time.time()   # bounded by the marker expiry, not by self.wait
+                    continue
+            if not self.priority and os.environ.get(SKIP_WAIT_ENV) != '1':
+                hb = [b for b in hold_blockers(self.name) if b.startswith('PRIORITY-HOLD')]
+                if hb:
+                    if not hold_note:
+                        self._log(f"WAITING — {hb[0]}")
+                        hold_note = True
+                    time.sleep(self.poll)
+                    start = time.time()   # bounded by the hold's release or its owner's death
                     continue
             try:
                 fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
@@ -711,6 +784,15 @@ def _cli():
             print(f"SOLO '{name}' label={so.get('label')} pid={so.get('pid')} owner_pid={so.get('owner_pid')} "
                   f"since={so.get('at')} expires_in={left}s")
         return 0
+    if cmd == 'wait-clear':
+        # HB-LOCK-ENFORCE: exit 0 once no PRIORITY-HOLD / SOLO is shown; --wait N bounds it (exit 3)
+        try:
+            wait_clear(label=opt('--label', 'cli'), name=name, wait=int(opt('--wait')) if opt('--wait') else None,
+                       poll=float(opt('--poll', 3.0)))
+        except TimeoutError as e:
+            print(f"[mashed-lock] {e}", flush=True)
+            return 3
+        return 0
     if cmd == 'solo-begin':
         tok = solo_begin(label=opt('--label', 'cli'), name=name,
                          ttl=int(opt('--ttl', SOLO_TTL_SEC)), wait=int(opt('--wait', 1800)),
@@ -766,7 +848,7 @@ def _cli():
                     prio_linger_mark(name, label)
         with MashedLock(label=label, name=name, wait=wait, priority=prio):
             return subprocess.call(sub)
-    sys.exit(f"unknown command '{cmd}' (status|break|run|solo-begin|solo-end|prio-hold|prio-release)")
+    sys.exit(f"unknown command '{cmd}' (status|break|run|wait-clear|solo-begin|solo-end|prio-hold|prio-release)")
 
 
 if __name__ == '__main__':

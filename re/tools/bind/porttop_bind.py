@@ -1604,6 +1604,10 @@ def selftest_libs():
 
 
 def cmd_selftest(a):
+    # HB-LOCK-ENFORCE: wait line only, no change to what the selftest checks
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'orchestrator'))
+    import mashed_lock
+    mashed_lock.wait_clear(label='porttop_bind selftest')
     bad = selftest_libs()
     for prof in sorted(PROFILES, key=lambda p: (PROFILES[p]['selftest_order'], p)):
         if not os.path.exists(os.path.join(state_dir(prof), 'plan.json')):

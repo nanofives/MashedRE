@@ -1,0 +1,3 @@
+# KNOBON-BOOTS-G5: ROLOAD (no RW core) + race-frame knob MASHED_OT_RACEFRAME=1, exit-mode stops
+@ROLOAD
+MASHED_OT_RACEFRAME=1

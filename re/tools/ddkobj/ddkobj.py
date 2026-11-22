@@ -432,7 +432,8 @@ def default_link_symbols():
     sdk = sorted(pathlib.Path(r"C:\Program Files (x86)\Windows Kits\10\Lib").iterdir())[-1] / "um" / "x86"
     imps = [sdk / (n + ".lib") for n in ("user32", "gdi32", "d3d9", "advapi32", "ole32", "oleaut32", "uuid",
                                          "winmm", "shell32", "dinput8", "dsound", "comdlg32", "winspool")]
-    for lib in [MOD / "deps" / "qhull-2002.1" / "qhull_2002_1.lib", MOD / "deps" / "librw" / "librw_d3d9.lib"] + imps:
+    for lib in [MOD / "deps" / "qhull-2002.1" / "qhull_2002_1.lib", MOD / "deps" / "librw" / "librw_d3d9.lib",
+                MOD / "deps" / "lua-4.0" / "lua_4_0.lib"] + imps:
         if lib.exists():
             syms |= ar_symbols(lib)
     return syms
@@ -1373,7 +1374,7 @@ def do_link(out: pathlib.Path):
                                                   "RwRasterBridge_exe.obj", "RwSceneBuild_exe.obj",
                                                   "RwRaceSubmit_exe.obj", "RwRaceFx_exe.obj", "RwApiBind_exe.obj"))
     libs = f'user32.lib d3d9.lib gdi32.lib {os.environ.get("DDKOBJ_EXTRA_LIBS", "")} "{MOD / "deps" / "qhull-2002.1" / "qhull_2002_1.lib"}" ' \
-           f'"{MOD / "deps" / "librw" / "librw_d3d9.lib"}"'
+           f'"{MOD / "deps" / "librw" / "librw_d3d9.lib"}" "{MOD / "deps" / "lua-4.0" / "lua_4_0_ddk.lib"}" legacy_stdio_definitions.lib'
     linkcmd = (f'cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"{exe}" @"{out / "link_ddk.rsp"}" {extra} '
                f'/link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO /MAP:"{mp}" '
                f'/DELAYLOAD:d3d9.dll /DELAYLOAD:dinput8.dll /NODEFAULTLIB:libc.lib {libs}')
@@ -1730,6 +1731,16 @@ def main_selftest(a):
     return 1 if fails else 0
 
 
+def _wait_for_hold(label):
+    """HB-LOCK-ENFORCE: wait while mashed_lock status shows PRIORITY-HOLD or SOLO (prints a line)."""
+    sys.path.insert(0, str(HERE.parent.parent / "orchestrator"))
+    try:
+        import mashed_lock
+    finally:
+        sys.path.pop(0)
+    mashed_lock.wait_clear(label=label)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -1744,6 +1755,7 @@ def main(argv=None):
     s = sub.add_parser("selftest")
     s.add_argument("--keep", action="store_true")
     a = p.parse_args(argv)
+    _wait_for_hold("ddkobj " + a.cmd)
     return {"build": main_build, "check": main_check, "selftest": main_selftest}[a.cmd](a)
 
 
