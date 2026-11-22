@@ -1,0 +1,87 @@
+[selftest] lib kind: 0 lib roots, 0 profile x rva lib bindings resolve, 0 fail (unit test: re/tools/bind/test_porttop_bind_lib.py)
+[selftest] raceload roots 45: plan IDENTICAL (bind 182 reuse 115 stop 114), wrappers+stops IDENTICAL (183 checked)
+[selftest] raceload refs: 129 caller-less bound bodies, Match/PortTop_BulkRefs.cpp IDENTICAL, 0x0040cea0 (own) drops out with a bound caller 0x00412050; 0x004074a0 (foreign) drops out with a bound caller 0x0040cea0 (own 35, foreign 94)
+[selftest] C emit: 39 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit of the 20 held rvas (c_hold.txt, not bound): 20 compile, 0 fail
+[selftest] audio roots 63: plan DIFFERENT (bind 384 reuse 83 stop 76), wrappers+stops DIFFERENT 13 (385 checked)
+   plan 005a6ea0 ['bind', 're/match/s25/005a6ea0.c', 'provisional'] -> ['bind', 're/match/s25/005a6ea0.c', 'replay']
+   plan 005a71f0 ['stop'] -> ['reuse', 'PortTop_Bound_005a71f0', 'Match/PortTop_005a71f0.cpp']
+   plan 005a7b60 ['stop'] -> ['reuse', 'PortTop_Bound_005a7b60', 'Match/PortTop_005a7b60.cpp']
+   plan 005a91b0 ['stop'] -> ['reuse', 'PortTop_Bound_005a91b0', 'Match/PortTop_005a91b0.cpp']
+   plan 005a9f10 ['bind', 're/match/s25/005a9f10.c', 'provisional'] -> ['bind', 're/match/s25/005a9f10.c', 'replay']
+   plan 005ae250 ['stop'] -> ['reuse', 'PortTop_Bound_005ae250', 'Match/PortTop_005ae250.cpp']
+   plan 005b10a0 ['stop'] -> ['reuse', 'AudioTableDispatchAt4', 'Audio/AudioTableDispatch.cpp']
+   plan 005ba1d0 ['stop'] -> ['reuse', 'PortTop_Bound_005ba1d0', 'Match/PortTop_005ba1d0.cpp']
+   plan 005bb000 ['stop'] -> ['reuse', 'PortTop_Bound_005bb000', 'Match/PortTop_005bb000.cpp']
+   plan 005bb910 ['stop'] -> ['reuse', 'PortTop_Bound_005bb910', 'Match/PortTop_005bb910.cpp']
+   plan 005bba30 ['stop'] -> ['reuse', 'PortTop_Bound_005bba30', 'Match/PortTop_005bba30.cpp']
+   plan 005bba60 ['stop'] -> ['reuse', 'PortTop_Bound_005bba60', 'Match/PortTop_005bba60.cpp']
+   plan 005bbac0 ['stop'] -> ['reuse', 'PortTop_Bound_005bbac0', 'Match/PortTop_005bbac0.cpp']
+   plan 005c7d30 ['stop'] -> ['reuse', 'PortTop_Bound_005c7d30', 'Match/PortTop_005c7d30.cpp']
+   file mashedmod/src/mashed_re/Match/PortTop_0045d460.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005a8f30.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005a9e60.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005b10d0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005b1140.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005b9f30.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005ba780.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005bb850.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005bc860.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005be0f0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005c7a90.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_005c7fb0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_AudioStops.cpp
+[selftest] bulk roots 362: plan DIFFERENT (bind 97 reuse 204 stop 188), wrappers+stops DIFFERENT 1 (98 checked)
+   plan 00420420 ['stop'] -> ['stop', 'outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s05/00420420.c']
+   file mashedmod/src/mashed_re/Match/PortTop_BulkStops.cpp
+   moved, not named: 00420420 | 00420420 stop  C2 FUN_00420420 -> 00420420 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s05/00420420.c C4 FUN_00420420
+[selftest] bulk listing vs verify/bindbulk_20261121/tools/last_plan.txt: 60 lines moved, FAIL 1 unnamed, 0 stale
+[selftest] C emit: 0 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] raceframe roots 1: plan DIFFERENT (bind 269 reuse 154 stop 129), wrappers+stops DIFFERENT 17 (270 checked)
+   plan 0040ce80 - -> ['reuse', 'PtrTable5f2770Get', 'Match/MatchS02_0040ce80.cpp']
+   plan 0041f3d0 - -> ['bind', 're/match/s04/0041f3d0.c', 'match']
+   plan 00420290 - -> ['stop']
+   plan 00420870 ['stop'] -> ['bind', 're/match/s05/00420870.c', 'replay']
+   plan 00422440 - -> ['bind', 're/match/s05/00422440.c', 'match']
+   plan 00422470 - -> ['bind', 're/match/s05/00422470.c', 'match']
+   plan 00422aa0 - -> ['reuse', 'SlotFieldSet', 'Match/MatchS05_00422aa0.cpp']
+   plan 004260a0 - -> ['reuse', 'GetDat00657438', 'Match/MatchS06_004260a0.cpp']
+   plan 004260b0 - -> ['reuse', 'GetDat0065743c', 'Match/MatchS06_004260b0.cpp']
+   plan 00426dc0 - -> ['bind', 're/match/s06/00426dc0.c', 'match']
+   plan 00431d70 - -> ['reuse', 'PortTop_Bound_00431d70', 'Match/PortTop_00431d70.cpp']
+   plan 0046b540 ['stop'] -> ['bind', 're/match/s11/0046b540.c', 'replay']
+   plan 0046bce0 - -> ['bind', 're/match/s11/0046bce0.c', 'match']
+   plan 0046bd20 - -> ['bind', 're/match/s11/0046bd20.c', 'match']
+   plan 0046bd60 - -> ['bind', 're/match/s11/0046bd60.c', 'match']
+   plan 0046bda0 - -> ['bind', 're/match/s11/0046bda0.c', 'match']
+   plan 00479100 - -> ['stop']
+   plan 004c5a60 - -> ['reuse', 'RwCore_004c5a60', 'RwCore/RwCore_004c5a60.cpp']
+   plan 00540080 - -> ['bind', 're/match/rwl03/00540080.c', 'match']
+   plan 00540100 - -> ['bind', 're/match/rwl03/00540100.c', 'match']
+   plan 00540160 - -> ['bind', 're/match/rwl03/00540160.c', 'match']
+   file mashedmod/src/mashed_re/Match/PortTop_0040da50.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_0040e590.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_004111c0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_0041f3d0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_00420870.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_00422440.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_00422470.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_00426dc0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_0046b540.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_0046bce0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_0046bd20.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_0046bd60.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_0046bda0.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_00540080.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_00540100.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_00540160.cpp
+   file mashedmod/src/mashed_re/Match/PortTop_RaceFrameStops.cpp
+[selftest] C emit: 0 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] renderframe roots 2: plan IDENTICAL (bind 100 reuse 116 stop 45), wrappers+stops IDENTICAL (101 checked)
+[selftest] C emit: 0 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] BINDINGS.tsv from the audio plan: IDENTICAL (updated 0 added 0)
+[selftest] FAIL 35

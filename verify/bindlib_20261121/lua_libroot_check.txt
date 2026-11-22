@@ -1,0 +1,35 @@
+004b7330 C2 FUN_004b7330 no libid note
+004c0510 C4 FUN_004c0510 no libid note
+004b7480 C2 FUN_004b7480 no libid note
+004b7a70 C2 FUN_004b7a70 no libid note
+004b7200 C4 thunk_FUN_004b7fd0 no libid note
+004b7250 C4 FUN_004b7250 no libid note
+004b6fc0 C4 lua_gettop no libid note
+004b7090 C2 lua_tonumber no libid note
+OK 004b6fc0 ('lua_gettop', 'lib:lua-4.0:src/lapi.c:68')
+OK 004b7090 ('lua_tonumber', 'lib:lua-4.0:src/lapi.c:157')
+symbol existence in mashedmod/deps/lua-4.0 (placeholder keys, NOT game rvas):
+  OK lua_open lib:lua-4.0:src/lstate.c:66
+  OK lua_close lib:lua-4.0:src/lstate.c:100
+  OK lua_mathlibopen lib:lua-4.0:src/lib/lmathlib.c:231
+  OK lua_baselibopen lib:lua-4.0:src/lib/lbaselib.c:645
+  OK lua_strlibopen lib:lua-4.0:src/lib/lstrlib.c:619
+  OK lua_iolibopen lib:lua-4.0:src/lib/liolib.c:714
+  OK lua_dblibopen lib:lua-4.0:src/lib/ldblib.c:185
+  OK lua_dobuffer lib:lua-4.0:src/ldo.c:304
+  OK lua_dostring lib:lua-4.0:src/ldo.c:312
+  OK lua_dofile lib:lua-4.0:src/ldo.c:287
+  OK lua_setglobal lib:lua-4.0:src/lapi.c:315
+  OK lua_getglobal lib:lua-4.0:src/lapi.c:251
+  OK lua_pushcclosure lib:lua-4.0:src/lapi.c:230
+  OK lua_pushnumber lib:lua-4.0:src/lapi.c:208
+  OK lua_pushstring lib:lua-4.0:src/lapi.c:222
+  OK lua_gettop lib:lua-4.0:src/lapi.c:68
+  OK lua_settop lib:lua-4.0:src/lapi.c:73
+  OK lua_tonumber lib:lua-4.0:src/lapi.c:157
+  OK lua_tostring lib:lua-4.0:src/lapi.c:162
+  OK lua_call lib:lua-4.0:src/ldo.c:215
+  OK lua_rawcall lib:lua-4.0:src/lapi.c:381
+  OK luaC_checkGC lib:lua-4.0:src/lgc.c:349
+  REFUSED lua_register defined 0 times (non-static) in mashedmod/deps/lua-4.0 src/*.c src/lib/*.c
+  REFUSED lua_pop defined 0 times (non-static) in mashedmod/deps/lua-4.0 src/*.c src/lib/*.c

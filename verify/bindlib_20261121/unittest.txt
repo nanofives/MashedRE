@@ -1,0 +1,11 @@
+[1/9] rules PASS
+[2/9] resolve PASS
+[3/9] static PASS
+[4/9] dup PASS
+[5/9] missing PASS
+[6/9] plan PASS
+[7/9] wrapper PASS
+[8/9] bindings PASS
+   link: t.exe printed '14', expected 14 = fix_add(3, 2) + fix_mul(3, 3)
+[9/9] link PASS
+lib kind unit test: PASS

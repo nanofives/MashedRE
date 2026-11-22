@@ -7,6 +7,8 @@
 #   alias      <rva> <symbol> <TU>         callers of rva bind this existing exe body (reuse)
 #   local_shared   <caller> <callee> <symbol>   a file-local callee bound to the one exe copy named
 #   local_as_bound <caller> <callee>            this source carries the only exe copy of callee (PortTop_Bound_<callee>)
+#   lib_root   <lib> <root> <globs>        a vendored library: tree under the worktree root, source globs relative to it
+#   lib        <rva> <lib> <symbol>        callers of rva bind the library's own symbol (BIND-LIB-ROUTE, 2026-11-21)
 #
 # L-126 provisional bodies bind on the knob path only for the rvas named here (kept narrow so the closure grows one
 # reached stop at a time); c4=frida-replay rows (L-128) bind from their one re/match source with no line here.
