@@ -1,0 +1,70 @@
+== 0x004b6fc0 -> lua_gettop: libmatch status identical best _lua_gettop (masked 0 B)
+   lib  lapi.obj:_lua_gettop size 15 callees []
+   game extent 16 (next hooks.csv start)
+   game callees []
+   pairing HOLDS
+== 0x004b7090 -> lua_tonumber: libmatch status differs best _lua_tonumber (mnemonic similarity 0.83; +0x5 lib[mov edx, dword ptr [esp +)
+   lib  lapi.obj:_lua_tonumber size 51 callees ['_luaA_indexAcceptable', '_luaV_tonumber']
+   game extent 64 (next hooks.csv start)
+   game callees ['0x004b6ff0=_luaA_indexAcceptable', '0x004b7f30=_luaV_tonumber']
+   pairing HOLDS
+== 0x004b7330 -> lua_open: libmatch status differs best _lua_open (mnemonic similarity 0.90; +0x14 lib[je 0x8a] orig[jne 0x1b] )
+   lib  lstate.obj:_lua_open size 156 callees ['_luaM_realloc', '_luaD_runprotected', '_lua_close']
+   game extent 288 (next hooks.csv start)
+   game callees ['0x004ba1b0=_luaM_realloc', '0x004b7be0=_luaD_runprotected', '0x004b7480=_lua_close', '0x004b9dc0=_luaH_new', '0x004b7530=_luaD_init', '0x004b97f0=_luaS_init', '0x004ba9a0=_luaX_init', '0x004b9570=_luaT_init', '0x004b7210=_lua_newtable', '0x004b7280=_lua_ref', '0x004b7200=_lua_pushcclosure', '0x004b7250=_lua_setglobal']
+   pairing DIFFERS
+== 0x004c0510 -> lua_mathlibopen: libmatch status identical best _lua_mathlibopen (masked 36 B; 1 intra-obj reloc implied addr differs)
+   lib  lmathlib.obj:_lua_mathlibopen size 76 callees ['_luaL_openlib', '_lua_pushcclosure', '_lua_settagmethod', '_lua_pushnumber', '_lua_setglobal']
+   game extent 80 (next hooks.csv start)
+   game callees ['0x004c06c0=_luaL_openlib', '0x004b7200=_lua_pushcclosure', '0x004b9730=_lua_settagmethod', '0x004b7140=_lua_pushnumber', '0x004b7250=_lua_setglobal']
+   pairing HOLDS
+== 0x004b7480 -> lua_close: libmatch status differs best _lua_close (mnemonic similarity 0.86; +0x1c lib[je 0x37] orig[je 0x33] ()
+   lib  lstate.obj:_lua_close size 171 callees ['_luaC_collect', '_luaS_freeall', '_luaM_realloc', '_luaM_realloc', '_luaM_realloc', '_luaM_realloc', '_luaM_realloc']
+   game extent 176 (next hooks.csv start)
+   game callees ['0x004ba210=_luaC_collect (by its callees collectudata,callgcTMudata,collectstrings,collecttable,collectproto,collectclosure)', '0x004b9850=_luaS_freeall', '0x004ba1b0=_luaM_realloc', '0x004ba1b0=_luaM_realloc', '0x004ba1b0=_luaM_realloc', '0x004ba1b0=_luaM_realloc', '0x004ba1b0=_luaM_realloc']
+   pairing HOLDS
+== 0x004b7a70 -> lua_dobuffer: libmatch status differs best _lua_dobuffer (mnemonic similarity 0.87; +0x3 lib[mov eax, dword ptr [esp +)
+   lib  ldo.obj:_lua_dobuffer size 45 callees ['_parse_buffer', '_lua_call']
+   game extent 48 (next hooks.csv start)
+   game callees ['0x004b7aa0=_parse_buffer', '0x004b7960=_lua_call']
+   pairing HOLDS
+== 0x004b7200 -> lua_pushcclosure: libmatch status identical best _lua_pushcclosure (masked 4 B)
+   lib  lapi.obj:_lua_pushcclosure size 5 callees ['_luaV_Cclosure']
+   game extent 16 (next hooks.csv start)
+   game callees ['0x004b7fd0=_luaV_Cclosure (by its callees luaV_closure)']
+   pairing HOLDS
+== 0x004b7250 -> lua_setglobal: libmatch status identical best _lua_setglobal (masked 8 B)
+   lib  lapi.obj:_lua_setglobal size 37 callees ['_luaS_new', '_luaV_setglobal']
+   game extent 48 (next hooks.csv start)
+   game callees ['0x004b9aa0=_luaS_new (by its callees luaS_newlstr)', '0x004b8340=_luaV_setglobal']
+   pairing HOLDS
+NOT ALL HOLD
+== lua_open game extent split (0x004b7330, 288 B to the next hooks.csv start)
+   lib lstate.obj:_f_luaopen static True size 106 callees ['_luaH_new', '_luaD_init', '_luaS_init', '_luaX_init', '_luaT_init', '_lua_newtable', '_lua_ref', '_lua_pushcclosure', '_lua_setglobal']
+   0x004b7338 call 0x4ba1b0
+   0x004b734a ret 
+   0x004b73aa call 0x4b7be0
+   0x004b73b7 call 0x4b7480
+   0x004b73c3 ret 
+   0x004b73d0 ret 
+   0x004b73fd call 0x4b9dc0
+   0x004b7407 call 0x4b7530
+   0x004b740d call 0x4b97f0
+   0x004b7413 call 0x4ba9a0
+   0x004b7419 call 0x4b9570
+   0x004b741f call 0x4b7210
+   0x004b7427 call 0x4b7280
+   0x004b7434 call 0x4b7200
+   0x004b743f call 0x4b7250
+   0x004b7449 ret 
+== 0x004b70d0 -> lua_tostring: libmatch status differs best _lua_tostring (mnemonic similarity 0.85; +0x4 lib[mov edx, dword ptr [esp +)
+   lib  lapi.obj:_lua_tostring size 51 callees ['_luaA_indexAcceptable', '_luaV_tostring']
+   game extent 64 (next hooks.csv start)
+   game callees ['0x004b6ff0=_luaA_indexAcceptable', '0x004b7f70=_luaV_tostring']
+   pairing HOLDS
+== 0x004b7140 -> lua_pushnumber: libmatch status identical best _lua_pushnumber (masked 4 B)
+   lib  lapi.obj:_lua_pushnumber size 56 callees ['_luaD_checkstack']
+   game extent 64 (next hooks.csv start)
+   game callees ['0x004b7570=_luaD_checkstack']
+   pairing HOLDS
+ALL HOLD

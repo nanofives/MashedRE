@@ -6,7 +6,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_0047b880 PortTop_Bound_0047b880
-#define FUN_004b7480 PortTop_RLStop_004b7480   // named stop
+#define FUN_004b7480 lua_close   // exe body (lib:lua-4.0:src/lstate.c:100)
 extern "C" {
 #include "../../../../re/match/s13/0047b880.c"
 }

@@ -374,18 +374,6 @@ int PortTop_RLStop_004b4eb0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_004b53b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004b53b0u, "0x00479030 0x0047bf70", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004b53b0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004b7330: declared int by 0x0047b860; no matched or admitted source
-int PortTop_RLStop_004b7330(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004b7330u, "0x0047b860", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004b7330u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004b7480: declared void by 0x0047b880; no matched or admitted source
-int PortTop_RLStop_004b7480(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004b7480u, "0x0047b880", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004b7480u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004c0510: declared void by 0x0047b860; no matched or admitted source
-int PortTop_RLStop_004c0510(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004c0510u, "0x0047b860", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004c0510u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004c3d90: declared RwV3d * / int / void by 0x00478660 0x0047bf70 0x00485460; cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
 int PortTop_RLStop_004c3d90(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004c3d90u, "0x00478660 0x0047bf70 0x00485460", n, _ReturnAddress(), ex);

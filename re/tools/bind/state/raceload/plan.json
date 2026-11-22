@@ -1417,10 +1417,14 @@
 "not bound here (--roots-only): matched source re/match/s15/00491a70.c"
 ],
 "004b7330": [
-"stop"
+"reuse",
+"lua_open",
+"lib:lua-4.0:src/lstate.c:66"
 ],
 "004c0510": [
-"stop"
+"reuse",
+"lua_mathlibopen",
+"lib:lua-4.0:src/lib/lmathlib.c:231"
 ],
 "0047b8a0": [
 "stop",
@@ -2818,7 +2822,9 @@
 "stop"
 ],
 "004b7480": [
-"stop"
+"reuse",
+"lua_close",
+"lib:lua-4.0:src/lstate.c:100"
 ],
 "0055af40": [
 "bind",
