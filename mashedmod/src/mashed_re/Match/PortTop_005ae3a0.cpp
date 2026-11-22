@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_005ae3a0 PortTop_Bound_005ae3a0
 #define FUN_005ae300 PortTop_Bound_005ae300
-#define FUN_005ae4c0 PortTop_AStop_005ae4c0   // named stop
+#define FUN_005ae4c0 PortTop_Bound_005ae4c0
 extern "C" {
 #include "../../../../re/match/s26/005ae3a0.c"
 }

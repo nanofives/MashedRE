@@ -5036,7 +5036,11 @@
 "Match/PortTop_CrtHelpers.cpp"
 ],
 "005ae4c0": [
-"stop"
+"bind",
+"re/match/s26/005ae4c0.c",
+"provisional",
+[],
+[]
 ],
 "005a7b00": [
 "bind",
