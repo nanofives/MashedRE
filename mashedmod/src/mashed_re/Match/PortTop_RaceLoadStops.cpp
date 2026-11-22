@@ -30,10 +30,6 @@ unsigned PortTop_RL_StopHits(void) { return g_rlStopHits; }
 int PortTop_RLStop_00409680(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00409680u, "0x00426e10", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00409680u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00409710: declared int by 0x00426e10; cpp-unclean: C2632 'char' seguido de 'bool' no es v lido
-int PortTop_RLStop_00409710(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00409710u, "0x00426e10", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00409710u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0041a5b0: declared void by 0x0041a8d0; not bound here (--roots-only): matched source re/match/s03/raw_0041a5b0.c
 int PortTop_RLStop_0041a5b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0041a5b0u, "0x0041a8d0", n, _ReturnAddress(), ex);

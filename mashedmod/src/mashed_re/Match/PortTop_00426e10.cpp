@@ -8,7 +8,7 @@
 #define FUN_00426e10 PortTop_Bound_00426e10
 #define FUN_004053d0 Orig_004053d0   // exe body (Match/PortTop_00405400.cpp)
 #define FUN_00409680 PortTop_RLStop_00409680   // named stop
-#define FUN_00409710 PortTop_RLStop_00409710   // named stop
+#define FUN_00409710 PortTop_Bound_00409710   // exe body (Match/PortTop_00409710.c)
 #define FUN_00412050 PortTop_Bound_00412050
 #define FUN_0041e870 TrackNodeRecordScan   // exe body (Match/MatchS04_0041e870.cpp)
 #define FUN_0041e8b0 PortTop_Bound_0041e8b0

@@ -1,0 +1,223 @@
+rank	rva	name	cls	rel_tool	rel_tool_calls	rel_alone	rel_alone_calls	behind	behind_calls	g_t2	g_calls	route_state	route_src	level	subsystem	source	best_pct	insitu	next_stops	next_stop_list	callers_on_path
+1	0x00420420	FUN_00420420	c4=match bindable	27	2379852	22	807210	32	878741	1	4	stop	bulk stop outside the bulk cp1 list (RVA ownership: bind only the list	C4	track	re/match/s05/00420420.c	79.8		5	0x00420290 0x004222f0 0x0053d460 0x00544a70 0x00544ad0	0x0040d110
+2	0x00446520	FUN_00446520	c4=match bindable	26	2299055	14	174063	11	87368	1	2522	stop	gates stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS b	C4	util	re/match/s08/00446520.c	100.0		7	0x00405540 0x00441b30 0x004a3384 0x004b4bb0 0x00538d60 0x00539900 0x00539ec0	0x00448220
+3	0x0055f800	FUN_0055f800	C3 with a source (65.3%)	15	31504	13	31502	26	68237	1	1	stop	raceload stop	C3	third-party-library[RenderWare-Physics-3.7]	re/match/rwl05/0055f800.c	65.3		9	0x0055f520 0x0055f670 0x00567350 0x005676f0 0x00568d20 0x0056a450 0x0056adb0 0x0056b310 0x00574a20	0x0055f450
+4	0x00418860	FUN_00418860	c4=match bindable	13	143825	2	11123	34	938352	1	3055	stop	raceframe stop cpp-unclean: C2065 'DAT_00801ca0': identificador no declarad	C4	ai	re/match/s03/h3_00418860.c	100.0		2	0x00416250 0x004a3384	0x004103a0
+5	0x00487280	FUN_00487280	no source (C2)	12	2150108	8	223253	4	732	1	276	stop	raceframe stop	C2	render				7	0x0045c030 0x00487180 0x004a3384 0x00538d60 0x00539900 0x00539ec0 0x00547230	0x00480100
+6	0x0048ae00	FUN_0048ae00	hand stand-in	11	1574016	6	1526	1	1420	0	0	stand	BINDINGS stand-in	C4	particle	re/match/s14/0048ae00.c	98.3		4	0x00534d00 0x00544a70 0x00544ad0 0x00544bf0	0x0040bbb0
+7	0x004e99b0	FUN_004e99b0	C2 with a source (45.5%)	10	46124	9	36266	6	5553	1	3	stop	raceload stop	C2	third-party-library[renderware]	re/match/rwl02/004e99b0.c	45.5		5	0x004e51e0 0x004e5300 0x004e9e40 0x004ea220 0x004f3e90	0x004b3c60
+8	0x004d8570	RwEngineRegisterStringFunctions	c4=match bindable	9	109749	7	52403	5	51402	0	0	unbound	no binding row	C4	render	re/match/s21/004d8570.c	100.0		7	0x004a3a90 0x004a8828 0x004ac560 0x004ac570 0x004ae29f 0x004af340 0x005c2300	0x004c32b0
+9	0x0046f6c0	VehicleWheelContactSolver	C2 with a source (50.7%, in-situ DIVERGED@1)	8	2177526	4	250671	5	300267	1	21823	stop	raceframe stop	C2	vehicle	re/match/s11/0046f6c0.c	50.7	DIVERGED@1	6	0x00468b80 0x0046cc40 0x004a3384 0x00538d60 0x00539900 0x00539ec0	0x004704c0
+10	0x004e7420	RpClumpStreamRead	C2 with a source (37.9%)	8	13124	6	2744	8	1846	1	30	unbound	BINDINGS rw	C2	third-party-library[renderware]	re/match/rwl02/004e7420.c	37.9		3	0x004e7060 0x004e9330 0x005c47e0	0x004781b0 0x004b3bf0 0x004b3e40
+11	0x00425bf0	FUN_00425bf0	c4=match cpp-unclean	8	260	0	0	1	1	1	1	stop	raceload stop cpp-unclean: C2664 'void PortTop_PizFs_Mount_00495280(undefi	C4	frontend	re/match/s05/00425bf0.c	100.0		2	0x004ae29f 0x005c192c	0x004262f0
+12	0x004568d0	FUN_004568d0	C4 frida-replay with source	7	2130894	6	257527	18	84538	1	2719	unbound	no binding row	C4	gameplay	re/match/s09/004568d0.c	76.1		2	0x00459620 0x00535700	0x0045bae0
+13	0x0041def0	FUN_0041def0	hand stand-in	7	1572584	3	96	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041def0.c	96.5		0		0x00402750
+14	0x00408b00	FUN_00408b00	C2 with a source (97.0%, in-situ IDENTICAL-FOR-2724)	6	490508	6	490508	3	65256	1	416	stop	raceframe stop	C2	util	re/match/s01/00408b00.c	97.0	IDENTICAL-FOR-2724	2	0x004a3384 0x004c3c60	0x0040e590 0x00448220
+15	0x004b6570	FUN_004b6570	c4=match bindable	6	146	1	7	7	153	1	7	unbound	no binding row	C4	render	re/match/s18/004b6570.c	100.0		0		0x00495280
+16	0x0041eaa0	FUN_0041eaa0	hand stand-in	5	81477	0	0	1	66	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041eaa0.c	100.0		2	0x004c1de0 0x00534d00	0x00402750
+17	0x0041bec0	FUN_0041bec0	hand stand-in	5	12990	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041b690.c	100.0		0		0x00402750
+18	0x0041d6e0	FUN_0041d6e0	hand stand-in	5	12990	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041cd20.c	100.0		0		0x00402750
+19	0x004cce20	FUN_004cce20	c4=match bindable	5	6381	4	6295	3	6294	0	0	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl01/004cce20.c	100.0		4	0x004ae29f 0x004ccef0 0x004ccf00 0x005aead0	0x004c32b0
+20	0x0041b4d0	FUN_0041b4d0	c4=match bindable	5	3136	1	4	2	5	1	1	stop	raceframe stop cpp-unclean: C3861 'Orig_004b3fc0': no se encontrÂ¢ el ident	C4	hud	re/match/s03/h1_grp_0041ad60.c	100.0		0		0x004111c0
+21	0x004c0510	FUN_004c0510	C4 no bindable source (libid)	5	382	5	382	34	4449	1	2	stop	raceload stop	C4	third-party-library[lua-4.0]				5	0x004b7140 0x004b7200 0x004b7250 0x004b9730 0x004c06c0	0x0047b860
+22	0x004275d0	FUN_004275d0	hand stand-in	4	1983812	0	0	1	616	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s06/004275d0.c	100.0		2	0x005530f0 0x005533d0	0x00402750
+23	0x00538c80	FUN_00538c80	c4=match bindable	4	1926855	3	53488	6	649704	1	53488	stop	raceframe stop owned by RACE rows (run 53, race_owned.txt)	C4	third-party-library[renderware]	re/match/rwl03/00538c80.c	100.0		3	0x00538d60 0x00539900 0x00539ec0	0x0046d400
+24	0x0045b990	FUN_0045b990	c4=match bindable	4	1881542	3	8175	4	10900	1	2725	stop	renderframe stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n 	C4	render	re/match/s09/0045b990.c	100.0		1	0x00458b10	0x00410b30
+25	0x0041cb10	FUN_0041cb10	hand stand-in	4	1572488	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041c320.c	100.0		0		0x00402750
+26	0x004775b0	FUN_004775b0	hand stand-in	4	1572488	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	render	re/match/s12/004775b0.c	95.2		1	0x00549b20	0x0040bbb0
+27	0x004e5850	RpWorldCreate	C2 with a source (57.4%)	4	29331	3	28809	0	0	0	0	unbound	BINDINGS rw	C2	third-party-library[renderware]	re/match/rwl02/004e5850.c	57.4		1	0x004e5300	0x00401000
+28	0x00419760	FUN_00419760	c4=match bindable	4	11058	2	52	5	11060	1	2	stop	raceframe stop cpp-unclean: C3861 'Orig_004b6520': no se encontrÂ¢ el ident	C4	vehicle	re/match/s03/h1_00418a30.c	100.0		0		0x004111c0
+29	0x0041a1e0	FUN_0041a1e0	hand stand-in	4	9954	3	96	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s03/h1_0041a1e0.c	91.7		0		0x00402750
+30	0x0041d8b0	FUN_0041d8b0	hand stand-in	4	9954	3	96	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041d8b0.c	100.0		0		0x00402750
+31	0x0041db90	FUN_0041db90	hand stand-in	4	9954	3	96	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041db90.c	100.0		0		0x00402750
+32	0x00558240	FUN_00558240	hand stand-in	4	794	4	794	4	794	0	0	stand	BINDINGS stand-in	C2	third-party-library[renderware]	re/match/rwl05/00558240.c	52.8		0		0x00402750
+33	0x0045be90	FUN_0045be90	c4=match bindable	4	156	1	1	2	2	1	1	stop	raceframe stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n 	C4	powerups	re/match/s10/0045be90.c	100.0		1	0x004e4650	0x004111c0
+34	0x00402240	ClumpGeom401fe0Create	hand stand-in	3	1562630	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	render	re/match/s01/raw/00402240.c	100.0		1	0x00401fe0	0x004025f0
+35	0x00402590	ClumpGeom4022a0Create	hand stand-in	3	1562630	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	render	re/match/s01/raw/00402590.c	100.0		1	0x004022a0	0x004025f0
+36	0x0041ebb0	FUN_0041ebb0	c4=match bindable	3	256027	3	256027	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	render	re/match/s04/0041ebb0.c	100.0		1	0x00535700	0x00410b30
+37	0x004783f0	FUN_004783f0	C4 frida-replay with source	3	176608	2	60175	2	32	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	ai	re/match/pilot/a4_004783f0.c	90.8		1	0x004a3384	0x00478660
+38	0x0045d7a0	FUN_0045d7a0	C2 with a source (52.6%, in-situ IDENTICAL-FOR-2724)	3	59388	3	59388	4	62216	1	2828	stop	audio stop	C2	util	re/match/s10/0045d7a0.c	52.6	IDENTICAL-FOR-2724	1	0x004a3907	0x00466b50
+39	0x004c4530	FUN_004c4530	c4=match bindable	3	58918	3	58918	2	28973	1	28963	unbound	no binding row	C4	render	re/match/s19/004c4530.c	100.0		1	0x004c4360	0x004e4450
+40	0x00427880	FUN_00427880	hand stand-in	3	10542	0	0	2	684	0	0	stand	BINDINGS stand-in	C4	frontend	re/match/s06/00427880.c	100.0		1	0x00554940	0x00427ca0
+41	0x00558df0	FUN_00558df0	C2 with a source (39.7%)	3	9861	2	3	2	2	1	1	stop	raceload stop	C2	third-party-library[renderware]	re/match/rwl05/00558df0.c	39.7		0		0x0042a740
+42	0x004464c0	CameraEntry::DispatchAll	C4 no bindable source (untagged)	3	3252	3	3252	7	7148	1	642	stop	raceframe stop	C4	util	re/match/s08/004464c0.c	100.0		3	0x00441d40 0x00442440 0x00445aa0	0x00448700
+43	0x004b7330	FUN_004b7330	no source (C2, lua)	3	1094	3	1094	2	4	1	2	stop	raceload stop	C2	third-party-library[lua-4.0]				3	0x004b73e0 0x004b7be0 0x004ba1b0	0x0047b860
+44	0x004b7480	FUN_004b7480	no source (C2, lua)	3	1090	3	1090	2	4	1	2	stop	raceload stop	C2	third-party-library[lua-4.0]				3	0x004b9850 0x004ba1b0 0x004ba210	0x0047b880
+45	0x0047a1e0	SkyFilename_Handler	c4=match bindable	3	182	3	182	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a1e0.c	100.0		3	0x004b6fc0 0x004b7090 0x004b70d0	0x00440bc0
+46	0x0047a280	Mts_Filename	c4=match bindable	3	182	3	182	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a280.c	100.0		3	0x004b6fc0 0x004b7090 0x004b70d0	0x00440bc0
+47	0x0047a320	SetCopter	C4 frida-replay with source	3	182	3	182	1	4	1	4	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a320.c	95.2		3	0x004b6fc0 0x004b7090 0x004b70d0	0x00440bc0
+48	0x0047a3a0	Clump_Filename	c4=match bindable	3	182	3	182	1	9	1	9	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a3a0.c	100.0		3	0x004b6fc0 0x004b7090 0x004b70d0	0x00440bc0
+49	0x0047a8b0	General_Anim_Filename	c4=match bindable	3	182	3	182	1	4	1	4	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a8b0.c	100.0		3	0x004b6fc0 0x004b7090 0x004b70d0	0x00440bc0
+50	0x0047ade0	RWP_Object	c4=match bindable	3	182	3	182	1	3	1	3	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	render	re/match/s13/0047ade0.c	100.0		3	0x004b6fc0 0x004b7090 0x004b70d0	0x00440bc0
+51	0x004547c0	FUN_004547c0	c4=match bindable	3	155	2	143	4	159	1	4	unbound	no binding row	C4	gameplay	re/match/s09/004547c0.c	100.0		1	0x004e4650	0x004548a0
+52	0x005a71f0	FUN_005a71f0	C2 with a source (47.9%)	3	140	3	140	3	140	0	0	stop	audio stop	C2	audio	re/match/s25/005a71f0.c	47.9		0		0x0045d460
+53	0x005595d0	FUN_005595d0	C3 with a source (57.5%)	3	24	3	24	3	3	1	1	stop	raceload stop	C3	third-party-library[RenderWare-Physics-3.7]	re/match/rwl05/005595d0.c	57.5		1	0x005645b0	0x00559b50
+54	0x004e67b0	RpAtomicCreate	c4=match bindable	2	1562108	2	1562108	3	1562822	1	714	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl02/004e67b0.c	100.0		0		0x004e69a0
+55	0x00401da0	FUN_00401da0	C2 with a source (93.5%, in-situ IDENTICAL-FOR-2724)	2	120811	2	120811	2	11088	1	104	stop	raceframe stop	C2	frontend	re/match/s01/00401da0.c	93.5	IDENTICAL-FOR-2724	0		0x00401ee0
+56	0x004cf2b0	FUN_004cf2b0	C2 with a source (47.8%)	2	41562	1	31704	2	31732	1	28	stop	raceload stop	C2	third-party-library[renderware]	re/match/rwl01/004cf2b0.c	47.8		0		0x00478110
+57	0x0055ab30	FUN_0055ab30	C4 no bindable source (untagged)	2	24226	2	24226	1	11934	1	11934	stop	raceframe stop	C4	third-party-library[RenderWare-Physics-3.7]				2	0x00564c80 0x00565260	0x00480100
+58	0x00463640	FUN_00463640	C2 with a source (94.3%, in-situ IDENTICAL-FOR-2724)	2	22459	2	22459	3	33355	1	10896	stop	audio stop	C2	audio	re/match/s10/00463640.c	94.3	IDENTICAL-FOR-2724	0		0x00466b50
+59	0x0043dfd0	FUN_0043dfd0	hand stand-in (run-loop piece)	2	14144	1	104	0	0	0	0	stand	BINDINGS stand-in	C2	frontend	re/match/s08/0043dfd0.c	17.7		1	0x0043c000	0x00492d30
+60	0x0041c100	FUN_0041c100	hand stand-in	2	9860	1	2	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s04/0041c100.c	100.0		0		0x00402750
+61	0x00426030	FUN_00426030	c4=match bindable	2	5450	2	5450	3	8175	1	2725	stop	renderframe stop cpp-unclean: C2660 'PortTop_Bound_0041e8f0': la funciÂ¢n no 	C4	render	re/match/s05/00426030.c	100.0		0		0x00492e90
+62	0x00442e00	FUN_00442e00	C2 with a source (65.1%, in-situ DIVERGED@1132)	2	5444	1	2722	1	200	1	200	stop	gates stop	C2	util	re/match/s08/00442e00.c	65.1	DIVERGED@1132	0		0x00448220
+63	0x0047a180	Course_Id	c4=match bindable	2	147	2	147	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	render	re/match/s12/0047a180.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+64	0x0047a720	Lap_Variations	c4=match bindable	2	147	2	147	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a720.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+65	0x0047a790	Lap_Line	c4=match bindable	2	147	2	147	1	2	1	2	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a790.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+66	0x0047aa20	Clump_Exclude_From_World	c4=match bindable	2	147	2	147	1	7	1	7	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047aa20.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+67	0x0047ab30	SetupFog_Handler	c4=match bindable	2	147	2	147	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	track	re/match/s13/0047ab30.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+68	0x0047ae80	RWP_Object_Box	c4=match bindable	2	147	2	147	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	render	re/match/s13/0047ae80.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+69	0x0047afa0	RWP_Object_Capsule	c4=match bindable	2	147	2	147	1	2	1	2	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	render	re/match/s13/0047afa0.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+70	0x0047b000	RWP_Object_Properties	c4=match bindable	2	147	2	147	1	3	1	3	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	render	re/match/s13/0047b000.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+71	0x0047b110	RWP_Object_BaseLabel	c4=match bindable	2	147	2	147	1	3	1	3	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	render	re/match/s13/0047b110.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+72	0x0047b160	RWP_Object_ShatterVel	c4=match bindable	2	147	2	147	1	3	1	3	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	render	re/match/s13/0047b160.c	100.0		2	0x004b6fc0 0x004b7090	0x00440bc0
+73	0x00402b70	FUN_00402b70	c4=match bindable	2	114	1	28	2	35	1	7	unbound	no binding row	C4	util	re/match/s01/00402b70.c	99.7		2	0x004ae29f 0x005c192c	0x00495280
+74	0x0040eee0	FUN_0040eee0	C4 no bindable source (frida-replay)	2	96	1	10	2	18	1	8	stop	raceframe stop	C4	frontend				1	0x004ae29f	0x00410d10
+75	0x0047a1b0	Occluder_Filename	c4=match cpp-unclean	2	93	2	93	1	1	1	1	stop	raceload stop cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el 	C4	track	re/match/s12/0047a1b0.c	100.0		2	0x004b6fc0 0x004b70d0	0x00440bc0
+76	0x0047a540	AI_Bsp_Filename	c4=match cpp-unclean	2	93	2	93	1	1	1	1	stop	raceload stop cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el 	C4	track	re/match/s12/0047a540.c	100.0		2	0x004b6fc0 0x004b70d0	0x00440bc0
+77	0x0047a5b0	World_Bsp_Filename	c4=match cpp-unclean	2	93	2	93	1	1	1	1	stop	raceload stop cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el 	C4	track	re/match/s12/0047a5b0.c	100.0		2	0x004b6fc0 0x004b70d0	0x00440bc0
+78	0x0047a6b0	Collision_Bsp_Filename	c4=match cpp-unclean	2	93	2	93	1	1	1	1	stop	raceload stop cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el 	C4	track	re/match/s12/0047a6b0.c	100.0		2	0x004b6fc0 0x004b70d0	0x00440bc0
+79	0x0047a6f0	Texture_Dictionary_Filename	c4=match cpp-unclean	2	93	2	93	1	1	1	1	stop	raceload stop cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el 	C4	track	re/match/s12/0047a6f0.c	100.0		2	0x004b6fc0 0x004b70d0	0x00440bc0
+80	0x0047aaa0	Lights_Filename	c4=match cpp-unclean	2	93	2	93	1	1	1	1	stop	raceload stop cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el 	C4	render	re/match/s12/0047aaa0.c	100.0		2	0x004b6fc0 0x004b70d0	0x00440bc0
+81	0x0045bed0	PowerupRoundCleanup	c4=match bindable	2	8	2	8	3	10	1	2	stop	raceframe stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n 	C4	powerups	re/match/s10/0045bed0.c	100.0		0		0x00410510 0x004111c0
+82	0x00414060	FUN_00414060	c4=match bindable	2	2	2	2	3	3	1	1	stop	raceframe stop cpp-unclean: C2065 'DAT_0089a384': identificador no declarad	C4	util	re/match/s03/h3_00414060.c	100.0		0		0x004111c0
+83	0x004caea0	FUN_004caea0	hand stand-in	2	2	1	1	0	0	0	0	stand	BINDINGS stand-in	C4	render	re/match/s20/004caea0.c	77.5		0		0x00402750
+84	0x004d8350	FUN_004d8350	c4=match bindable	1	1873367	1	1873367	2	1949833	1	76466	unbound	no binding row	C4	render	re/match/s21/004d8350.c	100.0		0		0x004c0ed0
+85	0x00406130	FUN_00406130	c4=match bindable	1	1873367	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido	C4	gameplay	re/match/s01/raw/00406130.c	100.0		0		0x004072e0
+86	0x004725c0	FUN_004725c0	c4=match bindable	1	1873367	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n 	C4	render	re/match/s11/004725c0.c	100.0		0		0x00410b30
+87	0x00490490	FUN_00490490	c4=match bindable	1	1873367	0	0	1	5450	1	5450	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	render	re/match/s15/00490490.c	100.0		0		0x0040bde0 0x00410b30
+88	0x00409330	FUN_00409330	c4=match bindable	1	116433	1	116433	1	12268	1	12268	stop	gates stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS b	C4	gameplay	re/match/s01/00409330.c	100.0		0		0x00448220
+89	0x0043d2a0	FUN_0043d2a0	hand stand-in	1	14040	0	0	0	0	0	0	stand	define PortTop_StandIn05_0043d2a0 in PortTop_0043d7c0.cpp	C2	frontend	re/match/s08/0043d2a0.c	54.0		0		0x0043d7c0
+90	0x00559c40	PhysicsSceneBodyRegister	C3 with a source (42.4%)	1	12127	1	12127	1	124	1	124	stop	raceframe stop	C3	third-party-library[RenderWare-Physics-3.7]	re/match/rwl05/00559c40.c	42.4		1	0x00564c80	0x0047d080 0x0047fad0 0x0047fc40 0x0047ff70
+91	0x00559ee0	FUN_00559ee0	C3 with a source (43.9%)	1	12099	1	12099	1	96	1	96	stop	raceframe stop	C3	third-party-library[RenderWare-Physics-3.7]	re/match/rwl05/00559ee0.c	43.9		1	0x00565260	0x0047d080
+92	0x0055dff0	RwpBodyRefreshGate	C4 no bindable source (untagged)	1	11870	1	11870	2	24004	1	12134	stop	raceframe stop	C4	third-party-library[RenderWare-Physics-3.7]				1	0x0055b800	0x00421a90 0x0047ea60 0x00480100 0x0057c220
+93	0x0041b630	HudSlotLoopB630	c4=match bindable	1	10064	1	10064	2	12580	1	2516	stop	renderframe stop cpp-unclean: C3861 'Orig_004b3fc0': no se encontrÂ¢ el ident	C4	hud	re/match/s03/h1_grp_0041ad60.c	100.0		0		0x0040dfc0
+94	0x004cc400	FUN_004cc400	c4=match bindable	1	9858	1	9858	2	19717	1	9859	unbound	no binding row	C4	render	re/match/s20/004cc400.c	100.0		0		0x004cc5e0
+95	0x0041b450	FUN_0041b450	hand stand-in	1	9858	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s03/h1_grp_0041ad60.c	100.0		0		0x00402750
+96	0x004a45cf	__nh_malloc	C4 no bindable source (libid)	1	6779	1	6779	2	13558	1	6779	stop	bulk stop	C4	third-party-library[msvc-crt-main]				1	0x004a4554	0x004a45fb
+97	0x00413a00	FUN_00413a00	c4=match bindable	1	4562	1	4562	2	7287	1	2725	stop	renderframe stop cpp-unclean: C2065 'DAT_00828320': identificador no declarad	C4	render	re/match/s03/h2_00413a00.c	100.0		1	0x004128f0	0x00410b30
+98	0x004189c0	FUN_004189c0	c4=match bindable	1	4360	1	4360	2	7085	1	2725	stop	renderframe stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido	C4	render	re/match/s03/raw_004189c0.c	100.0		0		0x00410b30
+99	0x00495350	HardwareShowIntroVideo	hand stand-in	1	2829	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	frontend	re/match/s16/00495350.c	100.0		3	0x00493f80 0x00493fd0 0x004d8c40	0x00402750
+100	0x0045dd60	FUN_0045dd60	C2 with a source (78.7%, in-situ IDENTICAL-FOR-2724)	1	2828	1	2828	2	5656	1	2828	stop	audio stop	C2	audio	re/match/s10/0045dd60.c	78.7	IDENTICAL-FOR-2724	0		0x00466b50
+101	0x00487de0	FUN_00487de0	c4=match bindable	1	2725	1	2725	2	5450	1	2725	stop	renderframe stop cpp-unclean: C2660 'PortTop_Bound_00487d70': la funciÂ¢n no 	C4	particle	re/match/s14/00487de0.c	100.0		0		0x0040bde0
+102	0x0047f7d0	FUN_0047f7d0	C1 with a source (76.5%)	1	2276	1	2276	2	4021	1	1745	stop	raceload stop	C1	physics	re/match/tlr/0047f7d0.c	76.5		1	0x0047f6d0	0x0047f840
+103	0x0048ad50	FUN_0048ad50	c4=match bindable	1	1330	1	1330	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	particle	re/match/s14/0048ad50.c	100.0		1	0x00499d90	0x0040bde0
+104	0x004914b0	RainRender	c4=match bindable	1	1330	1	1330	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	render	re/match/s15/004914b0.c	100.0		1	0x00499d90	0x004270f0
+105	0x004f3b60	FUN_004f3b60	c4=match bindable	1	522	1	522	1	17	1	17	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl03/004f3b60.c	100.0		0		0x004e8ea0
+106	0x004b5580	ClumpForAllAtomics_Cb4b5560	hand stand-in	1	500	1	500	2	1000	1	500	stand	BINDINGS stand-in	C4	vehicle	re/match/s18/004b5580.c	100.0		0		0x00411f30
+107	0x004a2d18	FUN_004a2d18	no source (C2)	1	86	1	86	2	172	1	86	unbound	no binding row	C2	render				1	0x004a5f9c	0x004a2cbd
+108	0x004095a0	FUN_004095a0	c4=match bindable	1	86	0	0	1	1	1	1	stop	gates stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS b	C4	gameplay	re/match/s01/004095a0.c	98.6		1	0x004ae29f	0x00409710
+109	0x004a5f4a	FUN_004a5f4a	C4 no bindable source (libid)	1	86	0	0	1	86	1	86	stop	bulk stop	C4	third-party-library[msvc-crt-main]				1	0x004ae29f	0x004a2cbd
+110	0x004a5fbf	FUN_004a5fbf	C4 no bindable source (libid)	1	86	1	86	1	86	1	86	stop	bulk stop	C4	third-party-library[msvc-crt-main]				1	0x004ac3ab	0x004a2cbd
+111	0x004113b0	FUN_004113b0	hand stand-in	1	86	0	0	0	0	0	0	stand	BINDINGS stand-in	C4	boot	re/match/s02/004113b0.c	100.0		1	0x004ae29f	0x00402750
+112	0x004a4ea8	FUN_004a4ea8	C4 no bindable source (libid)	1	86	1	86	0	0	0	0	stop	bulk stop	C4	third-party-library[msvc-crt-main]				2	0x004ac367 0x004ac3ab	0x004a2b60
+113	0x004a7800	FUN_004a7800	c4=match bindable	1	86	1	86	0	0	0	0	stop	bulk stop outside the bulk cp1 list (RVA ownership: bind only the list	C4	boot	re/match/s17/004a7800.c	100.0		1	0x004ae29f	0x004a787f
+114	0x004c5f60	rwID_TEXTUREMODULE_ctor	c4=match bindable	1	78	1	78	1	78	0	0	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl01/004c5f60.c	95.6		0		0x004c32b0
+115	0x004790e0	FUN_004790e0	c4=match bindable	1	42	1	42	2	43	1	1	stop	raceload stop register-arg: world pointer in EAX (re/match/s12/004790e0.c 	C4	track	re/match/s12/004790e0.c	100.0		0		0x00479330
+116	0x0055b940	PhysicsBodySetMass	C3 with a source (23.4%)	1	40	1	40	2	80	1	40	stop	bulk stop	C3	third-party-library[RenderWare-Physics-3.7]	re/match/rwl05/0055b940.c	23.4		1	0x0055bbf0	0x004218d0 0x0047fad0 0x0047fc40 0x0047ff70
+117	0x0047b8a0	FUN_0047b8a0	c4=match bindable	1	2	1	2	8	16	1	2	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	track	re/match/s13/0047b8a0.c	100.0		1	0x004b7a70	0x0047b8d0
+118	0x00559560	FUN_00559560	C4 frida-replay with source	1	1	1	1	2	2	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/rwl05	C4	third-party-library[RenderWare-Physics-3.7]	re/match/rwl05/00559560.c	68.3		0		0x00559b50
+119	0x00404320	PerModeRenderMachine	C4 no bindable source (untagged)	0	0	0	0	1	2725	1	2725	stop	renderframe stop	C4	render	re/match/s01/00403fa0.c	98.3		0		0x00492e90
+120	0x00405430	Pred405430	C4 no bindable source (untagged)	0	0	0	0	1	1	1	1	stop	raceframe stop	C4	gameplay	re/match/s01/004053d0.c	100.0		0		0x0040d470
+121	0x00406370	Clear10x3_63a494	c4=match bindable	0	0	0	0	1	3	1	3	stop	raceframe stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido	C4	gameplay	re/match/s01/raw/00406370.c	100.0		0		0x004073b0
+122	0x004075a0	Global63a5d0Get	C4 no bindable source (untagged)	0	0	0	0	1	3224	1	3224	stop	audio stop	C4	gameplay	re/match/s01/raw/004075a0.c	100.0		0		0x00464a50
+123	0x00409680	LedArrayInit	c4=match cpp-unclean	0	0	0	0	1	1	1	1	stop	raceload stop cpp-unclean: C2632 'char' seguido de 'bool' no es v lido	C4	render	re/match/s01/raw/00409680.c	100.0		0		0x00426e10
+124	0x0040bb70	SpriteLookupTableA	c4=match bindable	0	0	0	0	1	208	1	208	unbound	no binding row	C4	frontend	re/match/s02/0040bb70.c	100.0		0		0x0042e590
+125	0x0040df20	sub_0040df20	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2664 'int RwCore_004c1c80(int,undefined4 *)': 	C4	render	re/match/s02/0040df20.c	100.0		0		0x00492e90
+126	0x0040e180	MostSeparatedPair	C4 no bindable source (untagged)	0	0	0	0	1	9941	1	9941	stop	raceframe stop	C4	vehicle	re/match/s02/0040e180.c	95.1		0		0x00410d10 0x00471ac0
+127	0x00412100	FUN_00412100	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n 	C4	render	re/match/s02/00412100.c	100.0		0		0x0040bde0
+128	0x00412880	thunk_FUN_00412190	c4=match bindable	0	0	0	0	1	4	1	4	unbound	no binding row	C4	render	re/match/s03/h1_00412880.c	100.0		0		0x0040bd80
+129	0x00413a40	FUN_00413a40	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido	C4	render	re/match/s03/perm_00413a40.c	100.0		0		0x00410b30
+130	0x00413f20	ZeroFill60_63bc60	c4=match bindable	0	0	0	0	1	204	1	204	stop	raceframe stop cpp-unclean: C2065 'DAT_0063bc60': identificador no declarad	C4	util	re/match/s03/h1_00413f20.c	78.6		0		0x0040bd80
+131	0x00413f50	FUN_00413f50	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido	C4	hud	re/match/s03/raw_00413f50.c	100.0		0		0x0040bde0
+132	0x00414180	SubStateRollCountdown414180	c4=match bindable	0	0	0	0	1	3	1	3	stop	raceframe stop cpp-unclean: C2065 'DAT_0089a368': identificador no declarad	C4	util	re/match/s03/h2_00414180.c	100.0		0		0x004111c0
+133	0x00414220	FUN_00414220	c4=match bindable	0	0	0	0	1	2	1	2	stop	raceframe stop cpp-unclean: C3861 'PortTop_Bound_0040e4b0': no se encontrÂ¢	C4	util	re/match/s03/h2_00414220.c	100.0		0		0x004111c0
+134	0x00418990	thunk_FUN_004194f0	c4=match bindable	0	0	0	0	1	6	1	6	stop	raceframe stop cpp-unclean: C3861 'PortTop_Bound_004194f0': no se encontrÂ¢	C4	hud	re/match/s03/h1_00418990.c	100.0		0		0x00411170 0x004111c0
+135	0x004189f0	thunk_FUN_00419760	c4=match bindable	0	0	0	0	1	2	1	2	unbound	no binding row	C4	frontend	re/match/s03/h1_004189f0.c	100.0		0		0x00422fd0
+136	0x0041ae20	FUN_0041ae20	c4=match bindable	0	0	0	0	1	12	1	12	unbound	no binding row	C4	render	re/match/s03/h1_0041ae20.c	100.0		0		0x0041b520
+137	0x0041b510	HudCounterReset	c4=match bindable	0	0	0	0	1	3	1	3	stop	raceframe stop cpp-unclean: C2632 'char' seguido de 'bool' no es vÂ lido	C4	hud	re/match/s03/raw_0041b510.c	100.0		0		0x004111c0
+138	0x0041c9a0	FUN_0041c9a0	c4=match bindable	0	0	0	0	1	800	1	800	unbound	no binding row	C4	hud	re/match/s04/0041c9a0.c	100.0		0		0x0041ccc0
+139	0x0041db80	Sub0041db80_HudThresholdDispatch	C4 no bindable source (untagged)	0	0	0	0	1	2516	1	2516	stop	renderframe stop	C4	hud	re/match/s04/0041db80.c	100.0		0		0x0040dfc0
+140	0x0041ef60	Player::WriteFieldZero	c4=match bindable	0	0	0	0	1	20976	1	20976	stop	gates stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS b	C4	util	re/match/s04/0041ef60.c	100.0		0		0x00448220
+141	0x0041f330	FUN_0041f330	c4=match bindable	0	0	0	0	1	5	1	5	stop	bulk stop file-local copy of this rva in the source of 0x00420230 (one	C4	gameplay	re/match/s04/0041f330.c	100.0		0		0x00420230
+142	0x00421560	FUN_00421560	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	render	re/match/s05/00421560.c	100.0		0		0x0040bde0
+143	0x004228f0	FUN_004228f0	C2 with a source (79.2%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	10135	1	10135	stop	renderframe stop	C2	render	re/match/s05/004228f0.c	79.2	IDENTICAL-FOR-2724	0		0x00420050
+144	0x00427680	FontText_ComputeScreenXY	c4=match bindable	0	0	0	0	1	616	1	616	unbound	no binding row	C4	hud	re/match/s06/00427680.c	100.0		0		0x00427e00
+145	0x004277a0	TextCtrlCodeRemap	c4=match bindable	0	0	0	0	1	616	1	616	unbound	no binding row	C4	frontend	re/match/s06/004277a0.c	100.0		0		0x00427e00 0x004282a0
+146	0x00428610	ViewportScaledRectDraw	c4=match bindable	0	0	0	0	1	312	1	312	unbound	no binding row	C4	hud	re/match/s06/00428610.c	100.0		0		0x00428760
+147	0x0042e5b0	MenuChromeShellB	C3 with a source (54.3%)	0	0	0	0	1	11993	0	0	unbound	no binding row	C3	frontend	re/match/s07/0042e5b0.c	54.3		3	0x00473c20 0x00473ee0 0x00474890	0x0043c5b0
+148	0x00454170	FUN_00454170	c4=match bindable	0	0	0	0	1	8	1	8	unbound	no binding row	C4	gameplay	re/match/s09/00454170.c	100.0		0		0x004548a0
+149	0x00456c30	FUN_00456c30	c4=match bindable	0	0	0	0	1	2725	1	2725	unbound	no binding row	C4	gameplay	re/match/s09/00456c30.c	100.0		0		0x0045bae0
+150	0x00456c90	thunk_FUN_00456c70	c4=match bindable	0	0	0	0	1	3	1	3	unbound	no binding row	C4	gameplay	re/match/s09/00456c90.c	100.0		0		0x0045bae0
+151	0x00457610	FUN_00457610	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	gameplay	re/match/s09/00457610.c	100.0		0		0x0040bde0
+152	0x0045b9d0	FUN_0045b9d0	c4=match bindable	0	0	0	0	1	3	1	3	stop	raceframe stop cpp-unclean: C2440 '=': no se puede realizar la conversiÂ¢n 	C4	powerups	re/match/s10/0045b9d0.c	100.0		0		0x004111c0
+153	0x0045ba10	FUN_0045ba10	c4=match bindable	0	0	0	0	1	6	1	6	unbound	no binding row	C4	vehicle	re/match/s10/0045bae0.c	100.0		0		0x0045bae0
+154	0x0045de80	FUN_0045de80	C2 with a source (52.9%)	0	0	0	0	1	1	1	1	stop	raceload stop	C2	render	re/match/s10/0045de80.c	52.9		0		0x00462950
+155	0x0045efe0	FUN_0045efe0	C2 with a source (89.8%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	2724	1	2724	stop	audio stop	C2	audio	re/match/s10/0045efe0.c	89.8	IDENTICAL-FOR-2724	0		0x00466b50
+156	0x0046b1c0	VehicleSlotAabbExpand	C4 no bindable source (untagged)	0	0	0	0	1	20	1	20	stop	raceframe stop	C4	vehicle	re/match/s11/0046b1c0.c	97.7		0		0x0040e590 0x004111c0
+157	0x0046c7b0	VehicleSlotGetter	C4 no bindable source (untagged)	0	0	0	0	1	377385	1	377385	stop	raceframe stop	C4	vehicle	re/match/s11/0046c7b0.c	100.0		0		0x0040e4b0 0x004103a0 0x00410510 0x00410860 0x00410d10 0x00448220
+158	0x0046cbb0	VehicleCarStateRead	C4 no bindable source (untagged)	0	0	0	0	1	273243	1	273243	stop	raceframe stop	C4	vehicle	re/match/s11/0046cbb0.c	100.0		0		0x00410510 0x00410d10 0x00448220 0x0045cab0 0x004644a0 0x004645c0
+159	0x0046d3a0	?	no source (none (no hooks row))	0	0	0	0	1	12812	1	12812	stop	raceframe stop	none					0		0x0046d400
+160	0x00475e50	FUN_00475e50	c4=match bindable	0	0	0	0	1	5450	1	5450	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	render	re/match/s12/00475e50.c	100.0		0		0x0040bde0 0x00410b30
+161	0x004785e0	FUN_004785e0	C4 frida-replay with source	0	0	0	0	1	30	1	30	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	util	re/match/s12/004785e0.c	97.8		0		0x00478660
+162	0x0047a440	UVA_Filename	c4=match bindable	0	0	0	0	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a440.c	100.0		0		0x00440bc0
+163	0x0047a750	Split_Sector	c4=match bindable	0	0	0	0	1	2	1	2	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a750.c	100.0		0		0x00440bc0
+164	0x0047a7d0	Lap_Line_End	c4=match bindable	0	0	0	0	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a7d0.c	100.0		0		0x00440bc0
+165	0x0047a810	Safe_Start_Lines	c4=match bindable	0	0	0	0	1	2	1	2	stop	raceload stop not bound here (--roots-only): matched source re/match/s12/0	C4	track	re/match/s12/0047a810.c	100.0		0		0x00440bc0
+166	0x0047ac80	Vehicle_Shininess_Range	c4=match bindable	0	0	0	0	1	1	1	1	stop	raceload stop not bound here (--roots-only): matched source re/match/s13/0	C4	vehicle	re/match/s13/0047ac80.c	100.0		0		0x00440bc0
+167	0x0047be80	FUN_0047be80	C4 no bindable source (frida-replay)	0	0	0	0	1	2	1	2	stop	raceload stop	C4	track				0		0x0047bf70
+168	0x00486f50	FUN_00486f50	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	particle	re/match/s14/00486f50.c	100.0		0		0x0040bde0
+169	0x00487df0	Set703058_0	C4 no bindable source (untagged)	0	0	0	0	1	2723	1	2723	stop	raceframe stop	C4	particle	re/match/s14/00487df0.c	100.0		0		0x0040bd80
+170	0x004891f0	FUN_004891f0	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	render	re/match/s14/004891f0.c	100.0		0		0x00410b30
+171	0x0048baf0	FUN_0048baf0	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	particle	re/match/s14/0048baf0.c	100.0		0		0x0040bde0
+172	0x0048fce0	FUN_0048fce0	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	particle	re/match/s15/0048fce0.c	100.0		0		0x0040bde0
+173	0x0048fd10	FUN_0048fd10	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	particle	re/match/s15/0048fd10.c	100.0		0		0x0040bde0
+174	0x0048fd40	FUN_0048fd40	c4=match bindable	0	0	0	0	1	2725	1	2725	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	particle	re/match/s15/0048fd40.c	100.0		0		0x0040bde0
+175	0x0048fd70	FUN_0048fd70	c4=match bindable	0	0	0	0	1	5450	1	5450	stop	renderframe stop cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argume	C4	render	re/match/s15/0048fd70.c	100.0		0		0x0040bde0 0x00410b30
+176	0x004a34b0	_strncpy	no source (C2)	0	0	0	0	1	349	1	349	stop	audio stop	C2	boot				0		0x005507b0 0x005a86a0
+177	0x004a3860	FUN_004a3860	no source (C2, crt)	0	0	0	0	1	255	1	255	unbound	no binding row	C2	third-party-library[msvc-crt-main]				0		0x005507b0
+178	0x004a4da0	__aulldvrm	C4 no bindable source (libid)	0	0	0	0	1	244	1	244	stop	bulk stop	C4	third-party-library[msvc-crt-main]				0		0x004a504f
+179	0x004a4fc1	write_char	C4 no bindable source (libid)	0	0	0	0	1	5224	1	5224	stop	bulk stop	C4	third-party-library[msvc-crt-main]	re/match/s17/004a504f.c	100.0		0		0x004a504f
+180	0x004a4ff4	write_multi_char	C4 no bindable source (libid)	0	0	0	0	1	410	1	410	stop	bulk stop	C4	third-party-library[msvc-crt-main]	re/match/s17/004a504f.c	100.0		0		0x004a504f
+181	0x004a5018	write_string	C4 no bindable source (libid)	0	0	0	0	1	820	1	820	stop	bulk stop	C4	third-party-library[msvc-crt-main]	re/match/s17/004a504f.c	100.0		0		0x004a504f
+182	0x004a5984	CrtSehProlog	no source (C2)	0	0	0	0	1	10721	1	10721	unbound	no binding row	C2	boot				0		0x004a2cbd 0x004a460d
+183	0x004a59bf	CrtSehEpilog	C4 no bindable source (libid)	0	0	0	0	1	10721	1	10721	stop	bulk stop	C4	third-party-library[msvc-crt-main]				0		0x004a2cbd 0x004a460d
+184	0x004a6047	FUN_004a6047	C4 no bindable source (libid)	0	0	0	0	1	86	1	86	stop	bulk stop	C4	third-party-library[msvc-crt-main]				1	0x004a95e4	0x004a2cbd
+185	0x004a9410	_strlen	no source (C2)	0	0	0	0	1	2213	1	2213	stop	bulk stop	C2	boot				0		0x004a504f
+186	0x004b4550	Vec3Centroid	C3 with a source (63.3%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	74	1	74	stop	raceframe stop	C3	util	re/match/s18/004b4550.c	63.3	IDENTICAL-FOR-2724	0		0x00478660
+187	0x004b4eb0	FUN_004b4eb0	C1 with a source (70.9%)	0	0	0	0	1	30	1	30	stop	raceload stop	C1	render	re/match/tlr/004b4eb0.c	70.9		0		0x004b5030
+188	0x004b53b0	FUN_004b53b0	C4 frida-replay with source	0	0	0	0	1	18	1	18	stop	raceload stop not bound here (--roots-only): matched source re/match/s18/0	C4	render	re/match/s18/004b53b0.c	45.4		0		0x0047bf70
+189	0x004b65c0	FUN_004b65c0	c4=match bindable	0	0	0	0	1	7	1	7	unbound	no binding row	C4	render	re/match/s18/004b65c0.c	100.0		0		0x004952f0
+190	0x004c0790	FUN_004c0790	c4=match bindable	0	0	0	0	1	304	1	304	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl01/004c0790.c	100.0		0		0x004e6920 0x004e6ab0 0x004e6e00
+191	0x004c0ad0	FUN_004c0ad0	c4=match bindable	0	0	0	0	1	330	1	330	unbound	no binding row	C4	unknown	re/match/s19/004c0ad0.c	100.0		0		0x004c0a60 0x004c1040 0x004c1210
+192	0x004c0b70	FUN_004c0b70	c4=match bindable	0	0	0	0	1	533	1	533	unbound	no binding row	C4	unknown	re/match/s19/004c0b70.c	100.0		0		0x004c0b30
+193	0x004c0d70	FUN_004c0d70	c4=match bindable	0	0	0	0	1	346	1	346	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl01/004c0d70.c	100.0		0		0x004c0910
+194	0x004c0de0	FUN_004c0de0	c4=match bindable	0	0	0	0	1	8	1	8	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl01/004c0de0.c	100.0		0		0x004e6ab0 0x004e6e00
+195	0x004c1a70	CameraRecomputeProjCoeffs	C4 frida-replay with source	0	0	0	0	1	8174	1	8174	unbound	no binding row	C4	render	re/match/s19/004c1a70.c	90.7		0		0x004c1b10 0x004c1c10
+196	0x004c3b90	FastInvSqrt	c4=match bindable	0	0	0	0	1	724419	1	724419	unbound	no binding row	C4	util	re/match/s19/004c3b90.c	100.0		0		0x004c4d20
+197	0x004c3d90	FUN_004c3d90	c4=match cpp-unclean	0	0	0	0	1	187307	1	187307	stop	renderframe stop owned by RACE rows (run 53, race_owned.txt)	C4	render	re/match/s19/004c3d90.c	100.0		0		0x00478660 0x0047bf70
+198	0x004c4a50	RwMatrixRotateInner	C3 with a source (77.8%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	243330	1	243330	unbound	no binding row	C3	render	re/match/s19/004c4a50.c	77.8	IDENTICAL-FOR-2724	0		0x004c4d20
+199	0x004c4eb0	RwMatrixInvert_CofactorPath	C4 frida-replay with source	0	0	0	0	1	658	1	658	unbound	no binding row	C4	render	re/match/s19/004c4eb0.c	47.7	IDENTICAL-FOR-2724	0		0x004c4dc0
+200	0x004c52f0	RwMatrixCombine	C3 with a source (12.6%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	90225	1	90225	stop	renderframe stop	C3	render	re/match/s19/004c52f0.c	12.6	IDENTICAL-FOR-2724	0		0x004c1480
+201	0x004c5bc0	FUN_004c5bc0	c4=match bindable	0	0	0	0	1	66	1	66	unbound	BINDINGS rw	C4	render	re/match/s19/004c5bc0.c	100.0		0		0x0040bbb0
+202	0x004cca80	FUN_004cca80	C1 with a source (-%)	0	0	0	0	1	55906	1	55906	unbound	no binding row	C1	third-party-library[renderware]	RwCore/RwCore_Hand.cpp	-		0		0x004c32b0
+203	0x004ccba0	FUN_004ccba0	c4=match bindable	0	0	0	0	1	53723	1	53723	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl01/004ccba0.c	100.0		0		0x004c32b0
+204	0x004d8000	FUN_004d8000	c4=match bindable	0	0	0	0	1	2970	1	2970	unbound	no binding row	C4	frontend	re/match/s21/004d8000.c	100.0		0		0x004c0910 0x004c2fb0 0x004e4dd0
+205	0x004d8090	RwPluginListCopyDispatch	c4=match bindable	0	0	0	0	1	664	1	664	unbound	no binding row	C4	render	re/match/s21/004d8090.c	100.0		0		0x004c0910 0x004e69a0 0x004e6ab0
+206	0x004e44e0	FUN_004e44e0	c4=match bindable	0	0	0	0	1	36	1	36	unbound	no binding row	C4	third-party-library[renderware]	re/match/g2sh/004e44e0.c			0		0x004e4450
+207	0x004e6710	FUN_004e6710	c4=match bindable	0	0	0	0	1	16	1	16	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl02/004e6710.c	87.1		0		0x004e4450 0x004e6ab0
+208	0x004e6d80	FUN_004e6d80	c4=match bindable	0	0	0	0	1	36	1	36	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl02/004e6d80.c	100.0		0		0x004e6ab0
+209	0x004e8e90	FUN_004e8e90	c4=match bindable	0	0	0	0	1	714	1	714	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl02/004e8e90.c	100.0		0		0x004e68a0 0x004e69a0
+210	0x004f0c10	FUN_004f0c10	c4=match bindable	0	0	0	0	1	17	1	17	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl03/004f0c10.c	100.0		0		0x004e8ea0
+211	0x00550580	FUN_00550580	c4=match bindable	0	0	0	0	1	55	1	55	unbound	no binding row	C4	third-party-library[renderware]	re/match/rwl04/00550580.c	100.0		0		0x005507b0
+212	0x00550af0	FUN_00550af0	c4=match bindable	0	0	0	0	1	1	1	1	unbound	no binding row	C4	audio	re/match/s24/00550af0.c	100.0		0		0x004cbd30 0x004cc050
+213	0x00556ca0	FUN_00556ca0	C4 frida-replay with source	0	0	0	0	1	616	1	616	unbound	no binding row	C4	hud	re/match/s24/00556ca0.c	60.0		0		0x00427e00
+214	0x0055ac00	RwpShapeActiveBitSet	C4 no bindable source (untagged)	0	0	0	0	1	23940	1	23940	stop	raceframe stop	C4	third-party-library[RenderWare-Physics-3.7]				0		0x0047ea60 0x00480100
+215	0x0055ded0	FUN_0055ded0	C3 with a source (98.4%)	0	0	0	0	1	64	1	64	stop	raceload stop	C3	third-party-library[RenderWare-Physics-3.7]	re/match/rwl05/0055ded0.c	98.4		0		0x0057c300
+216	0x0057c210	RwpBodyTableLookup	C4 no bindable source (untagged)	0	0	0	0	1	127417	1	127417	stop	raceframe stop	C4	third-party-library[RenderWare-Physics-3.7]				0		0x00421930 0x0047d080 0x0047ea60 0x00480100
+217	0x0057c4b0	FUN_0057c4b0	no source (C2, qhull)	0	0	0	0	1	1	1	1	stop	raceload stop	C2	third-party-library[qhull-2002.1]				0		0x0047f4c0
+218	0x005a75b0	FUN_005a75b0	C2 with a source (51.6%, in-situ CRASH)	0	0	0	0	1	55839	1	55839	stop	audio stop	C2	audio	re/match/s25/005a75b0.c	51.6	CRASH	0		0x005a7520 0x005a7560
+219	0x005ae250	FUN_005ae250	C2 with a source (64.9%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	2	1	2	stop	audio stop	C2	audio	re/match/s26/005ae250.c	64.9	IDENTICAL-FOR-2724	0		0x005a9e60
+220	0x005ae4c0	FUN_005ae4c0	C3 with a source (35.5%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	8	1	8	stop	audio stop	C3	audio	re/match/s26/005ae4c0.c	35.5	IDENTICAL-FOR-2724	0		0x005ae3a0
+221	0x005b0cf0	FUN_005b0cf0	C3 with a source (43.9%, in-situ IDENTICAL-FOR-2724)	0	0	0	0	1	4672	1	4672	stop	audio stop	C3	audio	re/match/s26/005b0cf0.c	43.9	IDENTICAL-FOR-2724	0		0x005a89d0
+222	0x005c4ad0	FUN_005c4ad0	hand stand-in	0	0	0	0	1	1	1	1	stand	BINDINGS stand-in	C4	boot	re/match/s28/005c4ad0.c	96.7		0		0x00553f40

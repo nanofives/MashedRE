@@ -1,0 +1,47 @@
+## 0x0041f3d0 re/match/s04/0041f3d0.c
+   bytes: 281 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0041f3d0	OK	checked=13	unchecked=0
+## 0x00420870 re/match/s05/00420870.c
+   bytes: 158 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+   bytes: 396 B whole symbol, 128 differing unmasked bytes (first at +0x3b)
+   bytes: 88 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+   bytes: 279 B whole symbol, 147 differing unmasked bytes (first at +0x10)
+   bytes: 112 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+   bytes: 97 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+   bytes: 217 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+   bytes: 1172 B whole symbol, 609 differing unmasked bytes (first at +0xee)
+0x00420870	BAD	checked=27	unchecked=0
+## 0x00422440 re/match/s05/00422440.c
+   bytes: 45 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422440	OK	checked=4	unchecked=0
+## 0x00422470 re/match/s05/00422470.c
+   bytes: 72 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+   bytes: 94 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422470	OK	checked=4	unchecked=2
+## 0x00426dc0 re/match/s06/00426dc0.c
+   bytes: 29 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00426dc0	OK	checked=2	unchecked=0
+## 0x0046b540 re/match/s11/0046b540.c
+   bytes: 1356 B whole symbol, 906 differing unmasked bytes (first at +0xae)
+0x0046b540	BAD	checked=42	unchecked=0
+## 0x0046bce0 re/match/s11/0046bce0.c
+   bytes: 54 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0046bce0	OK	checked=3	unchecked=0
+## 0x0046bd20 re/match/s11/0046bd20.c
+   bytes: 54 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0046bd20	OK	checked=3	unchecked=0
+## 0x0046bd60 re/match/s11/0046bd60.c
+   bytes: 50 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0046bd60	OK	checked=1	unchecked=0
+## 0x0046bda0 re/match/s11/0046bda0.c
+   bytes: 104 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0046bda0	OK	checked=3	unchecked=0
+## 0x00540080 re/match/rwl03/00540080.c
+   bytes: 114 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00540080	OK	checked=2	unchecked=0
+## 0x00540100 re/match/rwl03/00540100.c
+   bytes: 95 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00540100	OK	checked=1	unchecked=0
+## 0x00540160 re/match/rwl03/00540160.c
+   bytes: 97 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00540160	OK	checked=1	unchecked=0

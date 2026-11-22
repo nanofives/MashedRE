@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-21  0x004103a0  SubStateHeldCountdown5  C4->C4  sha refresh (c4_reclass refresh): src sha256 7b1639eda2acb4ac -> ddcd252548112065, re/match/s02/004103a0.c still byte-identical + relocheck OK; evidence: verify/bindgates_20261121/RESULT_BIND-GATES-ALLKNOBS.md
 2026-11-21  0x00420870  FUN_00420870  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md
 2026-11-21  0x00470670  VehicleControlUpdate  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md
 2026-11-21  0x0046b540  VehicleSpawnInit  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md; evidence: verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md

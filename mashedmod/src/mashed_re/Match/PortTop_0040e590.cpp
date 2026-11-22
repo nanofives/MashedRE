@@ -21,7 +21,7 @@
 #define FUN_00430790 GetDat0067f17c   // exe body (Match/MatchS07_00430790.cpp)
 #define FUN_0045ba00 RaceResultIndexedStore   // exe body (Match/MatchS10_0045ba00.cpp)
 #define FUN_0046b1c0 PortTop_RFStop_0046b1c0   // named stop
-#define FUN_0046b540 PortTop_RFStop_0046b540   // named stop
+#define FUN_0046b540 PortTop_Bound_0046b540
 #define FUN_0046baa0 VehiclePhysicsStateReset   // exe body (Race/SubStateCallees.cpp)
 #define FUN_0046c6d0 VehicleEntitySlotRead   // exe body (Match/MatchS11_0046c6d0.cpp)
 #define FUN_0046d4a0 PtrCompute881ec8   // exe body (Vehicle/VehicleRecordPtr.cpp)

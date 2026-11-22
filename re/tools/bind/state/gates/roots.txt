@@ -1,0 +1,6 @@
+# BIND-GATES-ALLKNOBS (run 55): all-knobs gate roots this row owns
+# 0x0048ae00 left out: wired into 0x0040bbb0 it runs at boot and the knob boots exit 0xC0000374 after the Splash.dff read
+# (its callees 0x00544a70 / 0x00544ad0 / 0x00544bf0 have no body, RESULT section 4)
+00409710
+004103a0
+00448220

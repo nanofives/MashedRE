@@ -9,7 +9,7 @@
 #define FUN_00408610 PortTop_Bound_00408610
 #define FUN_0040d8f0 PortTop_Bound_0040d8f0
 #define FUN_0041eeb0 PortTop_Bound_0041eeb0
-#define FUN_00420870 PortTop_RFStop_00420870   // named stop
+#define FUN_00420870 PortTop_Bound_00420870
 #define FUN_00426080 GlobalDat00656ed8Get   // exe body (Match/MatchS06_00426080.cpp)
 #define FUN_00426c00 GameStateFlagGet   // exe body (Match/MatchS06_00426c00.cpp)
 #define FUN_0045b350 RwInitNullStub   // exe body (Match/MatchS09_0045b350.cpp)
