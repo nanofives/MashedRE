@@ -2422,7 +2422,8 @@
 "RwCore/RwCore_004c3ac0.cpp"
 ],
 "00420420": [
-"stop"
+"stop",
+"outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s05/00420420.c"
 ],
 "004e6ab0": [
 "reuse",

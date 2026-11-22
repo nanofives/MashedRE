@@ -12,7 +12,8 @@ Static, read-only, no build. Inputs (all on this tree):
              race-load or race-tick; its T2 calls = race-load + race-tick calls.
   route      binding state of each rva on the MASHED_ORIG_TOP route at this head, same precedence as
              verify/census_20261116/census_join.py binding(): plan first (raceload plan
-             verify/ro_20261116/rltools/plan_rl.json of PORT-OT-RACE-BIND-PROV4, then the audio plan
+             re/tools/bind/state/raceload/plan.json (BIND-GATES-ALLKNOBS run 55: was the pre-BIND-TOOL copy
+             verify/ro_20261116/rltools/plan_rl.json, frozen at PORT-OT-RACE-BIND-PROV4), then the audio plan
              re/tools/bind/state/audio/plan.json), then verify/porttop_20261108/BINDINGS.tsv.
                run   (body compiled, callees followed): plan bind / reuse, BINDINGS matched / near-match
                lib   (supplied, not followed): BINDINGS bound / crt / shim
@@ -66,7 +67,10 @@ KNOBS = [
 ]
 KNOB_FORCE = {0x004111c0: "MASHED_OT_RACEFRAME=1", 0x00492e90: "MASHED_OT_RENDERFRAME=1", 0x0040d110: "MASHED_OT_RL_D110=1",
               0x00429290: "MASHED_OT_TITLETICK=1"}
-EXTRA_PLANS = ("bulk", "raceframe", "renderframe")   # re/tools/bind/state/<profile>/plan.json
+# re/tools/bind/state/<profile>/plan.json of every profile other than audio / raceload (read above). BIND-GATES-ALLKNOBS
+# (run 55): was the fixed tuple ("bulk", "raceframe", "renderframe"), which missed a new profile (gates).
+EXTRA_PLANS = tuple(sorted(p.parent.name for p in (ROOT / "re/tools/bind/state").glob("*/plan.json")
+                           if p.parent.name not in ("audio", "raceload")))
 
 
 def h8(a):
@@ -149,7 +153,7 @@ def main(argv):
         st[a] = {"matched": "run", "near-match": "run", "bound": "lib", "crt": "lib", "shim": "lib", "port": "hand",
                  "stand-in": "stand", "under-stand-in": "stand"}.get(k, "unbound")
         why[a] = "BINDINGS " + k
-    for p in (ROOT / "re/tools/bind/state/audio/plan.json", ROOT / "verify/ro_20261116/rltools/plan_rl.json"):
+    for p in (ROOT / "re/tools/bind/state/audio/plan.json", ROOT / "re/tools/bind/state/raceload/plan.json"):
         for k, v in json.loads(p.read_text(encoding="utf-8")).items():
             a = int(k, 16)
             st[a] = "stop" if v[0] == "stop" else "run"

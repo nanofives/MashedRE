@@ -1,0 +1,11 @@
+define layer: 2371 rvas aliased, 352 added (not in plans/BINDINGS), 157 alias conflicts across TUs (highest kept)
+graph: executed functions 3377, T2 census 2450 (calls 54357823), reloc tables 78
+route states at head: {'stand': 58, 'run': 1263, 'unbound': 1737, 'hand': 99, 'lib': 61, 'stop': 159}
+executed path R: 889 functions, T2 census in R 629 (calls 13594939)
+T2 census reachable from top in the full-follow graph: 1288; not attached to the top: 1162
+gates on R: 190 (stop 80, stand 38, unbound 72); with census behind or released: 161
+T2 census reachable only through hand exe bodies (BINDINGS port / define to a named exe body), not ranked: 555
+class tally of ranked gates: {'hand stand-in': 32, 'c4=match bindable': 60, 'no source': 9, 'C3 with a source': 11, 'C2 with a source': 13, 'C4 frida-replay with source': 8, 'c4=match cpp-unclean': 9, 'C4 no bindable source': 16, 'C1 with a source': 3}
+  1 0x004111c0 FUN_004111c0                 hand stand-in (run-loop piece)                   tool=388/9637323 alone=122 behind=204/2130509
+  2 0x00492e90 FUN_00492e90                 hand stand-in (run-loop piece)                   tool=153/6564613 alone=12 behind=122/3266747
+  3 0x00429290 FUN_00429290                 hand stand-in                                    tool=30/1982898 alone=1 behind=2/208

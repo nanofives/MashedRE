@@ -416,8 +416,9 @@
 "stop"
 ],
 "004103a0": [
-"stop",
-"static in re/match/s02/004103a0.c:59 (file-local there): no linkable exe body"
+"reuse",
+"PortTop_Bound_004103a0",
+"Match/PortTop_004103a0.cpp"
 ],
 "00410860": [
 "bind",
@@ -1007,7 +1008,17 @@
 "stop"
 ],
 "0046b540": [
-"stop"
+"bind",
+"re/match/s11/0046b540.c",
+"replay",
+[
+"0040ce80",
+"0042f6a0",
+"00430790",
+"00431d70",
+"004c3b30"
+],
+[]
 ],
 "0046baa0": [
 "reuse",
@@ -1630,7 +1641,9 @@
 "stop"
 ],
 "00448220": [
-"stop"
+"reuse",
+"PortTop_Bound_00448220",
+"Match/PortTop_00448220.cpp"
 ],
 "004671a0": [
 "reuse",
@@ -1684,7 +1697,41 @@
 []
 ],
 "00420870": [
-"stop"
+"bind",
+"re/match/s05/00420870.c",
+"replay",
+[
+"0041f3d0",
+"00420290",
+"00422470",
+"00422aa0",
+"004260a0",
+"004260b0",
+"00426dc0",
+"0046bce0",
+"0046bd20",
+"0046bda0",
+"0046cb30",
+"00484cf0",
+"004b5240",
+"004c0ed0",
+"004c1340",
+"004c1480",
+"004c1520",
+"00540080",
+"00540100",
+"00540160",
+"00544bf0"
+],
+[
+"0041f360",
+"0041f4f0",
+"0041f590",
+"0041f710",
+"0041f770",
+"0041f880",
+"00420340"
+]
 ],
 "00426080": [
 "reuse",
@@ -2404,6 +2451,21 @@
 "reuse",
 "Vehicle0HandleGet",
 "Match/MatchS07_0042f510.cpp"
+],
+"0040ce80": [
+"reuse",
+"PtrTable5f2770Get",
+"Match/MatchS02_0040ce80.cpp"
+],
+"00431d70": [
+"reuse",
+"PortTop_Bound_00431d70",
+"Match/PortTop_00431d70.cpp"
+],
+"004c3b30": [
+"reuse",
+"RwCore_004c3b30",
+"RwCore/RwCore_004c3b30.cpp"
 ],
 "00422b50": [
 "bind",
@@ -3148,6 +3210,100 @@
 [],
 []
 ],
+"0041f3d0": [
+"bind",
+"re/match/s04/0041f3d0.c",
+"match",
+[
+"0046bd60",
+"0046bda0",
+"004c1340",
+"004c1520"
+],
+[]
+],
+"00420290": [
+"stop"
+],
+"00422470": [
+"bind",
+"re/match/s05/00422470.c",
+"match",
+[
+"00422440"
+],
+[
+"004223f0"
+]
+],
+"00422aa0": [
+"reuse",
+"SlotFieldSet",
+"Match/MatchS05_00422aa0.cpp"
+],
+"004260a0": [
+"reuse",
+"GetDat00657438",
+"Match/MatchS06_004260a0.cpp"
+],
+"004260b0": [
+"reuse",
+"GetDat0065743c",
+"Match/MatchS06_004260b0.cpp"
+],
+"00426dc0": [
+"bind",
+"re/match/s06/00426dc0.c",
+"match",
+[
+"00479100"
+],
+[]
+],
+"0046bce0": [
+"bind",
+"re/match/s11/0046bce0.c",
+"match",
+[],
+[]
+],
+"0046bd20": [
+"bind",
+"re/match/s11/0046bd20.c",
+"match",
+[],
+[]
+],
+"0046bda0": [
+"bind",
+"re/match/s11/0046bda0.c",
+"match",
+[],
+[]
+],
+"00540080": [
+"bind",
+"re/match/rwl03/00540080.c",
+"match",
+[
+"004c5a60"
+],
+[]
+],
+"00540100": [
+"bind",
+"re/match/rwl03/00540100.c",
+"match",
+[],
+[]
+],
+"00540160": [
+"bind",
+"re/match/rwl03/00540160.c",
+"match",
+[],
+[]
+],
 "00426bc0": [
 "reuse",
 "GetDat0066d6e0",
@@ -3731,6 +3887,28 @@
 "GlobalDat0066ce58Get",
 "Match/MatchS06_00426090.cpp"
 ],
+"0046bd60": [
+"bind",
+"re/match/s11/0046bd60.c",
+"match",
+[],
+[]
+],
+"00422440": [
+"bind",
+"re/match/s05/00422440.c",
+"match",
+[],
+[]
+],
+"00479100": [
+"stop"
+],
+"004c5a60": [
+"reuse",
+"RwCore_004c5a60",
+"RwCore/RwCore_004c5a60.cpp"
+],
 "0046d3a0": [
 "stop"
 ],
@@ -4037,11 +4215,6 @@
 "0057c210"
 ],
 []
-],
-"004c3b30": [
-"reuse",
-"RwCore_004c3b30",
-"RwCore/RwCore_004c3b30.cpp"
 ],
 "0044d5e0": [
 "bind",

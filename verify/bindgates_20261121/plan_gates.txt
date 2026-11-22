@@ -1,0 +1,48 @@
+Counter({'reuse': 33, 'stop': 11, 'bind': 3}) Counter({'match': 2, 'provisional': 1})
+00408a50 reuse PerCarRaceProgressGet C4 FUN_00408a50
+00408b00 stop  C2 FUN_00408b00
+00409330 stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s01/00409330.c C4 FUN_00409330
+004095a0 stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s01/004095a0.c C4 FUN_004095a0
+00409710 bind re/match/s01/raw/00409710.c C4 FUN_00409710
+0040e350 reuse GetRenderSubMode C4 GetRenderSubMode
+0040e370 reuse IsCarSlotActive C4 FUN_0040e370
+0040e4a0 reuse PortTop_Bound_0040e4a0 C4 ElapsedTimeGet
+0040e4b0 reuse PortTop_Bound_0040e4b0 C4 Race::GetSoleFinishedPlayer
+0040e560 reuse PortTop_Bound_0040e560 C4 FUN_0040e560
+004103a0 bind re/match/s02/004103a0.c C4 SubStateHeldCountdown5
+00411ae0 reuse PortTop_Bound_00411ae0 C4 Ghost::PlaybackTick
+00411d60 reuse PortTop_Bound_00411d60 C4 ReplayCheckTimer
+00418860 stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s03/h3_00418860.c C4 FUN_00418860
+0041da90 reuse DeltaTimeOutGet C4 DeltaTimeOutGet
+0041ef60 stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s04/0041ef60.c C4 Player::WriteFieldZero
+00426c90 reuse PortTop_Bound_00426c90 C4 FUN_00426c90
+00429840 reuse RaceStateLatchSet C4 RaceStateLatchSet
+00429860 reuse PortTop_Bound_00429860 C4 RaceStateFlagGet
+0042f6a0 reuse GetRaceSubMode C4 GetRaceSubMode
+00430820 reuse PortTop_Bound_00430820 C4 Global67ed6cGet
+00434360 stop  - 
+00441990 stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s08/00441990.c C4 FUN_00441990
+00442e00 stop  C2 FUN_00442e00
+00446520 stop outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s08/00446520.c C4 FUN_00446520
+00448220 bind re/match/s08/00448220.c C2 Frontend::PostRaceResultCamera
+0046b4f0 reuse UtilTableRead46b4f0 C4 FUN_0046b4f0
+0046baa0 reuse VehiclePhysicsStateReset C4 FUN_0046baa0
+0046c730 reuse EntityDamageStateGet C4 Table882198Get
+0046c750 reuse EntityVelocityCounterGet C4 Table882194Get
+0046c7b0 stop  C4 VehicleSlotGetter
+0046cbb0 stop  C4 VehicleCarStateRead
+0046cc10 reuse VehicleFloatFieldAsInt C4 VehicleFloatFieldAsInt
+0046d400 reuse PortTop_Bound_0046d400 C4 FUN_0046d400
+0046d4a0 reuse PtrCompute881ec8 C4 PtrCompute881ec8
+0046d510 reuse PortTop_Bound_0046d510 C4 VehicleVelocityWorldGet
+0046d780 reuse PortTop_Bound_0046d780 C4 LaunchRevRelease
+0046d7f0 reuse BoundedTableSignClamp46d7f0 C4 LaunchRevChargeTick
+00472650 reuse PortTop_Bound_00472650 C4 FUN_00472650
+00495280 reuse PortTop_PizFs_Mount_00495280 C4 FUN_00495280
+004952f0 reuse PortTop_PizFs_Unmount_004952f0 C4 FUN_004952f0
+004c1c10 reuse RwCore_004c1c10 C4 Camera::SetProjection
+004c3ac0 reuse RwCore_004c3ac0 C4 Vec3Magnitude
+004cbd30 reuse RwCore_004cbd30 C4 RwStreamRead
+004cc160 reuse RwCore_004cc160 C4 FUN_004cc160
+004cc230 reuse RwCore_004cc230 C2 FUN_004cc230
+004cc5e0 reuse RwCore_004cc5e0 C2 FUN_004cc5e0

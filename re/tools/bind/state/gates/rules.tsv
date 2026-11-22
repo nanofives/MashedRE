@@ -1,0 +1,7 @@
+# Profile `gates` rules (format: state/_shared/rules.tsv header)
+# 0x00448220: L-126 provisional body (PROVISIONAL.tsv status provisional, re/match/s08/00448220.c 97.0%, NOT-PROVEN, replay IDENTICAL-FOR-2724 after the const-scale fix)
+prov_bind	00448220
+# existing exe bodies other profiles already bind these callees to (same alias lines as raceload/bulk rules.tsv; 0x0040bb30 = the body 0x0040bbb0 calls)
+alias	00495280	PortTop_PizFs_Mount_00495280	Match/PortTop_00402750_Pieces.cpp
+alias	004952f0	PortTop_PizFs_Unmount_004952f0	Match/PortTop_00402750_Pieces.cpp
+alias	0040bb30	Search40bb30	Match/MatchS02_0040bb30.cpp
