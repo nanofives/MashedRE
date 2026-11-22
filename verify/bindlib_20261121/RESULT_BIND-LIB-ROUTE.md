@@ -1,6 +1,7 @@
 # RESULT BIND-LIB-ROUTE (run 55, section LIB, binder tool row)
 
-Verdict: GREEN on the row scope; HANDOFF for one parent condition (section "Pending" at the end). The binder has a `lib` binding kind next to `crt`. No RVA is bound by this row, and every generated
+Verdict: GREEN. The parent condition (merge drain 1, re-run the selftest) is done, see the section "Merge with drain 1"
+at the end. The binder has a `lib` binding kind next to `crt`. No RVA is bound by this row, and every generated
 output is unchanged (shown below).
 
 Base: `orch/integration` @ 39ee297f2. Worker: claude-opus-5-5 medium on claude2.
@@ -112,14 +113,69 @@ Not run, by row kind: G-CTRL, B, 12x4 captures, knob boot (the row binds nothing
 - [UNCERTAIN] line for the register, test in one line: "RACE-LOAD-LUA: for each lua `lib` line, the symbol equals the
   hooks.csv libid note's symbol of that rva, and `porttop_bind.py plan` resolves it against mashedmod/deps/lua-4.0".
 
-## Pending (parent condition, run 55 L0 via the LIB lead)
+## Merge with drain 1 (parent condition, run 55)
 
-HB-LOCK-ENFORCE (merge drain 1) adds a 4-line wait at the top of `cmd_selftest` in `re/tools/bind/porttop_bind.py`, the
-file this row edits (this row puts `bad = selftest_libs()` on that same first line). Remaining step, once the lead says
-drain 1 has merged (on claude3, because git merge prompts on claude2): `git -c merge.autoStash=false merge orch/integration`,
-resolve porttop_bind.py by keeping both (the HB-LOCK-ENFORCE wait first, then `bad = selftest_libs()`), re-run the binder
-selftest after `mashed_lock.py status` (RULE 7 bar: failures a subset of the head's), re-run the unit test, and re-run
-both builds + ddkobj check if the merge touched exe sources.
+- Done on claude3 (moved there because git merge prompts on claude2): `git -c merge.autoStash=false merge orch/integration`,
+  with integration at a2843847a (drain 1: HB-LOCK-ENFORCE, LUA-VENDOR, KNOBON-BOOTS-G5). Merge commit 9f939b788.
+- One conflict, in `re/tools/bind/porttop_bind.py` `cmd_selftest`, resolved by keeping both. The four HB-LOCK-ENFORCE lines
+  come first (`sys.path.insert`, `import mashed_lock`, `mashed_lock.wait_clear(label='porttop_bind selftest')`), then
+  `bad = selftest_libs()` in place of its `bad = 0`. The resolution touched nothing else in the file.
+- After the merge, `git diff orch/integration HEAD -- mashedmod` is empty: the exe sources are the new head's.
 
-Extra check done here: CRLF copies of the fixture sources (core.autocrlf checkouts) resolve the same way (fix_add :10,
-fix_mul :15, fix_static2 refused, fix_dup refused at fix_api.c:21 and fix_more.c:2).
+| Check on the merged tree | Result |
+|---|---|
+| `mashed_lock.py status` before each of: selftest, VS2022 build, object build, ddkobj check | free every time |
+| Unit test | **9/9 PASS** (`unittest_merged.txt`) |
+| Binder selftest, branch tool | **FAIL 35** (`selftest_merged.txt`) |
+| Binder selftest, new head tool (orch/integration a2843847a `porttop_bind.py`) on the same tree | **FAIL 35** (`selftest_merged_head_tool.txt`). `diff` shows only the added lib line: **0 new failures**, and the remaining 35 are the new head's own |
+| VS2022 build (re-run, because the merge changed `mashedmod/build.bat` and added `mashedmod/deps/lua-4.0`) | Build OK, `mashed_re.exe` sha256 `926fa459...6436d5` |
+| Object build `MASHED_DDKOBJ=1` | Build OK |
+| `ddkobj.py check` | IDENTICAL 2336/2435, DIFFERENT 72, not-in-map 27 (`check_merged.txt`, `ddkobj_summary_merged.json`). BYTECHECK.tsv is **byte-identical** to `log/orch/run55_headcheck` (sha256 `5c4196c5...b76f`) and the summary is equal: **0 newly DIFFERENT units, 0 fallbacks to a VS2022 body** |
+
+The new head is at FAIL 35, up from 14. Drain 1 caused the 21 new lines, not this row: the head tool gives the same 35
+lines on a tree whose `mashedmod/` equals orch/integration. Line by line, from the head output (identical on the branch):
+- **audio (14, unchanged):** `plan DIFFERENT` (1) plus the 13 `file` lines listed under "Checks run" above.
+- **bulk (3, new on the head):**
+  - `plan DIFFERENT` (1): `plan 00420420 [stop] -> [stop, outside the bulk cp1 list ... re/match/s05/00420420.c]`.
+  - `file Match/PortTop_BulkStops.cpp` (1).
+  - `moved, not named: 00420420`, giving "60 lines moved, FAIL 1 unnamed" (1).
+  - Cause: 0x00420420 is now C4 in hooks.csv, with a re/match source.
+- **raceframe (18, new on the head):**
+  - `plan DIFFERENT` (1): bind 256 -> 269, reuse 148 -> 154. Plan lines 0040ce80, 0041f3d0, 00420290, 00420870,
+    00422440, 00422470, 00422aa0, 004260a0, 004260b0, 00426dc0, 00431d70, 0046b540, 0046bce0, 0046bd20, 0046bd60,
+    0046bda0, 00479100, 004c5a60, 00540080, 00540100, 00540160.
+  - 17 `file` lines: Match/PortTop_0040da50.cpp, 0040e590, 004111c0, 0041f3d0, 00420870, 00422440, 00422470,
+    00426dc0, 0046b540, 0046bce0, 0046bd20, 0046bd60, 0046bda0, 00540080, 00540100, 00540160, and
+    PortTop_RaceFrameStops.cpp.
+  - Cause: new c4=match and c4=frida-replay rows on the head that the raceframe closure now reaches.
+- Total 14 + 3 + 18 = 35. This row owns none of these profiles and regenerated nothing. Taking bulk and raceframe back
+  to 0 is a regenerate step for whoever owns those profiles.
+
+### Lua: a lib_root at the vendored tree (check only, no rule committed)
+
+`lib_root lua-4.0 mashedmod/deps/lua-4.0 src/*.c src/lib/*.c` resolves all 22 Lua API symbols tried, each to exactly one
+definition (`lua_libroot_check.txt`):
+- `lua_open` lstate.c:66, `lua_close` lstate.c:100
+- `lua_mathlibopen` lib/lmathlib.c:231, `lua_baselibopen`, `lua_strlibopen`, `lua_iolibopen`, `lua_dblibopen`
+- `lua_dobuffer` ldo.c:304, `lua_dostring`, `lua_dofile`, `lua_call`
+- `lua_setglobal` lapi.c:315, `lua_getglobal`, `lua_pushcclosure` lapi.c:230, `lua_pushnumber`, `lua_pushstring`
+- `lua_gettop` lapi.c:68, `lua_settop`, `lua_tonumber` lapi.c:157, `lua_tostring`, `lua_rawcall`
+- `luaC_checkGC` lgc.c:349
+
+The macros `lua_register` and `lua_pop` are refused, which is correct.
+
+Of the 8 survey rvas, hooks.csv names only two, and both resolve: `0x004b6fc0` lua_gettop and `0x004b7090` lua_tonumber.
+The other six carry Ghidra names and mechanical notes only, with no `libid identical <obj> _<sym>` note: `0x004b7330`,
+`0x004c0510`, `0x004b7480`, `0x004b7a70`, `0x004b7200` (thunk to `0x004b7fd0`) and `0x004b7250`. Their rva -> symbol
+pairing is **[UNCERTAIN]** (register line updated). The binding row names them from a libid run against the vendored
+objects, not from reading code.
+
+Extra check: CRLF copies of the fixture sources (core.autocrlf checkouts) resolve the same way.
+
+### Raw files of the merged run (not committed)
+
+| file | sha256 |
+|---|---|
+| `D:/MashedWT/BIND-LIB-ROUTE_data/build_vs2022_merged.log` | `131fdecfae1926c41fdf8d80f70723c1f491ecce3f817918bea2b5fb58a47590` |
+| `D:/MashedWT/BIND-LIB-ROUTE_data/build_ddkobj_merged.log` | `2ce089656806a0751c1b4f3a7def2d589578ded66927f7194c8e066b28d43cf0` |
+| `mashedmod/build/ddkobj/mashed_re_ddk.exe` (merged) | `c64d0979ab4f1264bc94e9dd59ab537f6ac18e1328c537015abcc821982c04f1` |
