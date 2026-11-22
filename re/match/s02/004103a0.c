@@ -28,6 +28,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 typedef struct { int m_0; int m_4; int m_8; } Rec7f0a04;
 MGLOBAL(int, DAT_005f29b8, 0x005f29b8);
 MGLOBAL(int, DAT_007f0ff4, 0x007f0ff4);
@@ -56,7 +61,7 @@ int FUN_0046d780(int p0);
 int FUN_0046d7f0(int p0, int p1);
 
 // MATCH: 0x004103a0 FUN_004103a0
-static void FUN_004103a0(int delta)
+MATCH_STATIC void FUN_004103a0(int delta)
 {
   float t;
   int i;

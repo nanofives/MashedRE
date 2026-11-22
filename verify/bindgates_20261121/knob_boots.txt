@@ -1,0 +1,40 @@
+[1/4] knob_vs_base mashed_re_vs.exe MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000
+[1/4] knob_vs_base PASS (wrapper rc 0, game rc 0)
+    [mashed-lock] HELD 'mashed_machine' pid=16996 (BIND-GATES-ALLKNOBS)
+    knob_vs_base: exited rc=0 (0x00000000) after 28.0 s, log -> D:/MashedWT/BIND-GATES-ALLKNOBS_data\knob_vs_base.log
+      [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+      [ORIG_TOP] 0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1 or MASHED_OT_RACELOAD=1) returned 1
+      [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+      [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+      [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+      [ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames
+[2/4] knob_vs_all mashed_re_vs.exe MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000 MASHED_OT_RACEFRAME=1 MASHED_OT_RENDERFRAME=1 MASHED_RWC_FRAME=1 MASHED_OT_RL_D110=1 MASHED_OT_TITLETICK=1
+[2/4] knob_vs_all PASS (wrapper rc 0, game rc 0)
+    [mashed-lock] HELD 'mashed_machine' pid=12380 (BIND-GATES-ALLKNOBS)
+    knob_vs_all: exited rc=0 (0x00000000) after 26.9 s, log -> D:/MashedWT/BIND-GATES-ALLKNOBS_data\knob_vs_all.log
+      [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+      [ORIG_TOP] 0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1 or MASHED_OT_RACELOAD=1) returned 1
+      [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+      [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+      [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+      [ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames
+[3/4] knob_ddk_base mashed_re_ddk.exe MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000
+[3/4] knob_ddk_base PASS (wrapper rc 0, game rc 0)
+    [mashed-lock] HELD 'mashed_machine' pid=17780 (BIND-GATES-ALLKNOBS)
+    knob_ddk_base: exited rc=0 (0x00000000) after 27.9 s, log -> D:/MashedWT/BIND-GATES-ALLKNOBS_data\knob_ddk_base.log
+      [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+      [ORIG_TOP] 0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1 or MASHED_OT_RACELOAD=1) returned 1
+      [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+      [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+      [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+      [ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames
+[4/4] knob_ddk_all mashed_re_ddk.exe MASHED_ORIG_TOP=1 MASHED_OT_RACELOAD=1 MASHED_DET_FRAMES=3000 MASHED_OT_RACEFRAME=1 MASHED_OT_RENDERFRAME=1 MASHED_RWC_FRAME=1 MASHED_OT_RL_D110=1 MASHED_OT_TITLETICK=1
+[4/4] knob_ddk_all PASS (wrapper rc 0, game rc 0)
+    [mashed-lock] HELD 'mashed_machine' pid=23948 (BIND-GATES-ALLKNOBS)
+    knob_ddk_all: exited rc=0 (0x00000000) after 32.9 s, log -> D:/MashedWT/BIND-GATES-ALLKNOBS_data\knob_ddk_all.log
+      [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+      [ORIG_TOP] 0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1 or MASHED_OT_RACELOAD=1) returned 1
+      [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+      [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+      [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+      [ORIG_TOP] WinMain 0x00492370 returned 0 after 3000 frames
