@@ -1,0 +1,1 @@
+00409710	C2632 'char' seguido de 'bool' no es v lido

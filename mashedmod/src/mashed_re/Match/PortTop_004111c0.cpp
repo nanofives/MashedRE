@@ -33,7 +33,7 @@
 #define FUN_0040e590 PortTop_Bound_0040e590
 #define FUN_0040feb0 PortTop_RFStop_0040feb0   // named stop
 #define FUN_00410130 PortTop_RFStop_00410130   // named stop
-#define FUN_004103a0 PortTop_RFStop_004103a0   // named stop
+#define FUN_004103a0 PortTop_Bound_004103a0   // exe body (Match/PortTop_004103a0.cpp)
 #define FUN_00410860 PortTop_Bound_00410860
 #define FUN_00410ab0 PortTop_RFStop_00410ab0   // named stop
 #define FUN_00411170 PortTop_Bound_00411170

@@ -8,7 +8,7 @@
 #define FUN_0040d470 PortTop_Bound_0040d470
 #define FUN_00405430 PortTop_RFStop_00405430   // named stop
 #define FUN_004414b0 PortTop_RFStop_004414b0   // named stop
-#define FUN_00448220 PortTop_RFStop_00448220   // named stop
+#define FUN_00448220 PortTop_Bound_00448220   // exe body (Match/PortTop_00448220.cpp)
 #define FUN_004671a0 RwCore_004671a0   // exe body (RwCore/RwCore_004671a0.cpp)
 #define FUN_0046d4a0 PtrCompute881ec8   // exe body (Vehicle/VehicleRecordPtr.cpp)
 extern "C" {

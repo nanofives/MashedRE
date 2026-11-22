@@ -110,10 +110,6 @@ int PortTop_RFStop_0040feb0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RFStop_00410130(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00410130u, "0x004111c0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00410130u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004103a0: declared static void / void by 0x004111c0; static in re/match/s02/004103a0.c:59 (file-local there): no linkable exe body
-int PortTop_RFStop_004103a0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004103a0u, "0x004111c0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004103a0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00410ab0: declared static void / void by 0x004111c0; no matched or admitted source
 int PortTop_RFStop_00410ab0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00410ab0u, "0x004111c0", n, _ReturnAddress(), ex);
@@ -270,10 +266,6 @@ int PortTop_RFStop_004414b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RFStop_004464c0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004464c0u, "0x00448700", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004464c0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00448220: declared void by 0x0040d470; no matched or admitted source
-int PortTop_RFStop_00448220(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00448220u, "0x0040d470", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00448220u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00452140: declared int / void by 0x0045c350 0x00486830; cpp-unclean: C2664 'undefined4 PortTop_Bound_00451990(int,undefined4 *,undefined4 *)': el argumento 1 no puede convertirse de 'un
 int PortTop_RFStop_00452140(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00452140u, "0x0045c350 0x00486830", n, _ReturnAddress(), ex);

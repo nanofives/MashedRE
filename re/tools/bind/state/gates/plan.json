@@ -1,0 +1,275 @@
+{
+"00409710": [
+"bind",
+"re/match/s01/raw/00409710.c",
+"match",
+[
+"004095a0",
+"00495280",
+"004952f0",
+"004cbd30",
+"004cc160",
+"004cc230",
+"004cc5e0"
+],
+[]
+],
+"004103a0": [
+"bind",
+"re/match/s02/004103a0.c",
+"match",
+[
+"0040e560",
+"00411ae0",
+"00411d60",
+"00418860",
+"0041da90",
+"00426c90",
+"00429840",
+"00429860",
+"0042f6a0",
+"00430820",
+"0046baa0",
+"0046c730",
+"0046c750",
+"0046c7b0",
+"0046d780",
+"0046d7f0"
+],
+[]
+],
+"00448220": [
+"bind",
+"re/match/s08/00448220.c",
+"provisional",
+[
+"00408a50",
+"00408b00",
+"00409330",
+"0040e350",
+"0040e370",
+"0040e4a0",
+"0040e4b0",
+"0041ef60",
+"00434360",
+"00441990",
+"00442e00",
+"00446520",
+"0046b4f0",
+"0046c7b0",
+"0046cbb0",
+"0046cc10",
+"0046d400",
+"0046d4a0",
+"0046d510",
+"00472650",
+"004c1c10",
+"004c3ac0"
+],
+[]
+],
+"004095a0": [
+"stop",
+"outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s01/004095a0.c"
+],
+"00495280": [
+"reuse",
+"PortTop_PizFs_Mount_00495280",
+"Match/PortTop_00402750_Pieces.cpp"
+],
+"004952f0": [
+"reuse",
+"PortTop_PizFs_Unmount_004952f0",
+"Match/PortTop_00402750_Pieces.cpp"
+],
+"004cbd30": [
+"reuse",
+"RwCore_004cbd30",
+"RwCore/RwCore_004cbd30.cpp"
+],
+"004cc160": [
+"reuse",
+"RwCore_004cc160",
+"RwCore/RwCore_004cc160.cpp"
+],
+"004cc230": [
+"reuse",
+"RwCore_004cc230",
+"RwCore/RwCore_004cc230.cpp"
+],
+"004cc5e0": [
+"reuse",
+"RwCore_004cc5e0",
+"RwCore/RwCore_004cc5e0.cpp"
+],
+"0040e560": [
+"reuse",
+"PortTop_Bound_0040e560",
+"Match/PortTop_0040e560.cpp"
+],
+"00411ae0": [
+"reuse",
+"PortTop_Bound_00411ae0",
+"Match/PortTop_00411ae0.cpp"
+],
+"00411d60": [
+"reuse",
+"PortTop_Bound_00411d60",
+"Match/PortTop_00411d60.cpp"
+],
+"00418860": [
+"stop",
+"outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s03/h3_00418860.c"
+],
+"0041da90": [
+"reuse",
+"DeltaTimeOutGet",
+"Match/MatchS04_0041da90.cpp"
+],
+"00426c90": [
+"reuse",
+"PortTop_Bound_00426c90",
+"Match/PortTop_00426c90.cpp"
+],
+"00429840": [
+"reuse",
+"RaceStateLatchSet",
+"Match/MatchS06_00429840.cpp"
+],
+"00429860": [
+"reuse",
+"PortTop_Bound_00429860",
+"Match/PortTop_00429860.cpp"
+],
+"0042f6a0": [
+"reuse",
+"GetRaceSubMode",
+"Match/MatchS07_0042f6a0.cpp"
+],
+"00430820": [
+"reuse",
+"PortTop_Bound_00430820",
+"Match/PortTop_00430820.cpp"
+],
+"0046baa0": [
+"reuse",
+"VehiclePhysicsStateReset",
+"Race/SubStateCallees.cpp"
+],
+"0046c730": [
+"reuse",
+"EntityDamageStateGet",
+"Race/SubStateCallees.cpp"
+],
+"0046c750": [
+"reuse",
+"EntityVelocityCounterGet",
+"Race/SubStateCallees.cpp"
+],
+"0046c7b0": [
+"stop"
+],
+"0046d780": [
+"reuse",
+"PortTop_Bound_0046d780",
+"Match/PortTop_0046d780.cpp"
+],
+"0046d7f0": [
+"reuse",
+"BoundedTableSignClamp46d7f0",
+"Vehicle/LaunchRevCharge.cpp"
+],
+"00408a50": [
+"reuse",
+"PerCarRaceProgressGet",
+"Match/MatchS01.cpp"
+],
+"00408b00": [
+"stop"
+],
+"00409330": [
+"stop",
+"outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s01/00409330.c"
+],
+"0040e350": [
+"reuse",
+"GetRenderSubMode",
+"Match/MatchS02_0040e350.cpp"
+],
+"0040e370": [
+"reuse",
+"IsCarSlotActive",
+"Match/MatchS02_0040e370.cpp"
+],
+"0040e4a0": [
+"reuse",
+"PortTop_Bound_0040e4a0",
+"Match/PortTop_0040e4a0.cpp"
+],
+"0040e4b0": [
+"reuse",
+"PortTop_Bound_0040e4b0",
+"Match/PortTop_0040e4b0.cpp"
+],
+"0041ef60": [
+"stop",
+"outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s04/0041ef60.c"
+],
+"00434360": [
+"stop"
+],
+"00441990": [
+"stop",
+"outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s08/00441990.c"
+],
+"00442e00": [
+"stop"
+],
+"00446520": [
+"stop",
+"outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s08/00446520.c"
+],
+"0046b4f0": [
+"reuse",
+"UtilTableRead46b4f0",
+"Match/MatchS11_0046b4f0.cpp"
+],
+"0046cbb0": [
+"stop"
+],
+"0046cc10": [
+"reuse",
+"VehicleFloatFieldAsInt",
+"Match/MatchS11_0046cc10.cpp"
+],
+"0046d400": [
+"reuse",
+"PortTop_Bound_0046d400",
+"Match/PortTop_0046d400.cpp"
+],
+"0046d4a0": [
+"reuse",
+"PtrCompute881ec8",
+"Vehicle/VehicleRecordPtr.cpp"
+],
+"0046d510": [
+"reuse",
+"PortTop_Bound_0046d510",
+"Match/PortTop_0046d510.cpp"
+],
+"00472650": [
+"reuse",
+"PortTop_Bound_00472650",
+"Match/PortTop_00472650.cpp"
+],
+"004c1c10": [
+"reuse",
+"RwCore_004c1c10",
+"RwCore/RwCore_004c1c10.cpp"
+],
+"004c3ac0": [
+"reuse",
+"RwCore_004c3ac0",
+"RwCore/RwCore_004c3ac0.cpp"
+]
+}

@@ -1,0 +1,3 @@
+side	rva	exe_symbol	exe_va	size	relocs_masked	abs_data_refs_exact	diff_bytes	result	first_diff	vs_copy_in_map	src
+row	0x00409710	_PortTop_Bound_00409710	0x0006f6a0	128	8	2	0	IDENTICAL		False	re/match/s01/raw/00409710.c
+row	0x004103a0	___ddkreg_004103a0		368				not-in-map			re/match/s02/004103a0.c

@@ -416,8 +416,9 @@
 "stop"
 ],
 "004103a0": [
-"stop",
-"static in re/match/s02/004103a0.c:59 (file-local there): no linkable exe body"
+"reuse",
+"PortTop_Bound_004103a0",
+"Match/PortTop_004103a0.cpp"
 ],
 "00410860": [
 "bind",
@@ -1630,7 +1631,9 @@
 "stop"
 ],
 "00448220": [
-"stop"
+"reuse",
+"PortTop_Bound_00448220",
+"Match/PortTop_00448220.cpp"
 ],
 "004671a0": [
 "reuse",
