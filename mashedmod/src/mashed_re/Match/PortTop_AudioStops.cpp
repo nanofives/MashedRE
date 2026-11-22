@@ -82,9 +82,6 @@ void PortTop_AStop_005c8010(void) { PortTop_AudioCalleeStop(0x005c8010u, 0u, _Re
 void PortTop_AStop_005c83a0(void) { PortTop_AudioCalleeStop(0x005c83a0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005c8810(void) { PortTop_AudioCalleeStop(0x005c8810u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005c89a0(void) { PortTop_AudioCalleeStop(0x005c89a0u, 0u, _ReturnAddress()); }
-void PortTop_AStop_005c92c0(void) { PortTop_AudioCalleeStop(0x005c92c0u, 0u, _ReturnAddress()); }
-void PortTop_AStop_005c92f0(void) { PortTop_AudioCalleeStop(0x005c92f0u, 0u, _ReturnAddress()); }
-void PortTop_AStop_005c9310(void) { PortTop_AudioCalleeStop(0x005c9310u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005c9770(void) { PortTop_AudioCalleeStop(0x005c9770u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005c98d0(void) { PortTop_AudioCalleeStop(0x005c98d0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005c9d10(void) { PortTop_AudioCalleeStop(0x005c9d10u, 0u, _ReturnAddress()); }

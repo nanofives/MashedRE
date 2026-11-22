@@ -2292,13 +2292,29 @@
 []
 ],
 "005c92c0": [
-"stop"
+"bind",
+"re/match/s28/005c92c0.c",
+"match",
+[
+"005aea50"
+],
+[]
 ],
 "005c92f0": [
-"stop"
+"bind",
+"re/match/s28/005c92f0.c",
+"match",
+[
+"004522d0"
+],
+[]
 ],
 "005c9310": [
-"stop"
+"bind",
+"re/match/s28/005c9310.c",
+"match",
+[],
+[]
 ],
 "0040e350": [
 "reuse",

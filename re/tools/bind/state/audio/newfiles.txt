@@ -440,6 +440,9 @@ mashedmod/src/mashed_re/Match/PortTop_005c8980.cpp
 mashedmod/src/mashed_re/Match/PortTop_005c8eb0.cpp
 mashedmod/src/mashed_re/Match/PortTop_005c9220.cpp
 mashedmod/src/mashed_re/Match/PortTop_005c9230.cpp
+mashedmod/src/mashed_re/Match/PortTop_005c92c0.cpp
+mashedmod/src/mashed_re/Match/PortTop_005c92f0.cpp
+mashedmod/src/mashed_re/Match/PortTop_005c9310.cpp
 mashedmod/src/mashed_re/Match/PortTop_005c9680.cpp
 mashedmod/src/mashed_re/Match/PortTop_005c96e0.cpp
 mashedmod/src/mashed_re/Match/PortTop_005c9740.cpp
