@@ -5,8 +5,13 @@ cmwr0mi2n088jp121jgz9oroy. Rank script taken with `git checkout orch/GATERANK-AL
 (single-file checkout of 5e6ddb4d5's copy, not a cherry-pick), then edited (section 1).
 
 Verdict: 3 of the 4 gates bound (0x00409710, 0x004103a0, 0x00448220), 0x0048ae00 left unbound with a measured reason
-(section 4). 0x00440bc0 was a stale rank input, fixed in the rank script. Both builds OK, ddkobj check 0 new DIFFERENT, binder
-selftest 0 new failures (RULE 7), four knob boots rc 0 after 3000 frames with self-test PASS. One RULE 4 slip (section 8).
+(section 4). 0x00440bc0 was a stale rank input, fixed in the rank script. One RULE 4 slip (section 8).
+
+**Merged tree (sections 11 to 13 supersede 6 to 8 for the merge bar).** Hand merge of orch/integration a2843847a (drain 1), plus
+the widened step: bulk and raceframe regenerated, which binds 13 more rvas in raceframe (section 12). On the merged tree: both
+builds OK; ddkobj 4 new DIFFERENT, all c4=frida-replay rows, classed as replay-C4 bodies; selftest FAIL 14, all audio and all
+in the head's own lines (bulk, raceframe, raceload and gates at 0, against the head's FAIL 35); the 4 knob boots rc 0 after 3000
+frames with self-test PASS; both ranks re-run, the default view differs from the head's only by the input fix plus this row's binds.
 
 ## 1. First step: why 0x00440bc0 still ranked as a stop
 
@@ -15,7 +20,7 @@ The rank's input, not a stale wrapper. `t2_gate_rank.py` (line 152 of the GATERA
 0x00440bc0 is `stop, cpp-unclean: C2632`. The live raceload plan is `re/tools/bind/state/raceload/plan.json` (411 rvas), where
 0x00440bc0 is `bind re/match/tlr/00440bc0.c match` (C unit `Match/PortTop_00440bc0.c`, PORT-OT-RACE-BIND-HANDLER). 157 rvas differ
 in state between the two files. Fix (input): the rank reads `re/tools/bind/state/raceload/plan.json`. With that alone, 0x00440bc0
-and 0x005a7b60 (rank 1 in GATERANK) leave the ranked gates (`rank_fixinput_head.txt`).
+and 0x005a7b60 (rank 1 in GATERANK) leave the ranked gates (section 13: the fixed script on the unmodified head).
 
 A second input fix: `EXTRA_PLANS` was the fixed tuple (bulk, raceframe, renderframe); it now globs every
 `re/tools/bind/state/*/plan.json` other than audio / raceload, so a new profile (this row's `gates`) is read.
@@ -84,7 +89,7 @@ as a matched body. It stays a hand stand-in (`PortTop_StandIn04G_0048ae00`), ran
 
 Bound as a listed provisional body (L-126, knob path only, not C4). No ADMITTED.tsv line (not EQUIV).
 
-## 6. Object build vs log/orch/run55_headcheck (`bytecheck_vs_head.tsv`, `ddkobj_summary.json`)
+## 6. Object build vs log/orch/run55_headcheck (pre-merge tree 0fe6ee6a5; merged tree: section 12) (`bytecheck_vs_head.tsv`, `ddkobj_summary.json`)
 
 `py.exe -3.12 re/tools/ddkobj/ddkobj.py check` on the final object build:
 
@@ -108,7 +113,7 @@ linker dropped it for that reason; register line). 0x00448220 `skip:provisional`
 Pairs "listed unit -> 100% neighbour that fell back to its VS2022 body": none new. The one newly listed unit is 0x00448220; the count
 of provisional functions kept VS2022 inside linked units is 7 before and after, so no 100% neighbour fell back.
 
-## 7. The three binding numbers
+## 7. The three binding numbers (pre-merge; merged tree: section 12)
 
 1. Units executing or reachable from a bound caller on the top-down path: **3** (0x00409710 <- 0x00426e10, 0x004103a0 <- 0x004111c0,
    0x00448220 <- 0x0040d470). None executed in the 3000-frame boots (race paths; [UNCERTAIN] register line).
@@ -121,7 +126,7 @@ of provisional functions kept VS2022 inside linked units is 7 before and after, 
    - stops with no bindable source: 0x00408b00 (C2 97.0%), 0x00434360 (no row), 0x00442e00 (C2 65.1%), 0x0046c7b0 / 0x0046cbb0
      (C4 hand rh bodies in Vehicle/VehicleState.cpp, hand path, same stop raceframe has).
 
-## 8. Checks run
+## 8. Checks run (pre-merge tree 0fe6ee6a5; merged tree: section 13)
 
 | check | result |
 |---|---|
@@ -148,3 +153,128 @@ boot logs, both exes, the build logs, selftest, both rank outputs, the plan list
 - 0x0048ae00 (needs 0x00544a70 / 0x00544ad0 / 0x00544bf0 bodies or a decision on the crash cause first).
 - The six c4=match callees left as gates stops (ownership); 0x00446520 is the next all-knobs gate.
 - None of the three bodies ran: a knob-on boot that reaches race load / race frames is needed to see them execute.
+
+## 11. Hand merge of orch/integration (run 55, granted by L0 through the lead)
+
+- Session moved to claude3 (`move_self`, claude-opus-5-5, medium) because `git merge` prompts on claude2.
+- `git -c merge.autoStash=false merge orch/integration` at a2843847a (drain 1: GATERANK-ALLKNOBS, HB-LOCK-ENFORCE, LUA-VENDOR,
+  KNOBON-BOOTS-G5, WS-OWNSLOT-CALLERSCAN, FIX-00420420-CRASH ...). One conflict: `verify/t2gaterank_20261121/t2_gate_rank.py`.
+  Resolved by taking the head's file and re-applying this row's two input edits (live raceload plan, EXTRA_PLANS glob). The
+  result is byte-identical to this branch's copy: the head carries GATERANK's `--all-knobs` / `--out` version unchanged, which
+  is the copy this row started from. Both the `--all-knobs` view and the input fix are in. Merge commit f55441fe3.
+  `re/orchestrator/UNCERTAIN_REGISTER.md` auto-merged.
+- (a) **State-file edit in another profile (raceload).** `re/tools/bind/state/raceload/c_hold.txt` loses one line, no other
+  raceload state file changes (profile.json, rules.tsv, roots.txt, cpp_unclean.txt byte-identical to the head):
+  ```
+  @@ -4,7 +4,6 @@
+   00409680	race-owned
+  -00409710	race-owned
+   00425bf0	race-owned
+  ```
+  The file's header allows it: "An rva leaves this list when the row that owns it binds it (delete its line, then `write`)".
+  The parent gave this row 0x00409710. It is still a state-file edit in a profile this row does not own (RULE 3), made under
+  that header and the ownership grant.
+- (b) **RULE 4 slip at 21:08:18.** The branch predated HB-LOCK-ENFORCE, so the build wrappers had no lock wait yet. My chained
+  command printed `PRIORITY-HOLD` and started the object build anyway. Every build, check, selftest and boot on the merged tree
+  ran behind a loop that waits while the status shows PRIORITY-HOLD or SOLO. Each printed `free` or `PRIORITY-LINGER` (no hold)
+  and a commit of 17.8 to 19.0 GB.
+
+## 12. Widened step: bulk and raceframe regenerated on the merged tree
+
+The head's own selftest at a2843847a is **FAIL 35** (`selftest_head_a2843847a.txt`, run on a scratch detached checkout of
+a2843847a): audio 14 lines plus bulk (1 wrapper, 1 unnamed moved line) and raceframe (17 wrappers). Cause: drain 1's
+promotions made bodies bindable and no row regenerated the plans. Regenerated with the tool: `write --profile raceframe`,
+`write --profile bulk`, `sync` for both, `refs --profile raceload` (it owns `PortTop_BulkRefs.cpp`; run again after the sync, so
+that the index sees the new TUs).
+
+**raceframe: 13 new binds, owned by this row** (plan `plan_raceframe_regen.txt`, match `match_relocheck_regen.txt`):
+
+| rva | source | kind | match.py --bytes | relocheck |
+|---|---|---|---|---|
+| 0x0041f3d0 | re/match/s04/0041f3d0.c | match | BYTE-IDENTICAL 281 B | OK 13/0 |
+| 0x00420870 | re/match/s05/00420870.c | replay (c4=frida-replay, WS-OWNSLOT-CALLERSCAN) | 1172 B, 609 bytes differ (not a byte match) | BAD (replay body, not "matched") |
+| 0x00422440 | re/match/s05/00422440.c | match | BYTE-IDENTICAL 45 B | OK 4/0 |
+| 0x00422470 | re/match/s05/00422470.c | match | BYTE-IDENTICAL 72 B | OK 4/2 |
+| 0x00426dc0 | re/match/s06/00426dc0.c | match | BYTE-IDENTICAL 29 B | OK 2/0 |
+| 0x0046b540 | re/match/s11/0046b540.c | replay (c4=frida-replay, WS-OWNSLOT-CALLERSCAN) | 1356 B, 906 bytes differ | BAD (replay body) |
+| 0x0046bce0 | re/match/s11/0046bce0.c | match | BYTE-IDENTICAL 54 B | OK 3/0 |
+| 0x0046bd20 | re/match/s11/0046bd20.c | match | BYTE-IDENTICAL 54 B | OK 3/0 |
+| 0x0046bd60 | re/match/s11/0046bd60.c | match | BYTE-IDENTICAL 50 B | OK 1/0 |
+| 0x0046bda0 | re/match/s11/0046bda0.c | match | BYTE-IDENTICAL 104 B | OK 3/0 |
+| 0x00540080 | re/match/rwl03/00540080.c | match | BYTE-IDENTICAL 114 B | OK 2/0 |
+| 0x00540100 | re/match/rwl03/00540100.c | match | BYTE-IDENTICAL 95 B | OK 1/0 |
+| 0x00540160 | re/match/rwl03/00540160.c | match | BYTE-IDENTICAL 97 B | OK 1/0 |
+
+raceframe also moves, without a new body: 0x0040ce80, 0x00422aa0, 0x004260a0, 0x004260b0, 0x00431d70, 0x004c5a60 (new
+reuses of existing exe bodies), 0x00420290 and 0x00479100 (new named stops). Wrappers changed: `PortTop_0040da50.cpp`,
+`PortTop_0040e590.cpp`, `PortTop_004111c0.cpp`, `PortTop_RaceFrameStops.cpp`, plus the 13 new wrappers. `sync --profile
+raceframe`: rsp +13, allowlist +11. `externs`: 0. `samesrc --profile raceframe` lists 26 (for example 0x004922e0, carried by
+`Match/MatchS15_004922e0.cpp`). The bind count does not change between plan and write, and this row adds no alias for them.
+raceframe state files other than the generated plan.json / newfiles.txt are byte-identical to the head.
+
+**bulk:** no bind. 0x00420420 (FIX-00420420-CRASH's 100% source, now c4=match) stays a stop, because it is outside the bulk cp1
+list (`roots_only_reason`), so this row does not own a body of it. Its listing line changes text only. `state/bulk/moved.tsv`
+gets 2 appended lines, the other bulk state files are byte-identical:
+```
++00420420	00420420 stop  C2 FUN_00420420	00420420 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s05/00420420.c C4 FUN_00420420	stop text only: drain 1 (run 55) promoted 0x00420420 by match (FIX-00420420-CRASH), ...; nothing bound (BIND-GATES-ALLKNOBS regeneration)
++totals	Counter({'stop': 227, 'reuse': 181, 'bind': 97}) ...	Counter({'reuse': 204, 'stop': 188, 'bind': 97}) ...	plan totals after the moves (BIND-GATES-ALLKNOBS run 55: 0x00420420 stop text only, totals unchanged; ...)
+```
+`PortTop_BulkStops.cpp` regenerated (the stop's reason text). `PortTop_BulkRefs.cpp`: 129 -> 128 keep lines (0x00431d70 now
+has a bound caller in raceframe).
+
+**Object build vs log/orch/run55_headcheck** (`bytecheck_vs_head.tsv`, `ddkobj_summary.json`):
+
+| | head check | merged tree |
+|---|---|---|
+| IDENTICAL | 2336 | 2354 |
+| DIFFERENT | 72 | 76 |
+| not-in-map | 27 | 28 (+0x004103a0, section 6) |
+| refusals | 19 | 19 |
+| dual body | 33 | 33 |
+| provisional units kept VS2022 | 254 | 255 (+0x00448220) |
+| units linked | 2322 / 2595 | 2337 / 2611 |
+
+New IDENTICAL rows in BYTECHECK.tsv (16): 0x00409710, 10 of the 11 byte-matched binds (0x00426dc0 was already IDENTICAL in the
+head check under another symbol), and the byte-matched file-locals 0x0041f360, 0x0041f4f0, 0x0041f880, 0x00420340
+(re/match/s05/00420870.c) and 0x004223f0 (re/match/s05/00422470.c). The summary IDENTICAL count rises by 18, not 16. The 2 are
+not traced: no other BYTECHECK row differs from the head check.
+**Newly DIFFERENT units (4), each classified:**
+
+| rva | symbol | source | diff bytes | class |
+|---|---|---|---|---|
+| 0x00420870 | _PortTop_Bound_00420870 | re/match/s05/00420870.c | 602 | **replay-C4 body**: hooks.csv C4 `c4=frida-replay`, verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md (IDENTICAL-FOR-600, install ok, body executed 10876 calls) |
+| 0x0046b540 | _PortTop_Bound_0046b540 | re/match/s11/0046b540.c | 961 | **replay-C4 body**: c4=frida-replay, same RESULT |
+| 0x0041f590 | ___ddkreg_0041f590 | re/match/s05/00420870.c (file-local) | 136 | **replay-C4 body**: hooks.csv C4 c4=frida-replay (verify/provwsprom_20261112/RESULT_PROV-WRITESET-PROMOTE.md). Here it is the local copy inside the replay-verified 0x00420870 file |
+| 0x0041f770 | ___ddkreg_0041f770 | re/match/s05/00420870.c (file-local) | 176 | **replay-C4 body**: c4=frida-replay (verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md), ADMITTED.tsv EQUIV row. Here it is the local copy inside the 0x00420870 file |
+
+[UNCERTAIN] Whether the two local copies in re/match/s05/00420870.c are the same text as the bodies their own replay verdicts
+ran (re/match/s05/0041f770.c and 0x0041f590's source) rests on reading. They did run inside 0x00420870's replay verdict.
+Test: text-diff of the function bodies (register line). No linked DIFFERENT unit is unlisted: all four are replay-C4.
+
+Pairs "listed unit -> 100% neighbour that fell back to its VS2022 body": none. Provisional functions kept VS2022 in linked units
+stay at the head's count, and the one newly listed unit (0x00448220) carries no 100% neighbour.
+
+**Binding numbers on the merged tree:** (1) units bound by this row that execute or are reachable from a bound caller: 16
+(0x00409710, 0x004103a0, 0x00448220, plus the 13 raceframe binds under the raceframe closure of 0x004111c0). None executed in
+the 3000-frame menu boots. (2) pre-bound keep-alive units in `PortTop_BulkRefs.cpp`: 128 (head 129). (3) bindable rows left
+unbound: 0x0048ae00 (section 4), 0x00420420 (outside the bulk cp1 list), the six gates-profile ownership stops (section 7).
+
+## 13. Checks on the merged tree
+
+| check | result |
+|---|---|
+| lock + memory before each | loop until not PRIORITY-HOLD / SOLO. Printed: `free`, `free`, `PRIORITY-LINGER ... wait 95s more` (no hold), `PRIORITY-LINGER ... 91s`. Commit 17.8 to 19.0 GB |
+| VS2022 build | Build OK (`build_vs2022_m.log`) |
+| object build (MASHED_DDKOBJ=1) | link rc 0 |
+| `ddkobj.py check` | IDENTICAL 2354, DIFFERENT 76, not-in-map 28 (section 12) |
+| binder selftest | **FAIL 14**. raceload, bulk (listing "60 lines moved, all named"), raceframe, renderframe and gates IDENTICAL. BINDINGS.tsv IDENTICAL. Line by line against the head's own selftest at a2843847a (`selftest_subset.tsv`): 29 failure lines. The 28 audio lines are all in the head. The total line reads FAIL 14 against the head's FAIL 35. 0 new failures (RULE 7) |
+| knob boots (4) | knob_vs_base, knob_vs_all, knob_ddk_base, knob_ddk_all: game rc 0, `WinMain 0x00492370 returned 0 after 3000 frames`, `self-test PASS (0 of 260 checks failed)` |
+| rank, default view | head a2843847a: gates 165, R 810 / T2 551, ranked 137. Fixed script on the unmodified head: gates 190, R 888 / 628, ranked 161. Merged tree: gates 190, R 889 / 629, ranked 161. So the whole head -> merged shift is the input fix (it reads the 411-rva live raceload plan instead of the 260-rva copy), except one swap that is this row's: 0x00409710 leaves the ranked gates and its stop callee 0x004095a0 enters (R +1). Files `rank_default_rk_head_def.txt`, `rank_default_rk_headfix_def.txt`, `rank_default_rk_m_def.txt` |
+| rank, `--all-knobs` | head: 197 ranked (= GATERANK). Fixed script on the head: 220. Merged: 222. Not ranked any more: 0x004103a0, 0x00409710, 0x00448220, 0x00440bc0, 0x005a7b60, 0x00420870, 0x0046b540. Top: 0x00420420 (bulk stop, outside cp1), 0x00446520, 0x0055f800, 0x00418860, 0x00487280, 0x0048ae00 (`T2_GATE_RANK_allknobs_after.tsv`) |
+| not run | G-CTRL, B, 12x4 captures (top-down row), menu walk |
+
+Raw data SHA-256: `raw_sha256.txt` (boot logs, both exes, build logs, the head selftest, all six rank outputs, the plan listings).
+The crashing 0x0048ae00 boots of section 4 have no kept log (overwritten by the rerun under the same labels).
+
+Unfinished on the merged tree: 0x0048ae00, 0x00420420 (needs a bulk-list or a gates root decision), the six ownership stops,
+and executing the 16 bodies in a race-reaching knob boot.

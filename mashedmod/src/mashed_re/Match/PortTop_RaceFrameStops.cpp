@@ -230,10 +230,10 @@ int PortTop_RFStop_0041dca0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RFStop_0041e6c0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0041e6c0u, "0x004111c0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0041e6c0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00420870: declared void by 0x0040da50; no matched or admitted source
-int PortTop_RFStop_00420870(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00420870u, "0x0040da50", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00420870u, 0u, _ReturnAddress()); return 0; }
+// stop rva 00420290: declared void by 0x00420870; no matched or admitted source
+int PortTop_RFStop_00420290(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
+    if (n == 1 || ex) RlStopLog(0x00420290u, "0x00420870", n, _ReturnAddress(), ex);
+    if (ex) PortTop_AudioCalleeStop(0x00420290u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00421980: declared void by 0x00421c10; static in re/match/s05/004219f0.c:38 (file-local there): no linkable exe body
 int PortTop_RFStop_00421980(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00421980u, "0x00421c10", n, _ReturnAddress(), ex);
@@ -286,10 +286,6 @@ int PortTop_RFStop_0045bed0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RFStop_0046b1c0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0046b1c0u, "0x0040e590 0x004111c0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0046b1c0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0046b540: declared int / void by 0x0040e590 0x004111c0; no matched or admitted source
-int PortTop_RFStop_0046b540(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x0046b540u, "0x0040e590 0x004111c0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0046b540u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0046c7b0: declared int by 0x0040b9a0 0x0040da50 0x00410510 0x00410860 0x00410d10 0x004111c0 0x004252c0; no matched or admitted source
 int PortTop_RFStop_0046c7b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0046c7b0u, "0x0040b9a0 0x0040da50 0x00410510 0x00410860 0x00410d10 0x004111c0 0x004252c0", n, _ReturnAddress(), ex);
@@ -334,6 +330,10 @@ int PortTop_RFStop_00476880(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RFStop_00477be0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00477be0u, "0x0040d8f0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00477be0u, 0u, _ReturnAddress()); return 0; }
+// stop rva 00479100: declared undefined4 by 0x00426dc0; no matched or admitted source
+int PortTop_RFStop_00479100(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
+    if (n == 1 || ex) RlStopLog(0x00479100u, "0x00426dc0", n, _ReturnAddress(), ex);
+    if (ex) PortTop_AudioCalleeStop(0x00479100u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0047bb10: declared void by 0x0047c160; no matched or admitted source
 int PortTop_RFStop_0047bb10(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0047bb10u, "0x0047c160", n, _ReturnAddress(), ex);
@@ -480,9 +480,9 @@ int PortTop_RFStop_00535700(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RFStop_00538c80(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00538c80u, "0x00408610 0x0046d400 0x0048fe70 0x004b4a80", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00538c80u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00544bf0: declared int by 0x0048b440 0x0048b960; no matched or admitted source
+// stop rva 00544bf0: declared int / void by 0x00420870 0x0048b440 0x0048b960; no matched or admitted source
 int PortTop_RFStop_00544bf0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00544bf0u, "0x0048b440 0x0048b960", n, _ReturnAddress(), ex);
+    if (n == 1 || ex) RlStopLog(0x00544bf0u, "0x00420870 0x0048b440 0x0048b960", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00544bf0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00546b10: declared int by 0x004829d0; owned by RACE rows (run 53, race_owned.txt)
 int PortTop_RFStop_00546b10(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();

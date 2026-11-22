@@ -26,4 +26,4 @@ in-head	   file mashedmod/src/mashed_re/Match/PortTop_005be0f0.cpp
 in-head	   file mashedmod/src/mashed_re/Match/PortTop_005c7a90.cpp
 in-head	   file mashedmod/src/mashed_re/Match/PortTop_005c7fb0.cpp
 in-head	   file mashedmod/src/mashed_re/Match/PortTop_AudioStops.cpp
-in-head	[selftest] FAIL 14
+NEW	[selftest] FAIL 14

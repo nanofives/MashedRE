@@ -4,17 +4,17 @@ ALL-KNOBS view; knobs on:
   MASHED_OT_RENDERFRAME=1 (+ MASHED_RWC_FRAME): direct callees of 0x00492e90 -> walked bodies; root 0x00492e90 = RwCore_00492e90 (renderframe plan.json)  [Match/PortTop_RenderFrameSel.cpp:14; root route Match/PortTop_00492370.cpp:313 (RwCore_FrameRoute)]
   MASHED_OT_RL_D110=1: 0x0040d110 -> PortTop_Bound_0040d110 (bulk plan.json)  [Match/PortTop_StandInsRL.cpp:191]
   MASHED_OT_TITLETICK=1: 0x00429290 -> PortTop_Bound_00429290 (renderframe plan.json)  [Match/PortTop_00402750_Pieces.cpp:239]
-all-knobs plan layer: states changed per profile {'bulk': 369, 'gates': 12, 'raceframe': 118, 'renderframe': 64}
-define layer: 2346 rvas aliased, 134 added (not in plans/BINDINGS), 157 alias conflicts across TUs (highest kept)
+all-knobs plan layer: states changed per profile {'bulk': 369, 'gates': 12, 'raceframe': 133, 'renderframe': 64}
+define layer: 2371 rvas aliased, 142 added (not in plans/BINDINGS), 157 alias conflicts across TUs (highest kept)
 graph: executed functions 3377, T2 census 2450 (calls 54357823), reloc tables 78
-route states at head: {'stand': 36, 'run': 1368, 'unbound': 1485, 'hand': 71, 'stop': 364, 'lib': 53}
-executed path R: 1187 functions, T2 census in R 910 (calls 18000857)
+route states at head: {'stand': 36, 'run': 1382, 'unbound': 1463, 'hand': 79, 'stop': 364, 'lib': 53}
+executed path R: 1188 functions, T2 census in R 911 (calls 18000877)
 T2 census reachable from top in the full-follow graph: 1303; not attached to the top: 1147
-gates on R: 258 (stop 148, stand 32, unbound 78); with census behind or released: 223
+gates on R: 257 (stop 147, stand 32, unbound 78); with census behind or released: 222
 T2 census reachable only through hand exe bodies (BINDINGS port / define to a named exe body), not ranked: 543
 hand exe bodies on R: 0x0040fc00 0x004102f0 0x0041a400 0x0041c380 0x0041f8f0 0x0041faf0 0x0041fcc0 0x00420de0 0x00421720 0x00421c50 0x0042ae10 0x0042c1c0 0x0042c1d0 0x0042c220 0x0042c2e0 0x00432080 0x0045c4e0 0x0045c510 0x0045c550 0x00472640 0x00476ae0 0x00476be0 0x00476c10 0x00476cb0 0x004773f0 0x004778e0 0x0047bcc0 0x004844a0 0x004927c0 0x004935a0 0x004935d0 0x004951e0 0x004a2be9 0x004a3ac9 0x004b302f 0x004b3eb0 0x004b64e0
-class tally of ranked gates: {'C2 with a source': 19, 'c4=match bindable': 109, 'C3 with a source': 13, 'no source': 10, 'hand stand-in': 24, 'c4=match cpp-unclean': 9, 'C4 frida-replay with source': 9, 'C4 no bindable source': 27, 'C1 with a source': 3}
-  1 0x00420420 FUN_00420420                 C2 with a source (79.8%)                         tool=27/2379852 alone=22 behind=32/878741
+class tally of ranked gates: {'c4=match bindable': 110, 'C3 with a source': 12, 'no source': 10, 'hand stand-in': 24, 'C2 with a source': 18, 'c4=match cpp-unclean': 9, 'C4 frida-replay with source': 9, 'C4 no bindable source': 27, 'C1 with a source': 3}
+  1 0x00420420 FUN_00420420                 c4=match bindable                                tool=27/2379852 alone=22 behind=32/878741
   2 0x00446520 FUN_00446520                 c4=match bindable                                tool=26/2299055 alone=14 behind=11/87368
   3 0x0055f800 FUN_0055f800                 C3 with a source (65.3%)                         tool=15/31504 alone=13 behind=26/68237
   4 0x00418860 FUN_00418860                 c4=match bindable                                tool=13/143825 alone=2 behind=34/938352

@@ -1,8 +1,8 @@
 {
- "identical": 2337,
- "different": 72,
+ "identical": 2354,
+ "different": 76,
  "not_in_map": 28,
- "functions": 2437,
+ "functions": 2458,
  "provisional_units_skipped": 255,
  "provisional_functions_vs2022_in_linked_units": [
   "0x0041a400",
@@ -13,8 +13,8 @@
   "0x004c0c20",
   "0x004c0f00"
  ],
- "units": 2598,
- "units_linked": 2324,
+ "units": 2611,
+ "units_linked": 2337,
  "refusals": {
   "fail:externalized-static-register-convention": 13,
   "fail:wrapper-redefines-globals": 6
@@ -67,8 +67,11 @@
   "0x00410d10",
   "0x00411ae0",
   "0x0041d930",
+  "0x0041f590",
+  "0x0041f770",
   "0x0041fcc0",
   "0x00420050",
+  "0x00420870",
   "0x004212b0",
   "0x00421d20",
   "0x00422ba0",
@@ -79,6 +82,7 @@
   "0x00429bd0",
   "0x004332a0",
   "0x0045c480",
+  "0x0046b540",
   "0x004744a0",
   "0x00474de0",
   "0x00475a00",

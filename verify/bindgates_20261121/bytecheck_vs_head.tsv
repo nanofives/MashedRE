@@ -1,3 +1,26 @@
 side	rva	exe_symbol	exe_va	size	relocs_masked	abs_data_refs_exact	diff_bytes	result	first_diff	vs_copy_in_map	src
 row	0x00409710	_PortTop_Bound_00409710	0x0006f6a0	128	8	2	0	IDENTICAL		False	re/match/s01/raw/00409710.c
 row	0x004103a0	___ddkreg_004103a0		368				not-in-map			re/match/s02/004103a0.c
+row	0x0041f360	_PortTop_Local_00420870_0041f360	0x0006fc60	112	4	1	0	IDENTICAL		False	re/match/s05/00420870.c
+row	0x0041f3d0	_PortTop_Bound_0041f3d0	0x0006f720	288	11	2	0	IDENTICAL		False	re/match/s04/0041f3d0.c
+row	0x0041f4f0	___ddkreg_0041f4f0	0x0006f840	160	7	2	0	IDENTICAL		False	re/match/s05/00420870.c
+row	0x0041f590	___ddkreg_0041f590	0x0006f8e0	400	9	1	136	DIFFERENT	+0x3b	False	re/match/s05/00420870.c
+head	0x0041f710	___ddkreg_0041f710	0x00012500	96	1	0	0	IDENTICAL		False	re/match/s05/0041f710.c
+row	0x0041f710	___ddkreg_0041f710_00420870	0x0006fa70	96	1	0	0	IDENTICAL		False	re/match/s05/00420870.c
+row	0x0041f770	___ddkreg_0041f770	0x0006fad0	288	17	5	176	DIFFERENT	+0x10	False	re/match/s05/00420870.c
+row	0x0041f880	___ddkreg_0041f880	0x0006fbf0	112	1	1	0	IDENTICAL		False	re/match/s05/00420870.c
+row	0x00420340	___ddkreg_00420340	0x0006fcd0	224	5	0	0	IDENTICAL		False	re/match/s05/00420870.c
+row	0x00420870	_PortTop_Bound_00420870	0x0006fdb0	1184	42	8	602	DIFFERENT	+0xee	False	re/match/s05/00420870.c
+row	0x004223f0	___ddkreg_004223f0	0x00070280	80	2	0	0	IDENTICAL		False	re/match/s05/00422470.c
+row	0x00422440	_PortTop_Bound_00422440	0x00070250	48	3	1	0	IDENTICAL		False	re/match/s05/00422440.c
+row	0x00422470	_PortTop_Bound_00422470	0x000702d0	96	6	0	0	IDENTICAL		False	re/match/s05/00422470.c
+head	0x00426dc0	_FrontendRaycastForward	0x0001d850	32	1	1	0	IDENTICAL		False	re/match/s06/00426dc0.c
+row	0x00426dc0	_PortTop_Bound_00426dc0	0x00070330	32	1	1	0	IDENTICAL		False	re/match/s06/00426dc0.c
+row	0x0046b540	_PortTop_Bound_0046b540	0x00070350	1360	17	25	961	DIFFERENT	+0xae	False	re/match/s11/0046b540.c
+row	0x0046bce0	_PortTop_Bound_0046bce0	0x000708a0	64	0	3	0	IDENTICAL		False	re/match/s11/0046bce0.c
+row	0x0046bd20	_PortTop_Bound_0046bd20	0x000708e0	64	0	3	0	IDENTICAL		False	re/match/s11/0046bd20.c
+row	0x0046bd60	_PortTop_Bound_0046bd60	0x00070920	64	0	1	0	IDENTICAL		False	re/match/s11/0046bd60.c
+row	0x0046bda0	_PortTop_Bound_0046bda0	0x00070960	112	1	2	0	IDENTICAL		False	re/match/s11/0046bda0.c
+row	0x00540080	_PortTop_Bound_00540080	0x000709d0	128	1	1	0	IDENTICAL		False	re/match/rwl03/00540080.c
+row	0x00540100	_PortTop_Bound_00540100	0x00070a50	96	0	1	0	IDENTICAL		False	re/match/rwl03/00540100.c
+row	0x00540160	_PortTop_Bound_00540160	0x00070ab0	112	0	1	0	IDENTICAL		False	re/match/rwl03/00540160.c

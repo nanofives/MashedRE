@@ -110,7 +110,7 @@
 #define FUN_0045bed0 PortTop_RFStop_0045bed0   // named stop
 #define FUN_00467210 PortTop_Bound_00467210
 #define FUN_0046b1c0 PortTop_RFStop_0046b1c0   // named stop
-#define FUN_0046b540 PortTop_RFStop_0046b540   // named stop
+#define FUN_0046b540 PortTop_Bound_0046b540
 #define FUN_0046baa0 VehiclePhysicsStateReset   // exe body (Race/SubStateCallees.cpp)
 #define FUN_0046c5c0 VehicleSlotInit   // exe body (Match/MatchS11_0046c5c0.cpp)
 #define FUN_0046c730 EntityDamageStateGet   // exe body (Race/SubStateCallees.cpp)
