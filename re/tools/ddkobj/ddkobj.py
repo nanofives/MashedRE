@@ -1730,6 +1730,16 @@ def main_selftest(a):
     return 1 if fails else 0
 
 
+def _wait_for_hold(label):
+    """HB-LOCK-ENFORCE: wait while mashed_lock status shows PRIORITY-HOLD or SOLO (prints a line)."""
+    sys.path.insert(0, str(HERE.parent.parent / "orchestrator"))
+    try:
+        import mashed_lock
+    finally:
+        sys.path.pop(0)
+    mashed_lock.wait_clear(label=label)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -1744,6 +1754,7 @@ def main(argv=None):
     s = sub.add_parser("selftest")
     s.add_argument("--keep", action="store_true")
     a = p.parse_args(argv)
+    _wait_for_hold("ddkobj " + a.cmd)
     return {"build": main_build, "check": main_check, "selftest": main_selftest}[a.cmd](a)
 
 

@@ -19,6 +19,11 @@ if /i "%~1"=="clean" (
     echo cleaned %OUT%\obj
 )
 
+REM HB-LOCK-ENFORCE: wait while mashed_lock status shows PRIORITY-HOLD or SOLO (prints a line).
+REM MASHED_LOCK_SKIP_WAIT=1 skips it (the hold owner's own children).
+py -3.12 "%ROOT%..\re\orchestrator\mashed_lock.py" wait-clear --label build.bat
+if errorlevel 1 (echo [ERROR] mashed_lock wait-clear failed & exit /b 1)
+
 call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 
