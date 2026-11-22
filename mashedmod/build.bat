@@ -19,6 +19,11 @@ if /i "%~1"=="clean" (
     echo cleaned %OUT%\obj
 )
 
+REM HB-LOCK-ENFORCE: wait while mashed_lock status shows PRIORITY-HOLD or SOLO (prints a line).
+REM MASHED_LOCK_SKIP_WAIT=1 skips it (the hold owner's own children).
+py -3.12 "%ROOT%..\re\orchestrator\mashed_lock.py" wait-clear --label build.bat
+if errorlevel 1 (echo [ERROR] mashed_lock wait-clear failed & exit /b 1)
+
 call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 
@@ -71,6 +76,17 @@ if not exist "%QHULL_LIB%" (
     echo === Building vendored qhull-2002.1 static lib ===
     call "%ROOT%deps\qhull-2002.1\build_qhull.bat"
     if errorlevel 1 (echo [ERROR] qhull lib build failed & exit /b 1)
+)
+
+REM Vendored Lua 4.0 (LUA-VENDOR, run 55; L-97 / L-177). One static library per build: lua_4_0.lib (VS2022)
+REM is on the exe link line below, lua_4_0_ddk.lib (XP DDK, recorded flags) on the object build link (ddkobj.py).
+REM A library member is pulled only when an exe object references its name, so the exe is unchanged until a
+REM binding row binds a Lua RVA. See deps\lua-4.0\build_lua.bat and verify\luavendor_20261121\RESULT_LUA-VENDOR.md.
+set LUA_LIB=%ROOT%deps\lua-4.0\lua_4_0.lib
+if not exist "%LUA_LIB%" (
+    echo === Building vendored Lua 4.0 static lib ===
+    call "%ROOT%deps\lua-4.0\build_lua.bat" vs
+    if errorlevel 1 (echo [ERROR] Lua lib build failed & exit /b 1)
 )
 
 REM B5c: the RwpQHullWrapper bridge (Collision\QhullBridge.cpp) is the ONLY TU that
@@ -264,7 +280,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
     /DELAYLOAD:d3d9.dll /DELAYLOAD:dinput8.dll ^
-    user32.lib d3d9.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"
+    user32.lib d3d9.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%" "%LUA_LIB%"
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
@@ -299,6 +315,10 @@ REM checkout's). MASHED_DDKOBJ_UNITS=0x...,0x... limits the set (default: every 
 REM Tool and design: re\tools\ddkobj\ddkobj.py, verify\ddkobj_20261111\RESULT_DDKOBJ-SPIKE.md.
 REM ===========================================================================
 if "%MASHED_DDKOBJ%"=="1" (
+    if not exist "%ROOT%deps\lua-4.0\lua_4_0_ddk.lib" (
+        call "%ROOT%deps\lua-4.0\build_lua.bat" ddk
+        if errorlevel 1 (echo [ERROR] Lua DDK lib build failed & exit /b 1)
+    )
     py -3.12 "%ROOT%..\re\tools\ddkobj\ddkobj.py" build --units "%MASHED_DDKOBJ_UNITS%" --out "%OUT%\ddkobj" --link
     if errorlevel 1 (echo [ERROR] DDKOBJ variant build failed & exit /b 1)
     py -3.12 "%ROOT%..\re\tools\ddkobj\ddkobj.py" check --out "%OUT%\ddkobj"

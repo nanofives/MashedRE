@@ -1,5 +1,12 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S05 0x00420420 by hand (h2): best 79.8% (regs 93.4%, ops 99.4%), 317/317 ins. Raw g2s 49.8%.
+/* FIX-00420420-CRASH (2026-11-21): 100.0% (317/317 ins, 1099 B byte-identical with relocations masked, relocheck OK).
+   Two changes from h2: (1) the function takes TWO args. The original loads ESI = [esp+0x284] = param_2 at 0x0042045c
+   for the FUN_0041f330 call (id in ESI, cmp [ecx],esi at 0x0041f341), then zeroes ESI at 0x00420472. The only caller
+   0x0040d1fb pushes two args (push esi / push ebx / call / add esp,8). h2 passed param_1, which looked up the wrong car
+   entry ("Shuriken0.dff", entry 0x005f37a8) and crashed the PROV run at 0x004e66db (NULL clump from FUN_0042a5d0).
+   (2) the DAT_0063d830[param_1] store comes before DAT_0063e498++ (store order only). The h2 note below ("reloads
+   param_1 into ESI") is superseded: it was param_2, and the register residual came from the missing argument.
+   MATCH-S05 0x00420420 by hand (h2): best 79.8% (regs 93.4%, ops 99.4%), 317/317 ins. Raw g2s 49.8%.
    The file holds three file-`static` callees (pilot finding 1), each at 100% here: FUN_0041f330 (id in ESI, same body
    as re/match/s04/0041f330.c), FUN_0041f360 (same body as re/match/s04/0041f360.c) and FUN_0041fe10 (record in EAX;
    h1's slice function, written here from the disassembly and byte-identical, 117/117 ins; its float test is the
@@ -176,7 +183,7 @@ static void FUN_0041fe10(PSlot *s)
   s->sph258 = s->ev[0x3b]->sph;
 }
 // MATCH: 0x00420420 FUN_00420420
-void FUN_00420420(int param_1)
+void FUN_00420420(int param_1, int param_2)
 {
   PSlot *s;
   char *ent;
@@ -191,7 +198,7 @@ void FUN_00420420(int param_1)
   Atomic *atoms[128];
   s = &DAT_0063d9e0[param_1];
   FUN_004b6520(s, 0x2ac);
-  ent = FUN_0041f330(param_1);
+  ent = FUN_0041f330(param_2);   /* 0x0042045c: ESI = [esp+0x284] = param_2 (FIX-00420420-CRASH) */
   s->ent = ent;
   s->slot = param_1;
   s->u298 = 0;
@@ -266,7 +273,7 @@ void FUN_00420420(int param_1)
   }
   DAT_0063d850 = FUN_004260b0();
   DAT_0063d7ec = FUN_004260a0();
-  DAT_0063e498++;
   DAT_0063d830[param_1] = 1;
+  DAT_0063e498++;
   FUN_004c5c80(0);
 }

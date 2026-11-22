@@ -1,0 +1,6 @@
+4.0 _lua_newuserdata ['cmp eax, dword ptr [esi + 8]', 'add eax, 0x10']
+4.0 _retstat ['test eax, eax']
+4.0 _traceexec ['mov dword ptr [edi + 0x10], 0', 'lea eax, [edi + 0x10]', 'add esp, 0x10', 'cmp eax, ecx', 'cmp esi, dword ptr [edi + 8]', 'add ebx, -0x20', 'add esp, 0x10']
+4.0.1 _lua_newuserdata ['test eax, eax', 'cmp edx, dword ptr [esi + 8]', 'add eax, 0x10']
+4.0.1 _retstat ['test eax, eax', 'cmp edx, 0x3b']
+4.0.1 _traceexec ['mov dword ptr [edi + 0x10], 0', 'lea eax, [edi + 0x10]', 'add esp, 0x10', 'cmp eax, ecx', 'cmp esi, dword ptr [edi + 8]', 'add ebx, -0x10', 'add esp, 0x10']

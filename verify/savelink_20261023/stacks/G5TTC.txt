@@ -1,0 +1,3 @@
+# KNOBON-BOOTS-G5: G5TT with the race-load stops in count mode
+@G5TT
+MASHED_OT_RL_STOPS=count

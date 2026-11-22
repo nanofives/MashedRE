@@ -1,0 +1,11 @@
+_lua_newuserdata | 4.0: size 68 best 0x004b7180 ratio 0.750 identical_at [] | 4.0.1: size 77 best 0x004b7180 ratio 0.714 identical_at []
+_luaS_newudata | 4.0: size 108 best 0x004b78e0 ratio 0.614 identical_at [] | 4.0.1: size 108 best 0x004bc010 ratio 0.568 identical_at []
+_protectedparser | 4.0: size 77 best 0x004b79c0 ratio 0.879 identical_at [] | 4.0.1: size 101 best 0x004b79c0 ratio 0.683 identical_at []
+_lua_dofile | 4.0: size 38 best 0x004b9400 ratio 0.800 identical_at [] | 4.0.1: size 38 best 0x004b9400 ratio 0.800 identical_at []
+_parse_file | 4.0: size 258 best 0x004bf6e0 ratio 0.515 identical_at [] | 4.0.1: size 264 best 0x004bdc40 ratio 0.529 identical_at []
+_luaC_checkGC | 4.0: size 20 best 0x004ba570 ratio 0.636 identical_at [] | 4.0.1: size 24 best 0x004ba570 ratio 0.667 identical_at ['0x4ba570']
+_luaC_collectgarbage | 4.0: size 52 best 0x004bd040 ratio 0.739 identical_at [] | 4.0.1: size 56 best 0x004bd040 ratio 0.708 identical_at []
+_traceexec | 4.0: size 121 best 0x004b9380 ratio 0.818 identical_at [] | 4.0.1: size 121 best 0x004b9380 ratio 0.818 identical_at []
+_retstat | 4.0: size 59 best 0x004be360 ratio 0.846 identical_at [] | 4.0.1: size 66 best 0x004be360 ratio 0.759 identical_at []
+_luaV_execute | 4.0: size 2988 best 0x004b87e0 ratio 0.477 identical_at [] | 4.0.1: size 2988 best 0x004b87e0 ratio 0.477 identical_at []
+_statement | 4.0: absent | 4.0.1: absent
