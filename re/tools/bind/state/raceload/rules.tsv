@@ -74,3 +74,23 @@ extra_pre	0047b8d0	#define thunk_FUN_005509b0 RwCore_005509b0   // 0x0047b917 / 
 extra_pre	0047b8d0	#define thunk_FUN_00550bc0 RwCore_00550bc0   // 0x0047b91d call 0x4b53a0; 0x004b53a0 jmp 0x550bc0
 extra_pre	0047b8d0	#define thunk_FUN_00550950 RwCore_00550950   // 0x0047b937 call 0x4b5380; 0x004b5380 jmp 0x550950
 extra_pre	0047b8d0	#define thunk_FUN_00550910 RwCore_00550910   // 0x0047b93f call 0x4b5370; 0x004b5370 jmp 0x550910
+# RACE-LOAD-LUA (run 55, LIB G1): Lua 4.0 API surface the race-load callers call, bound to the vendored library
+# (mashedmod/deps/lua-4.0, LUA-VENDOR; lib kind BIND-LIB-ROUTE). Globs = the files build_lua.bat compiles (17 core + lauxlib + lmathlib).
+# Pairing per rva: verify/racelua_20261121/pairing_check.txt (libmatch best candidate + ordered callee list game vs library, all HOLD).
+lib_root	lua-4.0	mashedmod/deps/lua-4.0	src/*.c src/lib/lauxlib.c src/lib/lmathlib.c
+lib	004b7330	lua-4.0	lua_open
+lib	004c0510	lua-4.0	lua_mathlibopen
+lib	004b7480	lua-4.0	lua_close
+lib	004b7a70	lua-4.0	lua_dobuffer
+lib	004b7200	lua-4.0	lua_pushcclosure
+lib	004b7250	lua-4.0	lua_setglobal
+lib	004b6fc0	lua-4.0	lua_gettop
+lib	004b7090	lua-4.0	lua_tonumber
+lib	004b70d0	lua-4.0	lua_tostring
+lib	004b7140	lua-4.0	lua_pushnumber
+# RACE-LOAD-LUA: the generated reuse line drops the argument (source prototype `int FUN_004b7330(void)`, call passes 1). The game
+# pushes it (0x0047b860 push 0, 0x0047b862 call 0x4b7330) and lua_open(int stacksize) reads it (lstate.c:66, f_luaopen), so bind by name with the argument kept.
+extra_pre	0047b860	#undef FUN_004b7330
+extra_pre	0047b860	#define RL_ARG_void   // the source declaration `int FUN_004b7330(void)` becomes the non-prototype `int lua_open()` (VS2022 C refuses a 1-argument call against (void): C2197)
+extra_pre	0047b860	#define RL_ARG_0 0   // the source call `FUN_004b7330(0)` becomes `lua_open(0)`: 0x0047b860 push 0 / 0x0047b862 call 0x4b7330
+extra_pre	0047b860	#define FUN_004b7330(...) lua_open(RL_ARG_##__VA_ARGS__)   // lib:lua-4.0:src/lstate.c:66 lua_open(int stacksize); the argument is kept
