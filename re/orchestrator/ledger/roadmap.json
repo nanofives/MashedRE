@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-11-21T20:04:20Z",
+  "updated": "2026-11-22T04:19:17Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -10664,7 +10664,7 @@
       "id": "PORT-BIND-LUA",
       "section": "D4",
       "title": "Biggest closed-set unlock: bind the Lua 4.0 API (lua_gettop blocks 62 closed-set units) to exe-side bodies so matched callers close (L-97 keeps Lua itself out of the port count). Evidence base: verify/portbatch_20261109/RESULT_PORT-BATCH-TOOL.md",
-      "stage": "open",
+      "stage": "done",
       "owner": "",
       "parent": "",
       "branch": "",
@@ -10676,8 +10676,12 @@
       "decision": "",
       "wave": 10,
       "next": "",
-      "note": "",
-      "updated": "2026-11-09T21:33:13Z"
+      "note": "folded into RACE-LOAD-LUA (run 55 parent lane shape)",
+      "updated": "2026-11-21T23:03:05Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
     },
     {
       "id": "PORT-BIND-RWCORE-2",
@@ -12497,7 +12501,7 @@
       "id": "LUA-PORT",
       "section": "D4",
       "title": "L-114 (a) later: port the Lua 4.0 library (0x004b7330, 0x004c0510, ...) and the stream layer 0x005507b0.. as matched bodies; then replace the 0x0047b9b0 hand-runner deviation; also unblocks the track loader 0x00426e10. Owns the lua-family binding (TL-MATCH-LUA does not)",
-      "stage": "open",
+      "stage": "done",
       "owner": "",
       "parent": "",
       "branch": "",
@@ -12509,8 +12513,12 @@
       "decision": "",
       "wave": 9,
       "next": "",
-      "note": "",
-      "updated": "2026-11-10T18:22:32Z"
+      "note": "folded into RACE-LOAD-LUA (run 55 parent lane shape)",
+      "updated": "2026-11-21T23:03:03Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
     },
     {
       "id": "PORT-OT-TRIPOOL",
@@ -20370,11 +20378,12 @@
       "decision": "",
       "wave": 2,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T10:30:27Z",
-      "run": 53,
+      "note": "run 56 item added in run 55 (parent): 0x0041f590 and 0x0041f770 have different bodies in re/match/s05/00420870.c (file-local copies, bound and replay-run through 0x00420870) and in their own files re/match/s04/0041f590.c / re/match/s05/0041f770.c (signature types and expression form differ; log/orch/run55_localcopy_diff.txt).",
+      "updated": "2026-11-22T01:40:51Z",
+      "run": 55,
       "runs": [
-        53
+        53,
+        55
       ]
     },
     {
@@ -20502,24 +20511,26 @@
       "id": "FIX-00420420-CRASH",
       "section": "REPLAY",
       "title": "Gate 6 on the run 54 rank (27 behind). PROV-INSITU-REF1 sweep: CRASH confirmed 3 of 3, read 0x8 at eip 0x004e66db (ret into body 0x00420420+0x101), source re/match/s05/00420420.c 79.8%. eip 0x004e66db is the U-9677 vehicle-piz collision signature (MASHED.exe+0xe66db): step 1 re-run the single arm with no other Mashed piz load live; if it still crashes, name the first tick and raise the match first (L-168: no runtime debugging of a low-percentage body). Evidence verify/provinsitu_ref1_20261121/VERDICTS.tsv.",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "",
+      "stage": "merged",
+      "owner": "cmwr0nqic08mpp1216sy7bvnb",
+      "parent": "cmwr0mi2n088jp121jgz9oroy",
+      "branch": "orch/FIX-00420420-CRASH",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\FIX-00420420-CRASH",
+      "evidence": "verify/fix_00420420_crash_20261121/RESULT_FIX-00420420-CRASH.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 1,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T12:43:36Z",
-      "run": 54,
+      "note": "merge train 20261121_204524: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T00:19:51Z",
+      "run": 55,
       "runs": [
-        54
-      ]
+        54,
+        55
+      ],
+      "sha": "7f6c930b121aab733481b5e7f58a9592bc0f488c"
     },
     {
       "id": "FIX-0055F800-CRASH",
@@ -20653,35 +20664,38 @@
       "decision": "",
       "wave": 2,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T14:11:11Z",
-      "run": 54,
+      "note": "moved to run 56 by the parent (run 55): menu-phase words, nothing waits on it; its budget slot went to BIND-GATES-ALLKNOBS",
+      "updated": "2026-11-21T23:19:33Z",
+      "run": 55,
       "runs": [
-        54
+        54,
+        55
       ]
     },
     {
       "id": "HB-LOCK-ENFORCE",
       "section": "META",
       "title": "Run 55 meta row (parent): the wrappers workers already go through (mashed_lock for game arms, the build entry point mashedmod/build.bat, ddkobj.py check and its selftest) wait by themselves while the train holds PRIORITY-HOLD or SOLO, print a line when they wait, and a test shows an arm started under a hold does not launch until it is released. First say why arm ws_00412190 (REPLAY-FALLBACK-8 / PROV-INSITU-REF1-NOSRC, 10:48:24 2026-11-21) started under the hold: no mashed_lock around that arm, or a lock that does not look at PRIORITY-HOLD. Five slips in runs 53-54 with the exact command in the lead rules.",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "",
+      "stage": "merged",
+      "owner": "cmwr0njbe08kjp121hh8wwo5w",
+      "parent": "cmwr0mh5z0881p121wbrrd3bg",
+      "branch": "orch/HB-LOCK-ENFORCE",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\HB-LOCK-ENFORCE",
+      "evidence": "verify/lockenforce_20261121/RESULT_HB-LOCK-ENFORCE.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 2,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T14:12:44Z",
-      "run": 54,
+      "note": "merge train 20261121_212107: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T00:45:33Z",
+      "run": 55,
       "runs": [
-        54
-      ]
+        54,
+        55
+      ],
+      "sha": "7ece06ad0669695b1be634380c5e6cdd67c0eabc"
     },
     {
       "id": "PORT-OT-RACE-BIND-4790E0-EAX",
@@ -20710,7 +20724,7 @@
       "id": "BIND-MGLOBAL-C-FORM",
       "section": "BIND",
       "title": "Run 55 tool row (binder change, RULE 2), from PORT-OT-RACE-BIND-HANDLER (verify/racebind_20261121/RESULT_PORT-OT-RACE-BIND-HANDLER.md): a C form of the MGLOBAL binding that ddkobj accepts, so 0x0047b860 and 0x0047b8d0 (refused wrapper-redefines-globals, kept on VS2022 bodies) link their DDK objects. Selftest at 0 failures.",
-      "stage": "open",
+      "stage": "done",
       "owner": "",
       "parent": "",
       "branch": "",
@@ -20722,58 +20736,63 @@
       "decision": "",
       "wave": 2,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T16:39:08Z",
-      "run": 54,
+      "note": "folded into BIND-TOOLS-SMALL-3 (run 55 kickoff sequencing)",
+      "updated": "2026-11-21T23:03:12Z",
+      "run": 55,
       "runs": [
-        54
+        54,
+        55
       ]
     },
     {
       "id": "RO-AUDIOINIT-45D460-REACH-4",
       "section": "D4",
       "title": "After an audio-generator row: bind 0x005c9230's record slots 0x005c92c0 / 0x005c92f0 / 0x005c9310 (c1_add rows, sources from the listings, PROVISIONAL rows, prov_bind entry in the audio profile), confirm the record with --watch-write on +0xc (UNCERTAIN_REGISTER line), then the RO_ROAUDINIT-pr1 arm: 0x00604604 vs ref1 at record 0 (G3). Base orch/RO-AUDIOINIT-45D460-REACH-3 b49240097. Evidence verify/roaudinit_20261121/RESULT_RO-AUDIOINIT-45D460-REACH-3.md.",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "",
+      "stage": "merged",
+      "owner": "cmwr89qp70r6np121n5bj8ezf",
+      "parent": "cmwr0mh5z0881p121wbrrd3bg",
+      "branch": "orch/RO-AUDIOINIT-45D460-REACH-4",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-AUDIOINIT-45D460-REACH-4",
+      "evidence": "verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 9,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T17:09:46Z",
-      "run": 54,
+      "note": "merge train 20261122_005836: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T04:19:17Z",
+      "run": 55,
       "runs": [
-        54
-      ]
+        54,
+        55
+      ],
+      "sha": "d3e1f1960f2c7309312274349909576367939ee8"
     },
     {
       "id": "BIND-AUDIO-ONE-GENERATOR",
       "section": "D4",
       "title": "Tool row (RULE 2): settle on one audio generator (audiotick_bind_gen.py or the porttop_bind.py audio profile), clear the stale plan lines so porttop_bind.py selftest reaches 0 FAIL (17 on REACH-3, 19 on BIND-BULK-PROFILE), and give it the prov_bind/force entries audio needs (force 005b10a0 for the s26 replay body, PROV_BIND 005c92c0/005c92f0/005c9310). Evidence verify/roaudinit_20261121/RESULT_RO-AUDIOINIT-45D460-REACH-3.md.",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "",
+      "stage": "merged",
+      "owner": "cmwr5wbmd0ni9p121lpse3aiy",
+      "parent": "cmwr0mh5z0881p121wbrrd3bg",
+      "branch": "orch/BIND-AUDIO-ONE-GENERATOR",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\BIND-AUDIO-ONE-GENERATOR",
+      "evidence": "verify/bindaudio_20261121/RESULT_BIND-AUDIO-ONE-GENERATOR.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 9,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T17:09:47Z",
-      "run": 54,
+      "note": "merge train 20261121_231727: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T02:37:44Z",
+      "run": 55,
       "runs": [
-        54
-      ]
+        54,
+        55
+      ],
+      "sha": "218ca98837e78c04bda61708f04c5ea7f72f577b"
     },
     {
       "id": "REPLAY-005A7B60-BOOTCLASS",
@@ -20802,30 +20821,32 @@
       "id": "WS-OWNSLOT-CALLERSCAN",
       "section": "REPLAY",
       "title": "Run 55, L-180 answered (b) by Mariano: a store into the body's own incoming parameter slots counts as frame for the write-set leg when a static scan of every caller shows no caller reads that slot after the call, cited per body; an unknown or indirect caller keeps the slot as caller stack. Up to 11 own-slot-only bodies from PROV-INSITU-REF1-WS2 (verify/provinsitu_ref1_20261121/WS2_CLASSES.tsv), each still needing its stepped run IDENTICAL and the other L-128 legs; promotions as re/promotions/WS-OWNSLOT-CALLERSCAN.tsv through re-classify.",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "",
+      "stage": "merged",
+      "owner": "cmwr0nozv08mhp121147yw7ye",
+      "parent": "cmwr0mi2n088jp121jgz9oroy",
+      "branch": "orch/WS-OWNSLOT-CALLERSCAN",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/WS-OWNSLOT-CALLERSCAN",
+      "evidence": "verify/wsownslot_20261121/RESULT_WS-OWNSLOT-CALLERSCAN.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 2,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T17:33:31Z",
-      "run": 54,
+      "note": "merge train 20261121_204524: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T00:19:53Z",
+      "run": 55,
       "runs": [
-        54
-      ]
+        54,
+        55
+      ],
+      "sha": "7f6c930b121aab733481b5e7f58a9592bc0f488c"
     },
     {
       "id": "BIND-BULK-BINDINGS-TAG",
       "section": "BIND",
       "title": "Run 55 tool row (binder defect, RULE 2): porttop_bind.py bindings --profile bulk raises KeyError 'bindings_tag' (PORT-TOP-LAND-06-RF RESULT verify/porttopland_20261121/RESULT_PORT-TOP-LAND-06-RF.md). Fix in profile data or the bindings step; selftest 0.",
-      "stage": "open",
+      "stage": "done",
       "owner": "",
       "parent": "",
       "branch": "",
@@ -20837,18 +20858,19 @@
       "decision": "",
       "wave": 2,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T18:18:00Z",
-      "run": 54,
+      "note": "folded into BIND-TOOLS-SMALL-3 (run 55 kickoff sequencing)",
+      "updated": "2026-11-21T23:03:09Z",
+      "run": 55,
       "runs": [
-        54
+        54,
+        55
       ]
     },
     {
       "id": "BIND-MOVED-TSV-AUTO",
       "section": "BIND",
       "title": "Run 55 tool row (parent): porttop_bind.py writes moved.tsv lines itself during regeneration (cause + the RVA now bound + totals), so a row whose binds move another profile's plan lines no longer appends them by hand (HANDLER run 54, verify/racebind_20261121/RESULT_PORT-OT-RACE-BIND-HANDLER.md section 9). Selftest 0 on its own profiles.",
-      "stage": "open",
+      "stage": "done",
       "owner": "",
       "parent": "",
       "branch": "",
@@ -20860,17 +20882,91 @@
       "decision": "",
       "wave": 2,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T19:32:35Z",
-      "run": 54,
+      "note": "folded into BIND-TOOLS-SMALL-3 (run 55 kickoff sequencing)",
+      "updated": "2026-11-21T23:03:07Z",
+      "run": 55,
       "runs": [
-        54
+        54,
+        55
       ]
     },
     {
       "id": "BIND-LIB-ROUTE",
       "section": "BIND",
       "title": "Run 55, first row of the Lua lane (kickoff item 8 triggered: confirmed first runtime stop 0x004b7330, Lua 4.0, caller 0x0047b860; verify/racebind_20261121/RESULT_PORT-OT-RACE-BIND-HANDLER.md, lua_census_raceload.tsv: 130 Lua functions in race load, 12,563 calls, 88 C2 no source, 42 C4 libid; entry calls 0x004b7330, 0x004c0510, 0x004b7480, 0x004b7a70). Binder tool row (RULE 2): a library route so vendored-library functions (Lua 4.0, then libpng/zlib/qhull) bind as library objects, not re/match binds. Before LUA-PORT / PORT-BIND-LUA.",
+      "stage": "merged",
+      "owner": "cmwr0nkqb08kzp1217lk4wwjw",
+      "parent": "cmwr0mg01087np121axka8q15",
+      "branch": "orch/BIND-LIB-ROUTE",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\BIND-LIB-ROUTE",
+      "evidence": "verify/bindlib_20261121/RESULT_BIND-LIB-ROUTE.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "merge train 20261121_220831: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T01:30:56Z",
+      "run": 55,
+      "runs": [
+        54,
+        55
+      ],
+      "sha": "4ab42833bfa9f7ab8ffbbdf4487e294fe39b175e"
+    },
+    {
+      "id": "LUA-VENDOR",
+      "section": "LIB",
+      "title": "Run 55 Lua lane row 1 (log/orch/lua_survey_20261121.md, parent's reading item 1). Settle Lua 4.0 against 4.0.1 by per-function identity counts on both trees with the recorded flags (/O2 /Ob1 /G5, XP DDK cl 13.00.9176 / c2 13.00.9178; 87 of 294 identical today; luaC_checkGC 0x004ba570 matches only the 4.0.1 extern form). If neither tree reproduces the libid-identical functions, stop and report the counts (no pick on a guess). Copy the chosen tree from gitignored tools/_download/lua/ to mashedmod/deps/lua-4.0 with a build script like build_qhull.bat: DDK static lib for the object build, VS2022 lib for the default build; byte-check every function where the DDK build gives identity. Touches no binder file.",
+      "stage": "merged",
+      "owner": "cmwr0njmg08klp121bs3nnses",
+      "parent": "cmwr0mg01087np121axka8q15",
+      "branch": "orch/LUA-VENDOR",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/LUA-VENDOR",
+      "evidence": "verify/luavendor_20261121/RESULT_LUA-VENDOR.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "merge train 20261121_212107: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T00:45:35Z",
+      "run": 55,
+      "runs": [
+        55
+      ],
+      "sha": "7ece06ad0669695b1be634380c5e6cdd67c0eabc"
+    },
+    {
+      "id": "RACE-LOAD-LUA",
+      "section": "LIB",
+      "title": "Run 55 Lua lane row 3 (replaces LUA-PORT + PORT-BIND-LUA), binding row, data only (RULE 1), after BIND-LIB-ROUTE and LUA-VENDOR merge. Bind the Lua API surface the game-side callers use (0x004b7330, 0x004c0510, 0x004b7480, 0x004b7a70, 0x004b7200, 0x004b7250, 0x004b6fc0, 0x004b7090, plus Lua-range stops the walk reports) through the lib kind; state pointer stays at 0x006bf1e0. Re-run the knob-on race-load arm (MASHED_RWC_CORE=1 + MASHED_RWC_FRAME=1, stack ROLOADRWC) and work the next stops in the same session. Name the owner of the stream layer 0x005507b0/0x005509b0/0x00550bc0/0x00550950/0x00550910, and say whether the 0x0047b9b0 L-114 (b) hand-runner deviation can retire (a default-path change is a decision row). Done (G1): load length measured, or stops passed and the end stop with its class.",
+      "stage": "merged",
+      "owner": "cmwr5w6by0ngfp1212x3vqx6p",
+      "parent": "cmwr0mg01087np121axka8q15",
+      "branch": "orch/RACE-LOAD-LUA",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\RACE-LOAD-LUA",
+      "evidence": "verify/racelua_20261121/RESULT_RACE-LOAD-LUA.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 2,
+      "next": "",
+      "note": "merge train 20261121_233828: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T03:02:22Z",
+      "run": 55,
+      "runs": [
+        55
+      ],
+      "sha": "c353570bb758bd13012e26edfb0ed6c5abc8b3c2"
+    },
+    {
+      "id": "BIND-TOOLS-SMALL-3",
+      "section": "BIND",
+      "title": "Run 55 binder tool row (RULE 2), after BIND-LIB-ROUTE and BIND-AUDIO-ONE-GENERATOR merge: BIND-MOVED-TSV-AUTO, BIND-BULK-BINDINGS-TAG (KeyError 'bindings_tag') and BIND-MGLOBAL-C-FORM (0x0047b860 / 0x0047b8d0 DDK objects) as three commits, one merge. Selftest at 0 (or subset of head, no new).",
       "stage": "open",
       "owner": "",
       "parent": "",
@@ -20881,15 +20977,319 @@
       "needs": [],
       "solo": false,
       "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "moved to run 56 (parent, run 55 budget cap 13): top of run 56's tool rows",
+      "updated": "2026-11-22T00:54:23Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "KNOBON-BOOTS-G5",
+      "section": "RACE",
+      "title": "Run 55 G5: one boot each with MASHED_OT_RL_D110 (cp2 0x0040d110) and MASHED_OT_TITLETICK (cp3 0x00429290), and one with the race-frame knob: which bound bodies execute (counts), and where each stops (address, class). Binds nothing; evidence only.",
+      "stage": "merged",
+      "owner": "cmwr14k1h0b7fp121xvmtq0ew",
+      "parent": "cmwr0mi2n088jp121jgz9oroy",
+      "branch": "orch/KNOBON-BOOTS-G5",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/KNOBON-BOOTS-G5",
+      "evidence": "verify/knobonboots_20261121/RESULT_KNOBON-BOOTS-G5.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
       "wave": 1,
       "next": "",
-      "note": "",
-      "updated": "2026-11-21T20:04:20Z",
-      "run": 54,
+      "note": "merge train 20261121_212107: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T00:45:36Z",
+      "run": 55,
       "runs": [
-        54
+        55
+      ],
+      "sha": "7ece06ad0669695b1be634380c5e6cdd67c0eabc"
+    },
+    {
+      "id": "GATERANK-ALLKNOBS",
+      "section": "META",
+      "title": "Run 55 (parent, Step 0 addition): verify/t2gaterank_20261121/t2_gate_rank.py has one hard-coded knob view (MASHED_OT_RACELOAD=1, only 0x0040d270 forced to run, line 164) and reads only the audio and raceload plan.json files (line 126), so 0x004111c0 and 0x00492e90 still rank as hand stand-ins although run 54 bound them behind default-OFF sub-knobs. Add an --all-knobs route view: MASHED_OT_RACELOAD=1 plus MASHED_OT_RACEFRAME, the renderframe knob, MASHED_OT_RL_D110 and MASHED_OT_TITLETICK, reading the raceframe / renderframe / bulk profiles' plan.json under re/tools/bind/state/ and the wrappers those knobs switch in (cite each knob's file:line). Default output unchanged byte for byte (diff shown). Save the all-knobs run to log/orch/run55_gaterank/all_knobs and give the top 10 in the RESULT. Text-and-tool row: no build, no game.",
+      "stage": "merged",
+      "owner": "cmwr0r6ze09cxp1213w835j6u",
+      "parent": "cmwr0mi2n088jp121jgz9oroy",
+      "branch": "orch/GATERANK-ALLKNOBS",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/GATERANK-ALLKNOBS",
+      "evidence": "verify/t2gaterank_20261121/RESULT_GATERANK-ALLKNOBS.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "merge train 20261121_204524: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T00:19:49Z",
+      "run": 55,
+      "runs": [
+        55
+      ],
+      "sha": "7f6c930b121aab733481b5e7f58a9592bc0f488c"
+    },
+    {
+      "id": "BIND-GATES-ALLKNOBS",
+      "section": "BIND",
+      "title": "Run 55 (parent, on the all-knobs rank, GATERANK-ALLKNOBS RESULT verify/t2gaterank_20261121/RESULT_GATERANK-ALLKNOBS.md). Binding row, data only (RULE 1): bind the all-knobs gates that need no reverse engineering, by profile data and generated outputs only: 0x004103a0 (c4=match bindable, 20 fns behind), 0x00409710 (c4=match cpp-unclean, via C emit, 10), 0x0048ae00 (C4 by replay since run 53: bind as a replay-C4 body from the replay-verified file, 11), 0x00448220 (PROVISIONAL-listed, 34: bind as a listed provisional body; the RESULT puts run 53's ref1 verdict next to the old DIVERGED@1116 text and the WS2 'diverges only when single-stepped' [UNCERTAIN] line). FIRST step, before any bind: say why 0x00440bc0 still ranks as a stop although PORT-OT-RACE-BIND-HANDLER bound it in run 54; a stale generated wrapper in another profile -> regenerate that profile's outputs (rule 3) and it joins the row; the rank's input -> fix the input and say so. Done = each bound unit classified against log/orch/run55_headcheck, the all-knobs rank re-run on the row's tree with these gates gone, the three binding numbers, selftest under RULE 7.",
+      "stage": "merged",
+      "owner": "cmwr1c0f60cgrp121fvvlqiyh",
+      "parent": "cmwr0mi2n088jp121jgz9oroy",
+      "branch": "orch/BIND-GATES-ALLKNOBS",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\BIND-GATES-ALLKNOBS",
+      "evidence": "verify/bindgates_20261121/RESULT_BIND-GATES-ALLKNOBS.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "merge train 20261121_223942: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T02:05:33Z",
+      "run": 55,
+      "runs": [
+        55
+      ],
+      "sha": "aad7194271d7100af100ef35234b7d5620997734"
+    },
+    {
+      "id": "HB-LOCK-BARE-LAUNCH-SURVEY",
+      "section": "META",
+      "title": "Run 56 (parent, after HB-LOCK-ENFORCE RESULT verify/lockenforce_20261121/RESULT_HB-LOCK-ENFORCE.md [UNCERTAIN]): survey the harness for direct MASHED.exe / mashed_re.exe launches that bypass MashedLock (Popen / subprocess / Start-Process / frida spawn with no mashed_lock around it), list each with file:line, and route each through mashed_lock (or say why not). The remaining hole in the hold enforcement.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-21T23:47:24Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "RO-ARM-VS2022-AV",
+      "section": "RACE",
+      "title": "Run 56 (parent, after KNOBON-BOOTS-G5 RESULT verify/knobonboots_20261121/RESULT_KNOBON-BOOTS-G5.md lines 27-28 and 91): the replay arms die at 0xC0000005 at about 6 s on the VS2022 exe (data D:/MashedWT/KNOBON-BOOTS-G5_data/arms_vs, 10 arms incl. the knob-off ROLOADRWC baseline) and on the object build without the staged original/mashed_image.bin (arms_ddk_noimg, 9 arms), with no sub-knob; the fault address was not captured. First step: one knob-off ROLOADRWC arm on the run 54 start head (the tree of log/orch/run54_headcheck, 77dedfece) on each of the two failing setups, to say whether the fault is old or came in with a row of run 54 or 55; then capture the faulting EIP (re/frida/poll_attach_catch_crash.py or the exe crash handler) and map it. Default path and gates not affected; T4 decides which build ships, so a knob path that only lives on one build must be a known fact.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-22T00:11:02Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "HB-LOCK-PUBLISH-FIX",
+      "section": "META",
+      "title": "Run 55 regression from HB-LOCK-ENFORCE (merged 7ece06ad0): mashedmod/build.bat:24 calls py -3.12 %ROOT%..\\re\\orchestrator\\mashed_lock.py wait-clear and exits 1 when it fails; the LAN release builds from a git archive of mashedmod + scripts + re/tools/dual_copy_allowlist.txt + re/match (no re/orchestrator), so publish.sh failed in drain 1 ('[ERROR] mashed_lock wait-clear failed', D:/MashedWT/mtrain_data/drain_20261121_204522/publish_pass2.log). Fix: skip the wait (with a printed line) when mashed_lock.py is absent, keep it everywhere it exists; same check for ddkobj.py / porttop_bind.py if they can run outside the repo. Test: build.bat from a clean git archive with the publish.sh path set (MASHED_NO_DEPLOY=1) builds OK, and the HB-LOCK test (re/orchestrator/mashed_lock_hold_enforce_test.py) still passes 9/9.",
+      "stage": "merged",
+      "owner": "cmwr4bmar0k4jp121snirkwfd",
+      "parent": "cmwr0mh5z0881p121wbrrd3bg",
+      "branch": "orch/HB-LOCK-PUBLISH-FIX",
+      "worktree": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/HB-LOCK-PUBLISH-FIX",
+      "evidence": "verify/lockenforce_20261121/RESULT_HB-LOCK-PUBLISH-FIX.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "merge train 20261121_220831: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T01:30:54Z",
+      "run": 55,
+      "runs": [
+        55
+      ],
+      "sha": "4ab42833bfa9f7ab8ffbbdf4487e294fe39b175e"
+    },
+    {
+      "id": "BIND-0048AE00-CALLEES",
+      "section": "BIND",
+      "title": "Run 56 (parent, after BIND-GATES-ALLKNOBS RESULT verify/bindgates_20261121/RESULT_BIND-GATES-ALLKNOBS.md section 4): 0x0048ae00 (hooks.csv c4=match, all-knobs gate rank 6, hand stand-in) left unbound: wired into 0x0040bbb0, all 4 knob boots exit 0xC0000374. First step: its three callees with no body, 0x00544a70, 0x00544ad0, 0x00544bf0 (class, source / match state, what they write), then bind 0x0048ae00 once they have bodies or a named reason the heap fault is elsewhere.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-22T00:54:19Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "HB-TRAIN-BINDER-SELFTEST",
+      "section": "META",
+      "title": "Run 56 (parent, run 55 note 12): the binder selftest (re/tools/bind/porttop_bind.py selftest) becomes a merge-train step that runs after the promotions are applied (c4_reclass batch --apply --strict) and fails the pass on a NEW failure against the base head's list, so a promotion that changes what is bindable cannot leave the head's bulk / raceframe / raceload plans stale. Run 55 evidence: drain 1 took the head from FAIL 14 to FAIL 35 (log/orch/run55_selftest_head_a2843847a.txt).",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-22T01:09:18Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "BIND-LIB-VOIDPROTO",
+      "section": "BIND",
+      "title": "Run 56 binder tool row (RULE 2), from RACE-LOAD-LUA (run 55): the lib-kind wrapper generator drops the argument of a library function whose source prototype is (void): lua_open is declared lua_open(void) in Lua 4.0 but the game pushes 0 at 0x0047b860, so RACE-LOAD-LUA kept it with three extra_pre data lines in state/raceload/rules.tsv. Make the lib kind take the caller-side argument count from the game (or a per-rva rule) so no extra_pre workaround is needed; selftest unchanged.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-22T02:07:41Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "RACE-LOAD-LUA-2",
+      "section": "LIB",
+      "title": "Run 56, next stops after RACE-LOAD-LUA (verify/racelua_20261121/RESULT_RACE-LOAD-LUA.md section 3): binding row, data only. Add roots 0x0047b980 RegisterScriptCommand and 0x0047b8a0 to state/raceload/roots.txt (their Lua callees bind through the existing lib lines), then the 65 script callbacks 0x00440bc0 registers (0x0047a180..0x0047b7d0, 0x004917c0..0x00491a70, race_owned), then trace why RwCore_005507b0 (VFS_Open) returns 0 for COURSE.LUA (count arm AV at RwCore_005509b0+0x4, [UNCERTAIN] register line). Arms: object build + staged image + ROLOADRWC. Done: load length measured, or the next end stop with its class. Then say whether the L-114 (b) 0x0047b9b0 hand runner can retire.",
+      "stage": "merged",
+      "owner": "cmwr7ztov0qonp121d8z5u14c",
+      "parent": "cmwr0mh5z0881p121wbrrd3bg",
+      "branch": "orch/RACE-LOAD-LUA-2",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\RACE-LOAD-LUA-2",
+      "evidence": "verify/racelua2_20261122/RESULT_RACE-LOAD-LUA-2.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "merge train 20261122_003022: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS",
+      "updated": "2026-11-22T03:52:13Z",
+      "run": 55,
+      "runs": [
+        55
+      ],
+      "sha": "63ff7fdb7f972e7becb82763d500c7a8b1613559"
+    },
+    {
+      "id": "RACE-VFS-COURSELUA",
+      "section": "RACE",
+      "title": "Run 56, from RACE-LOAD-LUA-2 (run 55, its RESULT for the citations): RwCore_005507b0 (VFS_Open) returns 0 for COURSE.LUA on the knob-on arm because HardwareInstallFileSystem 0x00495780 does not run on the exe arm (0x004955d0 unported) and RtFSManagerOpen is bound to the librw shim, against the original watch at 0x005507b0. Port / bind 0x004955d0 and the RtFS file-system install on the top-down path (RW core on d3d9, L-124: no new librw binding), re-run the ROLOADRWC arm past the COURSE.LUA open.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-22T03:16:22Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "DDKOBJ-ADDR-REGISTERED",
+      "section": "BIND",
+      "title": "Run 56 ddkobj tool row, from RACE-LOAD-LUA-2 (verify/racelua2_20261122/RESULT_RACE-LOAD-LUA-2.md, [UNCERTAIN] register line): the object build has no DDK body for the 75 callback / callee units 0x00440bc0 registers by original address (60 not-in-map, 15 refused wrapper-redefines-globals); they keep VS2022 bodies. Make ddkobj link and byte-check units reached only through an address registration, then re-run the ROLOADRWC arm.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-22T03:30:12Z",
+      "run": 55,
+      "runs": [
+        55
+      ]
+    },
+    {
+      "id": "RO-AUDIOINIT-45D460-REACH-5",
+      "section": "D4",
+      "title": "Run 56, G2 carried (REACH-4 RESULT verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md): RO_ROAUDINIT-pr1 on the object build exits at 0x005B8910 after 1 s, 0 ticks. Next: 0x005b8910 (715 B, no hooks.csv row or source; worker's 71.0% draft uncommitted in D:/MashedWT/RO-AUDIOINIT-45D460-REACH-4_data): c1_add via re-classify, source, equiv verdict, PROVISIONAL listing with the verdict line, prov_bind; then 0x005b8c40 (C2, re/match/s27, 1676 B): equiv + listing + prov_bind. Then the ROAUDINIT oracle arm: 0x00604604 vs ref1 at record 0 (G2 done-means). Also the open --watch-write leg on +0xc (heap record, needs a pointer-relative watch).",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-22T03:58:14Z",
+      "run": 55,
+      "runs": [
+        55
       ]
     }
   ],
-  "run": 54
+  "run": 55
 }
