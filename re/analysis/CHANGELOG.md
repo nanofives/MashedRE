@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-22  0x005c92c0  FUN_005c92c0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c92c0.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
+2026-11-22  0x005c92f0  FUN_005c92f0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c92f0.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
+2026-11-22  0x005c9310  FUN_005c9310  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c9310.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
+2026-11-22  0x005b92d0  FUN_005b92d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s27/005b92d0.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
 2026-11-22  0x005b92d0  FUN_005b92d0  (none)->C1  added (RO-AUDIOINIT-45D460-REACH-4): code pointer: 0x005b8680 stores it at +0x3c (re/match/s27/005b8680.c line 56); next stop of the init_audio arms after 0x005c92c0 (call from PortTop_Bound_005aa560+0xb9); listing 0x005b92d0..0x005b92de, no callee; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
 2026-11-21  0x005c9310  FUN_005c9310  (none)->C1  added (RO-AUDIOINIT-45D460-REACH-4): code pointer, no Ghidra function: 0x005c9230 stores it at record +0x14 (re/match/s28/005c9230.c line 50); listing 0x005c9310..0x005c9377; inline copy, no callee; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
 2026-11-21  0x005c92f0  FUN_005c92f0  (none)->C1  added (RO-AUDIOINIT-45D460-REACH-4): code pointer, no Ghidra function: 0x005c9230 stores it at record +0x10 (re/match/s28/005c9230.c line 49); listing 0x005c92f0..0x005c9306; tail jump 0x004522d0; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
