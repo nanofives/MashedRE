@@ -5,9 +5,71 @@
 force	00466b50
 force	0045d3f0
 force	0045d430
-# its callee 0x005bf670 is __stdcall with no body: the cdecl stop thunk does not link (LNK2019)
-stop_force	005bf610
+# PORT-TOP-AUDIO-5BA1D0-STOPS: 0x005bf670 is BYTE-IDENTICAL as __stdcall (re/promotions/PORT-TOP-AUDIO-5BA1D0-STOPS.tsv),
+# so 0x005bf610 binds with it (audiotick_bind_gen.py dropped the line there; BIND-AUDIO-ONE-GENERATOR drops it here).
+# Previous line, kept as history: stop_force 005bf610 (its callee 0x005bf670 had no body, LNK2019).
 # PORT-TOP-AUDIO-5A8F30-STOPS: calls __beginthread (0x005c2e79), census order 42
 stop_force	005aef30
 # L-174 (c)
 knob	005aef30	PortTop_Knob_005aef30	Match/PortTop_Knob_005aef30.cpp
+
+# BIND-AUDIO-ONE-GENERATOR (2026-11-21): the audio lineage moves from verify/portorigtop_20261113/tools/
+# audiotick_bind_gen.py to this profile. The generator's PROV_BIND lines not in state/_shared/rules.tsv, its
+# STOP_FORCE 0x005c91f0 and its CALLER_ALIAS pairs follow, with the generator's comments.
+# PORT-TOP-AUDIO-5BA1D0-STOPS: census 71, stored code pointer of 0x005b9f30 (+0x28), source from the listing 40.1% (PROVISIONAL.tsv)
+prov_bind	005ba1d0
+# RO-AUDIOINIT-45D460-REACH: 0x0045d460's two named stops (0x005a7b60 existing PROVISIONAL.tsv row 60.9%, replay IDENTICAL-FOR-2724 in PROV-FIX-9; 0x005a71f0 47.9%, checked against the listing)
+prov_bind	005a7b60
+prov_bind	005a71f0
+# RO-AUDIOINIT-45D460-REACH: the four code pointers 0x005bb850 stores (+0xc .. +0x18), new sources from the listings (PROVISIONAL.tsv)
+prov_bind	005bb910
+prov_bind	005bba30
+prov_bind	005bba60
+prov_bind	005bbac0
+# RO-AUDIOINIT-45D460-REACH: converter path search of 0x005b3a00 / 0x005b3b80 (fixed against the listing; PROVISIONAL.tsv)
+prov_bind	005b3760
+# RO-AUDIOINIT-45D460-REACH: format converters of 0x005abd30 / 0x005acd10 (checked / fixed against the listings; PROVISIONAL.tsv)
+prov_bind	005b3a00
+prov_bind	005b3b80
+# RO-AUDIOINIT-45D460-REACH: 0x005ac210's format decoder (60.4%, checked against the listing; PROVISIONAL.tsv)
+prov_bind	005acaa0
+# RO-AUDIOINIT-45D460-REACH: 0x005ac210's callee, existing PROVISIONAL.tsv row (77.6%, replay IDENTICAL-FOR-2724 in PROV-FIX-9)
+prov_bind	005aba20
+# RO-AUDIOINIT-45D460-REACH: 0x005abfa0's callees (0x005ac210 rewritten from the listing; 0x005abd30 / 0x005aec30 checked); PROVISIONAL.tsv
+prov_bind	005ac210
+prov_bind	005abd30
+prov_bind	005aec30
+# RO-AUDIOINIT-45D460-REACH: next stops inside 0x0045d460 (0x005ab380 / 0x005aeca0 checked against the listings; 0x005abfa0 / 0x005ad0b0 existing rows, replay IDENTICAL-FOR-2724 in PROV-FIX-9)
+prov_bind	005ab380
+prov_bind	005aeca0
+prov_bind	005abfa0
+prov_bind	005ad0b0
+# PORT-TOP-AUDIO-5BA1D0-STOPS: census 79 / 92, new sources from the listings (stored code pointers of 0x005c7a90 / 0x005a8f30 at +0x28; PROVISIONAL.tsv)
+prov_bind	005c7d30
+prov_bind	005a91b0
+# PORT-TOP-AUDIO-5BA1D0-STOPS: census 81 (0x005bb000's callee, hand rebuild from the asm 29.7%) and census 74 (64.9%); behaviour checked against the listings (PROVISIONAL.tsv)
+prov_bind	005bc470
+prov_bind	005ae250
+# PORT-TOP-AUDIO-5BA1D0-STOPS: 0x005ba1d0's callees (census 75 / 76 / 77 / 88 / 87); 0x005bb000 and 0x005bbd50 rewritten from the listing (PROVISIONAL.tsv)
+prov_bind	005bb000
+prov_bind	005bbc10
+prov_bind	005bbd50
+prov_bind	005baf00
+prov_bind	005bbfc0
+# RO-AUDIOINIT-45D460-REACH: C4 match, but listed in run53_bindlists/bulk_cp1.tsv (BIND lane owns it, one owner
+# per RVA): kept a named stop here; reached only on 0x005bb910's device-flag-8 path
+stop_force	005c91f0
+# RO-AUDIOINIT-45D460-REACH: 0x0045d460 opens PERMDICT.RWS through the RW_FS binding (Match/PortTop_RwStream04F.cpp),
+# not the matched RW core open (RtFSManager file systems the exe does not register)
+callee_override	0045d460	004cc230	PortTop_RwStreamOpen_004cc230	RW_FS binding, Match/PortTop_RwStream04F.cpp (RO-AUDIOINIT-45D460-REACH)
+callee_override	0045d460	004cc160	PortTop_RwStreamClose_004cc160	RW_FS binding, Match/PortTop_RwStream04F.cpp (RO-AUDIOINIT-45D460-REACH)
+# BIND-AUDIO-ONE-GENERATOR (RO-AUDIOINIT-45D460-REACH-3 section "0x005b10a0"): bind the replay-verified source
+# re/match/s26/005b10a0.c (c4=frida-replay, IDENTICAL-FOR-600 run b3_060610_030_2) instead of reusing the hand body
+# AudioTableDispatchAt4 (Audio/AudioTableDispatch.cpp, C3 Frida A/B only)
+force	005b10a0
+# BIND-AUDIO-ONE-GENERATOR: the record slots 0x005c9230 stores at +0xc / +0x10 / +0x14 (re/match/s28/005c9230.c).
+# 0x005c92c0 is the next stop of RO-AUDIOINIT-45D460-REACH-3 (call eax at 0x005abc6d). No hooks.csv row, source or
+# PROVISIONAL.tsv row yet: each line binds only once RO-AUDIOINIT-45D460-REACH-4 adds both (until then a named stop).
+prov_bind	005c92c0
+prov_bind	005c92f0
+prov_bind	005c9310
