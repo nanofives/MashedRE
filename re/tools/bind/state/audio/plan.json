@@ -3386,7 +3386,11 @@
 "stop"
 ],
 "005b92d0": [
-"stop"
+"bind",
+"re/match/s27/005b92d0.c",
+"match",
+[],
+[]
 ],
 "005c7d30": [
 "bind",
