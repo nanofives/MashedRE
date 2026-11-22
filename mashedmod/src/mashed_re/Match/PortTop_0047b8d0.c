@@ -8,7 +8,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_0047b8d0 PortTop_Bound_0047b8d0
-#define FUN_0047b8a0 PortTop_RLStop_0047b8a0   // named stop
+#define FUN_0047b8a0 PortTop_Bound_0047b8a0
 #define FUN_004b6520 Orig_004b6520   // exe body (Match/PortTop_004b6520.cpp)
 #define FUN_005507b0 RwCore_005507b0   // exe body (RwCore/RwCore_005507b0.cpp)
 #define FUN_00550910 RwCore_00550910   // exe body (RwCore/RwCore_00550910.cpp)
