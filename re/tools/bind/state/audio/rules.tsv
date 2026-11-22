@@ -58,7 +58,7 @@ prov_bind	005baf00
 prov_bind	005bbfc0
 # RO-AUDIOINIT-45D460-REACH: C4 match, but listed in run53_bindlists/bulk_cp1.tsv (BIND lane owns it, one owner
 # per RVA): kept a named stop here; reached only on 0x005bb910's device-flag-8 path
-stop_force	005c91f0
+# RO-AUDIOINIT-45D460-REACH-4 (parent, run 55): line removed, REACH-2 bound 0x005c91f0 to the bulk body. Was: stop_force 005c91f0
 # RO-AUDIOINIT-45D460-REACH: 0x0045d460 opens PERMDICT.RWS through the RW_FS binding (Match/PortTop_RwStream04F.cpp),
 # not the matched RW core open (RtFSManager file systems the exe does not register)
 callee_override	0045d460	004cc230	PortTop_RwStreamOpen_004cc230	RW_FS binding, Match/PortTop_RwStream04F.cpp (RO-AUDIOINIT-45D460-REACH)
