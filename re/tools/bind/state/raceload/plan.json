@@ -541,6 +541,793 @@
 [],
 []
 ],
+"0047b980": [
+"bind",
+"re/match/s13/0047b980.c",
+"match",
+[
+"004b7200",
+"004b7250"
+],
+[]
+],
+"0047b8a0": [
+"bind",
+"re/match/s13/0047b8a0.c",
+"match",
+[
+"004b7a70"
+],
+[]
+],
+"0047a180": [
+"bind",
+"re/match/s12/0047a180.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047a1b0": [
+"bind",
+"re/match/s12/0047a1b0.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a1e0": [
+"bind",
+"re/match/s12/0047a1e0.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a280": [
+"bind",
+"re/match/s12/0047a280.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a320": [
+"bind",
+"re/match/s12/0047a320.c",
+"replay",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a3a0": [
+"bind",
+"re/match/s12/0047a3a0.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a440": [
+"bind",
+"re/match/s12/0047a440.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a4a0": [
+"bind",
+"re/match/s12/0047a4a0.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a540": [
+"bind",
+"re/match/s12/0047a540.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a580": [
+"bind",
+"re/match/s12/0047a580.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a5b0": [
+"bind",
+"re/match/s12/0047a5b0.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a5e0": [
+"bind",
+"re/match/s12/0047a5e0.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a610": [
+"bind",
+"re/match/s12/0047a610.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a6b0": [
+"bind",
+"re/match/s12/0047a6b0.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a6f0": [
+"bind",
+"re/match/s12/0047a6f0.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a720": [
+"bind",
+"re/match/s12/0047a720.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047a750": [
+"bind",
+"re/match/s12/0047a750.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047a790": [
+"bind",
+"re/match/s12/0047a790.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047a7d0": [
+"bind",
+"re/match/s12/0047a7d0.c",
+"match",
+[],
+[]
+],
+"0047a7f0": [
+"bind",
+"re/match/s12/0047a7f0.c",
+"match",
+[],
+[]
+],
+"0047a810": [
+"bind",
+"re/match/s12/0047a810.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047a880": [
+"bind",
+"re/match/s12/0047a880.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047a8b0": [
+"bind",
+"re/match/s12/0047a8b0.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047a950": [
+"bind",
+"re/match/s12/0047a950.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047a9b0": [
+"bind",
+"re/match/s12/0047a9b0.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047aa20": [
+"bind",
+"re/match/s12/0047aa20.c",
+"match",
+[
+"004a2c48",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047aa50": [
+"bind",
+"re/match/s12/0047aa50.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047aaa0": [
+"bind",
+"re/match/s12/0047aaa0.c",
+"match",
+[
+"004b6fc0",
+"004b70d0"
+],
+[]
+],
+"0047aad0": [
+"bind",
+"re/match/s13/0047aad0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047ab30": [
+"bind",
+"re/match/s13/0047ab30.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047abd0": [
+"bind",
+"re/match/s13/0047abd0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047ac80": [
+"bind",
+"re/match/s13/0047ac80.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047acd0": [
+"bind",
+"re/match/s13/0047acd0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047ad00": [
+"bind",
+"re/match/s13/0047ad00.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047ad40": [
+"bind",
+"re/match/s13/0047ad40.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047ade0": [
+"bind",
+"re/match/s13/0047ade0.c",
+"match",
+[
+"004b6fc0",
+"004b7090",
+"004b70d0"
+],
+[]
+],
+"0047ae80": [
+"bind",
+"re/match/s13/0047ae80.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047aef0": [
+"bind",
+"re/match/s13/0047aef0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047af50": [
+"bind",
+"re/match/s13/0047af50.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047afa0": [
+"bind",
+"re/match/s13/0047afa0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b000": [
+"bind",
+"re/match/s13/0047b000.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b0a0": [
+"bind",
+"re/match/s13/0047b0a0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b110": [
+"bind",
+"re/match/s13/0047b110.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b160": [
+"bind",
+"re/match/s13/0047b160.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b1b0": [
+"bind",
+"re/match/s13/0047b1b0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b200": [
+"bind",
+"re/match/s13/0047b200.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b230": [
+"bind",
+"re/match/s13/0047b230.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b250": [
+"bind",
+"re/match/s13/0047b250.c",
+"match",
+[
+"00458e00",
+"00458fa0"
+],
+[]
+],
+"0047b280": [
+"bind",
+"re/match/s13/0047b280.c",
+"match",
+[
+"00430250",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b350": [
+"bind",
+"re/match/s13/0047b350.c",
+"match",
+[
+"004b6fc0",
+"004b70d0",
+"004b7140"
+],
+[]
+],
+"0047b3c0": [
+"bind",
+"re/match/s13/0047b3c0.c",
+"match",
+[
+"00471430",
+"00471450",
+"00471490",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b420": [
+"bind",
+"re/match/s13/0047b420.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b480": [
+"bind",
+"re/match/s13/0047b480.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b500": [
+"bind",
+"re/match/s13/0047b500.c",
+"match",
+[
+"004b6fc0",
+"004b7090",
+"004b7140"
+],
+[]
+],
+"0047b5b0": [
+"bind",
+"re/match/s13/0047b5b0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b630": [
+"bind",
+"re/match/s13/0047b630.c",
+"match",
+[
+"00471560",
+"004b6fc0",
+"004b70d0",
+"004b7140"
+],
+[]
+],
+"0047b6b0": [
+"bind",
+"re/match/s13/0047b6b0.c",
+"match",
+[
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"0047b720": [
+"bind",
+"re/match/s13/0047b720.c",
+"match",
+[
+"00405780",
+"004b6fc0",
+"004b7090",
+"004b70d0",
+"004b7140"
+],
+[]
+],
+"0047b7d0": [
+"bind",
+"re/match/s13/0047b7d0.c",
+"match",
+[
+"00405730",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"004917c0": [
+"bind",
+"re/match/s15/004917c0.c",
+"match",
+[
+"00490e50",
+"00490f50",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"00491860": [
+"bind",
+"re/match/s15/00491860.c",
+"match",
+[
+"00490e50",
+"00490f80",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"00491900": [
+"bind",
+"re/match/s15/00491900.c",
+"match",
+[
+"00490e50",
+"00490fb0",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"004919b0": [
+"bind",
+"re/match/s15/004919b0.c",
+"match",
+[
+"00490e50",
+"00490ff0",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"00491a10": [
+"bind",
+"re/match/s15/00491a10.c",
+"match",
+[
+"00490e50",
+"00491010",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"00491a70": [
+"bind",
+"re/match/s15/00491a70.c",
+"match",
+[
+"00490e50",
+"00491030",
+"004b6fc0",
+"004b7090"
+],
+[]
+],
+"00405780": [
+"bind",
+"re/match/s01/00405780.c",
+"match",
+[
+"004a2b60"
+],
+[]
+],
+"00471430": [
+"bind",
+"re/match/s11/00471430.c",
+"match",
+[],
+[]
+],
+"00471450": [
+"bind",
+"re/match/s11/00471450.c",
+"match",
+[],
+[]
+],
+"00471490": [
+"bind",
+"re/match/s11/00471490.c",
+"match",
+[],
+[]
+],
+"00471560": [
+"bind",
+"re/match/s11/00471560.c",
+"match",
+[],
+[]
+],
+"00490e50": [
+"bind",
+"re/match/s15/00490e50.c",
+"match",
+[
+"004987b0",
+"004a332b"
+],
+[]
+],
+"00490fb0": [
+"bind",
+"re/match/s15/00490fb0.c",
+"match",
+[],
+[]
+],
+"00490ff0": [
+"bind",
+"re/match/s15/00490ff0.c",
+"match",
+[],
+[]
+],
+"00491010": [
+"bind",
+"re/match/s15/00491010.c",
+"match",
+[],
+[]
+],
+"00491030": [
+"bind",
+"re/match/s15/00491030.c",
+"match",
+[],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -1153,270 +1940,6 @@
 "00557a60": [
 "stop"
 ],
-"0047a180": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a180.c"
-],
-"0047a1b0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a1e0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a1e0.c"
-],
-"0047a280": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a280.c"
-],
-"0047a320": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a320.c"
-],
-"0047a3a0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a3a0.c"
-],
-"0047a440": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a440.c"
-],
-"0047a4a0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a4a0.c"
-],
-"0047a540": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a580": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a5b0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a5e0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a610": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a610.c"
-],
-"0047a6b0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a6f0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a720": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a720.c"
-],
-"0047a750": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a750.c"
-],
-"0047a790": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a790.c"
-],
-"0047a7d0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a7d0.c"
-],
-"0047a7f0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a7f0.c"
-],
-"0047a810": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a810.c"
-],
-"0047a880": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047a8b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a8b0.c"
-],
-"0047a950": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a950.c"
-],
-"0047a9b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047a9b0.c"
-],
-"0047aa20": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/0047aa20.c"
-],
-"0047aa50": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047aaa0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047aad0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047ab30": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047ab30.c"
-],
-"0047abd0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047abd0.c"
-],
-"0047ac80": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047ac80.c"
-],
-"0047acd0": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047ad00": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047ad40": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047ad40.c"
-],
-"0047ade0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047ade0.c"
-],
-"0047ae80": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047ae80.c"
-],
-"0047aef0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047aef0.c"
-],
-"0047af50": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047af50.c"
-],
-"0047afa0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047afa0.c"
-],
-"0047b000": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b000.c"
-],
-"0047b0a0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b0a0.c"
-],
-"0047b110": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b110.c"
-],
-"0047b160": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b160.c"
-],
-"0047b1b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b1b0.c"
-],
-"0047b200": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b200.c"
-],
-"0047b230": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_RLStop_004b6fc0(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'"
-],
-"0047b250": [
-"stop",
-"cpp-unclean: C2664 'int PortTop_Bound_00458e00(float *,int)': el argumento 1 no puede convertirse de 'undefined1 *' a 'float *'"
-],
-"0047b280": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b280.c"
-],
-"0047b350": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b350.c"
-],
-"0047b3c0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b3c0.c"
-],
-"0047b420": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b420.c"
-],
-"0047b480": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b480.c"
-],
-"0047b500": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b500.c"
-],
-"0047b5b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b5b0.c"
-],
-"0047b630": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b630.c"
-],
-"0047b6b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b6b0.c"
-],
-"0047b720": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b720.c"
-],
-"0047b7d0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b7d0.c"
-],
-"0047b980": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b980.c"
-],
-"004917c0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s15/004917c0.c"
-],
-"00491860": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s15/00491860.c"
-],
-"00491900": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s15/00491900.c"
-],
-"004919b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s15/004919b0.c"
-],
-"00491a10": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s15/00491a10.c"
-],
-"00491a70": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s15/00491a70.c"
-],
 "004b7330": [
 "reuse",
 "lua_open",
@@ -1426,10 +1949,6 @@
 "reuse",
 "lua_mathlibopen",
 "lib:lua-4.0:src/lib/lmathlib.c:231"
-],
-"0047b8a0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s13/0047b8a0.c"
 ],
 "005507b0": [
 "reuse",
@@ -1495,6 +2014,87 @@
 "reuse",
 "RwCore_004b3f90",
 "RwCore/RwCore_004b3f90.cpp"
+],
+"004b7200": [
+"reuse",
+"lua_pushcclosure",
+"lib:lua-4.0:src/lapi.c:230"
+],
+"004b7250": [
+"reuse",
+"lua_setglobal",
+"lib:lua-4.0:src/lapi.c:315"
+],
+"004b7a70": [
+"reuse",
+"lua_dobuffer",
+"lib:lua-4.0:src/ldo.c:304"
+],
+"004a2c48": [
+"reuse",
+"MashedCrt_ftol2_004a2c48",
+"Match/PortTop_CrtHelpers.cpp"
+],
+"004b6fc0": [
+"reuse",
+"lua_gettop",
+"lib:lua-4.0:src/lapi.c:68"
+],
+"004b7090": [
+"reuse",
+"lua_tonumber",
+"lib:lua-4.0:src/lapi.c:157"
+],
+"004b70d0": [
+"reuse",
+"lua_tostring",
+"lib:lua-4.0:src/lapi.c:162"
+],
+"00458e00": [
+"bind",
+"re/match/s09/00458e00.c",
+"match",
+[
+"0042fe30",
+"00458d00",
+"00458dd0",
+"004c15c0"
+],
+[]
+],
+"00458fa0": [
+"reuse",
+"TtlSet68b1b0",
+"Match/MatchS09_00458fa0.cpp"
+],
+"00430250": [
+"stop"
+],
+"004b7140": [
+"reuse",
+"lua_pushnumber",
+"lib:lua-4.0:src/lapi.c:208"
+],
+"00405730": [
+"stop"
+],
+"00490f50": [
+"reuse",
+"ByteQuadSet50Body",
+"Match/MatchS15_00490f50.cpp"
+],
+"00490f80": [
+"reuse",
+"ByteQuadSet80Body",
+"Match/MatchS15_00490f80.cpp"
+],
+"004a2b60": [
+"reuse",
+"MashedCrt_sprintf_004a2b60",
+"Match/PortTop_CrtStdio.cpp"
+],
+"004a332b": [
+"stop"
 ],
 "0047cdc0": [
 "bind",
@@ -1593,11 +2193,6 @@
 "00546380"
 ],
 []
-],
-"004a2b60": [
-"reuse",
-"MashedCrt_sprintf_004a2b60",
-"Match/PortTop_CrtStdio.cpp"
 ],
 "004a2cbd": [
 "reuse",
@@ -2178,22 +2773,20 @@
 "Orig_004b3bf0",
 "Match/PortTop_004b3bf0.cpp"
 ],
-"00458e00": [
+"00458d00": [
 "bind",
-"re/match/s09/00458e00.c",
+"re/match/s09/00458d00.c",
 "match",
 [
-"0042fe30",
-"00458d00",
-"00458dd0",
-"004c15c0"
+"004576b0",
+"00472690"
 ],
 []
 ],
-"00458fa0": [
+"004c15c0": [
 "reuse",
-"TtlSet68b1b0",
-"Match/MatchS09_00458fa0.cpp"
+"RwCore_004c15c0",
+"RwCore/RwCore_004c15c0.cpp"
 ],
 "004e4380": [
 "bind",
@@ -2392,9 +2985,6 @@
 "004cf2b0": [
 "stop"
 ],
-"004a332b": [
-"stop"
-],
 "004b53b0": [
 "stop",
 "not bound here (--roots-only): matched source re/match/s18/004b53b0.c"
@@ -2456,11 +3046,6 @@
 "reuse",
 "RwCore_004c0c20",
 "RwCore/RwCore_004c0c20.cpp"
-],
-"004c15c0": [
-"reuse",
-"RwCore_004c15c0",
-"RwCore/RwCore_004c15c0.cpp"
 ],
 "004e5fc0": [
 "reuse",
@@ -2706,13 +3291,17 @@
 ],
 []
 ],
-"00458d00": [
+"004576b0": [
+"reuse",
+"AnyActive4576b0",
+"Match/MatchS09_004576b0.cpp"
+],
+"00472690": [
 "bind",
-"re/match/s09/00458d00.c",
+"re/match/s11/00472690.c",
 "match",
 [
-"004576b0",
-"00472690"
+"00534870"
 ],
 []
 ],
@@ -2885,19 +3474,10 @@
 "RwCore_004c4600",
 "RwCore/RwCore_004c4600.cpp"
 ],
-"004576b0": [
+"00534870": [
 "reuse",
-"AnyActive4576b0",
-"Match/MatchS09_004576b0.cpp"
-],
-"00472690": [
-"bind",
-"re/match/s11/00472690.c",
-"match",
-[
-"00534870"
-],
-[]
+"RwCore_00534870",
+"RwCore/RwCore_00534870.cpp"
 ],
 "0055bad0": [
 "bind",
@@ -2922,11 +3502,6 @@
 "0055f450"
 ],
 []
-],
-"00534870": [
-"reuse",
-"RwCore_00534870",
-"RwCore/RwCore_00534870.cpp"
 ],
 "00559b50": [
 "bind",
