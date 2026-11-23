@@ -1,0 +1,3 @@
+== scr0_f3 (A: 117 draws, x1.0) vs f943 (B: 117 draws, x1.0)
+   matched 117  mismatched 0  missing 0  extra 0
+VERDICT: GREEN (match=117 mismatch=0 missing=0 extra=0)

@@ -2536,7 +2536,7 @@ static void PauseConfirmYes(int step) {
     if (step == 60 && !PauseRaceLive()) {
         // Screen 0 reached in the frontend (Back from 7 after Quit Race): no race to restart. The original's arm
         // still calls FUN_0040de10 and sets DAT_0067e914 = 1 there; what the frontend then shows is not observed
-        // [UNCERTAIN: no capture of the original's frontend after this path]. Here it only reloads the screen.
+        // [UNCERTAIN U-9804]. Here it only reloads the screen.
         Nav(0, kNavReload);
     } else if (step == 60) {
         // case -0xe20000: FUN_0043d2a0(0, 2); FUN_0040de10 (race re-init); DAT_0067e914 = 1; FUN_004298c0.
@@ -2572,7 +2572,7 @@ static void PauseConfirmYes(int step) {
 }
 
 // MASHED_PAUSE_DEMO driver (capture aid, pair with MASHED_GOTO=6): launches the race from Challenge Select, opens the
-// pause menu with PauseOpen() 180 frames in, then runs one scenario script. Frame-counted (no wall-clock waits), so a
+// pause menu with PauseOpen() 600 frames in, then runs one scenario script. Frame-counted (no wall-clock waits), so a
 // rerun with MASHED_DBG_DRAWSTREAM=N:M lands on the frames the log names (ds=). Captures: verify/pause/<tag>.bmp,
 // log lines "PAUSE_DEMO tag=..." in the standalone log.
 static bool RunPauseDemoStep() {
@@ -2625,10 +2625,10 @@ static bool RunPauseDemoStep() {
         for (const char* path : {kLogPath, VOut("pause/pause_demo.txt")})
         if (std::FILE* lf = std::fopen(path, "a")) {
             std::fprintf(lf, "PAUSE_DEMO tag=%s ds=%d phase=%d alpha=%d mode=%d paused=%d sid=%d depth=%d cur=%d "
-                             "modal=%d race_t=%.3f\n", tag, mashed_re::D3d9Render::DrawStreamDump_FrameIndex(),
+                             "modal=%d race_t=%.3f cd=%.3f\n", tag, mashed_re::D3d9Render::DrawStreamDump_FrameIndex(),
                          g_pause.phase, g_pause.alpha, static_cast<int>(mode),
                          static_cast<int>(mashed_re::Race::GameFlow_IsPaused()), Nav_ScreenId(), Nav_Depth(),
-                         Nav_Cursor(), g_modal_step, g_track.car_ready() ? g_track.race_time() : -1.0f);
+                         Nav_Cursor(), g_modal_step, g_track.car_ready() ? g_track.race_time() : -1.0f, g_track.car_ready() ? g_track.countdown() : -1.0f);
             std::fclose(lf);
         }
     };
@@ -2636,9 +2636,12 @@ static bool RunPauseDemoStep() {
     if (wait > 0) { --wait; return false; }
     if (stage == 0) {                       // Challenge Select up -> launch
         if (g_frontend_phase < 3 || g_modal_step != 0 || Nav_ScreenId() != 6) return false;
-        log("launch"); NavDemoTap(DIK_RETURN); stage = 1; wait = 2; return false;
+        // 200 frames on the menu first: the arc-wash fade pair steps 2 per frame (0x00473f87..0x00473fc2) and is
+        // frozen through the race, so a launch right after boot would carry a part-raised wash into the pause screen.
+        stage = 4; wait = 200; return false;
     }
-    if (stage == 1) {                       // InRace, 180 frames in
+    if (stage == 4) { log("launch"); NavDemoTap(DIK_RETURN); stage = 1; wait = 2; return false; }
+    if (stage == 1) {                       // InRace, 600 frames in
         if (mode != mashed_re::Race::GameMode::InRace) return false;
         stage = 2; wait = 600; return false;   // past the intro camera and the countdown
     }

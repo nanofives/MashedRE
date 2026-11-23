@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-22  U-9804  UNCERTAINTIES  filed  pause menu screen 0 reached in the frontend after Quit Race -> Back: original frontend state after Continue / Restart Race there unobserved; standalone reloads screen 0 (fix/playtest-pause-menu, verify/pause_menu_20261122/RESULT_PLAYTEST-PAUSE-MENU.md)
 2026-11-22  0x005c92c0  FUN_005c92c0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c92c0.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
 2026-11-22  0x005c92f0  FUN_005c92f0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c92f0.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
 2026-11-22  0x005c9310  FUN_005c9310  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c9310.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md

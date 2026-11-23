@@ -1,0 +1,9 @@
+PAUSE_DEMO tag=launch ds=200 phase=0 alpha=0 mode=0 paused=0 sid=6 depth=1 cur=0 modal=0 race_t=-1.000 cd=-1.000
+PAUSE_DEMO tag=race_before ds=832 phase=0 alpha=0 mode=2 paused=0 sid=6 depth=1 cur=0 modal=0 race_t=0.000 cd=3.000
+PAUSE_DEMO tag=fade_in ds=841 phase=1 alpha=128 mode=2 paused=1 sid=6 depth=1 cur=0 modal=0 race_t=0.000 cd=3.000
+PAUSE_DEMO tag=reveal ds=853 phase=2 alpha=223 mode=2 paused=1 sid=0 depth=1 cur=0 modal=0 race_t=0.000 cd=3.000
+PAUSE_DEMO tag=cur0 ds=943 phase=3 alpha=0 mode=2 paused=1 sid=0 depth=1 cur=0 modal=0 race_t=0.000 cd=3.000
+PAUSE_DEMO tag=options ds=951 phase=3 alpha=0 mode=2 paused=1 sid=8 depth=2 cur=0 modal=0 race_t=0.000 cd=3.000
+PAUSE_DEMO tag=options_back ds=951 phase=3 alpha=0 mode=2 paused=1 sid=0 depth=1 cur=1 modal=0 race_t=0.000 cd=3.000
+PAUSE_DEMO tag=resumed ds=951 phase=0 alpha=0 mode=2 paused=0 sid=6 depth=1 cur=0 modal=0 race_t=0.000 cd=3.000
+PAUSE_DEMO tag=done ds=951 phase=0 alpha=0 mode=2 paused=0 sid=6 depth=1 cur=0 modal=0 race_t=0.000 cd=3.000
