@@ -7067,20 +7067,26 @@ bool RenderFrame() {
             }
         }
 
-        // --- Challenge Select (screens 6/7): the list half of FUN_00439210 (playtest 2026-11-22: the arrows "not
-        // doing anything"). The hand-built list drew four cup rows whatever the save said and showed nothing that
-        // followed the tier selection DAT_0067f184 that LEFT/RIGHT move (the original's ring 1 <-> 2 <-> 5, game
-        // mode 3 <-> 4 <-> 5). Read from Ghidra (Mashed_pool10, analyzeHeadless DecompPC) plus capstone over
-        // MASHED.exe.unpatched, checked against draw-list + text captures of the original on this screen
-        // (log/chalsel/o_s6_m3*.json, cup flow, stock save, Bronze row 0 and Silver row 0):
-        //   the rows the predicates FUN_00436810 / FUN_0042ebe0 report; the scroll DAT_0067f180; the selection bar;
-        //   the up and down triangles FUN_00472dc0 (0x00439b2c / 0x00439b5d); per row the Star (0x00439c0e) and, for
-        //   the selected row, the three tier slots FUN_00430a10 / FUN_00430a60 / FUN_00430ab0 with the selected tier
-        //   drawn pulsing (0x0043a153 / 0x0043a315 / 0x0043a4e8) and the cell icon FUN_004391b0 (0x0043a1a9 /
-        //   0x0043a375 / 0x0043a548); other rows get FUN_0042ee00(cell) at alpha a>>2.
+        // --- Challenge Select (screens 6/7): port of FUN_00439210 and of the FUN_004368e0 it calls first
+        // (0x0043926c), replacing the hand-built list + "Multi Player" checklist + four car-0 devils that drew the
+        // same thing in every game mode (playtest 2026-11-22: "these indicators look different from original", and
+        // the arrows "not doing anything" because nothing on screen followed the tier selection DAT_0067f184).
+        // Read from Ghidra (Mashed_pool10, analyzeHeadless DecompPC) plus capstone over MASHED.exe.unpatched, checked
+        // against draw-list + text captures of the original on this screen (log/chalsel/o_s6_m3*.json, cup flow,
+        // stock save, Bronze row 0 and Silver row 0).
+        //   FUN_004368e0: plate (32,300,576,96) black alpha a*2/3 (0x00436996), divider (319,308,2,80) white
+        //     (0x004369d8); then FUN_00430760() == 0 (modes outside {2,3,4,5,10}) -> LAB_004375d5, one icon per
+        //     joined player in each slot's own colour FUN_0042fab0(*(0x007f1a1c + k*0x10)); else switch on the mode:
+        //     2 Time Trial text + the player's car, 3/4/5 the cup event description and the player's car against the
+        //     event's opponents (FUN_00430670), 10 not ported here (see "Not ported" below).
+        //   FUN_00439210: the mode-6/7/8 checklist only when FUN_00430760() == 0 (0x0043930a); the list of rows
+        //     the predicates FUN_00436810 / FUN_0042ebe0 report; the scroll DAT_0067f180; the selection bar; the up and
+        //     down triangles FUN_00472dc0 (0x00439b2c / 0x00439b5d); per row the Star (0x00439c0e) and, for the
+        //     selected row, the three tier slots FUN_00430a10 / FUN_00430a60 / FUN_00430ab0 with the selected tier
+        //     DAT_0067f184 drawn pulsing (0x0043a153 / 0x0043a315 / 0x0043a4e8) and the cell icon FUN_004391b0
+        //     (0x0043a1a9 / 0x0043a375 / 0x0043a548); other rows get FUN_0042ee00(cell) at alpha a>>2.
         // a (DAT_0067e7bc, the screen alpha) is taken as the settled 0xff. Vertex colours are passed in the bridge's
         // pre-swap order (HudIm2DQuad swaps R and B), so the stream holds the original's buffer dwords.
-        // The right panel and the car strip below the list are still the previous hand-built ones.
         if ((Nav_ScreenId() == 6 || Nav_ScreenId() == 7) && g_carsel_ready) {
             using namespace mashed_re::Race;
             const int gm   = Nav_GameModeWord();                 // DAT_0067e9fc
@@ -7149,6 +7155,206 @@ bool RenderFrame() {
                 return v;
             };
 
+            // The track preview (unchanged from the previous block; the original's shell draws it at 0x0042eafa as two
+            // 135x180 halves inside a 2 px black frame, before FUN_004368e0, so its rows stay open in the diff).
+            if (g_previews_ready) quad(kHandlePreview0, 330.f, 96.f, 290.f, 160.f, 0xffffffffu);
+            // ---------------- FUN_004368e0 ----------------
+            quad(0, 32.f, 300.f, 576.f, 96.f, 0xaa000000u);       // 0x00436996, alpha (a*2)/3
+            quad(0, 319.f, 308.f, 2.f, 80.f, 0xffffffffu);        // 0x004369d8
+            int strip = 0;   // uVar18 after the mode switch (0 = straight to the switch's caseD_6 exit)
+            if (!cupFlow(gm)) {
+                // LAB_004375d5 (0x004375d5): players with a profile at 0x007f1a14 + k*0x10 != -1.
+                const auto slotI = [](std::uintptr_t a, int k) {
+                    return *reinterpret_cast<const std::int32_t*>(a + static_cast<std::uintptr_t>(k) * 0x10u);
+                };
+                int np = 0;
+                for (int k = 0; k < 4; ++k) if (slotI(0x007f1a14, k) != -1) ++np;
+                const auto col = [&](int k) { return (k >= 0 && k < 4) ? slotI(0x007f1a1c, k) : -1; };
+                const auto team = [&](int k) { return slotI(0x007f1a18, k); };
+                if (ea64 == 0) {
+                    if (np == 2) {
+                        carIcon(col(0), 40.f, 292.f, 112.f);
+                        carIcon(col(1), ea7c ? 148.f : 196.f, 292.f, 112.f);
+                        vsIcon(ea7c ? 108.f : 132.f, 300.f, 88.f);
+                        if (ea7c) {
+                            chal(kChalQuestion, 262.f, 304.f, 48.f, 48.f, 0xffffffffu);
+                            chal(kChalQuestion, 262.f, 348.f, 48.f, 48.f, 0xffffffffu);
+                            vsIcon(232.f, 324.f, 48.f);
+                        }
+                    } else if (np == 3) {
+                        carIcon(col(0), 40.f, 308.f, 80.f);
+                        carIcon(col(1), ea7c ? 112.f : 136.f, 308.f, 80.f);
+                        carIcon(col(2), ea7c ? 184.f : 232.f, 308.f, 80.f);
+                        vsIcon(ea7c ? 88.f : 100.f, 316.f, 64.f);
+                        vsIcon(ea7c ? 160.f : 196.f, 316.f, 64.f);
+                        if (ea7c) {
+                            chal(kChalQuestion, 262.f, 316.f, 64.f, 64.f, 0xffffffffu);
+                            vsIcon(232.f, 324.f, 48.f);
+                        }
+                    } else if (np == 4) {
+                        static const float kX[4] = {40.f, 104.f, 168.f, 232.f};
+                        for (int k = 0; k < 4; ++k) carIcon(col(k), kX[k], 308.f, 72.f);
+                        vsIcon(72.f, 316.f, 56.f); vsIcon(136.f, 316.f, 56.f); vsIcon(200.f, 316.f, 56.f);
+                    }
+                } else {
+                    // Team Play. Team members in slot order: team 0 = A0 A1 A2, team 1 = B0 B1 B2 (team word
+                    // 0x007f1a18 + k*0x10 == 0 -> team 0), as the assignment chain 0x0043766a.. builds them.
+                    if (np == 2) {
+                        carIcon(col(0), 40.f, 292.f, 112.f);
+                        carIcon(col(1), 196.f, 292.f, 112.f);
+                        vsIcon(132.f, 300.f, 88.f);
+                    } else if (np == 3) {
+                        // The decomp's literal choice of the lone player (iVar13) and the pair (iVar9, iVar14).
+                        int lone, p1, p2;
+                        if (team(0) == 0) {
+                            if (team(1) == 0) { lone = 2; p1 = 0; p2 = 1; }
+                            else              { lone = 0; p1 = 1; p2 = 2; }
+                        } else {
+                            if (team(1) == 0) {
+                                if (team(2) == 0) { lone = 0; p1 = 1; p2 = 2; }
+                                else              { lone = 1; p1 = 0; p2 = 2; }
+                            } else { lone = 2; p1 = 0; p2 = 1; }
+                        }
+                        carIcon(col(lone), 56.f, 292.f, 112.f);
+                        carIcon(col(p1), 216.f, 288.f, 64.f);
+                        carIcon(col(p2), 216.f, 340.f, 64.f);
+                        vsIcon(144.f, 304.f, 88.f);
+                    } else if (np == 4) {
+                        int A[3] = {-1, -1, -1}, B[3] = {-1, -1, -1}, na = 0, nb = 0;
+                        for (int k = 0; k < 4; ++k) {
+                            if (team(k) == 0) { if (na < 3) A[na++] = k; }
+                            else              { if (nb < 3) B[nb++] = k; }
+                        }
+                        if (na == 2 && nb == 2) {
+                            carIcon(col(A[0]), 74.f, 296.f, 64.f);  carIcon(col(B[0]), 220.f, 296.f, 64.f);
+                            carIcon(col(A[1]), 74.f, 340.f, 64.f);  carIcon(col(B[1]), 220.f, 340.f, 64.f);
+                            vsIcon(127.f, 300.f, 96.f);
+                        } else {
+                            const int* trio = (na == 3) ? A : B;
+                            const int  lone = (na == 3) ? B[0] : A[0];
+                            carIcon(col(lone), 56.f, 292.f, 112.f);
+                            carIcon(col(trio[0]), 202.f, 288.f, 64.f);
+                            carIcon(col(trio[1]), 232.f, 316.f, 64.f);
+                            carIcon(col(trio[2]), 202.f, 344.f, 64.f);
+                            vsIcon(144.f, 304.f, 88.f);
+                        }
+                    }
+                }
+            } else if (gm == 2) {
+                // case 2 (0x00436aa2..): 0x24 at (330,316) 0.6, 0x13a at (330,334) 0.55, 0x12a at (330,350) 0.55.
+                // Not ported: the best-time string FUN_00427f00(auStack_14, 508, 350) formats DAT_007f0db4[row]
+                // with two ftol results whose operands the decomp drops (FUN_004a2c48); it needs the disassembly.
+                text(0x24, 330.f, 316.f, 0xffffffffu, 0.6f);
+                text(0x13a, 330.f, 334.f, 0xffffffffu, 0.55f);
+                text(0x12a, 330.f, 350.f, 0xffffffffu, 0.55f);
+                strip = 1;
+            } else if (cupMode) {
+                // case 3/4/5 (0x00436b0e..): title, then the event's lines at x 326 (0x43a30000), y 334 / 350 / 366.
+                int title = (gm == 3) ? 0x115 : (gm == 4) ? 0x116 : 0x117;
+                if (row > 9) {
+                    title = (row == 0xb) ? 0x257 : (row == 0xc) ? 0x25a : 0x254;
+                    title += tier;
+                }
+                text(title, 326.f, 316.f, 0xffffffffu, 0.55f);
+                const auto L = [&](int id334, int id350, int id366) {
+                    text(id334, 326.f, 334.f, 0xffffffffu, 0.6f);
+                    text(id350, 326.f, 350.f, 0xffffffffu, 0.55f);
+                    if (id366 >= 0) text(id366, 326.f, 366.f, 0xffffffffu, 0.55f);
+                };
+                const int hi = evHi;
+                int u17 = 0;
+                if (hi == 0x0 || hi == 0x1 || hi == 0xc) {
+                    const bool h1c = (hi == 0x1 || hi == 0xc);
+                    if (evLo == 1)      L(0xec, 0x118, hi == 0x1 ? 0x121 : -1);
+                    else if (evLo == 2) { if (h1c) L(0x206, 0x207, 0x208); else L(0x203, 0x204, 0x205); }
+                    else                { if (h1c) L(0x209, 0x20a, 0x20b); else L(0x20c, 0x20d, 0x20e); }
+                    u17 = 2;
+                }
+                if (hi == 0x9 || hi == 0xa) {
+                    L(0xec, evLo == 1 ? 0x118 : evLo == 2 ? 0x119 : 0x11a, hi == 0xa ? 0x121 : -1);
+                    u17 = 2;
+                }
+                if (hi == 0x2 || hi == 0x3 || hi == 0xb) { L(0x11f, 0x120, hi != 0x2 ? 0x121 : -1); u17 = 2; }
+                if (hi == 0x4)      { L(0xf2, 0xf7, 0xf8); strip = 0x40000; }
+                else if (hi == 0x5) { L(0xf0, 0xf5, 0xf6); strip = 0x50000; }
+                else if (hi == 0x6) { L(0xef, 0xf9, 0xfa); strip = 2000; }
+                else if (hi == 0x7) { L(0xee, 0xf3, 0xf4); strip = 0x70000; }
+                else if (hi == 0x8) { L(0xf1, 0xfb, 0xfc); strip = 2; }   // LAB_00436cf8
+                else                strip = u17;                          // 0 -> caseD_6
+            }
+            // Not ported: mode 10 (Quick Race, case 10 0x00436c10.. and the LAB_004382e3 mode-10 arms), which reads
+            // DAT_0067ea94..DAT_0067eaac; the frontend's copies of those are not tied to the original's addresses
+            // here. Mode 10 draws only the plate and divider.
+            if (strip != 0) {
+                // After the switch (0x00437f6f..): the player's car at (40 | 128 when uVar18 == 1, 292, 112).
+                carIcon(pcol, strip == 1 ? 128.f : 40.f, 292.f, 112.f);
+                if ((strip == 2 || strip == 2000) && cupMode) {
+                    const int o1 = opp(1), o2 = opp(2), o3 = opp(3);
+                    if (evHi == 0x9 || evHi == 0xa) {
+                        // LAB_004382e3 (0x004382e3)
+                        int n = (o1 != -1) ? 1 : 0;
+                        if (o2 != -1) n = 2;
+                        float w = 112.f;
+                        if (o3 == -1) { if (n == 2) w = 64.f; else if (n == 3) w = 56.f; }
+                        else          { n = 3; w = 56.f; }
+                        if (o1 != -1) {
+                            const float x = (n == 1) ? 196.f : (n == 2) ? 164.f : 142.f;
+                            const float y = (n == 1) ? 292.f : (n == 2) ? 316.f : 320.f;
+                            carIcon(o1, x, y, w);
+                        }
+                        if (o2 != -1) carIcon(o2, n == 2 ? 242.f : 192.f, n == 2 ? 316.f : 320.f, w);
+                        if (o3 != -1) carIcon(o3, 252.f, 320.f, w);
+                        if (n == 1) vsIcon(132.f, 300.f, 88.f);
+                        else if (n == 2) { vsIcon(128.f, 320.f, 56.f); vsIcon(206.f, 320.f, 56.f); }
+                        else if (n == 3) { vsIcon(116.f, 324.f, 48.f); vsIcon(166.f, 324.f, 48.f);
+                                           vsIcon(216.f, 324.f, 48.f); }
+                    } else {
+                        // 0x0043837a..: cVar21 from FUN_00430670(2) / (3)
+                        int n = 1;
+                        if (o2 != -1) n = 2;
+                        if (o3 != -1) n = 3;
+                        const float w = (n == 2 || n == 3) ? 64.f : 112.f;
+                        if (o1 != -1) {
+                            const float x = (n == 1) ? 196.f : (n == 2) ? 216.f : 202.f;
+                            const float y = (n == 1) ? 292.f : 288.f;
+                            carIcon(o1, x, y, w);
+                        }
+                        if (o2 != -1) carIcon(o2, n == 2 ? 216.f : 232.f, n == 2 ? 340.f : 316.f, w);
+                        if (o3 != -1) carIcon(o3, 202.f, 344.f, w);
+                        vsIcon(132.f, 300.f, 88.f);
+                        if (strip == 2000) carIcon(9, 104.f, 356.f, 48.f);   // FUN_0042fab0(9) 0x004388d6
+                    }
+                } else if (strip == 0x70000 || strip == 0x40000 || strip == 0x50000) {
+                    // LAB_00438916: FUN_0042fab0(6 | 7 | 8) at (196,292,112), "vs" (132,300,88).
+                    carIcon(strip == 0x70000 ? 6 : strip == 0x40000 ? 7 : 8, 196.f, 292.f, 112.f);
+                    vsIcon(132.f, 300.f, 88.f);
+                }
+            }
+            // caseD_6 (0x00438973..): the cup event's power-up row, five columns of DAT_007f0cb0[col + row*5]
+            // (event 0x70000: column 0 id 9, column 1 id 0xb, the rest none). Placement from the Silver row-0
+            // capture (log/chalsel/o_s6_m3_right.json): Powerupshadow (548 - 40*col, 372, 48) then the icon
+            // (552 - 40*col, 376, 32), x step (W*col*0x28)/0x280.
+            // Not ported: events 0xb0000 / 0xc0000 take the animated branch (fsin zoom, a random id from
+            // DAT_005f6668 via FUN_004a2c48); nothing is drawn for them.
+            if (cupMode && g_powerups_ready &&
+                (evHi == 0x1 || evHi == 0xa || evHi == 0x3 || evHi == 0x7 || evHi == 0x6) && row >= 0 && row < 13) {
+                const std::int32_t* const pu = reinterpret_cast<const std::int32_t*>(
+                    mashed_re::Frontend::Nav_SaveSpanData() + 0x270);          // 0x007f0cb0 - 0x007f0a40
+                for (int c = 0; c < 5; ++c) {
+                    std::int32_t id = pu[c + row * 5];
+                    if (id < 0) continue;
+                    if (evHi == 0x7) id = (c == 0) ? 9 : (c == 1) ? 0xb : -1;
+                    if (id < 0 || id > 22) continue;
+                    const int icon = kPowerupIdToIcon[id];
+                    if (icon < 0) continue;                                     // FUN_00458630 NULL
+                    if (g_pushadow_ready)
+                        quad(kHandlePowerupShadow, 548.f - 40.f * c, 372.f, 48.f, 48.f, 0xffffffffu);
+                    quad(kHandlePowerup0 + icon, 552.f - 40.f * c, 376.f, 32.f, 32.f, 0xffffffffu);
+                }
+            }
+            // Not ported: the rotated "Challenge Completed" / "Challenge Locked" stamp (FUN_0042ed70, ids 0xeb /
+            // 0x263, 0x00438f07..) and the row > 9 reward stamp (0x253), text through the trig text path.
+
             // ---------------- FUN_00439210 ----------------
             // DAT_0067ed30 += DAT_007f1004 (0x00439245): the phase advances by the frame time on each frame this
             // screen draws. Port stand-in for the frame time: the DetTicks delta to the previous drawn frame, not
@@ -7161,6 +7367,27 @@ bool RenderFrame() {
                 s_ed30T = now;
             }
             const float pulse = (std::sin(s_ed30 * 10.0f) + 1.0f) * 12.0f;
+            // Right panel checklists, FUN_00430760() == 0 only (0x0043930a).
+            if (!cupFlow(gm) && (gm == 6 || gm == 7 || gm == 8)) {
+                const auto badge = [&](bool on, int k) {         // FUN_0040bb50("check" | "lock") (520, 320+16k, 24)
+                    const int  h  = on ? kHandleCheck : kHandleLock;
+                    const bool rd = on ? g_check_ready : g_lock_ready;
+                    if (rd) quad(h, 520.f, 320.f + 16.f * k, 24.f, 24.f, 0xffffffffu);
+                };
+                const int r = (row >= 0 && row < 13) ? row : 0;
+                if (gm == 6) {
+                    text(ea64 ? 0x140 : 0x22, 330.f, 316.f, 0xffffffffu, 0.6f);
+                    text(0x56,  330.f, 334.f, 0xffffffffu, 0.6f); badge(tbl[r * 12 + 4] != 0, 0);
+                    text(0x24b, 330.f, 350.f, 0xffffffffu, 0.6f); badge(tbl[r * 12 + 6] != 0, 1);
+                    text(0x141, 330.f, 366.f, 0xffffffffu, 0.6f); badge(tbl[r * 12 + 7] != 0 && ea64 == 0, 2);
+                } else {
+                    text(gm == 7 ? 0x142 : 0x143, 330.f, 316.f, 0xffffffffu, 0.6f);
+                    text(0x151, 332.f, 334.f, 0xffffffffu, 0.6f); badge(true, 0);
+                    text(0x152, 332.f, 350.f, 0xffffffffu, 0.6f); badge(true, 1);
+                    text(0x24b, 332.f, 366.f, 0xffffffffu, 0.6f); badge(true, 2);
+                    text(0x141, 332.f, 382.f, 0xffffffffu, 0.6f); badge(true, 3);
+                }
+            }
             // Row predicates. FUN_00436810 (byte-matched source re/match/s08/00436810.c): cup flow -> rows with
             // column 1 (0x007f0a44) == 2 counted, the row's column 1 must be non-zero; otherwise rows with column 3
             // (0x007f0a4c) != 0 counted. FUN_0042ebe0 (rows 10..12): column 1 / 2 / 5 of rows 0..9 all non-zero and
@@ -7353,129 +7580,6 @@ bool RenderFrame() {
                     }
                 }
             }
-            // ---- previous hand-built right panel and car strip (replaced by the FUN_004368e0 port next) ----
-            const std::uint32_t white = 0xffffffffu;
-            const float bt = 1.875f * kVScale;
-            const float lcell = 0.6147f * 0.0708f * 480.f * kVScale;
-            int sel = row;
-            {
-                const Cup& cup = Campaign_CurrentCup();
-                if (sel < 0) sel = 0;
-                if (sel >= cup.trackCount) sel = cup.trackCount - 1;
-            }
-            // Right side: the selected track's map preview rect + a semi-transparent
-            // black detail panel (with a white divider) + the challenge details.
-            if (g_previews_ready)
-                HudIm2DQuad(kHandlePreview0, 330.0f * kVScale, 96.0f * kVScale,
-                            290.0f * kVScale, 160.0f * kVScale, white, uv_full);
-            HudIm2DQuad(0, 330.0f * kVScale, 264.0f * kVScale,
-                        290.0f * kVScale, 96.0f * kVScale, 0xa0000000u, uv_full);  // black panel
-            HudIm2DQuad(0, 330.0f * kVScale, 264.0f * kVScale,
-                        290.0f * kVScale, bt, white, uv_full);                     // top divider
-            if (g_font.ready()) {
-                // Same msgid law as the list, so the panel cannot disagree with
-                // the row it describes.
-                wchar_t sname[64];
-                if (GetMenuMessage(0x49 + sel, sname, 64) <= 0)
-                    sname[0] = L'\0';
-                DrawMashedString(sname, 340.0f * kVScale,
-                                 280.0f * kVScale, lcell, white, true);
-                // The panel's real content, read out of FUN_00439210 (C4)
-                // 2026-09-04 (Finding 36). It is NOT a one-line
-                // "Bronze Challenge / Locked" caption -- that wording was
-                // invented and appears nowhere in the message table. It is a
-                // per-track MODE CHECKLIST: a heading plus three mode names,
-                // each with a lock icon when that mode is still locked for the
-                // selected challenge.
-                //
-                //   heading  DAT_0067ea64 == 0 ? 0x22 "Multi Player"
-                //                              : 0x140 "Team Play"   (330, 316)
-                //   row 0    0x56  "Power Ups"      (330, 334)
-                //   row 1    0x24b "Hold the Flag"  (330, 350)
-                //   row 2    0x141 "The Fugitive"   (330, 366)
-                //   all at scale 0x3f19999a = 0.6
-                //
-                // Unlock flags, per selected challenge DAT_0067f17c (stride
-                // 0x30): 0x007f0a50 (Power Ups), 0x007f0a58 (Hold the Flag),
-                // 0x007f0a5c (The Fugitive). Row 2 is additionally forced
-                // LOCKED whenever FUN_0042f500() != 0, i.e. under Team Play.
-                //
-                // Icons: x = width * 0x208/0x280 = 520, y = height * 0x140/0x1e0
-                // = 320 stepping by height * 0x10/0x1e0 = 16, size
-                // width * 0.0375 x height * 0.05 = 24 x 24.
-                {
-                    // DAT_0067f17c's analogue. The standalone never writes the
-                    // image address, so reading 0x0067f17c here always gave 0
-                    // (row-movers 2026-10-12; the movers now move the row).
-                    const int chal = Nav_ChallengeRow();
-                    const int ea64 = *reinterpret_cast<const std::int32_t*>(0x0067ea64);
-                    const std::uintptr_t base =
-                        static_cast<std::uintptr_t>(chal) * 0x30u;
-                    const int flags[3] = {
-                        *reinterpret_cast<const std::int32_t*>(0x007f0a50 + base),
-                        *reinterpret_cast<const std::int32_t*>(0x007f0a58 + base),
-                        *reinterpret_cast<const std::int32_t*>(0x007f0a5c + base),
-                    };
-                    const int teamPlay = (ea64 != 0) ? 1 : 0;   // FUN_0042f500
-                    static const int kRowIds[3] = { 0x56, 0x24b, 0x141 };
-                    static const float kRowY[3] = { 334.0f, 350.0f, 366.0f };
-                    wchar_t mbuf[64];
-                    if (GetMenuMessage(ea64 == 0 ? 0x22 : 0x140, mbuf, 64) > 0)
-                        DrawMashedString(mbuf, 330.0f * kVScale,
-                                         316.0f * kVScale, lcell, white, true);
-                    for (int m = 0; m < 3; ++m) {
-                        if (GetMenuMessage(kRowIds[m], mbuf, 64) > 0)
-                            DrawMashedString(mbuf, 330.0f * kVScale,
-                                             kRowY[m] * kVScale, lcell,
-                                             0xffc8c8c8u, true);
-                        const bool locked =
-                            (flags[m] == 0) || (m == 2 && teamPlay != 0);
-                        // Finding 38: the original draws an icon on EVERY row,
-                        // "lock" or "check" (0x004395d9 / 0x004395e6), both out
-                        // of the BADGES dictionary. Drawing nothing on an
-                        // unlocked row was a gap, not a faithful reading.
-                        const int  icon  = locked ? kHandleLock : kHandleCheck;
-                        const bool ready = locked ? g_lock_ready : g_check_ready;
-                        if (ready)
-                            HudIm2DQuad(icon, 520.0f * kVScale,
-                                        (320.0f + 16.0f * m) * kVScale,
-                                        24.0f * kVScale, 24.0f * kVScale,
-                                        white, uv_full);
-                    }
-                }
-            }
-            // 4 challenge-cup devil icons + vertical separator at the bottom-left.
-            // Group placement measured: the original's 4 devils merge into one
-            // blob (no column gaps) so only the GROUP extents are observable --
-            // orig x74..471 y493..597, ours x85..461 y480..584. Heights are
-            // identical (105 = 105), so size/pitch are left alone and only the
-            // group origin moves: x 48 - 11/1.6 = 41.125, y 300 + 13/1.6 = 308.125.
-            // CORRECTED round 3: the quad is 72x72 at (40 + 64c, 308), i.e.
-            // identical to the s18/s24 row -- the original's icon measures
-            // 26x79 on BOTH screens, and those s24 numbers reproduce it
-            // exactly. The old 56-wide quad rendered 21x80 here, which is
-            // the horizontal squash the user reported as 'stretched'.
-            // "vs" separators, same law as the s18/s24 row (see there for the
-            // measurement); origin shifted to this block's 41.125 icon base.
-            for (int c = 0; c < 4; ++c)
-                HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
-                            308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
-                            white, uv_full);
-            if (g_vs_ready) {
-                // 60, and 1.75 lower. MEASURED VS band in the icon gaps:
-                // original y 514..570 (h 57), ours y 514..564 (h 51) -- so
-                // ~1.118x small and its centre 3 device px high.
-                const float vsw = 63.0f * kVScale, vsh = 63.0f * kVScale;
-                for (int c = 0; c < 3; ++c)
-                    HudIm2DQuad(kHandleVs,
-                                (105.625f + c * 64.0f) * kVScale - vsw * 0.5f,
-                                340.5f * kVScale - vsh * 0.5f,
-                                vsw, vsh, white, uv_full);
-            }
-            // Separator: orig x511..513 y493..620 -> 319.375 / 308.125, w 1.875,
-            // h 128 device = 80 virtual (height already matched exactly).
-            HudIm2DQuad(0, 319.375f * kVScale, 308.125f * kVScale,
-                        1.875f * kVScale, 80.0f * kVScale, white, uv_full);
         }
 
         // --- Game Mode setup (18 MP / 24 SP): the nav item list (above) draws
