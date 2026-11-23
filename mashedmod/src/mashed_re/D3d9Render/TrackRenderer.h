@@ -95,7 +95,7 @@ public:
 
     struct DriveInput {
         float accel = 0.f;   // +1 up-arrow / -1 down-arrow (reverse/brake)
-        float steer = 0.f;   // +1 right / -1 left
+        float steer = 0.f;   // +1 -> steer byte [0] (the original's LEFT key, action 9), -1 -> byte [1] (RIGHT, action 10)
         float dt    = 0.f;
     };
     // Kinematic drive step: speed/yaw integration, ground-height snap via
