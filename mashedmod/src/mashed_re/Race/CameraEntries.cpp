@@ -150,6 +150,15 @@ inline void  FlagSet(int v)                     { I32(0x00897fe0u) = v; }       
 inline int   TrackId()                          { return s_camHost.track_id ? s_camHost.track_id() : 0; }
 inline void  MostSep(int* a, int* b)            { if (s_camHost.most_separated) s_camHost.most_separated(a, b); }
 inline std::uint32_t VehPtr(std::uint32_t* o, std::uint32_t i) { return PtrCompute881ec8(o, i); }
+// FUN_0046d4a0(i) then +0x30..+0x38 (0x00441cb5..c4 / 0x00441cdd..e2), through CamEntryHost.car_pos when bound.
+inline bool CarPos(int i, float o[3]) {
+    if (s_camHost.car_pos) return s_camHost.car_pos(i, o);
+    std::uint32_t p = 0;
+    if (!VehPtr(&p, static_cast<std::uint32_t>(i)) || !p) return false;
+    const float* r = reinterpret_cast<const float*>(p + 0x30u);
+    o[0] = r[0]; o[1] = r[1]; o[2] = r[2];
+    return true;
+}
 inline double RandRange(float lo, float hi)     { return ::Ai::Ai_RandRange(lo, hi); }
 inline const float* AxisY()                     { return reinterpret_cast<const float*>(kAxisY); }
 inline double PathProg(int i)                   { return F32(0x008a96e8u + static_cast<std::uint32_t>(i) * 0x30cu); }   // FUN_00408a50 body: fld [i*0x30c + 0x8a96e8] (0x00408a54..5a)
@@ -219,8 +228,10 @@ RH_ScopedInstall(CamEntryBuild441b30, 0x00441b30);
 // ===========================================================================
 // 0x00441c80  CamCarMidpoint441c80(out, cam). FUN_0040e180(&a, &b); if cam[7] != 0 both = cam[8];
 // out = p_a - (p_a - p_b) * 0.5, p = FUN_0046d4a0(car) +0x30..+0x38.
-// exe: a failed PtrCompute881ec8 (records not allocated) leaves out at 0 (named; never fails on
-// the original for idx < 16).
+// exe: the positions come through CamEntryHost.car_pos (the grid pose the original's ring holds before GO; the exe's
+// ring is (0,0,0) until the first physics substep, which aimed the phase-3 intro at the world origin, PLAYTEST-INTRO-
+// CAMERA 2026-11-22); unbound, PtrCompute881ec8. A failed lookup leaves out at 0 (named; never fails on the original
+// for idx < 16).
 // ===========================================================================
 // 0x00441c80
 extern "C" __declspec(dllexport) void __cdecl CamCarMidpoint441c80(float* out, const std::int32_t* cam)
@@ -228,20 +239,19 @@ extern "C" __declspec(dllexport) void __cdecl CamCarMidpoint441c80(float* out, c
     int a = 0, b = 0;
     MostSep(&a, &b);                                                         // 0x00441c8d
     if (cam[7] != 0) { a = cam[8]; b = cam[8]; }                             // 0x00441c96..0x00441ca7
-    std::uint32_t p = 0;
 #ifdef MASHED_STANDALONE
-    if (!VehPtr(&p, static_cast<std::uint32_t>(a)) || !p) { out[0] = out[1] = out[2] = 0.f; return; }
+    float pa[3], pb[3];
+    if (!CarPos(a, pa)) { out[0] = out[1] = out[2] = 0.f; return; }          // 0x00441cb5
+    const float ax = pa[0], ay = pa[1], az = pa[2];                          // 0x00441cbe..c4
+    if (!CarPos(b, pb)) { out[0] = out[1] = out[2] = 0.f; return; }          // 0x00441cdd
 #else
+    std::uint32_t p = 0;
     VehPtr(&p, static_cast<std::uint32_t>(a));                               // 0x00441cb5
-#endif
     const float* pa = reinterpret_cast<const float*>(p + 0x30u);
     const float ax = pa[0], ay = pa[1], az = pa[2];                          // 0x00441cbe..c4
-#ifdef MASHED_STANDALONE
-    if (!VehPtr(&p, static_cast<std::uint32_t>(b)) || !p) { out[0] = out[1] = out[2] = 0.f; return; }
-#else
     VehPtr(&p, static_cast<std::uint32_t>(b));                               // 0x00441cdd
-#endif
     const float* pb = reinterpret_cast<const float*>(p + 0x30u);
+#endif
     const float dx = ax - pb[0], dy = ay - pb[1], dz = az - pb[2];           // 0x00441ce2..0x00441cf8
     out[0] = ax - dx * k0_5;                                                 // 0x00441d05..0f
     out[1] = ay - dy * k0_5;                                                 // 0x00441d11..1b

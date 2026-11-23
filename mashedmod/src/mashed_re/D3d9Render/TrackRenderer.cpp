@@ -8463,10 +8463,10 @@ void TrackRenderer::NextRoundOrEnd() {
 // sub-mode != 6 frame (states 3, 4, 5 under MASHED_SUBSTATE): FUN_00442600 (0x0044655c, guarded),
 // FUN_004464c0 (0x004468f9; the entries read cam +4..+0xc from the PREVIOUS update), the camera
 // main block when cam[7] == 0 (RaceCamera::Update, the same block the sub-mode-6 path runs), then
-// the copy cam+0x40..+0x48 -> cam+4..+0xc (0x004481c9; RaceCamera keeps +0x40 as pos_out_).
+// the copy cam+0x40..+0x48 -> cam+4..+0xc (0x004481c9; RaceCamera keeps +0x40 as pos_out_) and the target point
+// -> cam+0x10..+0x18 (0x004481e5; RaceCamera tgt_out_).
 // Named gaps: cam[7] != 0 runs FUN_004427c0 in the original (not ported; cam[7] is 0 here, set by
-// FUN_00448700(0,0)); FUN_00442a20 (main block, flag != 0) is not in RaceCamera; cam +0x10..+0x18
-// (FUN_00445aa0 orientation only) is not written.
+// FUN_00448700(0,0)); FUN_00442a20 (main block, flag != 0) is not in RaceCamera.
 void TrackRenderer::SubStateCameraChain(bool reset) {
     static bool s_hostSet = false;
     if (!s_hostSet) {
@@ -8480,6 +8480,24 @@ void TrackRenderer::SubStateCameraChain(bool reset) {
             Race::RaceCamera::MostSeparatedPair(cc, a, b);
             if (*a < 0) *a = 0;
             if (*b < 0) *b = 0;
+        };
+        // [PLAYTEST-INTRO-CAMERA] FUN_00441c80's per-car position, FUN_0046d4a0(car) +0x30..+0x38. Before GO the
+        // original's ring row holds the grid pose FUN_0040e590 -> FUN_004704c0 wrote (translation 0x004705fe /
+        // 0x0047060a; FUN_004111c0's state-2 tail and FUN_004102f0's first phase-3 frame, before FUN_0040d470(1);
+        // FUN_0046baa0's per-frame hold writes nothing in 0x00881ec8..0x00881f48). The exe's ring row is (0,0,0) until
+        // the first physics substep (the u9747 countdown seed was lost with the stand-in, 20efede42), so the intro aimed
+        // at the world origin. The pose comes from the exe's held grid position in the record's convention (the y
+        // VehiclePhysics_SeedSpawnPose writes: s_spawnY, else pos.y - car_ground_off_). The ring itself stays as it is:
+        // the AI's pre-GO tick reads it too, and seeding it moves G-CTRL / B (verify/playtest_intro_camera_20261122).
+        h.car_pos = [](int car, float out[3]) -> bool {
+            if (!s_tr || car < 0 || car >= kRaceCars) return false;
+            Race::RaceCamCar cc[kRaceCars] = {};
+            s_tr->FillRaceCamCars(cc);
+            if (!cc[car].active) return false;
+            out[0] = cc[car].pos[0];
+            out[1] = s_spawnYOk[car] ? s_spawnY[car] : cc[car].pos[1] - s_tr->car_ground_off_;
+            out[2] = cc[car].pos[2];
+            return true;
         };
         CamEntry_SetHost(h);
         s_hostSet = true;
@@ -8515,6 +8533,11 @@ void TrackRenderer::SubStateCameraChain(bool reset) {
             race_cam_.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, reset);
         const float* p = race_cam_.pos();                          // +0x40..+0x48
         std::memcpy(reinterpret_cast<void*>(0x00897fe4u), p, 12);  // 0x004481c9 copy -> +4..+0xc
+        // [PLAYTEST-INTRO-CAMERA] 0x004481e5..0x004481f9: the target point ([ebp-0x10], [ebp-0xc], [ebp-8], the value the
+        // main block also stores at +0x97c, RaceCamera tgt_out_) -> +0x10..+0x18. FUN_00445aa0 pulls its look target toward
+        // it once entry 0 is within 8 units (0x00445e9b..0x00445f0e); unwritten (0,0,0), the phase-3 intro turned to the
+        // origin for its last ~500 frames.
+        std::memcpy(reinterpret_cast<void*>(0x00897ff0u), race_cam_.target(), 12);
     } else if (CamReplayP3On()) {
         // [HB-RUN13-PHASE3-START] camera_probe.py writes a row on every FUN_00446520 return, cam[7] or not, so a
         // gated-off call still takes its row (no trace row has c7 != 0; this keeps the 1:1 call mapping anyway)
