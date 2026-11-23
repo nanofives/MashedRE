@@ -60,14 +60,17 @@ Standalone differences, by design:
 
 | what | path | verdict |
 |---|---|---|
-| draw list, settled pause screen | `diff_scr0_final.txt` (orig `orig/scr0_burst.json` `--screen 0`, standalone `r4/nav/drawstream_re.json` f940..f943) | GREEN 117/117 each frame vs orig f0 and f3 (`--scale-b 1 --exclude-tex 9 --rotate-a 0x42e65a --tol-anim 4`) |
-| behaviour, all 5 entries + ESC/Backspace + modal No | `r4/<scenario>/pause/pause_demo.txt` (nav, options, no, restart, quitrace, quitgame) | Continue resumes (paused 0, pre-race stack 6 back). Options pushes 8, Back returns to 0. Restart relaunches (mode 1 -> 2). Quit Race lands on 7 (depth 2). Quit Game lands on 1. ESC / Backspace on 0 and ESC on 1 are no-ops. No keeps the menu. |
+| draw list, settled pause screen | `diff_scr0_final.txt` (orig `orig/scr0_burst.json` `--screen 0`, standalone `r6/nav/drawstream_re.json` f940..f943) | GREEN 117/117 each frame vs orig f0 and f3 (`--scale-b 1 --exclude-tex 9 --rotate-a 0x42e65a --tol-anim 4`) |
+| behaviour, all 5 entries + ESC/Backspace + modal No | `r6/<scenario>/pause/pause_demo.txt` (nav, options, no, restart, quitrace, quitgame) | Continue resumes (paused 0, pre-race stack 6 back). Options pushes 8, Back returns to 0. Restart relaunches (mode 1 -> 2). Quit Race lands on 7 (depth 2). Quit Game lands on 1. ESC / Backspace on 0 and ESC on 1 are no-ops. No keeps the menu. |
 | text raster | `imgdiff/` header and footer bands vs `verify/screen_id/race_fire6_settled.bmp` | same strings, positions and sizes (0x47, 0x41, 0x42). Mean diff 9.05 / 7.68 is backdrop movie frame + checker phase through the translucent bands. |
 | nav_coverage | `nav_coverage.txt` | screen 0 not statically reachable from root 1 (entered by the pause key), so its 5 actions are covered by the dynamic walk above |
-| gates | `gates_exe12a81d33.txt` | G-CTRL 8284be46 / 67931834 / 31fe043e, B 1d5bf4f9 x3, equal to `re/orchestrator/merge_train.json` refs |
+| gates | `gates_exe6411ebf1.txt` | G-CTRL 8284be46 / 67931834 / 31fe043e, B 1d5bf4f9 x3, equal to `re/orchestrator/merge_train.json` refs |
 
-The gates ran on exe 12a81d33: the merged tree, before two capture-driver-only edits (the MASHED_PAUSE_DEMO
-pre-launch wait and log fields). Those edits are inside `RunPauseDemoStep`, which runs only with MASHED_PAUSE_DEMO set.
+Final tree: branch merged with race/first-frame-parity ea4e6f6f2, exe sha8 6411ebf1. The draw-list diff, the six
+scenarios and the gates all ran on that exe. The same acceptance also passed on the two earlier merges (7fabf4dd1,
+exe 12a81d33, and 64b078a66, exe 3c89f2aa), with the same gate hashes.
+The bash runner reported rc=127 for nav / options / no on 6411ebf1 even though each run reached `done`. A direct
+launch exits 0x00000000 (`exitcode.txt`). The r6 `pause_demo.txt` files of those three hold two appended runs.
 
 ## Open
 

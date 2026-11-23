@@ -1,0 +1,4 @@
+direct launch (pwsh Start-Process, exe 6411ebf1, MASHED_PAUSE_DEMO):
+scenario=no exit=0x00000000
+scenario=restart exit=0x00000000
+(the bash runner reported rc=127 for nav/options/no on this exe while each run reached 'done'; the direct launch shows the process exits 0)
