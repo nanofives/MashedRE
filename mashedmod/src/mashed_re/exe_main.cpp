@@ -1333,6 +1333,9 @@ bool g_nav_demo = false;
 // demo, drives the REAL input path but launches a race from Challenge Select and
 // captures the in-race 3D view. Defined below; also bypasses the focus gate.
 bool g_race_demo = false;
+// MASHED_PAUSE_DEMO=<nav|options|no|restart|quitrace|quitgame> (pair with MASHED_GOTO=6): scripted in-race pause-menu
+// walk, captures under verify/pause/ (RunPauseDemoStep).
+bool g_pause_demo = false;
 
 // Dump the current backbuffer (post-Present is unavailable, so we grab the
 // render target before Present, see RenderFrame) to a 24-bit BMP. Self-contained
@@ -2259,9 +2262,16 @@ void ModalGo(int step) {
         case 52: g_modal_body_id = g_modal_ok_body; g_modal_yesno = false;
                  g_modal_button_id = 0x2d;
                  break;                                              // single OK
+        // Pause-menu confirms, 0x0043dfd0 select arms: FUN_0042bf30(0x32, 0xff1e0000, 2, 0x2e, 0x2f, 0) Restart Race,
+        // (0x33, 0xff1f0000, ...) Quit Race, (0x34, 0xff200000, ...) Quit Game. Kind 2 = Yes/No (0x0043d7c0 case 2:
+        // FUN_0042ae10 -> DAT_0067eac4 Yes, FUN_0042aeb0 -> DAT_0067eac5 No). Yes -> PauseConfirmYes.
+        case 60: g_modal_body_id = 0x32;  g_modal_yesno = true;  break; // "Are you sure you want to restart the race?"
+        case 61: g_modal_body_id = 0x33;  g_modal_yesno = true;  break; // "Are you sure you want to quit the race?"
+        case 62: g_modal_body_id = 0x34;  g_modal_yesno = true;  break; // "Are you sure you want to quit the game?"
         default: g_modal_body_id = 0; g_modal_step = 0; g_modal_yesno = false; break;
     }
 }
+static void PauseConfirmYes(int step);   // defined after MenuLaunchRace
 
 // [MATCH-T13-SEED-WRITER] Race/AiDifficultyReset.cpp, MASHED_DIFF360_LIVE (default OFF).
 extern "C" bool __cdecl RaceDiff360Live_Enabled();
@@ -2340,7 +2350,9 @@ static int ChallengeLaunchOpponentColours(int mode, int row) {
     return n;
 }
 
+static int g_last_launch_mode = 3;   // the launchMode of the last MenuLaunchRace (pause-menu Restart Race reuses it)
 static void MenuLaunchRace(int launchMode) {
+    g_last_launch_mode = launchMode;
     char piz[160];
     RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
     // [MATCH-PORTSTATE-GAMEFLOW] knob ON: the mode word is written before the course load, as the original's
@@ -2460,15 +2472,268 @@ static void MenuLaunchRace(int launchMode) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// In-race PAUSE MENU (playtest 2026-11-22, "pause menu is completely different"). Replaces the hand-written
+// "PAUSED / [ESC] Resume / [ENTER] Quit to Menu" stand-in. The original's pause is frontend screen 0 drawn as a
+// full frontend frame, reached through a fade through black:
+//   - In 0x004929d0 case 3: FUN_0042f6a0() (DAT_0067e9fc) != 0xb and FUN_0040e350() (DAT_0063ba8c) != 0xb, != 9,
+//     then FUN_00432080(FUN_005c9d00()) != 0 -> mode 5. 0x00432080 needs DAT_0067eca4 == 0 and the pause action
+//     edge (pad byte +9, 0x007f1041 / 0x007f1501), then sets DAT_0067eca4 = 1, clears the nav stack and stores
+//     DAT_0067ecac = 0 (0x005c9d00 returns 0).
+//   - The tick 0x0043dfd0 ramps DAT_0067eca8 (the alpha of 0x0042aae0's full-screen black quad) per DAT_0067eca4:
+//     1: += (int)(dt * 1000) [0x005cc9fc], at >= 0xff -> 2 and FUN_0043d2a0(DAT_0067ecac, 0) (push screen 0);
+//     2: += (int)(dt * -500) [0x005cda88], below 0 -> 3 (menu takes input); 4: += (int)(dt * 1000), at >= 0xff and
+//     once FUN_004325c0 reports the records settled -> 5; 5: += (int)(dt * -800) [0x005cd8f8], at <= 0 -> 0.
+//     dt = DAT_007f1004 = 0x32 * (1/3000) [0x005cc948] every frame (0x00493390 stores 0x32 at 0x004933d5).
+//   - Modes in 0x004929d0: mode 5 -> 4 when DAT_0067eca4 == 2, 4 -> 6 when == 5, 6 -> 3 when == 0. 0x00492d30 runs the race
+//     tick FUN_004111c0 only in modes 3 and 6, so the sim stays frozen through DAT_0067eca4 1..4.
+//   - Render 0x00492e90: mode 5 = race + FUN_0043c5b0 (eca4 == 1: the black quad only); mode 4 = 0x00492e60 +
+//     FUN_0043c5b0 (chrome while eca4 < 5, records while eca4 < 4, quad between them) + 0x00433f40 modal; mode 6 =
+//     race + quad, or nothing (black) while DAT_007719c8 = (DAT_0067eca8 >= 200).
+//   - Screen 0 (kT0) flag run: ff0b/ff0c (up/down), ff10 (select), ff12. No ff11, so Back does nothing there, and the
+//     pause key is only read in mode 3, so ESC does nothing on the pause menu.
+//   - Select arms in 0x0043dfd0: 0xff150000 Continue = FUN_0043d2a0(0, 2) + DAT_0067e914 = 1 (eca4 -> 4);
+//     0xff500000 Options = push 8; 0xff1e0000 / 0xff1f0000 / 0xff200000 = FUN_0042bf30(0x32 / 0x33 / 0x34, code, 2,
+//     0x2e, 0x2f, 0), whose Yes runs 0x0043d7c0's case -0xe20000 / -0xe10000 / -0xe00000 (see PauseConfirmYes).
+// ---------------------------------------------------------------------------
+struct PauseMenuState {
+    int phase = 0;     // DAT_0067eca4 analogue while a race is live (0 = closed)
+    int alpha = 0;     // DAT_0067eca8 analogue (0x0042aae0 quad alpha)
+    bool restarting = false;   // standalone: hold eca4 4 -> 5 until the relaunch reaches InRace
+};
+static PauseMenuState g_pause;
+static bool g_menu_anim_settled = true;   // last Nav_AnimTick() result (FUN_004325c0 return)
+constexpr float kPauseDt = 50.0f * 3.3333333e-4f;   // DAT_007f1004 with DAT_007f1000 = 0x32 (0x0049351f, 0x004933d5)
+
+static bool PauseRaceLive() {
+    const auto m = mashed_re::Race::GameFlow_Mode();
+    return m == mashed_re::Race::GameMode::InRace || m == mashed_re::Race::GameMode::LoadingRace;
+}
+// Mode 4 frames (eca4 2..4): the frontend frame is drawn instead of the race.
+static bool PauseShowsFrontend() { return g_pause.phase >= 2 && g_pause.phase <= 4 && PauseRaceLive(); }
+// The draw 0x0043c5b0 draws the records only while DAT_0067eca4 < 4.
+static bool PauseHidesRecords()  { return g_pause.phase >= 4 && PauseRaceLive(); }
+// The 0x004929d0 case 3 gate in front of FUN_00432080, plus its own DAT_0067eca4 == 0 test.
+static bool PauseAllowed() {
+    if (g_pause.phase != 0) return false;
+    if (mashed_re::Race::GameFlow_Mode() != mashed_re::Race::GameMode::InRace) return false;
+    if (mashed_re::Frontend::Nav_GameModeWord() == 0xb) return false;          // FUN_0042f6a0 = DAT_0067e9fc
+    const int ba8c = *reinterpret_cast<const int*>(0x0063ba8cu);               // FUN_0040e350 = DAT_0063ba8c
+    return ba8c != 0xb && ba8c != 9;
+}
+static void PauseOpen() {
+    g_pause.phase = 1;                                   // 0x00432080: DAT_0067eca4 = 1
+    g_pause.alpha = 0;
+    g_pause.restarting = false;
+    mashed_re::Frontend::Nav_PauseSnapshotSave();        // standalone flow, see MenuNavSM.h
+    mashed_re::Race::GameFlow_SetPaused(true);           // mode 5: no race tick
+    if (std::FILE* lf = std::fopen(kLogPath, "a")) { std::fprintf(lf, "PAUSE open\n"); std::fclose(lf); }
+}
+// DAT_0067e914 = 1: the next 0x0043dfd0 frame sets DAT_0067eca4 = 4.
+static void PauseClose() { g_pause.phase = 4; }
+
+// One 0x0043dfd0 frame of the fade word, see the block comment.
+static void PauseTick() {
+    if (g_pause.phase == 0) return;
+    if (!PauseRaceLive()) { g_pause = PauseMenuState{}; return; }   // the race ended under the menu
+    switch (g_pause.phase) {
+        case 1:
+            g_pause.alpha += static_cast<int>(kPauseDt * 1000.0f);    // [0x005cc9fc]
+            if (g_pause.alpha >= 0xff) {
+                g_pause.alpha = 0xff;
+                g_pause.phase = 2;
+                mashed_re::Frontend::Nav_PauseEnter(0);              // FUN_0043d2a0(DAT_0067ecac = 0, 0)
+            }
+            break;
+        case 2:
+            g_pause.alpha += static_cast<int>(kPauseDt * -500.0f);    // [0x005cda88]
+            if (g_pause.alpha < 0) { g_pause.alpha = 0; g_pause.phase = 3; }
+            break;
+        case 4:
+            // At 0x00440a0c the eca4 4 arm calls FUN_004325c0 itself (the records are not drawn in this phase, so
+            // RenderFrame's anim tick does not run).
+            g_menu_anim_settled = mashed_re::Frontend::Nav_AnimTick();
+            g_pause.alpha += static_cast<int>(kPauseDt * 1000.0f);    // [0x005cc9fc]
+            if (g_pause.alpha < 0xff) break;
+            g_pause.alpha = 0xff;
+            if (!g_menu_anim_settled) break;                          // FUN_004325c0 == 0
+            if (g_pause.restarting &&
+                mashed_re::Race::GameFlow_Mode() != mashed_re::Race::GameMode::InRace) break;
+            g_pause.phase = 5;                                        // mode 4 -> 6: the race tick runs again
+            mashed_re::Frontend::Nav_PauseSnapshotRestore();
+            mashed_re::Race::GameFlow_SetPaused(false);
+            break;
+        case 5:
+            g_pause.alpha += static_cast<int>(kPauseDt * -800.0f);    // [0x005cd8f8]
+            if (g_pause.alpha <= 0) g_pause = PauseMenuState{};       // mode 6 -> 3
+            break;
+        default: break;
+    }
+}
+
+// The fade 0x0042aae0: full-screen quad, colour (DAT_0067eca8 << 24), src alpha / inv src alpha, drawn when the word != 0.
+static void PauseDrawFade() {
+    if (g_pause.phase == 0 || g_pause.alpha == 0 || !g_bridge_installed) return;
+    std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+    // Mode 6 with DAT_007719c8 = (DAT_0067eca8 >= 200): 0x00492e90 draws nothing over the black clear.
+    const std::uint32_t a = (g_pause.phase == 5 && g_pause.alpha >= 200)
+        ? 0xff000000u : (static_cast<std::uint32_t>(g_pause.alpha & 0xff) << 24);
+    HudIm2DQuad(0, 0.f, 0.f, 640.f * kVScale, 480.f * kVScale, a, uvf);
+}
+
+// Yes on the three pause confirms, 0x0043d7c0 after the modal fades out (DAT_0067eac4 = Yes).
+static void PauseConfirmYes(int step) {
+    using namespace mashed_re::Frontend;
+    if (step == 60 && !PauseRaceLive()) {
+        // Screen 0 reached in the frontend (Back from 7 after Quit Race): no race to restart. The original's arm
+        // still calls FUN_0040de10 and sets DAT_0067e914 = 1 there; what the frontend then shows is not observed
+        // [UNCERTAIN U-9804]. Here it only reloads the screen.
+        Nav(0, kNavReload);
+    } else if (step == 60) {
+        // case -0xe20000: FUN_0043d2a0(0, 2); FUN_0040de10 (race re-init); DAT_0067e914 = 1; FUN_004298c0.
+        // Standalone: the race is relaunched with the same configuration through the launch path; the original
+        // re-inits in place (0x0040de10 -> 0x0040ddb0 / 0x00411750, DAT_0063ba8c = 1, 0x00405420) without reloading
+        // the course piz. FUN_004298c0 zeroes DAT_0067d99c / d994 / d98c / 008991bc, which have no reader here.
+        Nav(0, kNavReload);
+        mashed_re::Race::GameFlow_EndRaceForRestart();
+        Nav_PauseSnapshotRestore();      // MenuLaunchRace reads the frontend's launch state
+        MenuLaunchRace(g_last_launch_mode);
+        Nav_PauseSnapshotSave();         // keep it for the 4 -> 5 restore
+        g_pause.restarting = true;
+        PauseClose();
+    } else if (step == 61 || step == 62) {
+        // case -0xe10000 (Quit Race): FUN_00493570 (DAT_0077196c = 1: 0x004929d0 mode 4 -> 1), DAT_0067f1a8 = 0,
+        // FUN_0043d2a0(7, 0), FUN_0040de10, DAT_0067e9fc = 3 when DAT_0067ed6c != 0.
+        // case -0xe00000 (Quit Game): FUN_00493580 (DAT_00771970 = 1: mode 4 -> 1), FUN_0042b950
+        // (DAT_007f1a0c = 0x1000), FUN_0043d2a0(1, 0), FUN_0040de10.
+        // DAT_0067eca4 stays 3: the frontend continues on the pushed screen with no fade. The push lands on the
+        // pause stack [cleared slot, 0], as in the original. DAT_0067f1a8 and DAT_007f1a0c have no reader here.
+        const bool inRace = PauseRaceLive();
+        g_pause = PauseMenuState{};
+        Nav_PauseSnapshotDrop();
+        if (inRace) mashed_re::Race::GameFlow_RequestExit();
+        if (step == 61) {
+            Nav(7, kNavPush);
+            if (Nav_GameState().flag_ed6c != 0) Nav_GameModeWord() = 3;
+        } else {
+            Nav(1, kNavPush);
+        }
+    }
+    ModalGo(0);
+}
+
+// MASHED_PAUSE_DEMO driver (capture aid, pair with MASHED_GOTO=6): launches the race from Challenge Select, opens the
+// pause menu with PauseOpen() 600 frames in, then runs one scenario script. Frame-counted (no wall-clock waits), so a
+// rerun with MASHED_DBG_DRAWSTREAM=N:M lands on the frames the log names (ds=). Captures: verify/pause/<tag>.bmp,
+// log lines "PAUSE_DEMO tag=..." in the standalone log.
+static bool RunPauseDemoStep() {
+    using namespace mashed_re::Frontend;
+    struct Op { char op; int arg; const char* tag; };
+    static const Op kOpen[] = {
+        {'C',0,"race_before"}, {'O',0,nullptr}, {'W',6,nullptr}, {'C',0,"fade_in"}, {'P',2,nullptr}, {'W',2,nullptr},
+        {'C',0,"reveal"}, {'P',3,nullptr}, {'W',60,nullptr}, {'C',0,"cur0"}, {'S',0,nullptr} };
+    static const Op kNav[] = {
+        {'D',0,nullptr}, {'W',20,nullptr}, {'C',0,"cur1"}, {'D',0,nullptr}, {'W',20,nullptr}, {'C',0,"cur2"},
+        {'D',0,nullptr}, {'W',20,nullptr}, {'C',0,"cur3"}, {'D',0,nullptr}, {'W',20,nullptr}, {'C',0,"cur4"},
+        {'U',0,nullptr}, {'W',8,nullptr}, {'U',0,nullptr}, {'W',8,nullptr}, {'U',0,nullptr}, {'W',8,nullptr},
+        {'U',0,nullptr}, {'W',8,nullptr}, {'C',0,"cur0_again"}, {'X',0,nullptr}, {'W',20,nullptr}, {'C',0,"esc_noop"},
+        {'B',0,nullptr}, {'W',20,nullptr}, {'L',0,"bks_noop"}, {'E',0,nullptr}, {'W',4,nullptr}, {'C',0,"close_fade"},
+        {'P',5,nullptr}, {'C',0,"close_reveal"}, {'P',0,nullptr}, {'W',60,nullptr}, {'C',0,"resumed"}, {'Q',0,nullptr} };
+    static const Op kOptions[] = {
+        {'D',0,nullptr}, {'W',20,nullptr}, {'E',0,nullptr}, {'W',40,nullptr}, {'C',0,"options"}, {'X',0,nullptr},
+        {'W',40,nullptr}, {'C',0,"options_back"}, {'U',0,nullptr}, {'W',10,nullptr}, {'E',0,nullptr}, {'P',0,nullptr},
+        {'W',30,nullptr}, {'L',0,"resumed"}, {'Q',0,nullptr} };
+    static const Op kNo[] = {
+        {'D',0,nullptr}, {'D',0,nullptr}, {'D',0,nullptr}, {'W',20,nullptr}, {'E',0,nullptr}, {'W',40,nullptr},
+        {'C',0,"quitrace_modal"}, {'X',0,nullptr}, {'W',30,nullptr}, {'C',0,"modal_no"}, {'U',0,nullptr},
+        {'U',0,nullptr}, {'U',0,nullptr}, {'W',10,nullptr}, {'E',0,nullptr}, {'P',0,nullptr}, {'L',0,"resumed"},
+        {'Q',0,nullptr} };
+    static const Op kRestart[] = {
+        {'D',0,nullptr}, {'D',0,nullptr}, {'W',20,nullptr}, {'E',0,nullptr}, {'W',40,nullptr}, {'C',0,"restart_modal"},
+        {'E',0,nullptr}, {'W',2,nullptr}, {'L',0,"restart_yes"}, {'P',0,nullptr}, {'W',60,nullptr},
+        {'C',0,"restarted"}, {'Q',0,nullptr} };
+    static const Op kQuitRace[] = {
+        {'D',0,nullptr}, {'D',0,nullptr}, {'D',0,nullptr}, {'W',20,nullptr}, {'E',0,nullptr}, {'W',40,nullptr},
+        {'C',0,"quitrace_modal"}, {'E',0,nullptr}, {'W',40,nullptr}, {'C',0,"quitrace_done"}, {'X',0,nullptr},
+        {'W',40,nullptr}, {'C',0,"quitrace_back"}, {'Q',0,nullptr} };
+    static const Op kQuitGame[] = {
+        {'D',0,nullptr}, {'D',0,nullptr}, {'D',0,nullptr}, {'D',0,nullptr}, {'W',20,nullptr}, {'E',0,nullptr},
+        {'W',40,nullptr}, {'C',0,"quitgame_modal"}, {'E',0,nullptr}, {'W',40,nullptr}, {'C',0,"quitgame_done"},
+        {'X',0,nullptr}, {'W',20,nullptr}, {'L',0,"quitgame_esc_noop"}, {'Q',0,nullptr} };
+    static int stage = 0, pc = 0, wait = 0, guard = 0;
+    static const Op* script = nullptr;
+    if (!script) {
+        char sc[16] = {};
+        GetEnvironmentVariableA("MASHED_PAUSE_DEMO", sc, sizeof sc);
+        script = !std::strcmp(sc, "options") ? kOptions : !std::strcmp(sc, "no") ? kNo
+               : !std::strcmp(sc, "restart") ? kRestart : !std::strcmp(sc, "quitrace") ? kQuitRace
+               : !std::strcmp(sc, "quitgame") ? kQuitGame : kNav;
+        CreateDirectoryA("verify", nullptr);
+        CreateDirectoryA("verify\\pause", nullptr);
+    }
+    const auto mode = mashed_re::Race::GameFlow_Mode();
+    auto log = [&](const char* tag) {
+        for (const char* path : {kLogPath, VOut("pause/pause_demo.txt")})
+        if (std::FILE* lf = std::fopen(path, "a")) {
+            std::fprintf(lf, "PAUSE_DEMO tag=%s ds=%d phase=%d alpha=%d mode=%d paused=%d sid=%d depth=%d cur=%d "
+                             "modal=%d race_t=%.3f cd=%.3f\n", tag, mashed_re::D3d9Render::DrawStreamDump_FrameIndex(),
+                         g_pause.phase, g_pause.alpha, static_cast<int>(mode),
+                         static_cast<int>(mashed_re::Race::GameFlow_IsPaused()), Nav_ScreenId(), Nav_Depth(),
+                         Nav_Cursor(), g_modal_step, g_track.car_ready() ? g_track.race_time() : -1.0f, g_track.car_ready() ? g_track.countdown() : -1.0f);
+            std::fclose(lf);
+        }
+    };
+    if (++guard > 60 * 180) { log("timeout"); return true; }
+    if (wait > 0) { --wait; return false; }
+    if (stage == 0) {                       // Challenge Select up -> launch
+        if (g_frontend_phase < 3 || g_modal_step != 0 || Nav_ScreenId() != 6) return false;
+        // 200 frames on the menu first: the arc-wash fade pair steps 2 per frame (0x00473f87..0x00473fc2) and is
+        // frozen through the race, so a launch right after boot would carry a part-raised wash into the pause screen.
+        stage = 4; wait = 200; return false;
+    }
+    if (stage == 4) { log("launch"); NavDemoTap(DIK_RETURN); stage = 1; wait = 2; return false; }
+    if (stage == 1) {                       // InRace, 600 frames in
+        if (mode != mashed_re::Race::GameMode::InRace) return false;
+        stage = 2; wait = 600; return false;   // past the intro camera and the countdown
+    }
+    const Op* ops = (stage == 2) ? kOpen : script;
+    const Op& o = ops[pc];
+    switch (o.op) {
+        case 'O': PauseOpen(); break;
+        case 'W': wait = o.arg; break;
+        case 'C': {
+            char p[160];
+            std::snprintf(p, sizeof p, "%s", VOut2("pause/%s.bmp", o.tag));
+            DumpBackbufferBMP(p);
+            log(o.tag);
+            break;
+        }
+        case 'L': log(o.tag); break;
+        case 'P': if (g_pause.phase != o.arg) return false; break;
+        case 'D': NavDemoTap(DIK_DOWN); break;
+        case 'U': NavDemoTap(DIK_UP); break;
+        case 'E': NavDemoTap(DIK_RETURN); break;
+        case 'X': NavDemoTap(DIK_ESCAPE); break;
+        case 'B': NavDemoTap(DIK_BACK); break;
+        case 'S': stage = 3; pc = 0; return false;
+        case 'Q': log("done"); return true;
+        default: break;
+    }
+    ++pc;
+    if (o.op == 'D' || o.op == 'U' || o.op == 'E' || o.op == 'X' || o.op == 'B') wait = 1;   // one edge per frame
+    return false;
+}
+
 bool UpdateMenuSelection() {
     using namespace mashed_re::Frontend;
     Nav_FrameInputBegin();   // FUN_0043dfd0 per-frame resets (harvest L59-L61)
+    PauseTick();             // FUN_0043dfd0's DAT_0067eca4 / DAT_0067eca8 ramp (in-race pause menu)
     if (!g_kbd) return false;
     // #1 (user review): DirectInput is DISCL_BACKGROUND|NONEXCLUSIVE, so g_kbd
     // reads GLOBAL key state even when our window isn't focused — meaning keys
     // pressed in another app were driving the menu. Gate all input on window
     // focus (g_active, set by WM_ACTIVATE); the nav-demo driver bypasses this.
-    if (!g_active && !g_nav_demo && !g_race_demo && !g_cfgedit_demo && !g_nav_keys) return false;
+    if (!g_active && !g_nav_demo && !g_race_demo && !g_cfgedit_demo && !g_nav_keys && !g_pause_demo) return false;
     const bool up_now    = (g_keys[DIK_UP]        & 0x80) != 0;
     const bool up_prev   = (g_keys_prev[DIK_UP]   & 0x80) != 0;
     const bool down_now  = (g_keys[DIK_DOWN]      & 0x80) != 0;
@@ -2482,6 +2747,7 @@ bool UpdateMenuSelection() {
     // InRace: Esc PAUSES (faithful mode 3<->7), it does NOT exit — see below.
     {
         const mashed_re::Race::GameMode gm = mashed_re::Race::GameFlow_Mode();
+        if (g_pause.phase != 0 && g_pause.phase != 3) return false;   // pause fades (incl. a Restart's LoadingRace)
         if (gm == mashed_re::Race::GameMode::InRace) {
             // [#3 playtest, 2026-09-06] FAITHFUL in-race pause. In the original the
             // pause button freezes the sim and shows the pause menu (master mode
@@ -2493,29 +2759,26 @@ bool UpdateMenuSelection() {
             // e.g. "RequestExit -> Frontend" ~:1596 below). Keep that exit for them
             // so headless parity captures are unchanged; only interactive play
             // pauses. g_det_clock (deterministic capture) also keeps exit-on-ESC.
-            const bool demo = g_nav_demo || g_race_demo || g_cfgedit_demo ||
-                              g_det_clock;
-            if (demo) {
-                if (esc_now && !esc_prev)
-                    mashed_re::Race::GameFlow_RequestExit();
+            // The pause menu (see the PauseMenuState block): while it is up the menu input below runs on its
+            // screens. DAT_0067eca4 3 is the only phase 0x0043dfd0 reads input in (1 and 2 return early,
+            // 4 and 5 jump past the input to LAB_00440a0c). This sits before the demo test so a capture driver
+            // that opened the menu with PauseOpen() can drive it.
+            const bool pauseUp = (g_pause.phase != 0);
+            if (pauseUp && g_pause.phase != 3) return false;
+            if (!pauseUp) {
+                const bool demo = g_nav_demo || g_race_demo || g_cfgedit_demo ||
+                                  g_det_clock || g_pause_demo;
+                if (demo) {
+                    if (esc_now && !esc_prev && !g_pause_demo)
+                        mashed_re::Race::GameFlow_RequestExit();
+                    return false;
+                }
+                // Pause key (contcfg action 6, ESC here): 0x004929d0 case 3 -> FUN_00432080.
+                if (esc_now && !esc_prev && PauseAllowed()) PauseOpen();
                 return false;
             }
-            if (esc_now && !esc_prev) {
-                mashed_re::Race::GameFlow_SetPaused(
-                    !mashed_re::Race::GameFlow_IsPaused());  // toggle pause/resume
-            } else if (mashed_re::Race::GameFlow_IsPaused() && ent_now &&
-                       !ent_prev) {
-                // Pause-menu QUIT-to-frontend (original overlay action -0xce0000 in
-                // FUN_0043d7c0 -> FUN_0043d2a0(1,0)): ENTER while paused exits the
-                // race. [SCOPED] the full pause menu (event 0xff210000 /
-                // FUN_0043d7c0 records: Resume / Restart / Quit) is not yet
-                // reversed; this wires the two core actions (resume via ESC, quit
-                // via ENTER) without inventing the menu's exact text/layout.
-                // Restart (-0xe00000 -> FUN_0040de10) is left for the full port.
-                mashed_re::Race::GameFlow_RequestExit();
-            }
-            return false;
-        }
+            // pauseUp, phase 3: fall through to the menu input (modal, cursor, select).
+        } else
         if (gm == mashed_re::Race::GameMode::Results) {
             if (esc_now && !esc_prev) {
                 // [D-11059(a)] Dismissing the RESULTS of a completed cup race
@@ -2625,6 +2888,9 @@ bool UpdateMenuSelection() {
             } else if (g_modal_step == 51) {         // [D-11057] continue-cup two-choice
                 if (yes)      { mashed_re::Frontend::Nav_ContinueCupConfirm(); ModalGo(0); }
                 else if (no)  ModalGo(0);            // No -> dismiss (stay)
+            } else if (g_modal_step >= 60 && g_modal_step <= 62) {   // pause-menu confirms
+                if (yes)      PauseConfirmYes(g_modal_step);         // 0x0043d7c0, DAT_0067eac4 != 0
+                else if (no)  ModalGo(0);                             // DAT_0067eac5: no dispatch
             } else if (yes) {
                 // [WS-G4/G5] perform the real save/load at the confirm, then
                 // advance the modal: Load (10) re-reads the real gamesave ->
@@ -2730,7 +2996,19 @@ bool UpdateMenuSelection() {
                     recs[i].row_index == cur) { sel_prim = recs[i].prim_id; break; }
             }
         }
-        if (sel_prim == 0x261) {          // Exit To Windows -> quit confirm
+        // Screen 0 (the pause menu, kT0) select arms of 0x0043dfd0. 0xff500000 (Options) is the generic push 8
+        // through Nav_Select below.
+        const std::uint32_t act0 = (sid == 0) ? Nav_SelectAction() : 0u;
+        if (act0 == 0xff150000u) {               // Continue: FUN_0043d2a0(0, 2); DAT_0067e914 = 1
+            Nav(0, kNavReload);
+            if (PauseRaceLive() && g_pause.phase == 3) PauseClose();
+        } else if (act0 == 0xff1e0000u) {        // Restart Race: FUN_0042bf30(0x32, 0xff1e0000, 2, 0x2e, 0x2f, 0)
+            ModalGo(60); g_modal_alpha = 0;
+        } else if (act0 == 0xff1f0000u) {        // Quit Race:    FUN_0042bf30(0x33, 0xff1f0000, 2, 0x2e, 0x2f, 0)
+            ModalGo(61); g_modal_alpha = 0;
+        } else if (act0 == 0xff200000u) {        // Quit Game:    FUN_0042bf30(0x34, 0xff200000, 2, 0x2e, 0x2f, 0)
+            ModalGo(62); g_modal_alpha = 0;
+        } else if (sel_prim == 0x261) {          // Exit To Windows -> quit confirm
             ModalGo(40); g_modal_alpha = 0;
         } else if (sid == 8 && cur == 2) {       // Load Game
             ModalGo(10); g_modal_alpha = 0;
@@ -2883,11 +3161,17 @@ bool UpdateMenuSelection() {
         const bool pgup_prev= (g_keys_prev[DIK_PRIOR] & 0x80) != 0;
         const bool pgdn_now = (g_keys[DIK_NEXT] & 0x80) != 0;
         const bool pgdn_prev= (g_keys_prev[DIK_NEXT] & 0x80) != 0;
-        if (pgdn_now && !pgdn_prev) { Nav_DevGoto(Nav_DevScreen() + 1); return false; }
-        if (pgup_now && !pgup_prev) { Nav_DevGoto(Nav_DevScreen() - 1); return false; }
+        if (g_pause.phase == 0) {   // the dev jump would replace the pause stack
+            if (pgdn_now && !pgdn_prev) { Nav_DevGoto(Nav_DevScreen() + 1); return false; }
+            if (pgup_now && !pgup_prev) { Nav_DevGoto(Nav_DevScreen() - 1); return false; }
+        }
     }
-    if ((bks_now && !bks_prev)) Nav_Back();             // Backspace = pop
-    if (esc_now  && !esc_prev) {
+    // Screens 0 and 1 carry no 0xff110000 in their flag run (kT0 / kT1), so 0x0043dfd0's Back arm (bVar2,
+    // FUN_0042aeb0) never runs there. Screen 1 sat at the root until now; the pause menu's Quit Game pushes it
+    // above screen 0, so the pop is gated on these two to keep Back from revealing the pause screen.
+    const bool backless = (Nav_ScreenId() == 0 || Nav_ScreenId() == 1);
+    if ((bks_now && !bks_prev) && !backless) Nav_Back();   // Backspace = pop
+    if (esc_now  && !esc_prev && !backless) {
         // Round-2 feedback: ESC at the main-menu ROOT does NOTHING (it must
         // not return to the title/press-button screen). In a submenu it pops
         // one level. Exit is via the "Exit To Windows" item only.
@@ -3956,7 +4240,9 @@ bool RenderFrame() {
                           mashed_re::Race::GameMode::InRace);
     const bool results = (mashed_re::Race::GameFlow_Mode() ==
                           mashed_re::Race::GameMode::Results);
-    if ((g_track_view || in_race || results) && g_track.ready()) {
+    // In-race pause menu: DAT_0067eca4 2..4 are 0x004929d0 mode 4 frames, which 0x00492e90 draws as a frontend frame
+    // (0x00492e60 + 0x0043c5b0 + 0x00433f40, no race), so they fall through to the frontend draw below.
+    if ((g_track_view || (in_race && !PauseShowsFrontend()) || results) && g_track.ready()) {
         // Parity harness: race/results frame delimiter for MASHED_DBG_DRAWSTREAM.
         // This branch `return true`s below (see the end of the block) WITHOUT
         // ever reaching the frontend delimiter further down, so before this call
@@ -5009,22 +5295,10 @@ bool RenderFrame() {
             }
             DrawMashedString(L"[ESC] Continue", 250.f, 350.f, 22.f, 0xffb0b0b0u);
         }
-        // [#3 playtest] PAUSE overlay. Drawn on top of the frozen 3D scene while
-        // paused (the original renders the frozen scene identically to driving —
-        // FUN_00492e90 case 7 == case 3 — with the pause menu FUN_0043d7c0 over it).
-        // [SCOPED] This is a minimal stand-in for that menu: the original's exact
-        // pause-menu records (event 0xff210000 / FUN_0043d7c0: Resume/Restart/Quit,
-        // drawn from the message table) are not yet reversed, so this shows only the
-        // two wired actions rather than inventing the original's layout/strings. It
-        // never appears in a parity capture (demo/capture drivers exit on ESC and
-        // never pause), so it cannot pollute a draw-list diff.
-        if (paused && g_font.ready() && g_bridge_installed) {
-            std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
-            HudIm2DQuad(0, 210.f, 210.f, 380.f, 190.f, 0xc0100c0cu, uvf);  // dim panel
-            DrawMashedString(L"PAUSED",            250.f, 232.f, 40.f, 0xffffffffu);
-            DrawMashedString(L"[ESC]   Resume",    250.f, 300.f, 24.f, 0xffc0ffc0u);
-            DrawMashedString(L"[ENTER] Quit to Menu", 250.f, 336.f, 24.f, 0xffffc0c0u);
-        }
+        // In-race pause menu, race-drawn phases: mode 5 (DAT_0067eca4 1) draws 0x0043c5b0's black quad over the
+        // race, mode 6 (DAT_0067eca4 5) the same quad while the race resumes. Replaces the 2026-09-06 stand-in
+        // ("PAUSED / [ESC] Resume / [ENTER] Quit to Menu"), which drew no part of the original's screen.
+        PauseDrawFade();
         g_device->EndScene();
         // [d1r2] MASHED_CAM_REPLAY_SHOTS=K1,K2,... (ascending): the backbuffer of the
         // first frame whose race camera consumed MASHED_CAM_REPLAY row >= K, as
@@ -5611,7 +5885,11 @@ bool RenderFrame() {
         }
     }
 
-    if (g_bridge_installed && (g_frontend_phase == 2 || g_frontend_phase == 3)) {   // F6 phase gate (not 4=loading)
+    // In 0x0043c5b0 FUN_0042aae0 (the black fade quad) after the chrome and before the records; the records only while
+    // DAT_0067eca4 < 4 (in-race pause menu fades).
+    PauseDrawFade();
+    if (g_bridge_installed && (g_frontend_phase == 2 || g_frontend_phase == 3) &&   // F6 phase gate (not 4=loading)
+        !PauseHidesRecords()) {
         using namespace mashed_re::Frontend;
         const MenuRecord* recs = Nav_Records();
         const int         nrec = Nav_RecordCount();
@@ -5679,7 +5957,7 @@ bool RenderFrame() {
             if (s_clock_faithful) raw_ms = 0x32;
             Nav_FrameClockUpdate(raw_ms);
         }
-        Nav_AnimTick();
+        g_menu_anim_settled = Nav_AnimTick();   // FUN_004325c0's return, read by the pause close fade
         // MASHED_MENU_ANIM_LOG=<path> (debug, default off): per anim-tick call, QPC ms since the first call after
         // the last screen change, the tick dt, and tag/slide/type of records 0..6 (orig_anim_timing.py fields).
         {
@@ -9915,6 +10193,7 @@ static void HandTop_Prelude() {
     g_nav_demo = (GetEnvironmentVariableA("MASHED_NAV_DEMO", nullptr, 0) != 0);
     g_parity   = (GetEnvironmentVariableA("MASHED_PARITY",   nullptr, 0) != 0);
     g_race_demo= (GetEnvironmentVariableA("MASHED_RACE_DEMO", nullptr, 0) != 0);
+    g_pause_demo = (GetEnvironmentVariableA("MASHED_PAUSE_DEMO", nullptr, 0) != 0);
     g_cfgedit_demo = (GetEnvironmentVariableA("MASHED_CFGEDIT_DEMO", nullptr, 0) != 0);
     g_nav_keys = (GetEnvironmentVariableA("MASHED_NAV_KEYS", g_nav_keys_list,
                                           sizeof(g_nav_keys_list)) > 0);
@@ -10805,6 +11084,9 @@ static void HandTop_FrameHarness() {
     if (g_race_demo) {
         if (RunRaceDemoStep(s_nav_demo_phase)) { PostQuitMessage(0); }
         ++s_nav_demo_phase;
+    }
+    if (g_pause_demo) {
+        if (RunPauseDemoStep()) { PostQuitMessage(0); }
     }
     if (g_cfgedit_demo) {
         if (RunConfigEditDemo(s_nav_demo_phase)) { PostQuitMessage(0); }

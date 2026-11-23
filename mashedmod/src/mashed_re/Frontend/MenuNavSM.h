@@ -169,6 +169,18 @@ void Nav_Init();
 // Force the current screen's records to slide in (title->menu entry motion).
 void Nav_AnimateIn();
 
+// In-race pause entry (playtest 2026-11-22). 0x00432080 LAB_004321c3: FUN_0042d3a0 zeroes every nav slot
+// (0x0067ed78..0x0067f0bc), DAT_0067e844 = 0, DAT_0067e9f8 = 0; then 0x0043dfd0's DAT_0067eca4 1->2 arm pushes
+// DAT_0067ecac with FUN_0043d2a0(DAT_0067ecac, 0), where DAT_0067ecac = FUN_005c9d00() = 0 (0x005c9d00 returns 0).
+// So the pause stack is [zeroed slot, screen 0] at depth 1.
+void Nav_PauseEnter(int screen_id);
+// Standalone flow only (no original counterpart): the original discards the pre-race stack at 0x00432080; the
+// standalone's post-race flow resumes the frontend where the race was launched, so the stack the pause replaced is
+// kept here and put back when the race resumes (Continue / Restart Race).
+void Nav_PauseSnapshotSave();
+bool Nav_PauseSnapshotRestore();   // false when no snapshot is held
+void Nav_PauseSnapshotDrop();
+
 // Dev screen jump (PageUp/PageDown inspection of every screen).
 void Nav_DevGoto(int screen_id);
 int  Nav_DevScreen();

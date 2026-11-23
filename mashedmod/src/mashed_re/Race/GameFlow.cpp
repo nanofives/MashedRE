@@ -349,6 +349,13 @@ void GameFlow_SetPaused(bool paused) {
     // audio state is left as-is.
 }
 
+void GameFlow_EndRaceForRestart() {
+    if (g_mode != GameMode::InRace) return;
+    g_paused = false;
+    g_session.End();                  // the caller relaunches with GameFlow_RequestRace
+    log("EndRaceForRestart");
+}
+
 void GameFlow_RequestRace(const RaceConfig& cfg,
                           D3d9Render::TrackRenderer* track,
                           IDirect3DDevice9* dev) {

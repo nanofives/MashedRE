@@ -31,6 +31,9 @@ namespace D3d9Render {
 // Call once per frontend frame (frame delimiter). Draws reported between two
 // calls belong to the earlier frame. Cheap no-op when the env var is unset.
 void DrawStreamDump_OnFrameBegin();
+// The frame index the next OnFrameBegin will close (the N of MASHED_DBG_DRAWSTREAM=N:M); for capture drivers that
+// log where a state settled so a second run can dump exactly those frames.
+int DrawStreamDump_FrameIndex();
 
 // Call from the bridge draw handler with the raw source vertex blob and the
 // mirrored render state. Cheap no-op unless the current frame is in range.
