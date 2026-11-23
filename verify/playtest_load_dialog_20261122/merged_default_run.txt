@@ -1,7 +1,7 @@
-[mashed-lock] WAITING — 'mashed_machine' held by pid=9432 (chalsel-orig); queueing...
-[mashed-lock] HELD 'mashed_machine' pid=25456 (playtest-load-dialog)
-spawned pid 1260
-merged_default: exited rc=0 (0x00000000) after 7.1 s, log -> D:/MashedWT/playtest-load-dialog_data\merged_default.log
+[mashed-lock] WAITING — 'mashed_machine' held by pid=24912 (playtest-intro-camera-gates); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=23728 (playtest-load-dialog)
+spawned pid 16124
+m2_default: exited rc=0 (0x00000000) after 7.0 s, log -> D:/MashedWT/playtest-load-dialog_data\m2_default.log
   Milestone B10: frontend boot chain start
     [7] MainLoopInit returned 1
   Milestone B10: frontend boot chain complete
@@ -20,4 +20,4 @@ merged_default: exited rc=0 (0x00000000) after 7.1 s, log -> D:/MashedWT/playtes
   NAV_DEMO phase=24 11_sound_adjusted ok=1 depth=2 screen=19 cur=0 nrec=6
   NAV_DEMO phase=27 12_back_mainmenu2 ok=1 depth=0 screen=1 cur=2 nrec=7
   NAV_DEMO phase=28 done ok=1 depth=0 screen=1 cur=2 nrec=7
-[mashed-lock] released 'mashed_machine' pid=25456
+[mashed-lock] released 'mashed_machine' pid=23728
