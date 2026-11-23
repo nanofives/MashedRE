@@ -5476,14 +5476,19 @@ bool RenderFrame() {
                 const float ly = 40.0f * kVScale;
                 const float lw = aw * kVScale, lh = 80.0f * kVScale;
                 std::uint32_t uvF[4] = { 0x00000000u, 0u, 0x3f000000u, 0x3f800000u }; // u[0,0.5]
-                std::uint32_t uvB[4] = { 0x3f800000u, 0u, 0x3f000000u, 0x3f800000u }; // u[1,0.5] mirror
-                // #1 (CORRECTED 2026-06-14): the LoadIcon texture (res-404) is an
-                // 8bpp GRAYSCALE silver CD (verify/_disc_gray.png: a reflective
-                // disc back + the "mashed" logo). Decoded white-RGB + alpha=
-                // intensity, so on the BLACK loading background a flat WHITE
-                // modulate shows the silver/grey detail faithfully. The earlier
-                // warm-gold modulate (from a mis-measured region) tinted it beige
-                // — the user's complaint. FUN_00428450 draws it with white.
+                // Back face (sin < 0): 0x00428450 passes uv {1.0, 0, 0.5, 1} WITH a negative
+                // width (r.w = s*80*w), and 0x00450b10 puts u0 at x and u1 at x + w, so the
+                // right edge gets u=1.0 and the left edge u=0.5: the right half, NOT mirrored
+                // (original capture: the MASHED logo reads left to right). This port draws a
+                // positive width from the left edge, so it needs u[0.5,1] left to right.
+                // FIX 2026-11-22: it used {1.0, .., 0.5} here and drew the logo mirrored.
+                std::uint32_t uvB[4] = { 0x3f000000u, 0u, 0x3f800000u, 0x3f800000u }; // u[0.5,1]
+                // The LoadIcon texture (res-404) is an 8bpp PALETTED full-colour
+                // image: a rainbow CD (left half, front) and the MASHED logo in a
+                // ring (right half, back). LoadLoadIconResource expands the RGBA
+                // palette (fixed 2026-11-22: it used to force RGB to white, which
+                // drew a flat white silhouette). FUN_00428450 draws it with a
+                // white modulate (col = 0xff x4), so colours pass through as is.
                 const std::uint32_t discMod = 0xffffffffu;  // flat white = silver disc
                 HudIm2DQuad(kHandleLoadIcon, lx, ly, lw, lh, discMod,
                             s >= 0.0f ? uvF : uvB);
@@ -8906,8 +8911,8 @@ bool LoadPngAssetToSlot(const char* piz_path, const char* entry_name,
 // the lookup runs on our own module and original\MASHED.exe is never opened
 // (it used to be LoadLibraryExA(..., LOAD_LIBRARY_AS_DATAFILE)).
 // The resource is the 0x23 TXD variant: 256x128 8bpp direct-intensity, pixels
-// at +0x43c (identical decode to FGDC20.TXD). Expanded to white-RGB / alpha=
-// intensity. Returns true on success.
+// at +0x3c, then the 256-entry RGBA palette. Expanded through the palette to
+// BGRA (colour and alpha). Returns true on success.
 bool LoadLoadIconResource() {
     std::FILE* log = std::fopen(kLogPath, "a");
     HMODULE hExe = GetModuleHandleA(nullptr);
@@ -8940,8 +8945,19 @@ bool LoadLoadIconResource() {
                     for (std::uint32_t x = 0; x < w; ++x) {
                         const std::size_t i = static_cast<std::size_t>(y) * w + x;
                         const std::uint8_t ix = d[pix + static_cast<std::size_t>(y) * stride + x];
-                        bgra[i*4+0] = 255; bgra[i*4+1] = 255; bgra[i*4+2] = 255;
-                        bgra[i*4+3] = d[pal + static_cast<std::size_t>(ix) * 4 + 3];
+                        // FIX 2026-11-22 (playtest "spinning disc not showing its
+                        // texture"): the palette is full-colour RGBA (224 of the 255
+                        // used entries are not grey: a rainbow CD on the left half,
+                        // the MASHED logo in a ring on the right). The original reads
+                        // this TXD with RW's own reader (0x004921d0: FUN_004997b0(0x194)
+                        // -> FUN_004b3eb0 -> FUN_004c5c00(dict, "LoadIcon")) and
+                        // 0x00428450 draws it with a 0xFFFFFFFF modulate, so the palette
+                        // colours reach the screen as they are. Forcing RGB to 255 here
+                        // drew a flat white silhouette. Entries are R,G,B,A, expanded
+                        // the same way as QuadRenderer.cpp:239-246.
+                        const std::uint8_t* pe = d + pal + static_cast<std::size_t>(ix) * 4;
+                        bgra[i*4+0] = pe[2]; bgra[i*4+1] = pe[1]; bgra[i*4+2] = pe[0];
+                        bgra[i*4+3] = pe[3];
                     }
                     ok = g_quad_renderer.UploadBGRAToSlot(kSlotLoadIcon, w, h, bgra);
                     std::free(bgra);
