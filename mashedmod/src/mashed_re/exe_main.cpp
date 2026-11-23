@@ -924,6 +924,28 @@ bool             g_category_mp_ready = false;
 constexpr std::uint32_t kSlotDot       = 96;
 constexpr int           kHandleDot     = 87;
 bool             g_dot_ready = false;
+// Challenge Select (screens 6/7) INTERFACE.TXD sprites (playtest 2026-11-22), all resolved by the original through
+// FUN_0040bb90 (head 0x0063b904):
+//   0x004391b0 (EAX = the cell 0x007f0a40[row*12 + v], loaded at 0x0043a184 / 0x0043a521):
+//       0 "Lock" 0x005cda44, 1 and 3 "Star" 0x005cd970 (kHandleStar), 2 "tick" 0x005cda3c (only when
+//       FUN_00430760() != 0 and the mode is not 10 or 2)
+//   0x0042ee40 (capstone over 0x0042ee40..0x0042ef0c): mode 2 "TimeTrial" 0x005cd81c; modes 3/4/5 with
+//       DAT_0067f17c > 9 "BronzeMedal"/"SilverMedal"/"GoldMedal" (0x005cd810/804/7f8) for 0/1/2, else (param
+//       minus 1000 when above 999) "BronzeCup"/"SilverCup"/"GoldCup" (0x005cd7ec/7e0/7d8); modes 6..9 param 0
+//       "MultiPlayer" 0x005cd7cc (kHandleCategoryMP); mode 10 "QuickRace" 0x005cd7c0
+//   FUN_004368e0 "question" (0x00437319 area, the DAT_0067ea7c layouts)
+// Slots 98..108 / handles 89..99 (QuadRenderer::kMaxSlots 109, RwIm2DBridge kMaxTexHandles 128).
+enum ChalSprite : int {
+    kChalLock = 0, kChalTick, kChalBronzeCup, kChalSilverCup, kChalGoldCup,
+    kChalBronzeMedal, kChalSilverMedal, kChalGoldMedal, kChalQuickRace, kChalTimeTrial, kChalQuestion,
+    kChalSpriteCount
+};
+constexpr const char*   kChalSpriteNames[kChalSpriteCount] = {
+    "Lock", "tick", "BronzeCup", "SilverCup", "GoldCup",
+    "BronzeMedal", "SilverMedal", "GoldMedal", "QuickRace", "TimeTrial", "question" };
+constexpr std::uint32_t kSlotChal0   = 98;
+constexpr int           kHandleChal0 = 89;
+bool             g_chal_sprite_ready[kChalSpriteCount] = {};
 // s18/s24 power-up frame: FUN_0043af10 draws FUN_0040bb90("Powerupshadow")
 // (name 0x005cda04, pushed at 0x0043badb) behind each power-up icon, so it is
 // INTERFACE.TXD's (0x0040bb90 -> head 0x0063b904). Slot 97 needs the
@@ -7045,244 +7067,301 @@ bool RenderFrame() {
             }
         }
 
-        // --- Challenge Select (6/7): a vertical list of challenge slots, each
-        // shown as a gold STAR (the per-challenge lock/medal icon); the first
-        // (unlocked) row additionally gets the orange selection bar + the
-        // challenge NAME; locked rows below are bare stars. Below the list, the
-        // 4 challenge-cup "devil" icons + a vertical separator. CORRECTS the old
-        // hand-rolled all-track-names + preview + 5-car row (which did not match
-        // the original at all). Layout MEASURED from the clean capture
-        // verify/parity/orig_s6.bmp: 7 star rows at virtual y=116 (pitch 22),
-        // star at x~42; Angel Peak bar x=0..311 y=107 h=22; 4 devils at x=48
-        // (pitch 64) y~300; separator at x~315. [Residual: the real cup track
-        // names + unlock COUNT come from campaign/save state the original drawer
-        // reads — only the first slot is unlocked at a fresh save, which IS the
-        // jumped-to default this matches. NO-GUESSING: only the unlocked slot is
-        // named; the rest stay as the original's lone stars.]
+        // --- Challenge Select (screens 6/7): the list half of FUN_00439210 (playtest 2026-11-22: the arrows "not
+        // doing anything"). The hand-built list drew four cup rows whatever the save said and showed nothing that
+        // followed the tier selection DAT_0067f184 that LEFT/RIGHT move (the original's ring 1 <-> 2 <-> 5, game
+        // mode 3 <-> 4 <-> 5). Read from Ghidra (Mashed_pool10, analyzeHeadless DecompPC) plus capstone over
+        // MASHED.exe.unpatched, checked against draw-list + text captures of the original on this screen
+        // (log/chalsel/o_s6_m3*.json, cup flow, stock save, Bronze row 0 and Silver row 0):
+        //   the rows the predicates FUN_00436810 / FUN_0042ebe0 report; the scroll DAT_0067f180; the selection bar;
+        //   the up and down triangles FUN_00472dc0 (0x00439b2c / 0x00439b5d); per row the Star (0x00439c0e) and, for
+        //   the selected row, the three tier slots FUN_00430a10 / FUN_00430a60 / FUN_00430ab0 with the selected tier
+        //   drawn pulsing (0x0043a153 / 0x0043a315 / 0x0043a4e8) and the cell icon FUN_004391b0 (0x0043a1a9 /
+        //   0x0043a375 / 0x0043a548); other rows get FUN_0042ee00(cell) at alpha a>>2.
+        // a (DAT_0067e7bc, the screen alpha) is taken as the settled 0xff. Vertex colours are passed in the bridge's
+        // pre-swap order (HudIm2DQuad swaps R and B), so the stream holds the original's buffer dwords.
+        // The right panel and the car strip below the list are still the previous hand-built ones.
         if ((Nav_ScreenId() == 6 || Nav_ScreenId() == 7) && g_carsel_ready) {
-            // Challenge Select now reads the CAMPAIGN scaffold (Race/GameFlow:
-            // Campaign_CurrentCup) — the cup's track list with per-track unlock +
-            // trophy state, the selected-row highlight, the right-side map-preview
-            // rect + semi-transparent detail panel + details, and the cup devil
-            // icons. The full FUN_00434720 cup-progress layout (exact trophy
-            // sprites + the per-challenge medal grid + the map VIDEO) lands as the
-            // campaign/race state is RE'd; this is the scaffold-driven structure.
             using namespace mashed_re::Race;
-            const Cup& cup = Campaign_CurrentCup();
-            int sel = Nav_ChallengeRow();        // DAT_0067f17c analogue (U-9667)
-            if (sel < 0) sel = 0;
-            if (sel >= cup.trackCount) sel = cup.trackCount - 1;
-            Campaign_SetSelectedTrack(sel);
+            const int gm   = Nav_GameModeWord();                 // DAT_0067e9fc
+            const int row  = Nav_ChallengeRow();                 // DAT_0067f17c (U-9667)
+            const int f184 = Nav_GameState().sel_f184;           // DAT_0067f184
+            // DAT_0067ea64: the frontend's word, or the real address MASHED_TEAM_PLAY writes at boot.
+            const int ea64 = (Nav_GameState().flag_ea64 != 0 ||
+                              *reinterpret_cast<const std::int32_t*>(0x0067ea64) != 0) ? 1 : 0;
+            const int ea7c = Nav_GameState().ea7c;               // DAT_0067ea7c
+            const std::int32_t* const tbl = reinterpret_cast<const std::int32_t*>(0x007f0a40);   // 13 x 12 cells
+            const std::uint8_t*  const vul = reinterpret_cast<const std::uint8_t*>(0x007f0e50);  // FUN_0042ef40 bytes
+            {
+                // Launch-side track selection, unchanged: the cup scaffold row (clamped) the launch reads.
+                const Cup& cup = Campaign_CurrentCup();
+                int sel = row;
+                if (sel < 0) sel = 0;
+                if (sel >= cup.trackCount) sel = cup.trackCount - 1;
+                Campaign_SetSelectedTrack(sel);
+            }
+            const auto V = [&](float v) { return v * kVScale; };
+            const auto quad = [&](int h, float x, float y, float w, float hh, std::uint32_t c) {
+                HudIm2DQuad(h, V(x), V(y), V(w), V(hh), c, uv_full);
+            };
+            const auto text = [&](int id, float x, float y, std::uint32_t c, float scale) {
+                if (!g_font.ready()) return;
+                wchar_t b[96];
+                if (GetMenuMessage(id, b, 96) > 0)
+                    DrawMashedString(b, V(x), V(y), scale * 0.0708f * 480.f * kVScale, c, true);
+            };
+            const auto carIcon = [&](int colour, float x, float y, float w) {   // FUN_0042fab0 -> NFL* sprite
+                if (colour < 0 || colour > 9) return;
+                quad(kHandleCar0 + colour, x, y, w, w, 0xffffffffu);
+            };
+            const auto vsIcon = [&](float x, float y, float w) {                // FUN_0040bb90(&DAT_005cda30) "vs"
+                if (g_vs_ready) quad(kHandleVs, x, y, w, w, 0xffffffffu);
+            };
+            const auto chal = [&](int s, float x, float y, float w, float hh, std::uint32_t c) {
+                if (s >= 0 && s < kChalSpriteCount && g_chal_sprite_ready[s]) quad(kHandleChal0 + s, x, y, w, hh, c);
+            };
+            const auto cupFlow = [](int m) {                                    // FUN_00430760
+                return m == 2 || m == 3 || m == 4 || m == 5 || m == 10;
+            };
+            const int tier = (gm == 4) ? 1 : (gm == 5) ? 2 : 0;                 // 0x00436b0e.. (iVar9)
+            const bool cupMode = (gm == 3 || gm == 4 || gm == 5);
+            // DAT_005f65c8[tier + row*3] (RaceModes kCupEvent holds the high word; the low two bits are the
+            // opponent-count field the description reads, .data 0x005f65c8 of MASHED.exe.unpatched).
+            static const std::uint8_t kCupEventLo[39] = {
+                1, 3, 2,  2, 2, 3,  3, 0, 1,  3, 2, 0,  2, 3, 1,  2, 3, 0,  3, 3, 3,
+                3, 3, 0,  3, 3, 3,  2, 2, 1,  3, 1, 3,  3, 3, 3,  3, 0, 0 };
+            const int evHi = cupMode ? mashed_re::Race::RaceModes::EventType(gm, row) : -1;   // entry >> 16
+            const int evLo = (cupMode && row >= 0 && row < 13) ? kCupEventLo[tier + row * 3] : 0;
+            // FUN_00430670(k) on the cup modes: l[0] = DAT_007f1a1c, l[i+1] = the event group's colour i
+            // (FUN_00413f90 table, kOppColourTable), a colour equal to the player's replaced by the first 0..5 not
+            // used by the player or the group (0x00430670 body, re/match/s07/00430670.c).
+            const std::int32_t pcol = *reinterpret_cast<const std::int32_t*>(0x007f1a1c);
+            const auto opp = [&](int k) -> int {
+                if (!cupMode || row < 0 || row >= 13 || k < 1 || k > 3) return -1;
+                const std::int32_t* g = kOppColourTable[row][tier];
+                const int cnt = g[0];
+                if (k > cnt) return -1;
+                std::int32_t v = g[k];
+                if (v == pcol) {
+                    for (std::int32_t j = 0; j < 6; ++j)
+                        if (j != pcol && j != g[1] && j != g[2] && j != g[3]) { v = j; break; }
+                }
+                return v;
+            };
+
+            // ---------------- FUN_00439210 ----------------
+            // DAT_0067ed30 += DAT_007f1004 (0x00439245): the phase advances by the frame time on each frame this
+            // screen draws. Port stand-in for the frame time: the DetTicks delta to the previous drawn frame, not
+            // counted when the screen was not drawn in between (a gap over 0.5 s), so a re-entry continues the phase.
+            static float s_ed30 = 0.f;
+            static DWORD s_ed30T = 0;
+            {
+                const DWORD now = DetTicks();
+                if (s_ed30T && now - s_ed30T < 500u) s_ed30 += static_cast<float>(now - s_ed30T) * 0.001f;
+                s_ed30T = now;
+            }
+            const float pulse = (std::sin(s_ed30 * 10.0f) + 1.0f) * 12.0f;
+            // Row predicates. FUN_00436810 (byte-matched source re/match/s08/00436810.c): cup flow -> rows with
+            // column 1 (0x007f0a44) == 2 counted, the row's column 1 must be non-zero; otherwise rows with column 3
+            // (0x007f0a4c) != 0 counted. FUN_0042ebe0 (rows 10..12): column 1 / 2 / 5 of rows 0..9 all non-zero and
+            // the row's column 1 non-zero.
+            const auto rowOk = [&](int i) -> bool {          // FUN_00436810
+                if (i == 0xc) return false;
+                int n = 0;
+                if (cupFlow(gm)) {
+                    for (int k = 0; k < 12; ++k) if (tbl[k * 12 + 1] == 2) ++n;
+                    if (tbl[i * 12 + 1] == 0) return false;
+                    return n >= i;
+                }
+                for (int k = 0; k < 12; ++k) if (tbl[k * 12 + 3] != 0) ++n;
+                return n - 1 >= i;
+            };
+            const auto bonusOk = [&](int p) -> bool {        // FUN_0042ebe0
+                const int c = (p == 10) ? 1 : (p == 11) ? 2 : (p == 12) ? 5 : -1;
+                bool locked = false;
+                if (c >= 0) for (int k = 0; k < 10; ++k) if (tbl[k * 12 + c] == 0) { locked = true; break; }
+                return tbl[p * 12 + 1] != 0 && !locked;
+            };
+            const auto unlockByte = [&](int i, int m) -> bool {   // FUN_0042ef40 (0x0042ef40)
+                int off;
+                switch (m) {
+                    case 2: case 1000: off = 0; break;
+                    case 3: case 1001: off = 1; break;
+                    case 4: case 1002: off = 2; break;
+                    case 5: case 1005: off = 5; break;
+                    case 10: case 1011: off = 0xb; break;
+                    default: return false;
+                }
+                return vul[i * 12 + off] == 1;
+            };
+            int nrow = 0;
+            for (int i = 0; i < 13; ++i) {
+                if (i >= 10) { if (bonusOk(i)) ++nrow; }
+                else if (i <= 0 || rowOk(i)) ++nrow;
+            }
+            float base = 118.0f;                              // [0x005cda68] 0x42ec0000
+            if (nrow < 7) base = static_cast<float>(((7 - nrow) * 20) / 2) + 118.0f;
+            static int s_f180 = 0;                            // DAT_0067f180
+            const float top = static_cast<float>(s_f180) + base;
+            {
+                const int t = row * 0x16 + s_f180;            // 0x004397ae..0x004397c8
+                if (t > 0x84) s_f180 -= 3;
+                if (t < 0)    s_f180 += 3;
+            }
+            const float y0 = top - 11.0f;
+            {
+                const float bw = (gm == 2 || gm == 10 || gm == 6) ? 270.f : 310.f;
+                const float by = static_cast<float>(row) * 22.0f + y0;
+                const bool blue = row > 9;
+                quad(0, 0.f, by, bw, 22.f, blue ? 0x7ff7941du : 0x7f1d94f7u);     // (f7,94,1d,a>>1) 0x00439871
+                const std::uint32_t bc = blue ? 0xffb4640fu : 0xff0f64b4u;        // (b4,64,0f,a)
+                quad(0, 0.f, by, bw, 2.f, bc);                                     // 0x004398bf
+                quad(0, 0.f, by + 20.f, bw, 2.f, bc);                              // 0x004398db
+                quad(0, bw, by, 2.f, 22.f, bc);                                    // 0x00439939
+            }
+            {
+                // FUN_00472dc0 triangles in the shade colour, black alpha (a*0xa0)/0xff.
+                const auto tri = [&](float x1, float y1, float x2, float y2, float x3, float y3) {
+                    const std::uintptr_t g = *reinterpret_cast<const std::uintptr_t*>(0x007d3ff8);
+                    if (!g) return;
+                    float* vb = reinterpret_cast<float*>(0x00898a20);
+                    const float xs[3] = {V(x1), V(x2), V(x3)}, ys[3] = {V(y1), V(y2), V(y3)};
+                    const std::uint32_t z = *reinterpret_cast<const std::uint32_t*>(g + 0x18);
+                    for (int k = 0; k < 3; ++k) {
+                        float* p = vb + k * 7;
+                        p[0] = xs[k]; p[1] = ys[k];
+                        reinterpret_cast<std::uint32_t*>(p)[2] = z;
+                        reinterpret_cast<std::uint32_t*>(p)[3] = 0x3f800000u;
+                        reinterpret_cast<std::uint32_t*>(p)[4] = 0xa0000000u;
+                    }
+                    using SetSt = void(__cdecl*)(int, int);
+                    using Draw  = void(__cdecl*)(int, void*, int);
+                    (*reinterpret_cast<SetSt*>(g + 0x20))(1, 0);
+                    (*reinterpret_cast<SetSt*>(g + 0x20))(0xc, 1);
+                    (*reinterpret_cast<SetSt*>(g + 0x20))(10, 5);
+                    (*reinterpret_cast<SetSt*>(g + 0x20))(0xb, 6);
+                    // The original calls (+0x30)(4 = tristrip, &DAT_00898a20, 3). The bridge's Bridge_DrawPrimitive
+                    // takes its vertex count from the FIRST argument (every reimpl passes 4, buf, 4), so 3 here.
+                    (*reinterpret_cast<Draw*>(g + 0x30))(3, vb, 3);
+                };
+                if (row != 0)        tri(152.f, 96.f, 200.f, 96.f, 176.f, 72.f);
+                if (row < nrow - 1)  tri(152.f, 272.f, 200.f, 272.f, 176.f, 296.f);
+            }
+            // First row loop (0x004399a0..): names, the Star, the row > 9 medal.
+            const int m3 = (gm == 4 || gm == 5) ? 3 : gm;
+            for (int i = 0, yy = 0; yy < 0x11e; yy += 0x16, ++i) {
+                const float fy = static_cast<float>(yy), fa = fy + top;
+                const int t = static_cast<int>(fa);
+                int alpha = 0x100;
+                if (t < 0x76) { int d = 0x76 - t; if (d > 0x16) d = 0x16; alpha = ((0x16 - d) * 0x100) / 0x16; }
+                if (t > 0xfa) { int d = t - 0xfa; if (d > 0x16) d = 0x16; alpha = ((0x16 - d) * 0x100) / 0x16; }
+                int kind = 2;
+                if (yy >= 0xdc) { if (!bonusOk(i)) kind = 0; }
+                else if (yy > 0 && !rowOk(i)) kind = 1;
+                if (kind != 2) continue;
+                const std::uint32_t txt = static_cast<std::uint32_t>((alpha * 0xff) / 0x100) << 24;
+                text(i + 0x49, 64.f, fa, txt, i == row ? 0.6f : 0.58f);
+                if (unlockByte(i, m3) && yy < 0xdc) {
+                    const float sa = ((std::sin(s_ed30 * 8.0f) + 1.0f) * 0.33333334f + 0.333f) * 0xff;
+                    const std::uint32_t a8 = static_cast<std::uint32_t>(
+                        (static_cast<int>(static_cast<std::uint8_t>(static_cast<int>(sa))) * alpha) / 0x100);
+                    if (g_star_ready) quad(kHandleStar, 32.f, top - 20.f + fy, 32.f, 32.f, (a8 << 24) | 0xffffffu);
+                }
+                if (m3 == 3 && yy > 0xc6) {
+                    const float p = (i == row) ? (std::sin(s_ed30 * 8.0f) + 1.0f) * 12.0f : 0.0f;
+                    // FUN_0042ee40(i + 0x3de) = 1000..1002: the medal compares at 0x0042ee6c.. test the raw
+                    // param (0/1/2) and miss, then 0x0042eea7 subtracts 1000 -> BronzeCup / SilverCup / GoldCup.
+                    const int s = (i >= 10 && i <= 12) ? kChalBronzeCup + (i - 10) : -1;
+                    chal(s, 36.f - p * 0.5f, top - 12.f + fy - p * 0.5f, p + 20.f, p + 20.f, 0xffffffffu);
+                }
+            }
+            // Second row loop (0x00439d4d..): the tier slots. which = 1 when f184 == FUN_00430a60(), 2 when
+            // f184 == FUN_00430ab0(); pass 0 draws the other slots, pass 1 the selected one on top.
+            const int vA = (gm == 2) ? 0 : cupMode ? 1 : (gm >= 6 && gm <= 9) ? 3 : (gm == 10) ? 0xb : -1;  // 0x00430a10
+            const int vB = cupMode ? 2 : 0;                                                                 // 0x00430a60
+            const int vC = cupMode ? 5 : 0;                                                                 // 0x00430ab0
+            int which = 0;
+            if (f184 == vB) which = 1;
+            if (f184 == vC) which = 2;
+            std::uint8_t wa = 0xff;                           // the white colour's alpha, carried across slots
+            if (gm >= 2 && gm <= 10 && vA >= 0) {
+                for (int i = 0, yy = 0; yy < 0x11e; yy += 0x16, ++i) {
+                    if (yy >= 0xdc && !bonusOk(i)) continue;
+                    int kind = 2;
+                    if (yy >= 0xdc) { if (!bonusOk(i)) kind = 0; }
+                    else if (yy > 0 && !rowOk(i)) kind = 1;
+                    const int t = static_cast<int>(static_cast<float>(yy) + top);
+                    int alpha = 0x100;
+                    if (t < 0x76) { int d = 0x76 - t; if (d > 0x16) d = 0x16; alpha = ((0x16 - d) * 0x100) / 0x16; }
+                    if (t > 0xfa) { int d = t - 0xfa; if (d > 0x16) d = 0x16; alpha = ((0x16 - d) * 0x100) / 0x16; }
+                    int sa = 0xff >> 2;
+                    if (!rowOk(i) && sa > 0x20) sa = 0x20;
+                    const std::uint32_t shade = static_cast<std::uint32_t>((sa * alpha) >> 8) << 24;
+                    const float rowy = static_cast<float>(i) * 22.0f + y0;
+                    const auto cupSprite = [&](int k) -> int {          // FUN_0042ee40(k)
+                        if (gm == 2) return kChalTimeTrial;
+                        if (gm == 10) return kChalQuickRace;
+                        if (gm >= 6 && gm <= 9) return (k == 0) ? -2 : -1;   // -2 = MultiPlayer
+                        if (row > 9) return kChalBronzeMedal + k;
+                        return kChalBronzeCup + k;
+                    };
+                    const auto iconFor = [&](int cell) -> int {          // FUN_004391b0(cell)
+                        if (cell == 0) return kChalLock;
+                        if (cell == 1 || cell == 3) return -3;           // -3 = Star
+                        if (cell == 2 && cupFlow(gm) && gm != 10 && gm != 2) return kChalTick;
+                        return -1;
+                    };
+                    const auto drawSprite = [&](int s, float x, float y, float w, std::uint32_t c) {
+                        if (s == -2) { if (g_category_mp_ready) quad(kHandleCategoryMP, x, y, w, w, c); }
+                        else if (s == -3) { if (g_star_ready) quad(kHandleStar, x, y, w, w, c); }
+                        else chal(s, x, y, w, w, c);
+                    };
+                    const auto badgeFor = [&](int cell) -> int {          // FUN_0042ee00(cell): lock / dot / check
+                        return cell == 0 ? 0 : cell == 1 ? 1 : cell == 2 ? 2 : -1;
+                    };
+                    for (int j = 0; j < 2; ++j) {
+                        float sx = 220.0f;                                     // (W*0xdc)/0x280
+                        const float sy = rowy;
+                        for (int k = 0; k < 3; ++k) {
+                            const int v = (k == 0) ? vA : (k == 1) ? vB : vC;
+                            const bool drawNow = (j == 0) ? (which != k) : (which == k);
+                            if (drawNow && (k == 0 || v != 0)) {
+                                const int cell = tbl[i * 12 + v];
+                                if (i == row) {
+                                    if (k != 0 && cell == 0) wa = static_cast<std::uint8_t>(wa >> 1);
+                                    const std::uint32_t wc = (static_cast<std::uint32_t>(wa) << 24) | 0xffffffu;
+                                    if (f184 == v)
+                                        drawSprite(cupSprite(k), sx - 11.f - pulse * 0.5f, sy - 11.f - pulse * 0.5f,
+                                                   44.f + pulse, wc);
+                                    else
+                                        drawSprite(cupSprite(k), sx - 11.f, sy - 11.f, 44.f, wc);
+                                    if (k != 0 && cell == 0) wa = static_cast<std::uint8_t>(wa << 1);
+                                    const std::uint32_t wc2 = (static_cast<std::uint32_t>(wa) << 24) | 0xffffffu;
+                                    if (unlockByte(i, v + 1000) || cell != 1) {
+                                        const int ic = iconFor(cell);
+                                        if (ic != -1) drawSprite(ic, sx, sy, 44.f, wc2);
+                                    }
+                                } else if (kind != 1) {
+                                    const int b = badgeFor(cell);
+                                    const int h = b == 0 ? kHandleLock : b == 1 ? kHandleDot : kHandleCheck;
+                                    const bool rd = b == 0 ? g_lock_ready : b == 1 ? g_dot_ready : g_check_ready;
+                                    if (b >= 0 && rd) quad(h, sx, sy, 22.f, 22.f, shade);
+                                }
+                            }
+                            sx += 30.0f;                                       // (W*0x1e)/0x280
+                        }
+                    }
+                }
+            }
+            // ---- previous hand-built right panel and car strip (replaced by the FUN_004368e0 port next) ----
             const std::uint32_t white = 0xffffffffu;
-            // Colours MEASURED from orig_s6.bmp (1024x768). Both sides render a
-            // perfectly flat fill (per-channel std exactly 0), so these are
-            // exact targets, not gradient averages:
-            //   plate  original (120, 72, 8)   ours was (151, 69, 13)
-            //   border original (176,100, 8)   ours was (180, 80, 16), and the
-            //          original's border is 3 device rows where ours drew 2.
-            // NOTE the plate here is NOT the s15/s16 plate: that one measures
-            // (120,52,8), this one (120,72,8). f06e14 at ANY alpha yields G=55,
-            // so neither screen's plate can come from that constant and there is
-            // no single global plate colour. Base solved at the existing alpha
-            // 0xa0 (160/255 = 0.62745): R 120/0.62745 = 191 = 0xbf, G 72/0.62745
-            // = 115 = 0x73, B 8/0.62745 = 13 = 0x0d, which re-renders (120,72,8)
-            // exactly. [UNCERTAIN] the original's own constant/alpha split is
-            // unknown - this is a measured match, not a ported decomposition.
-            const std::uint32_t barFill = 0xa00d73bfu;     // selected = orange
-            const std::uint32_t bord = 0xff0864b0u;
-            const float bt = 1.875f * kVScale;             // 3 device rows
-            // Track-name cap height: original 19 device, ours was 17 -> 0.55 *
-            // (19/17) = 0.6147.
+            const float bt = 1.875f * kVScale;
             const float lcell = 0.6147f * 0.0708f * 480.f * kVScale;
-            // (The old per-row pulsing "Star" at x~36 was removed 2026-09-06 —
-            // the FUN_00473870 draw hook found no original draw there; the real
-            // per-row element is the status glyph / category sprite below.)
-            // row0 144, not 116. This was previously unmeasurable: with the cup
-            // at 8 rows against the original's 4, no anchoring rule (top /
-            // centre / bottom) could be distinguished. Setting kCupTrackCount=4
-            // from the msgid trace removed the confound -- star PITCH now agrees
-            // (orig 35.17 device, ours 35.3) and the count agrees, so the
-            // residual is a pure origin offset. Star centroids measured on the
-            // 1024x768 capture: orig 233.0/268.5/303.5/338.5, ours
-            // 188.0/223.0/259.0/294.0 -> 45.0 device = 28.125 virtual high.
-            // 116 + 28.125 = 144.125; an independent solve in the s6 lane put
-            // the original's row-0 centre at 143.94 virtual. Taking 144.0.
-            const float row0 = 144.0f * kVScale, rowdy = 22.0f * kVScale;
-            // [SCAFFOLD — known imprecise, 2026-09-05] The star below is drawn
-            // on EVERY row, pulsing. The MEASURED original (arm selection traced
-            // via Ghidra + confirmed live with re/frida/chal_icon_probe.py
-            // --mode 3, and a poke test on the cup table) draws a per-row STATE
-            // icon instead, keyed on cup-table COLUMN 3 = *(u32*)(0x007f0a40 +
-            // row*0x30 + 0xc):
-            //   selected row  -> INTERFACE gate 0x004391b0 (32x32):
-            //                    0->Lock 1->Star 2->tick 3->Star
-            //   other rows    -> BADGES gate 0x0042ee00 (16x16):
-            //                    0->lock 1->dot  2->check 3->(none, no draw)
-            // and the SELECTED row additionally draws a category sprite
-            // (MultiPlayer/QuickRace/... via the screen-dispatch gate
-            // 0x0042ee40) at an animated x. Measured 3:1 badges:interface over
-            // 180 frames on a fresh save (rows 0-3, sel=0); the poke test proved
-            // the slot tracks each row's own col-3 value, not a fixed one. On a
-            // fresh save every cup row has col3=2.
-            //
-            // GEOMETRY MEASURED 2026-09-05 (chal_icon_probe.py draw hook on
-            // FUN_00473870; numbers are in THIS virtual-640 space — the detail
-            // panel measured x=520 w=24, matching the 520.0f/24.0f draw below):
-            //   non-selected row: state icon at x=220, w=h=22, argb=0x3f000000
-            //                     (semi-transparent BLACK, stable over 723
-            //                     draws), texture via the BADGES gate.
-            //   selected row:     a category sprite (MultiPlayer on screen 6,
-            //                     via 0x0042ee40) at x~208 w~45 white; its
-            //                     INTERFACE tick is SUPPRESSED by FUN_00430760()
-            //                     on this state, so no small badge draws.
-            //   => no Star on any row, and nothing at x~36 where this star sits.
-            // NOT fixed here on purpose: the faithful change is a multi-texture
-            // COMPOSITION rewrite (load the category sprites + `dot`, draw
-            // category-on-selected / black status-glyph-on-others at the
-            // measured geometry, remove this star, model FUN_00430760's
-            // suppression). CLAUDE.md/CONFIDENCE.md hold composition fixes above
-            // compile-and-run, and this headless session can produce no capture
-            // (the standalone exits on focus loss), so it is handed off rather
-            // than shipped blind. Full geometry + plan:
-            // re/analysis/chalsel_icon_dictionary_20260905.md, third Addendum.
-            // Row icon triangle-wave phase (no <cmath> dep).
-            const float ph = (DetTicks() % 800u) / 800.0f;
-            const float tri = (ph < 0.5f) ? ph * 2.f : (1.f - ph) * 2.f;  // 0..1..0
-            for (int i = 0; i < cup.trackCount; ++i) {
-                const float cy = row0 + i * rowdy;          // row centre
-                const bool selrow = (i == sel);
-                if (selrow) {
-                    // Bar: original y220..254 = 35 device = 21.875 virtual tall,
-                    // x0..499 = 500 device = 312.5 virtual wide.
-                    const float by = cy - 11.0f * kVScale, bh = 21.875f * kVScale;
-                    HudIm2DQuad(0, 0.f, by, 312.5f * kVScale, bh, barFill, uv_full);
-                    HudIm2DQuad(0, 0.f, by, 312.5f * kVScale, bt, bord, uv_full);
-                    HudIm2DQuad(0, 0.f, by + bh - bt, 312.5f * kVScale, bt, bord, uv_full);
-                }
-                // ---- Row icon (Finding 38, MEASURED via chal_icon_probe.py's
-                // FUN_00473870 draw hook; all coords in this virtual-640 space).
-                // Non-selected rows: a faint status glyph driven per-row by the
-                // cup-table column 3 (BADGES gate 0x0042ee00, SpriteGate.cpp):
-                // 0->lock 1->dot 2->check 3->(none). col-3 = *(u32*)(0x007f0a40 +
-                // row*0x30 + 0xc); this table is the same one the detail panel
-                // reads at base+0x10 (0x007f0a50). On a fresh save every row's
-                // col-3 == 2, so this draws "check"; lock/dot/none only differ once
-                // progression writes other states (live-confirmed with a poke test,
-                // chalsel_icon_dictionary_20260905.md 2nd addendum). Selected row: a
-                // size-pulsing MultiPlayer category sprite (INTERFACE.TXD, via the
-                // screen-dispatch gate 0x0042ee40) and NO small glyph — its tick is
-                // suppressed by FUN_00430760. The port's old pulsing Star at x~36
-                // matched no original draw and is gone.
-                //   glyph:    x=220, w=h=22, argb=0x3f000000, centre_y = cy + 4
-                //   category: centred (231, cy+4), size 44..68 (base 56, +/-21.4%)
-                // [UNCERTAIN] the pulse PERIOD/shape is not measured (one frame
-                // cannot show it) — reusing the 800-tick triangle. The C1 renderer
-                // note (re/analysis/hud_frontend_d2/0x00439210.md) records an
-                // animation accumulator 0x0067ed30 += DAT_007f1004 then sin(); the
-                // faithful curve is a sine whose per-frame increment DAT_007f1004
-                // and amplitude/offset are a needs-Ghidra read, so the triangle
-                // stands as an explicit stand-in.
-                // The selected-row category id does NOT switch under Team Play:
-                // 0x0042ee40 reads only the screen id 0x0067e9fc and count 0x0067f17c
-                // (never the team-play flag 0x0067ea64), and INTERFACE.TXD has no
-                // Team-Play category sprite. Team Play only swaps the detail-panel
-                // heading text (0x22 <-> 0x140), already modelled below.
-                const float icy = cy + 4.0f * kVScale;   // icon-column centre
-                if (selrow) {
-                    if (g_category_mp_ready) {
-                        const float csz =
-                            (56.0f + 12.0f * (2.0f * tri - 1.0f)) * kVScale;  // 44..68
-                        HudIm2DQuad(kHandleCategoryMP, 231.0f * kVScale - csz * 0.5f,
-                                    icy - csz * 0.5f, csz, csz, white, uv_full);
-                    }
-                } else {
-                    // BADGES gate 0x0042ee00: slot = this row's cup-table column 3.
-                    // Row i maps to the original's row (its selection test is
-                    // iStack_78 == DAT_0067f17c, i.e. i == sel here). Same live
-                    // global read as the detail panel below (0x007f0a50 = base+0x10).
-                    const std::uintptr_t rowbase =
-                        static_cast<std::uintptr_t>(i) * 0x30u;
-                    const int col3 = *reinterpret_cast<const std::int32_t*>(
-                        0x007f0a40 + rowbase + 0xc);
-                    int  handle = 0; bool ready = false;
-                    switch (col3) {
-                        case 0: handle = kHandleLock;  ready = g_lock_ready;  break;
-                        case 1: handle = kHandleDot;   ready = g_dot_ready;   break;
-                        case 2: handle = kHandleCheck; ready = g_check_ready; break;
-                        default: break;   // 3 / other -> BADGES gate returns 0, no draw
-                    }
-                    // [UNCERTAIN] argb 0x3f000000 was measured over 723 draws, all
-                    // of which were "check" on a fresh save. The gate only swaps the
-                    // texture pointer; the draw's colour register is the same for
-                    // lock/dot, so it is reused for those arms.
-                    if (ready)
-                        HudIm2DQuad(handle, 220.0f * kVScale, icy - 11.0f * kVScale,
-                                    22.0f * kVScale, 22.0f * kVScale, 0x3f000000u, uv_full);
-                }
-                // Text x / y / scale: the original's own call arguments, see the
-                // block above the DrawMashedString below (the earlier 64.375 was
-                // an ink-edge fit).
-                //
-                // NAME comes from the message table, NOT from kAreas. The list
-                // row is a CUP TRACK SLOT, which is a different thing from an
-                // area: the original's row 0 reads "Angel Peak" while our
-                // kAreas[0] is "Arctic" (an internal area name from COURSE.LUA).
-                // Law measured behaviourally -- an Interceptor on 0x00427e00
-                // (arg0 = msgid) at screen 6 logs 0x49,0x4a,0x4b,0x4c, 72 calls
-                // each over 72 frames => msgid = 0x49 + row. Note this is NOT
-                // 0x49 + areaIndex: the two orders differ (our kAreas[5] is
-                // "Neustein" but msgid 0x49+5 is "Keister Bay", while the real
-                // Neustein is 0x4b), so indexing by area would have produced
-                // real-looking but MISMAPPED names. kAreas still drives which
-                // .piz loads; only the label changes here.
-                // [UNCERTAIN] the row -> area mapping (which area each cup slot
-                // actually loads) is still unverified, so a row's label and the
-                // track it launches are not yet proven to agree.
-                //
-                // COLOUR: black on EVERY row, selected or not. The original
-                // requests all four names every frame yet the capture measures
-                // ZERO ink on unselected rows -- text that is drawn but invisible
-                // over a black backdrop is black text. (Our previous 0xffc8c8c8
-                // rendered them light grey; the earlier note claiming the user's
-                // "unselected track has black font" report was REFUTED is itself
-                // wrong and is retracted here. It only looked unmeasurable
-                // because the parity harness nops the video backdrop to black,
-                // against which black text vanishes.)
-                // Drawn for LOCKED rows too, matching the original's request set.
-                // Name geometry from the original's call at 0x00439ae7
-                // (FUN_00427e00(0x49 + row, x, y, colour, scale, 0)), not the old
-                // ink fit (x 64.375 / lcell 0.6147 / row0 144):
-                //   x     = 0x42800000 = 64.0, push at 0x00439ae1.
-                //   scale = 0x3f19999a (0.6) when row == [0x0067f17c]
-                //           (0x00439a9b..0x00439aa5), else 0x3f147ae1 (0.58)
-                //           (0x00439aaf).
-                //   y     = float(k) + base, k = 22*row (`add eax,0x16` at
-                //           0x00439d33; fild/fadd/fst at 0x004399b0..0x004399bc).
-                //           base = fild [0x0067f180] + 118.0 (`[0x005cda68]` =
-                //           0x42ec0000, 0x0043975f / 0x00439787), plus the int
-                //           ((7-n)*20)/2 when n < 7 (`cmp edi,7` 0x0043975c;
-                //           cdq/sub/sar signed /2 at 0x0043977a..0x0043977d), stored
-                //           at 0x004397a6. n = available-entry count (loop
-                //           0x00439730..0x0043975a); cup.trackCount here (measured
-                //           n = 4: pens y 148/170/192/214).
-                //   [0x0067f180] is only moved by the clamp at 0x004397ae..0x004397c8
-                //   when 22*sel + it leaves 0..0x84; with n <= 7 rows (22*6 = 132)
-                //   it stays at its BSS 0 (measured 0), so it is 0 here.
-                if (g_font.ready()) {
-                    wchar_t tname[64];
-                    if (GetMenuMessage(0x49 + i, tname, 64) > 0) {
-                        const int n = cup.trackCount;
-                        const int cupScroll = 0;   // [0x0067f180]
-                        const float nbase =
-                            static_cast<float>(cupScroll) + 118.0f +
-                            (n < 7 ? static_cast<float>(((7 - n) * 20) / 2) : 0.0f);
-                        const float ny = static_cast<float>(22 * i) + nbase;
-                        const float ncell =
-                            (selrow ? 0.6f : 0.58f) * 0.0708f * 480.f * kVScale;
-                        DrawMashedString(tname, 64.0f * kVScale, ny * kVScale, ncell,
-                                         0xff000000u, true);
-                    }
-                }
+            int sel = row;
+            {
+                const Cup& cup = Campaign_CurrentCup();
+                if (sel < 0) sel = 0;
+                if (sel >= cup.trackCount) sel = cup.trackCount - 1;
             }
             // Right side: the selected track's map preview rect + a semi-transparent
             // black detail panel (with a white divider) + the challenge details.
@@ -8744,6 +8823,22 @@ bool LoadCarColorSprites() {
                               tex.width(), tex.height(),
                               g_category_mp_ready ? "OK" : "FAILED");
         break;
+    }
+    // Challenge Select sprites (kChalSpriteNames, see kSlotChal0). FUN_004c5c00 folds case (Finding 38).
+    for (int s = 0; s < kChalSpriteCount; ++s) {
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& tex = dict.texture(i);
+            if (_stricmp(tex.name, kChalSpriteNames[s]) != 0) continue;
+            const std::uint32_t slot = kSlotChal0 + static_cast<std::uint32_t>(s);
+            if (g_quad_renderer.UploadFromTextureToSlot(slot, tex)) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    kHandleChal0 + s, g_quad_renderer.slot_texture(slot));
+                g_chal_sprite_ready[s] = true;
+            }
+            break;
+        }
+        if (log) std::fprintf(log, "chalsel: interface.txd '%s' upload %s\n", kChalSpriteNames[s],
+                              g_chal_sprite_ready[s] ? "OK" : "MISSING/FAILED");
     }
     // NOTE: the challenge-select per-mode lock icon used to be loaded here from
     // INTERFACE.TXD's "Lock". It is NOT that texture — FUN_00439210 resolves it
