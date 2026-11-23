@@ -1,0 +1,9 @@
+  forced returns (sweep): 1
+  selection timeline (t, depth, sel@d, sel@d+1, modal state/body) on change:
+    t=    67ms d=0 s=0 s80=0 modal=0 body=0x0 tick
+    t=  5751ms d=1 s=0 s80=0 modal=0 body=0x0 tick
+    t=  7023ms d=2 s=0 s80=0 modal=0 body=0x0 tick
+    t=  7084ms d=2 s=0 s80=0 modal=2 body=0x231 tick
+    t= 10121ms d=2 s=0 s80=0 modal=3 body=0x231 tick
+    t= 10424ms d=2 s=0 s80=0 modal=2 body=0x1bc tick
+[mashed-lock] released 'mashed_machine' pid=18736

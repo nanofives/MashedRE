@@ -667,7 +667,8 @@ int              g_modal_step       = 0;     // 0=none; 10/11 load; 20/21/22 sav
 bool             g_modal_yesno      = false; // true=Yes/No, false=single Continue
 DWORD            g_modal_timer_ms   = 0;     // auto-advance timer for the saving step
 bool             g_boot_loadsuccess = false; // true while the boot Loading->Load
-                                             // Successful modal auto-advances (#2)
+                                             // Successful modal is up; its confirm
+                                             // slides the menu in (#2)
 bool             g_modal_fadeout    = false; // true while the current modal is
                                              // fading OUT before the next one fades
                                              // in (the brief Loading->Load
@@ -1580,9 +1581,37 @@ bool RunNavDemoStep(int /*phase*/) {
         // --- boot: wait for the title, then press the button ---
         case 0: if (ph >= 1) { cap("01_title"); step = 1; cool = 8; } return false;
         case 1: NavDemoTap(DIK_RETURN); step = 2; cool = 4; return false;   // press button
-        case 2: // wait for the loading modal to clear and the menu to be up
-            if (ph == 3 && modal == 0) { cap("02_mainmenu"); step = 3; cool = 6; }
+        case 2: { // wait for the loading modal to clear and the menu to be up
+            // "Load Successful." (step 11) holds until confirm, as in the
+            // original (FUN_0043d7c0 case 0xb), so the walk confirms it. The
+            // confirm lands when the retired 1.1 s auto-dismiss fired (same
+            // g_modal_timer_ms reference), so the walk_* captures keep their
+            // timing. MASHED_NAV_DEMO_LS_HOLD_MS=<ms> holds it longer and
+            // captures it again just before the confirm (02b, hold evidence).
+            static const DWORD s_hold = [] {
+                const char* e = std::getenv("MASHED_NAV_DEMO_LS_HOLD_MS");
+                return (e && e[0]) ? static_cast<DWORD>(std::strtoul(e, nullptr, 0)) : 1100u;
+            }();
+            static int ls_shots = 0;
+            if (ph == 3 && modal == 11 && g_boot_loadsuccess) {
+                const DWORD el = DetTicks() - g_modal_timer_ms;
+                if (ls_shots == 0 && g_modal_alpha >= 0xff && s_hold > 1100u) {
+                    cap("02a_loadsuccess"); ls_shots = 1;
+                }
+                if (el > s_hold) {
+                    if (s_hold > 1100u) cap("02b_loadsuccess_held");
+                    ls_shots = 2;
+                    NavDemoTap(DIK_RETURN);
+                }
+                return false;
+            }
+            if (ph == 3 && modal == 0) {
+                NavDemoLog(step, ls_shots == 2 ? "loadsuccess_dismissed_by_confirm"
+                                               : "loadsuccess_cleared_without_input", true);
+                cap("02_mainmenu"); step = 3; cool = 6;
+            }
             return false;
+        }
         // --- main menu: Single Player (cursor starts at item 0) ---
         case 3: NavDemoTap(DIK_RETURN); step = 4; cool = 20; return false;  // -> Single Player (scr2)
         case 4: cap("03_singleplayer"); step = 5; cool = 6; return false;
@@ -2549,8 +2578,24 @@ bool UpdateMenuSelection() {
     if (g_modal_step != 0) {
         const bool yes = (ent_now && !ent_prev);
         const bool no  = (esc_now && !esc_prev);
-        if (g_modal_step == 21 || g_modal_step == 30 ||
-            (g_modal_step == 11 && g_boot_loadsuccess)) return false;  // auto-advancing
+        if (g_modal_step == 21 || g_modal_step == 30) return false;  // auto-advancing
+        // "Load Successful." (0x1bc) holds until CONFIRM, at boot and from the
+        // Load Game menu alike. The original opens it as
+        // FUN_0042bfb0(0x1bc,0xff460000,0xb,0x2d,0,0) (boot load state 5 and the
+        // menu-load case 0xf of FUN_0040acd0); FUN_0043d7c0's case 0xb leaves
+        // state 2 only when FUN_0042ae10(0) reports a confirm press edge (now
+        // 0x007f1042+n*0x4c set, previous 0x007f1502+n*0x4c clear). It does not
+        // test back (FUN_0042aeb0) and nothing closes it on a timer.
+        if (g_modal_step == 11) {
+            if (yes) {
+                ModalGo(0);
+                if (g_boot_loadsuccess) {          // boot flow: menu slides in on dismiss
+                    g_boot_loadsuccess = false;
+                    mashed_re::Frontend::Nav_AnimateIn();
+                }
+            }
+            return false;
+        }
         if (g_modal_yesno) {
             if (g_modal_step == 40) {                // quit-to-Windows confirm
                 if (yes)      return true;           // Yes -> quit
@@ -7922,13 +7967,9 @@ bool RenderFrame() {
             DetTicks() - g_modal_timer_ms > 800u) {
             g_modal_fadeout = true;
         }
-        // Boot "Load Successful." auto-dismisses (~1.1s), then the menu slides in.
-        if (g_modal_step == 11 && g_boot_loadsuccess && g_modal_timer_ms != 0 &&
-            DetTicks() - g_modal_timer_ms > 1100u) {
-            g_boot_loadsuccess = false;
-            ModalGo(0);
-            mashed_re::Frontend::Nav_AnimateIn();
-        }
+        // Boot "Load Successful." holds until confirm (UpdateMenuSelection, step
+        // 11; FUN_0043d7c0 case 0xb). It used to auto-dismiss after 1.1 s here,
+        // which the original never does (playtest 2026-11-22).
         const std::uint32_t A = static_cast<std::uint32_t>(g_modal_alpha) << 24;
         const float S = kVScale;
         std::uint32_t uvf[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u };
