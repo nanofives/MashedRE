@@ -46,6 +46,9 @@ void     GameFlow_RequestResults();
 // state object is the single source of truth. Paused only ever holds in InRace.
 bool     GameFlow_IsPaused();
 void     GameFlow_SetPaused(bool paused);
+// Pause-menu "Restart Race" (0x0043d7c0 case -0xe20000 -> FUN_0040de10): end the live session without leaving
+// the race state, so the caller can relaunch the same configuration (GameFlow_RequestRace) in place.
+void     GameFlow_EndRaceForRestart();
 // Driven once per frame from exe_main's main loop (after the frontend update).
 void     GameFlow_Update(float dt);
 // Draw the race frame when in race; no-op in Frontend (the menu draws itself).

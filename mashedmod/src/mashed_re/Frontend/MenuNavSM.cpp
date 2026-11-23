@@ -994,6 +994,47 @@ void Nav_DevGoto(int screen_id) {
 
 int  Nav_DevScreen() { return g_stack[g_nav_depth].screen_id; }
 
+// In-race pause entry, see MenuNavSM.h. 0x00432080 (LAB_004321c3): FUN_0042d3a0 (0x0042d3a0..0x0042d3d4) zeroes the
+// 0x40-byte nav slots from 0x0067ed78 up to 0x0067f0bc, then DAT_0067e844 = 0 and DAT_0067e9f8 = 0.
+// The push is 0x0043dfd0's DAT_0067eca4 1->2 arm, FUN_0043d2a0(DAT_0067ecac, 0) once the fade word reaches 0xff.
+void Nav_PauseEnter(int screen_id) {
+    std::memset(g_stack, 0, sizeof(g_stack));   // FUN_0042d3a0
+    g_last_dir  = 0;                            // DAT_0067e844 = 0
+    g_nav_depth = 0;                            // DAT_0067e9f8 = 0
+    Nav(screen_id, kNavPush);                   // FUN_0043d2a0(DAT_0067ecac, 0)
+}
+
+namespace {
+bool       s_pause_snap_valid = false;
+int        s_pause_snap_depth = 0;
+int        s_pause_snap_count = 0;
+int        s_pause_snap_last_dir = 0;
+NavSlot    s_pause_snap_stack[kMaxNavDepth] = {};
+MenuRecord s_pause_snap_records[kMaxRecords] = {};
+}  // namespace
+
+void Nav_PauseSnapshotSave() {
+    s_pause_snap_depth    = g_nav_depth;
+    s_pause_snap_count    = g_record_count;
+    s_pause_snap_last_dir = g_last_dir;
+    std::memcpy(s_pause_snap_stack, g_stack, sizeof(g_stack));
+    std::memcpy(s_pause_snap_records, g_records, sizeof(MenuRecord) * static_cast<std::size_t>(RecordCapacity()));
+    s_pause_snap_valid = true;
+}
+
+bool Nav_PauseSnapshotRestore() {
+    if (!s_pause_snap_valid) return false;
+    g_nav_depth    = s_pause_snap_depth;
+    g_record_count = s_pause_snap_count;
+    g_last_dir     = s_pause_snap_last_dir;
+    std::memcpy(g_stack, s_pause_snap_stack, sizeof(g_stack));
+    std::memcpy(g_records, s_pause_snap_records, sizeof(MenuRecord) * static_cast<std::size_t>(RecordCapacity()));
+    s_pause_snap_valid = false;
+    return true;
+}
+
+void Nav_PauseSnapshotDrop() { s_pause_snap_valid = false; }
+
 // DAT_0067f17c analogue: the challenge row on screens 6/7 (see Nav_ChallengeRow).
 // Ghidra xrefs (Mashed_pool, 2026-10-12): its only writers are FUN_004322c0
 // (0x00432304/0x00432311/0x004323a9), FUN_004323c0 (0x004323d7/0x004323e1/

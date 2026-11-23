@@ -76,6 +76,9 @@ void ParseEnvOnce() {
     g_state = 1;
 }
 
+}  // namespace
+int DrawStreamDump_FrameIndex() { return g_frameCount; }
+namespace {
 bool Capturing() {
     return g_state == 1 && !g_written &&
            g_frameCount >= g_frameStart && g_frameCount <= g_frameEnd;
