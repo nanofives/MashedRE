@@ -62,7 +62,10 @@ public:
     // (RwIm2DBridge kMaxTexHandles=96) still has headroom, so only the slot cap moves.
     // 98 (2026-10-13): +1 for the s18/s24 "Powerupshadow" frame (INTERFACE.TXD,
     // FUN_0043af10 0x0043bae9) at slot 97. Handle 88 is still under 96.
-    static constexpr std::uint32_t kMaxSlots = 98;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup +13 standings +1 chalsel dot +1 powerup frame
+    // 109 (2026-11-22, playtest challenge select): +11 INTERFACE.TXD sprites the screen 6/7 renderer
+    // FUN_00439210 / FUN_004368e0 resolves through FUN_0040bb90 (Lock, tick, the 0x0042ee40 tier and
+    // category names, question) at slots 98..108; handles 89..99 (RwIm2DBridge kMaxTexHandles raised to 128).
+    static constexpr std::uint32_t kMaxSlots = 109;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup +13 standings +1 chalsel dot +1 powerup frame +11 chalsel sprites
 
     QuadRenderer() = default;
     ~QuadRenderer() { Shutdown(); }
