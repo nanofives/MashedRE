@@ -111,9 +111,12 @@ function readSel(){
         return {d:d, s:s, s80:s80}; }
   catch(e){ return {d:-999,s:-999,s80:-999}; }
 }
+// Modal box (FUN_00433f40 / FUN_0043d7c0): state DAT_0067eab0 (0 none, 1 posted, 2 up, 3 closing)
+// and body id DAT_0067eab4, so the timeline shows when a dialog opens and closes.
+function readModal(){ try{ return {ms: abs(0x0067eab0).readS32(), mb: abs(0x0067eab4).readS32()}; }catch(e){ return {ms:-1, mb:-1}; } }
 function sample(extra){
-  const v = readSel(); const sig = v.d+':'+v.s+':'+v.s80;
-  if (sig !== lastSig){ selTL.push({t:Date.now()-t0, d:v.d, s:v.s, s80:v.s80, why:extra||''}); lastSig = sig; }
+  const v = readSel(); const m = readModal(); const sig = v.d+':'+v.s+':'+v.s80+':'+m.ms+':'+m.mb;
+  if (sig !== lastSig){ selTL.push({t:Date.now()-t0, d:v.d, s:v.s, s80:v.s80, ms:m.ms, mb:m.mb, why:extra||''}); lastSig = sig; }
 }
 
 // tap schedule: which control is "pressed" right now (by wall time after settle)
@@ -251,9 +254,9 @@ def main():
         try: tl = scr.exports_sync.timeline()
         except Exception: pass
         print(f"\n  forced returns ({mode}): {forced}")
-        print(f"  selection timeline (t, depth, sel@d, sel@d+1) on change:")
+        print(f"  selection timeline (t, depth, sel@d, sel@d+1, modal state/body) on change:")
         for e in tl[:80]:
-            print(f"    t={e['t']:>6}ms d={e['d']} s={e['s']} s80={e['s80']} {e['why']}")
+            print(f"    t={e['t']:>6}ms d={e['d']} s={e['s']} s80={e['s80']} modal={e.get('ms')} body=0x{(e.get('mb') or 0) & 0xffffffff:x} {e['why']}")
     try:
         if not psutil or psutil.pid_exists(pid): dev.kill(pid)
     except Exception: pass
