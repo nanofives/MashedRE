@@ -25,6 +25,10 @@ bool TableRow(int course_id, int k, float xyz[3], float* yaw);
 struct CamEntryHost {
     int  (*track_id)();                       // FUN_00426c00 -> aib_track_index()
     void (*most_separated)(int* a, int* b);   // FUN_0040e180 -> RaceCamera::MostSeparatedPair
+    // FUN_0046d4a0(car) +0x30..+0x38, the record ring row FUN_00441c80 reads. The original fills it with the grid pose
+    // before phase 3 (FUN_0040e590 -> FUN_004704c0, 0x004705fe..0x0047062e); the exe's record ring is written only by
+    // the physics substep after GO, so the host returns the same grid pose from the exe's car state. Null: the ring.
+    bool (*car_pos)(int car, float out[3]);
 };
 void CamEntry_SetHost(const CamEntryHost& h);
 #endif
