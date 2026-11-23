@@ -1,0 +1,12 @@
+NAV_KEYS f=30 tap=e depth=0 screen=1 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=07d8da5b n=7
+NAV_KEYS f=61 tap=e depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=d8b8b3c7 n=5
+NAV_KEYS f=92 tap=e depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=ac82b516 n=3
+NAV_KEYS f=123 tap=d depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=33a020ab n=3
+NAV_KEYS f=154 tap=d depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=3e0ecf17 n=3
+NAV_KEYS f=185 tap=u depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=9a2b8f66 n=3
+NAV_KEYS f=216 tap=r depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=9a2b8f66 n=3
+NAV_KEYS f=247 tap=d depth=3 screen=6 cur=-1 row=0 gm=4 sel=2 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=9a2b8f66 n=3
+NAV_KEYS f=278 tap=r depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=9a2b8f66 n=3
+NAV_KEYS f=309 tap=d depth=3 screen=6 cur=-1 row=0 gm=4 sel=2 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=9a2b8f66 n=3
+NAV_KEYS f=340 tap=l depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=9a2b8f66 n=3
+NAV_KEYS f=371 tap=u depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3 opp=4,2,3 rec=9a2b8f66 n=3
