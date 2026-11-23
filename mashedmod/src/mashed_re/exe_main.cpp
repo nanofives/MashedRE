@@ -4022,7 +4022,16 @@ bool RenderFrame() {
             } else if (g_kbd && !g_det_clock && s_live_input_ok) {   // R10b/#6: no ambient/unfocused steering
                 auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
                 di.accel = (dn(DIK_UP) ? 1.f : 0.f) - (dn(DIK_DOWN) ? 1.f : 0.f);
-                di.steer = (dn(DIK_RIGHT) ? 1.f : 0.f) - (dn(DIK_LEFT) ? 1.f : 0.f);
+                // [PLAYTEST-STEER-SIGN 2026-11-22] The original's keyboard cook puts LEFT in steer byte [0] and RIGHT
+                // in byte [1]: FUN_00498510 binds action 9 to 0xcb (DIK_LEFT) and action 10 to 0xcd (DIK_RIGHT)
+                // for the type-2 slot (puVar8[9] / puVar8[10], cfg + 0x108 + action*4), and the cook FUN_00496530
+                // stores action 9 to ctrl + 0 (0x00496633 push 9 .. 0x0049664f mov [ebp+0x7f1038], al) and action
+                // 10 to ctrl + 1 (0x00496655 push 0xa .. 0x0049666b mov [ebp+0x7f1039], al). FUN_004709a0 hands
+                // that block (0x00470a04, 0x007f1038 + slot*0x4c) to the car as its input bytes. The port maps
+                // steer > 0 to byte [0] (VehiclePhysicsRun.cpp WS-A8-STEER), so LEFT is +1 here. It was RIGHT = +1,
+                // which put RIGHT in byte [0] and steered the player car the wrong way (Mariano's playtest,
+                // keyboard). The swap at 0x00496717 (DAT_007f0f30, zeroed at 0x0049250a) is not modelled: 0 by default.
+                di.steer = (dn(DIK_LEFT) ? 1.f : 0.f) - (dn(DIK_RIGHT) ? 1.f : 0.f);
             }
             // A8 (2026-08-26): MASHED_STEER_HOLD — a HELD steer, full accel, for the
             // whole run. MEASUREMENT HARNESS ONLY; it commands input, it changes no
