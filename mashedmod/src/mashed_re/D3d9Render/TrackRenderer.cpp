@@ -5561,6 +5561,24 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         s_subTr = this;
         s_subAccel = in.accel;
         s_subDt = in.dt;
+        // [PLAYTEST-INTRO-CAMERA] FUN_0040e590's per-car placement leg: FUN_004704c0 writes each active car's grid pose into
+        // both record state matrices (DAT_00881ec8 = +0x928 and DAT_00881f08 = +0x968; FUN_004c51a0 translation at
+        // 0x004705fe / 0x0047060a, FUN_004c4d20 Y rotation at 0x0047061c / 0x0047062e). The original runs FUN_0040e590 in
+        // FUN_004111c0's state-2 tail (before DAT_0063ba8c = 3 / 4) and again on phase 3's first frame (FUN_004102f0, before
+        // FUN_0040d470(1)), and FUN_0046baa0 (the per-frame hold) writes nothing in 0x00881ec8..0x00881f48, so the pose holds
+        // until GO. The port wrote it only from the countdown stand-in (u9747, VehiclePhysics_SeedSpawnPose), which the
+        // sub-state path made unreachable and D5-DEAD-COUNTDOWN-STANDIN (20efede42) deleted, so every record read (0,0,0)
+        // before GO and FUN_00441c80 aimed the phase-3 intro camera at the world origin: on Arctic (grid near x = -26) the
+        // intro ended looking 90 degrees off the cars and snapped at the handover. Pose only, as u9747: FUN_004704c0's
+        // wheel pass FUN_0046f6c0(0) (0x00470638) and the rest stay with the first StepCar.
+        auto seedGridPose = [this] {
+            if (!Vehicle::VehiclePhysics_Enabled()) return;
+            Vehicle::VehiclePhysics_SeedSpawnPose(0, car_pos_, car_yaw_, car_ground_off_, s_spawnYOk[0] ? &s_spawnY[0] : nullptr);
+            for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci)
+                Vehicle::VehiclePhysics_SeedSpawnPose(ci + 1, ai_cars_[static_cast<std::size_t>(ci)].pos,
+                                                      ai_cars_[static_cast<std::size_t>(ci)].yaw, car_ground_off_,
+                                                      (ci < 3 && s_spawnYOk[ci + 1]) ? &s_spawnY[ci + 1] : nullptr);
+        };
         static bool s_hostSet = false;
         if (!s_hostSet) {
             SubStateHost h{};
@@ -5607,6 +5625,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             if (RingAudioPassEnabled()) RingAudioPassDraws(1 + static_cast<int>(ai_cars_.size()));   // [D4-DC-77b0-ST5-RING] the audio pass before it
             SubStateRollCountdown414180();                 // 0x00410259 FUN_00414180 (cd roll)
             SubState_SeedCd();                             // MASHED_SUBSTATE_CD override (measurement, unset by default)
+            seedGridPose();                                // FUN_0040e590 (state-2 tail call): FUN_004704c0 per car
             // [D-11073 leg 2] 0x0041026d: phase 3 only while the state-1 seed 100000 is intact
             // (round 1; seeded in Ai_BridgeLoad). Rounds 2+ see 0 (0x004104c0) -> state 4.
             if (s29b8 == 100000) {
@@ -5623,7 +5642,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             if (s29b8 == 100000) {                         // 0x004102f8 entry block, first frame only
                 VehicleSeedWritePair(0, 0);                // 0x00448700: 100 x FUN_004464c0, +0x1c/+0x20 = 0
                 *reinterpret_cast<int*>(0x00897fe0u) = 1;  // FUN_004430a0(1) @0x00410307 (the hold flag)
-                *reinterpret_cast<int*>(0x007f0ff8u) = 0;  // FUN_0040e590 PARTIAL: 0x0040e5a2 clock store only
+                *reinterpret_cast<int*>(0x007f0ff8u) = 0;  // FUN_0040e590 PARTIAL: 0x0040e5a2 clock store
+                seedGridPose();                            //   + its FUN_004704c0 per-car pose (before the camera reset)
                 SubStateCameraChain(true);                 // FUN_0040d470(1) -> FUN_00446520(cam, 1)
             }
             {                                              // 0x00410320..0x00410343 hold alive cars
@@ -8463,10 +8483,10 @@ void TrackRenderer::NextRoundOrEnd() {
 // sub-mode != 6 frame (states 3, 4, 5 under MASHED_SUBSTATE): FUN_00442600 (0x0044655c, guarded),
 // FUN_004464c0 (0x004468f9; the entries read cam +4..+0xc from the PREVIOUS update), the camera
 // main block when cam[7] == 0 (RaceCamera::Update, the same block the sub-mode-6 path runs), then
-// the copy cam+0x40..+0x48 -> cam+4..+0xc (0x004481c9; RaceCamera keeps +0x40 as pos_out_).
+// the copy cam+0x40..+0x48 -> cam+4..+0xc (0x004481c9; RaceCamera keeps +0x40 as pos_out_) and the target point
+// -> cam+0x10..+0x18 (0x004481e5; RaceCamera tgt_out_).
 // Named gaps: cam[7] != 0 runs FUN_004427c0 in the original (not ported; cam[7] is 0 here, set by
-// FUN_00448700(0,0)); FUN_00442a20 (main block, flag != 0) is not in RaceCamera; cam +0x10..+0x18
-// (FUN_00445aa0 orientation only) is not written.
+// FUN_00448700(0,0)); FUN_00442a20 (main block, flag != 0) is not in RaceCamera.
 void TrackRenderer::SubStateCameraChain(bool reset) {
     static bool s_hostSet = false;
     if (!s_hostSet) {
@@ -8515,6 +8535,11 @@ void TrackRenderer::SubStateCameraChain(bool reset) {
             race_cam_.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, reset);
         const float* p = race_cam_.pos();                          // +0x40..+0x48
         std::memcpy(reinterpret_cast<void*>(0x00897fe4u), p, 12);  // 0x004481c9 copy -> +4..+0xc
+        // [PLAYTEST-INTRO-CAMERA] 0x004481e5..0x004481f9: the target point ([ebp-0x10], [ebp-0xc], [ebp-8], the value the
+        // main block also stores at +0x97c, RaceCamera tgt_out_) -> +0x10..+0x18. FUN_00445aa0 pulls its look target toward
+        // it once entry 0 is within 8 units (0x00445e9b..0x00445f0e); unwritten (0,0,0), the phase-3 intro turned to the
+        // origin for its last ~500 frames.
+        std::memcpy(reinterpret_cast<void*>(0x00897ff0u), race_cam_.target(), 12);
     } else if (CamReplayP3On()) {
         // [HB-RUN13-PHASE3-START] camera_probe.py writes a row on every FUN_00446520 return, cam[7] or not, so a
         // gated-off call still takes its row (no trace row has c7 != 0; this keeps the 1:1 call mapping anyway)
