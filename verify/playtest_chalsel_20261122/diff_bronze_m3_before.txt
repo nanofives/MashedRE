@@ -1,0 +1,108 @@
+== o_s6_m3_f0 (A: 103 draws, x1.0) vs f300 (B: 102 draws, x1.0)
+   matched 50  mismatched 0  missing 53  extra 52
+  MISSING  A[  3] x= 928.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISSING  A[  4] x= 928.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISSING  A[  5] x= 928.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  6] x=   0.00 y=   0.00 w= 928.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  7] x= 883.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  8] x=   0.00 y=  34.13 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  9] x= 866.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 10] x=   0.00 y=  68.27 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 11] x= 856.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 12] x=   0.00 y= 102.40 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 13] x= 848.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 14] x=   0.00 y= 136.53 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 15] x= 843.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 16] x=   0.00 y= 170.67 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 17] x= 839.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 18] x=   0.00 y= 204.80 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 19] x= 838.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 20] x=   0.00 y= 238.93 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 21] x= 838.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 22] x=   0.00 y= 273.07 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 23] x= 839.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 24] x=   0.00 y= 307.20 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 25] x= 843.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 26] x=   0.00 y= 341.33 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 27] x= 848.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 28] x=   0.00 y= 375.47 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 29] x= 856.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 30] x=   0.00 y= 409.60 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 31] x= 866.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 32] x=   0.00 y= 443.73 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 33] x= 883.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 34] x=   0.00 y= 477.87 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 81] x= 330.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474bd3,0x42eafa
+  MISSING  A[ 82] x= 465.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474d0c,0x42eafa
+  MISSING  A[ 83] x= 328.00 y=  94.00 w=   2.00 h=184.00 col=ff000000  @0x472db4,0x42eb43
+  MISSING  A[ 84] x= 328.00 y=  94.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb65
+  MISSING  A[ 85] x= 328.00 y= 276.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb7f
+  MISSING  A[ 86] x= 600.00 y=  94.00 w=   2.00 h=182.00 col=ff000000  @0x472db4,0x42ebb9
+  MISSING  A[ 87] x=  32.00 y= 300.00 w= 576.00 h= 96.00 col=aa000000  @0x472db4,0x436996
+  MISSING  A[ 89] x=  40.00 y= 292.00 w= 112.00 h=112.00 col=ffffffff  @0x473c19,0x436da9
+  MISSING  A[ 90] x= 196.00 y= 292.00 w= 112.00 h=112.00 col=ffffffff  @0x473c19,0x438687
+  MISSING  A[ 91] x= 132.00 y= 300.00 w=  88.00 h= 88.00 col=ffffffff  @0x473c19,0x43879a
+  MISSING  A[ 92] x=   0.00 y= 167.00 w= 310.00 h= 22.00 col=7ff7941d  @0x472db4,0x439871
+  MISSING  A[ 93] x=   0.00 y= 167.00 w= 310.00 h=  2.00 col=ffb4640f  @0x472db4,0x4398bf
+  MISSING  A[ 94] x=   0.00 y= 187.00 w= 310.00 h=  2.00 col=ffb4640f  @0x472db4,0x4398db
+  MISSING  A[ 95] x= 310.00 y= 167.00 w=   2.00 h= 22.00 col=ffb4640f  @0x472db4,0x439939
+  MISSING  A[ 96] x=  32.00 y= 158.00 w=  32.00 h= 32.00 col=efffffff  @0x4739e7,0x439c0e
+  MISSING  A[ 97] x= 239.00 y= 156.00 w=  44.00 h= 44.00 col=7fffffff  @0x4739e7,0x43a315
+  MISSING  A[ 98] x= 250.00 y= 167.00 w=  44.00 h= 44.00 col=feffffff  @0x4739e7,0x43a375
+  MISSING  A[ 99] x= 269.00 y= 156.00 w=  44.00 h= 44.00 col=7fffffff  @0x4739e7,0x43a4e8
+  MISSING  A[100] x= 280.00 y= 167.00 w=  44.00 h= 44.00 col=feffffff  @0x4739e7,0x43a548
+  MISSING  A[101] x= 205.24 y= 152.24 w=  51.53 h= 51.53 col=feffffff  @0x4739e7,0x43a153
+  MISSING  A[102] x= 220.00 y= 167.00 w=  44.00 h= 44.00 col=feffffff  @0x4739e7,0x43a1a9
+  EXTRA    B[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0x1647e1<?A0x1a0a58d9::WrapDevice9::GetVertexShaderConstantB+0x1>,0x16f46<?A0x6520fa73::RenderFrame+0x2af6>
+  EXTRA    B[ 81] x=   0.00 y= 133.00 w= 312.50 h= 21.88 col=a0bf730d tex=0 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 82] x=   0.00 y= 133.00 w= 312.50 h=  1.88 col=ffb06408 tex=0 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 83] x=   0.00 y= 153.00 w= 312.50 h=  1.88 col=ffb06408 tex=0 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 84] x= 208.37 y= 125.37 w=  45.26 h= 45.26 col=ffffffff tex=86 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 85] x= 220.00 y= 159.00 w=  22.00 h= 22.00 col=3f000000 tex=85 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 86] x= 220.00 y= 181.00 w=  22.00 h= 22.00 col=3f000000 tex=85 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 87] x= 220.00 y= 203.00 w=  22.00 h= 22.00 col=3f000000 tex=85 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 88] x= 330.00 y=  96.00 w= 290.00 h=160.00 col=ffffffff tex=10 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 89] x= 330.00 y= 264.00 w= 290.00 h= 96.00 col=a0000000 tex=0 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 90] x= 330.00 y= 264.00 w= 290.00 h=  1.88 col=ffffffff tex=0 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 91] x= 520.00 y= 320.00 w=  24.00 h= 24.00 col=ffffffff tex=85 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 92] x= 520.00 y= 336.00 w=  24.00 h= 24.00 col=ffffffff tex=84 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 93] x= 520.00 y= 352.00 w=  24.00 h= 24.00 col=ffffffff tex=84 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 94] x=  40.00 y= 308.00 w=  72.00 h= 72.00 col=ffffffff tex=35 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 95] x= 104.00 y= 308.00 w=  72.00 h= 72.00 col=ffffffff tex=35 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 96] x= 168.00 y= 308.00 w=  72.00 h= 72.00 col=ffffffff tex=35 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 97] x= 232.00 y= 308.00 w=  72.00 h= 72.00 col=ffffffff tex=35 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 98] x=  74.12 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[ 99] x= 138.12 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+  EXTRA    B[100] x= 202.12 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0x164978<?A0x1a0a58d9::WrapD3D9::QueryInterface+0x28>,0x21a96<?A0x6520fa73::WriteMashedInputGlobalsFromKeyboard+0x16>
+VERDICT: RED (match=50 mismatch=0 missing=53 extra=52)

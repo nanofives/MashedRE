@@ -84,7 +84,8 @@ int  g_dstBlend     = 6;     // state 11 (rwBLENDINVSRCALPHA == D3DBLEND_INVSRCA
 // + lock/check (the Challenge-Select mode-checklist pair) = ~85. Headroom ~11.
 // Recount before adding another texture family, not after: an overflow here is
 // silent and shows up as some unrelated sprite rendering as white.
-constexpr int     kMaxTexHandles = 96;
+// 128 (2026-11-22): +11 challenge-select sprites (handles 89..99) put the census at ~96.
+constexpr int     kMaxTexHandles = 128;
 struct TexEntry { int handle; IDirect3DTexture9* tex; bool point_filter; };
 TexEntry          g_texMap[kMaxTexHandles] = {};
 int               g_texMapCount = 0;
