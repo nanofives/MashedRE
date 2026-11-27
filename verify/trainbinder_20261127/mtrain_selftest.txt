@@ -1,0 +1,504 @@
+[mtrain 11:29:34] SELFTEST fake repo C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930
+[mtrain 11:29:37]   union-resolved: re/analysis/CHANGELOG.md
+[mtrain 11:29:37]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 11:29:37]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 11:29:37]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 11:29:37]   SELFTEST contrast: Set-Content writes 2 CR byte(s) for 2 lines on this host
+[mtrain 11:29:39] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-8488 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-8488: removed
+[mtrain 11:29:43]   SELFTEST PASS: tracker: two branches on different hooks.csv rows both merge (key-merged), 3 rows, no duplicate RVA
+[mtrain 11:29:44]   SELFTEST PASS: tracker: the same RVA edited two ways = set aside naming the RVA, merge aborted, tree clean (conflict needs a hand merge (same key edited on both sides): hooks.csv [00401000])
+[mtrain 11:29:47]   union-resolved: ; key-merged: hooks.csv
+[mtrain 11:29:48]   promotions applied: re/promotions/PA.tsv (wrote hooks.csv (1 rows -> C4) and 1 CHANGELOG lines)
+[mtrain 11:29:48]   SELFTEST PASS: tracker: promotions TSV applied at merge time on the current head: row C4 with the other branch's edit kept, CHANGELOG line written, TSV moved to applied/
+[mtrain 11:29:49]   SELFTEST PASS: tracker: a refused promotion row (write-set not covered) = whole branch set aside, hooks.csv left at C3 (promotions: c4_reclass refused re/promotions/PB.tsv ([1/1] 0x00401020 frida-replay REFUSED write-set not covered (stays C3, L-40) | batch: 0 pass, 1 refused, 0 skipped (already C4), 1 rows) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\promo_re_promotions_PB.tsv.log))
+[mtrain 11:29:52]   tags applied: re/promotions/TA-tag.tsv (wrote hooks.csv (1 rows tagged) and 1 CHANGELOG line)
+[mtrain 11:29:52]   binder selftest: PASS 0 (after promotions)
+[mtrain 11:29:52]   SELFTEST PASS: binder selftest step: an unchanged list (PASS 0 before and after) passes the pass
+[mtrain 11:29:52]   binder selftest: FAIL 1 after promotions, base head FAIL 1, 0 NEW
+[mtrain 11:29:52]   SELFTEST PASS: binder selftest step: failures already in the base head's list are not NEW, the pass stands
+[mtrain 11:29:52]   binder selftest: FAIL 3 after promotions, base head FAIL 1, 1 NEW
+[mtrain 11:29:52]     NEW: [selftest] C emit: 3 cpp-unclean rvas bound as .c units, 2 wrapper-shape failures
+[mtrain 11:29:53]   SELFTEST PASS: binder selftest step: a NEW failure against the base list fails the pass (binder selftest: 1 NEW failure(s) against the base head's list (first: [selftest] C emit: 3 cpp-unclean rvas bound as .c units, 2 wrapper-shape failures))
+[mtrain 11:29:53]   binder selftest: FAIL 1 after promotions, base head PASS, 1 NEW
+[mtrain 11:29:53]     NEW: [selftest] bulk listing vs verify/bindbulk_20261121/tools/last_plan.txt: 60 lines moved, FAIL 1 unnamed, 0 stale
+[mtrain 11:29:53]   SELFTEST PASS: binder selftest step: PASS 0 on the base head and FAIL 1 after the promotions (the run 55 shape) fails the pass
+[mtrain 11:29:53]   SELFTEST PASS: binder selftest step: a selftest that never prints PASS / FAIL N fails the pass (not a list comparison)
+[mtrain 11:29:53]   SELFTEST PASS: binder selftest step: placed in Try-Batch right after Apply-Promotions (c4_reclass --apply --strict) and before archive lint, build and gates
+[mtrain 11:29:53]   SELFTEST PASS: tracker: a <ID>-tag.tsv is applied at merge time (c4_reclass tag --strict): notes tagged, confidence untouched, CHANGELOG line written, TSV moved to applied/
+[mtrain 11:29:53]   SELFTEST PASS: tracker: a refused tag row (no hooks.csv row) = whole branch set aside (promotions: c4_reclass tag refused re/promotions/TB-tag.tsv ([1/1] 0x00409999 tag REFUSED no hooks.csv row | tag: 0 tagged, 1 refused, 0 skipped (already tagged), 1 rows) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\promo_re_promotions_TB-tag.tsv.log))
+[mtrain 11:29:56]   SELFTEST PASS: tracker: tracker_merge3_selftest.py 11/11 PASS
+[mtrain 11:29:57]   RED pass logged in integration (5c1d7ff)
+[mtrain 11:29:58]   RED pass logged in integration (c564049)
+[mtrain 11:29:58]   SELFTEST PASS: RED pass log: 2 commits touching only INTEGRATION_LOG.md, newest first, bounced rows named, 0 CR (commits 2, files re/orchestrator/INTEGRATION_LOG.md, CR 0)
+[mtrain 11:29:58]   SELFTEST PASS: RED pass log: the run body calls Add-RedLogLine when nothing merged, and a mixed pass names its bounced rows on the merged line
+[mtrain 11:30:00] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261127_112930/.worktrees/step-clean rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\step-clean: removed
+[mtrain 11:30:00]   cleanup step-clean: worktree and branch removed
+[mtrain 11:30:01] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261127_112930/.worktrees/step-dirty rc=1 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\step-dirty: refused (likely dirty): fatal: 'C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\step-dirty' contains modified 
+[mtrain 11:30:01]   cleanup step-dirty: worktree removal refused (C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261127_112930/.worktrees/step-dirty), worktree and branch kept
+[mtrain 11:30:01]   cleanup step-ahead: git branch --delete refused, branch kept: error: the branch 'step-ahead' is not fully merged
+[mtrain 11:30:01]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 11:30:01]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 11:30:01]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 11:30:02] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-f98c
+[mtrain 11:30:03] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-f98c rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-f98c: removed
+[mtrain 11:30:03]   SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+[mtrain 11:30:03] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-3924
+[mtrain 11:30:03] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-3924 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-3924: removed
+[mtrain 11:30:03]   SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+[mtrain 11:30:04] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-6630 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-6630: removed
+[mtrain 11:30:04]   SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+[mtrain 11:30:06] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-b7cc rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-b7cc: removed
+[mtrain 11:30:06] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-0f16
+[mtrain 11:30:06] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-0f16 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-0f16: removed
+[mtrain 11:30:06]   SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+[mtrain 11:30:07]   cleanup step-out: worktree C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261127_112930-outside-wt is not under .worktrees\, worktree and branch kept
+[mtrain 11:30:07]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 11:30:08] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930-outside-wt rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930-outside-wt: removed
+[mtrain 11:30:08]   SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+[mtrain 11:30:08]   SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+[mtrain 11:30:08]   SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+[mtrain 11:30:08]   SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+[mtrain 11:30:09]   SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+[mtrain 11:30:09]   SELFTEST PASS: priority window: Try-Batch takes the hold once, after build.bat (4204) and lint_rva_bodies (4958), right before Run-Gates (5383 < 5407)
+[mtrain 11:30:09]   SELFTEST PASS: AST: the run-body try starts with the priority_scope=pass fallback only, Exit-PassPriority runs in a finally after Clear-Temps (first=True inner=1)
+[mtrain 11:30:09] priority: PRIORITY-HOLD 'mashed_machine' owner_pid=19380 rc=0
+[mtrain 11:30:10] priority: PRIORITY-RELEASED 'mashed_machine' owner_pid=19380 rc=0
+[mtrain 11:30:10]   SELFTEST PASS: priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=False)
+[mtrain 11:30:10] priority: PRIORITY-HOLD 'mashed_machine' owner_pid=19380 rc=0
+[mtrain 11:30:10]   SELFTEST PASS: priority hold: status shows PRIORITY-HOLD pid=19380
+[mtrain 11:30:17]   SELFTEST PASS: priority hold: a new non-priority solo open waits while held (blocked=True), an ordinary acquire does not (ok=True), the solo opens after release (opened=True)
+[mtrain 11:30:17]   SELFTEST PASS: marker dir: default priority/linger marker dir is outside %TEMP% (C:\Users\maria\AppData\Local\mashed_lock\markers)
+[mtrain 11:30:21]   merged T-rc-ok (step-rc-ok)
+[mtrain 11:30:21]   changed 2 file(s); text-only=True full-set=False
+[mtrain 11:30:21]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:22]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 4f5489325a9fb4f3b68dba1aa12fb2a7301158ca)
+[mtrain 11:30:22]   SELFTEST PASS: tracker: rc-ok (hooks.csv + CHANGELOG only) is text-only, no build, lint OK with the base's 9-column row pre-existing (ok=True gates='not run: text-only change (no build input touched)')
+[mtrain 11:30:22] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-3aae rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-3aae: removed
+[mtrain 11:30:23]   merged T-bad-ncol (step-bad-ncol)
+[mtrain 11:30:23]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:30:23]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:23]   SELFTEST PASS: tracker: bad-ncol bounced by the tracker lint with NEW NCOL rva=00401030 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 4f5489325a9fb4f3b68dba1aa12fb2a7301158ca) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\tracker_lint.txt)')
+[mtrain 11:30:24] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-bc5a rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-bc5a: removed
+[mtrain 11:30:24]   merged T-bad-conf (step-bad-conf)
+[mtrain 11:30:24]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:30:24]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:25]   SELFTEST PASS: tracker: bad-conf bounced by the tracker lint with NEW CONF rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 4f5489325a9fb4f3b68dba1aa12fb2a7301158ca) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\tracker_lint.txt)')
+[mtrain 11:30:25] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-00c3 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-00c3: removed
+[mtrain 11:30:26]   merged T-bad-dup (step-bad-dup)
+[mtrain 11:30:26]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:30:26]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:26]   SELFTEST PASS: tracker: bad-dup bounced by the tracker lint with NEW DUP rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 4f5489325a9fb4f3b68dba1aa12fb2a7301158ca) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\tracker_lint.txt)')
+[mtrain 11:30:27] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-bab7 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-bab7: removed
+[mtrain 11:30:28]   merged T-bad-quote (step-bad-quote)
+[mtrain 11:30:28]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:30:28]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:28]   SELFTEST PASS: tracker: bad-quote bounced by the tracker lint with NEW PARSE (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 0 rows, UNCERTAINTIES.md 2 ids, pre-existing=0 NEW=1 (base 4f5489325a9fb4f3b68dba1aa12fb2a7301158ca) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\tracker_lint.txt)')
+[mtrain 11:30:29] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-8183 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-8183: removed
+[mtrain 11:30:29]   merged T-bad-udup (step-bad-udup)
+[mtrain 11:30:29]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:30:29]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:30]   SELFTEST PASS: tracker: bad-udup bounced by the tracker lint with NEW UDUP U-0002 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 4f5489325a9fb4f3b68dba1aa12fb2a7301158ca) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\tracker_lint.txt)')
+[mtrain 11:30:30] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-aa28 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-aa28: removed
+[mtrain 11:30:30]   SELFTEST PASS: control: hooks.csv was not text-only under the old globs, is under merge_train.json
+[mtrain 11:30:30]   SELFTEST PASS: control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: )
+[mtrain 11:30:32]   merged T-cA (step-cA)
+[mtrain 11:30:33] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-e19a rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-e19a: removed
+[mtrain 11:30:33]   conflict: T-cB set aside (conflict needs a hand merge (frida-sweep recipe): notes/conf.txt); gating the other 2 row(s) as one batch
+[mtrain 11:30:33]   merged T-cA (step-cA)
+[mtrain 11:30:34]   merged T-cC (step-cC)
+[mtrain 11:30:34]   changed 2 file(s); text-only=True full-set=False
+[mtrain 11:30:34]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:35]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base ad4fe40344840f70199c748de22c387dbde2b766)
+[mtrain 11:30:35]   SELFTEST PASS: conflict-skip (real merge): B conflicts on notes/conf.txt = set aside with no gate run, A+C merged again and gated as one batch (A merged 2 times, one-at-a-time not used, merged T-cA,T-cC)
+[mtrain 11:30:35]   SELFTEST PASS: conflict-skip (real merge): the landed tree holds A's conf.txt and C's c.txt only (notes/c.txt,notes/conf.txt)
+[mtrain 11:30:35] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-2d42 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-2d42: removed
+[mtrain 11:30:36]   SELFTEST PASS: match-textonly: build refs = rsp entry + #include from a mashedmod TU + the include inside it (re/match/rsp1/a.c,re/match/t01g/004111c0.c,re/match/t01g/common.h)
+[mtrain 11:30:41]   merged T-m-free (step-m-free)
+[mtrain 11:30:41]   changed 2 file(s); text-only=True full-set=True
+[mtrain 11:30:41]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:42]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:42]   SELFTEST PASS: match-textonly: m-free (re/match files no build reads) = text-only, no build, no gates (gates 'not run: text-only change (no build input touched)')
+[mtrain 11:30:42] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-a201 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-a201: removed
+[mtrain 11:30:43]   merged T-m-incl (step-m-incl)
+[mtrain 11:30:43]   changed 1 file(s); text-only=False full-set=True
+[mtrain 11:30:43]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:43]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:43]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:43]   SELFTEST PASS: match-textonly: m-incl = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:44] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-acb8 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-acb8: removed
+[mtrain 11:30:44]   merged T-m-trans (step-m-trans)
+[mtrain 11:30:45]   changed 1 file(s); text-only=False full-set=True
+[mtrain 11:30:45]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:45]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:45]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:45]   SELFTEST PASS: match-textonly: m-trans = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:46] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-73f9 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-73f9: removed
+[mtrain 11:30:46]   merged T-m-rsp (step-m-rsp)
+[mtrain 11:30:46]   changed 1 file(s); text-only=False full-set=True
+[mtrain 11:30:46]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:46]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:46]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:47]   SELFTEST PASS: match-textonly: m-rsp = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:47] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-726e rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-726e: removed
+[mtrain 11:30:47]   merged T-m-mix (step-m-mix)
+[mtrain 11:30:48]   changed 2 file(s); text-only=False full-set=True
+[mtrain 11:30:48]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:48]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:48]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:48]   SELFTEST PASS: match-textonly: m-mix = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:48] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-dadd rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-dadd: removed
+[mtrain 11:30:49]   merged T-m-tbl-adm (step-m-tbl-adm)
+[mtrain 11:30:49]   changed 1 file(s); text-only=False full-set=True
+[mtrain 11:30:49]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:49]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:49]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:49]   SELFTEST PASS: match-textonly: m-tbl-adm = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:49]   SELFTEST PASS: matchtables-build: m-tbl-adm (a match table decides which units ddkobj links) is not text-only, the pass goes on to the build with the object build (gates 'not run', 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:50] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-305f rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-305f: removed
+[mtrain 11:30:51]   merged T-m-tbl-prov (step-m-tbl-prov)
+[mtrain 11:30:52]   changed 1 file(s); text-only=False full-set=True
+[mtrain 11:30:52]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:52]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:52]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:52]   SELFTEST PASS: match-textonly: m-tbl-prov = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:52]   SELFTEST PASS: matchtables-build: m-tbl-prov (a match table decides which units ddkobj links) is not text-only, the pass goes on to the build with the object build (gates 'not run', 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:52] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-6cf6 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-6cf6: removed
+[mtrain 11:30:53]   merged T-m-tbl-ref (step-m-tbl-ref)
+[mtrain 11:30:53]   changed 1 file(s); text-only=False full-set=True
+[mtrain 11:30:53]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:53]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:54]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:54]   SELFTEST PASS: match-textonly: m-tbl-ref = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:54]   SELFTEST PASS: matchtables-build: m-tbl-ref (a match table decides which units ddkobj links) is not text-only, the pass goes on to the build with the object build (gates 'not run', 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:54] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-b3f6 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-b3f6: removed
+[mtrain 11:30:55]   merged T-m-tbl-rwc (step-m-tbl-rwc)
+[mtrain 11:30:55]   changed 1 file(s); text-only=False full-set=False
+[mtrain 11:30:55]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:55]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:56]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:56]   SELFTEST PASS: match-textonly: m-tbl-rwc = not text-only, the train goes on to the build (fake repo has no build.bat: 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:56]   SELFTEST PASS: matchtables-build: m-tbl-rwc (a match table decides which units ddkobj links) is not text-only, the pass goes on to the build with the object build (gates 'not run', 'build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:56] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-0fdc rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-0fdc: removed
+[mtrain 11:30:57]   merged T-m-free (step-m-free)
+[mtrain 11:30:57]   changed 2 file(s); text-only=False full-set=True
+[mtrain 11:30:57]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:30:57]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base 987986c652ee4d7f1fc952cf25434732425a0e46)
+[mtrain 11:30:57]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:30:57]   SELFTEST PASS: match-textonly: a flip pass (effective -Full) still builds and gates a match-only batch ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:30:58] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-72ee rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-72ee: removed
+[mtrain 11:30:58]   SELFTEST PASS: match-textonly: a build script naming re/match makes every re/match file a build input
+[mtrain 11:30:58]   SELFTEST PASS: match-textonly: Test-TextOnlyPath only frees re/match/ (not re/matchx/, not re/tools/match/)
+[mtrain 11:30:58]   SELFTEST PASS: matchtables-build: Test-TextOnlyPath is false for the four match tables (any folder, even under verify/*), other tsv files stay text-only
+[mtrain 11:30:58]   SELFTEST PASS: verifypy: gate-input closure follows import / from-import / a quoted .py token from the scorer roots (re/orchestrator/tracker_lint.py,re/tools/ai_speed_env.py,re/tools/scorer_lib.py,re/tools/win_lib.py,verify/d2band42_20261029/score_d2_v2.py,verify/rsky_20261016/run13.py,verify/savelink_20261023/gate_helper.py,verify/savelink_20261023/run_arms.py,verify/savelink_20261023/vsum.py)
+[mtrain 11:31:05]   merged T-v-evid (step-v-evid)
+[mtrain 11:31:05]   changed 2 file(s); text-only=True full-set=False
+[mtrain 11:31:05]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:05]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:05]   SELFTEST PASS: verifypy: v-evid (verify/** or re/frida evidence no gate reads) = text-only, no build, no gates (gates 'not run: text-only change (no build input touched)')
+[mtrain 11:31:06] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-8a23 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-8a23: removed
+[mtrain 11:31:17]   merged T-v-frida (step-v-frida)
+[mtrain 11:31:33]   changed 2 file(s); text-only=True full-set=False
+[mtrain 11:31:33]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:35]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:35]   SELFTEST PASS: verifypy: v-frida (verify/** or re/frida evidence no gate reads) = text-only, no build, no gates (gates 'not run: text-only change (no build input touched)')
+[mtrain 11:31:36] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-2d7f rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-2d7f: removed
+[mtrain 11:31:38]   merged T-v-mix (step-v-mix)
+[mtrain 11:31:39]   changed 3 file(s); text-only=True full-set=False
+[mtrain 11:31:39]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:39]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:40]   SELFTEST PASS: verifypy: v-mix (verify/** or re/frida evidence no gate reads) = text-only, no build, no gates (gates 'not run: text-only change (no build input touched)')
+[mtrain 11:31:41] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-c7a7 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-c7a7: removed
+[mtrain 11:31:42]   merged T-v-runner (step-v-runner)
+[mtrain 11:31:43]   changed 1 file(s); text-only=False full-set=False
+[mtrain 11:31:43]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:45]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:45]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:46]   SELFTEST PASS: verifypy: v-runner = still a build input, the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:31:47] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-5061 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-5061: removed
+[mtrain 11:31:47]   merged T-v-import (step-v-import)
+[mtrain 11:31:47]   changed 1 file(s); text-only=False full-set=False
+[mtrain 11:31:47]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:48]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:48]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:48]   SELFTEST PASS: verifypy: v-import = still a build input, the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:31:48] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-7fb7 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-7fb7: removed
+[mtrain 11:31:49]   merged T-v-retool (step-v-retool)
+[mtrain 11:31:49]   changed 1 file(s); text-only=False full-set=False
+[mtrain 11:31:49]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:49]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:49]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:49]   SELFTEST PASS: verifypy: v-retool = still a build input, the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:31:50] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-ea09 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-ea09: removed
+[mtrain 11:31:50]   merged T-v-quoted (step-v-quoted)
+[mtrain 11:31:50]   changed 1 file(s); text-only=False full-set=False
+[mtrain 11:31:50]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:51]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:51]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:51]   SELFTEST PASS: verifypy: v-quoted = still a build input, the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:31:51] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-665c rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-665c: removed
+[mtrain 11:31:51]   merged T-v-stack (step-v-stack)
+[mtrain 11:31:52]   changed 1 file(s); text-only=False full-set=False
+[mtrain 11:31:52]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:52]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:52]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:52]   SELFTEST PASS: verifypy: v-stack = still a build input, the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:31:53] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-ce98 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-ce98: removed
+[mtrain 11:31:53]   merged T-v-tool (step-v-tool)
+[mtrain 11:31:54]   changed 1 file(s); text-only=False full-set=False
+[mtrain 11:31:54]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:54]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:54]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:54]   SELFTEST PASS: verifypy: v-tool = still a build input, the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:31:55] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-450a rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-450a: removed
+[mtrain 11:31:56]   merged T-v-mixsc (step-v-mixsc)
+[mtrain 11:31:56]   changed 2 file(s); text-only=False full-set=False
+[mtrain 11:31:56]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:57]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:57]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:57]   SELFTEST PASS: verifypy: v-mixsc = still a build input, the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:31:58] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-1b79 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-1b79: removed
+[mtrain 11:31:58]   merged T-v-table (step-v-table)
+[mtrain 11:31:58]   changed 2 file(s); text-only=False full-set=True
+[mtrain 11:31:58]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:31:59]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b75c88e9868e6f10646ba6acf0d78302c7c922a8)
+[mtrain 11:31:59]   object build: not run (no mashedmod\build\ddkobj\ddkobj_build.json)
+[mtrain 11:31:59]   SELFTEST PASS: verifypy: v-table = still a build input (match table: object build path), the train goes on to the build ('build failed rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\build.log)')
+[mtrain 11:32:00] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-9cdb rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-9cdb: removed
+[mtrain 11:32:00]   SELFTEST PASS: match-textonly: -Full counts only with a decided flip in the batch, -ForceFull always, no flag never
+[mtrain 11:33:47]   SELFTEST PASS: match-textonly (live tree): t01g/004111c0.c and s01/00401340.c are build inputs; 2691 of 4310 re/match files are
+[mtrain 11:33:47]   D2 rerun: D2_DEFH_2 motion_diag under 1600 lines, rerun 1/2
+[mtrain 11:33:47]   SELFTEST PASS: short-once: D2_DEFH_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 11:33:47]   D2 rerun: D2_DEFH_2 motion_diag under 1600 lines, rerun 1/2
+[mtrain 11:33:48]   D2 rerun: D2_DEFH_2 motion_diag under 1600 lines, rerun 2/2
+[mtrain 11:33:48]   D2 short after 2 rerun(s): D2_DEFH_2
+[mtrain 11:33:49]   SELFTEST PASS: short-always: reruns bounded at 2, arm still reported short (runs=3)
+[mtrain 11:33:49]   SELFTEST PASS: full-length logs: no rerun
+[mtrain 11:33:49]   SELFTEST PASS: unit: arm log with CreateDevice hr=0x8876086A and no device = INFRA reason
+[mtrain 11:33:49]   SELFTEST PASS: unit: hr=0x8876086C in one of two arm logs = INFRA, names that arm
+[mtrain 11:33:49]   SELFTEST PASS: unit: 0x8876086A followed by a working CreateDevice is not the signature (falls to ALL-MISSING)
+[mtrain 11:33:50]   SELFTEST PASS: unit: all MISSING, log present, no signature = ALL-MISSING (caller probes)
+[mtrain 11:33:50]   SELFTEST PASS: unit: all MISSING and no arm log = INFRA (runner never ran the exe)
+[mtrain 11:33:50]   SELFTEST PASS: unit: one hash present, clean log = not INFRA
+[mtrain 11:33:50]   SELFTEST PASS: unit: D2 form (no hashes), clean log = not INFRA
+[mtrain 11:33:50]   render precheck: RENDER: BLOCKED - fake probe
+[mtrain 11:33:50]   SELFTEST PASS: INFRA path: precheck BLOCKED = INFRA before any arm (arms run 0, why 'INFRA: render precheck RENDER: BLOCKED - fake probe')
+[mtrain 11:33:50]   render precheck: RENDER: OK - fake probe
+[mtrain 11:33:50]   gates: G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/5d43806c/5d43806c
+[mtrain 11:33:51]   SELFTEST PASS: normal path: precheck OK, refs match = GREEN, one probe, no rerun (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/5d43806c/5d43806c')
+[mtrain 11:33:51]   render precheck: RENDER: OK - fake probe
+[mtrain 11:33:51]   gates: G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)
+[mtrain 11:33:52]   SELFTEST PASS: normal path: a changed B hash is still RED 'default gates changed' (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)')
+[mtrain 11:33:52]   render precheck: RENDER: OK - fake probe
+[mtrain 11:33:52]   gates: G-CTRL MISSING/MISSING/MISSING  B not run (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+[mtrain 11:33:52]   SELFTEST PASS: INFRA path: 0x8876086A arm (display slept after the precheck) = INFRA, no G-CTRL rerun, B not run (runs H_DEF)
+[mtrain 11:33:52]   render precheck: RENDER: UNKNOWN - fake probe
+[mtrain 11:33:52]   gates: G-CTRL MISSING/MISSING/MISSING  B not run (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+[mtrain 11:33:52]   SELFTEST PASS: INFRA path: precheck UNKNOWN goes on to the arms, the 0x8876086A arm makes it INFRA
+[mtrain 11:33:52]   render precheck: RENDER: OK - fake probe
+[mtrain 11:33:52]   gates: G-CTRL MISSING/MISSING/MISSING  B not run (INFRA: all gate hashes MISSING and no arm wrote a log (the runner or the lock never ran the exe))
+[mtrain 11:33:52]   SELFTEST PASS: INFRA path: arms that wrote nothing = INFRA (why 'INFRA: all gate hashes MISSING and no arm wrote a log (the runner or the lock never ran the exe)')
+[mtrain 11:33:52]   render precheck: RENDER: OK - fake probe
+[mtrain 11:33:52]   all gate hashes MISSING, render probe: RENDER: BLOCKED - fake probe
+[mtrain 11:33:52]   gates: G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (INFRA: all gate hashes MISSING and the render probe is BLOCKED (RENDER: BLOCKED - fake probe))
+[mtrain 11:33:52]   SELFTEST PASS: INFRA path: all-MISSING with clean logs, post-arm probe BLOCKED = INFRA (probes 2)
+[mtrain 11:33:53]   render precheck: RENDER: OK - fake probe
+[mtrain 11:33:53]   all gate hashes MISSING, render probe: RENDER: OK - fake probe
+[mtrain 11:33:53]   gates: G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (all MISSING, render probe OK: a boot failure of the merged exe, not a display fault)
+[mtrain 11:33:53]   SELFTEST PASS: normal path: all-MISSING with a live display stays RED (a broken exe is bounced, not held) (gates 'G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (all MISSING, render probe OK: a boot failure of the merged exe, not a display fault)')
+[mtrain 11:33:53]   render precheck: RENDER: OK - fake probe
+[mtrain 11:33:53]   gates: G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)
+[mtrain 11:33:53]   SELFTEST PASS: normal path: a 0x8876086A attempt followed by a working device is not INFRA, the changed hash stays RED
+[mtrain 11:33:53]   SELFTEST PASS: INFRA path: single row INFRA = 0 bounced, 0 merged, row left queued (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+[mtrain 11:33:53]   SELFTEST PASS: INFRA path: 3-row batch INFRA = 0 bounced, no one-at-a-time re-merge (Try-Batch calls 1)
+[mtrain 11:33:54] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:33:54]   T-B: INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF; stopping, the rows not merged stay queued
+[mtrain 11:33:54]   SELFTEST PASS: INFRA path: INFRA mid one-at-a-time stops there; the RED before it bounces, the row after it is not tried (calls T-A+T-B+T-C,T-A,T-B)
+[mtrain 11:33:54]   SELFTEST PASS: normal path: single row RED = bounced (unchanged)
+[mtrain 11:33:54] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:33:54]   SELFTEST PASS: normal path (HB-TRAIN-STACK): batch RED -> one at a time, later rows stacked on the GREEN ones: A and C land, B bounced (calls T-A+T-B+T-C,T-A,T-A+T-B,T-A+T-C, temps removed 3)
+[mtrain 11:33:54] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:33:54]   SELFTEST PASS: normal path (HB-TRAIN-STACK): RED first, then two GREEN stacked: B and C land, A bounced (calls T-A+T-B+T-C,T-A,T-B,T-B+T-C)
+[mtrain 11:33:54]   SELFTEST PASS: normal path: batch GREEN = both merged (unchanged)
+[mtrain 11:33:54]   conflict: T-B set aside (conflict needs a hand merge (frida-sweep recipe): hooks.csv); gating the other 2 row(s) as one batch
+[mtrain 11:33:55]   SELFTEST PASS: conflict-skip: B conflicts = B set aside, A+C gated once as one batch and land (calls T-A+T-B+T-C,T-A+T-C)
+[mtrain 11:33:55]   conflict: T-A set aside (conflict needs a hand merge (frida-sweep recipe): hooks.csv); gating the other 2 row(s) as one batch
+[mtrain 11:33:55]   conflict: T-C set aside (conflict needs a hand merge (frida-sweep recipe): hooks.csv); gating the other 1 row(s) as one batch
+[mtrain 11:33:55]   SELFTEST PASS: conflict-skip: two conflicts in a row = both set aside, B gated alone once (calls T-A+T-B+T-C,T-B+T-C,T-B)
+[mtrain 11:33:55]   conflict: T-B set aside (conflict needs a hand merge (frida-sweep recipe): hooks.csv); gating the other 2 row(s) as one batch
+[mtrain 11:33:55] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:33:55]   SELFTEST PASS: conflict-skip: the rest gate-RED = the one-at-a-time path runs on the rest only (calls T-A+T-B+T-C,T-A+T-C,T-A,T-A+T-C)
+[mtrain 11:33:55]   conflict: T-A set aside (conflict needs a hand merge (frida-sweep recipe): hooks.csv); no row left in the batch
+[mtrain 11:33:56]   SELFTEST PASS: conflict-skip: a single conflicting row = bounced (conflict), no second Try-Batch
+[mtrain 11:33:56]   conflict: T-B set aside (conflict needs a hand merge (frida-sweep recipe): hooks.csv); gating the other 1 row(s) as one batch
+[mtrain 11:33:56]   SELFTEST PASS: conflict-skip: the rest INFRA = conflict row bounced, the rest stays queued (INFRA)
+[mtrain 11:33:56] worktree add attempt 1/3 failed rc=128 at integration -> C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-98ff: fatal: fake add failure 1 for integration
+[mtrain 11:34:12] worktree add attempt 2/3 failed rc=128 at integration -> C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-63d3: fatal: fake add failure 2 for integration
+[mtrain 11:34:13] worktree add OK on attempt 3/3: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-f50a
+[mtrain 11:34:13]   SELFTEST PASS: wtadd: add fails twice then succeeds = temp created on attempt 3, registered once, both git messages in the train log (calls 3, err '')
+[mtrain 11:34:20] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-f50a rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-f50a: removed
+[mtrain 11:34:20] worktree add attempt 1/3 failed rc=128 at integration -> C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-9ba5: fatal: fake add failure 1 for integration
+[mtrain 11:34:20] worktree add attempt 2/3 failed rc=128 at integration -> C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-660f: fatal: fake add failure 2 for integration
+[mtrain 11:34:20] worktree add attempt 3/3 failed rc=128 at integration -> C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261127_112930\.worktrees\mtrain-20261127_112930-a886: fatal: fake add failure 3 for integration
+[mtrain 11:34:20]   SELFTEST PASS: wtadd: three failures = throw after the last try with git's message ('worktree add failed after 3 attempts at integration: fatal: fake add failure 3 for integration')
+[mtrain 11:34:20] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:34:20]   T-B: threw (worktree add failed after 3 attempts at abc123: fatal: fake for T-A+T-B); stopping one-at-a-time, landing GREEN T-A, rows not merged stay queued
+[mtrain 11:34:20]   SELFTEST PASS: one-at-a-time: GREEN T-A then T-B throws = no exception escapes, T-A returned for landing, T-B/T-C stay queued (calls T-A+T-B+T-C,T-A,T-A+T-B, escaped '', error 'T-B: worktree add failed after 3 attempts at abc123: fatal: fake for T-A+T-B')
+[mtrain 11:34:20] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:34:20]   T-B: threw (worktree add failed after 3 attempts at abc123: fatal: fake for T-B); stopping one-at-a-time, rows not merged stay queued
+[mtrain 11:34:20]   SELFTEST PASS: one-at-a-time: RED T-A then T-B throws = T-A still bounced, nothing merged, error reported (escaped '')
+[mtrain 11:34:21]   SELFTEST PASS: AST: Resolve-Batch catches the one-at-a-time Try-Batch, the run body carries the error to the report without rethrowing before landing (try/catch=True)
+[mtrain 11:34:21]   SELFTEST PASS: AST: run body = Try-Batch -> Resolve-Batch, red-merge only for $bounced, verdict INFRA when $infra
+[mtrain 11:34:21]   SELFTEST PASS: merge_train.json unchanged by the selftest (sha256 FB6B2FB197EE)
+[mtrain 11:34:21]   SELFTEST PASS: drain: Select-Batch keeps the old pick (stops before a solo row, a solo head merges alone): A,B / S
+[mtrain 11:34:21]   SELFTEST PASS: drain: Test-FlipRow by id (-FLIP / FLIP-) or 'decided flip' in the title (wrong: )
+[mtrain 11:34:21]   SELFTEST PASS: drain: Get-BatchFlips reads each row's ledger title (Q-DEC,Q-2-FLIP)
+[mtrain 11:34:21]   SELFTEST PASS: flip-decision: decision L-n + 'default ON' title flags, near-match L-n citations / default-OFF / plain rows do not (wrong: )
+[mtrain 11:34:21]   SELFTEST PASS: flip-decision: Get-BatchFlips reads the ledger decision field (flags Q-COLL, not the near-match row)
+[mtrain 11:34:21]   SELFTEST PASS: drain: pass result file round-trips (verdict, merged, hashes), LF only
+[mtrain 11:34:22] drain: pass 1 starts, 3 row(s) queued
+[mtrain 11:34:23] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:23] drain: race/first-frame-parity fast-forwarded 740887998 -> 5653af299
+[mtrain 11:34:23] drain: main 740887998 -> 5653af299 (update-ref, old value checked)
+[mtrain 11:34:24] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:24] drain: pass 2 starts, 2 row(s) queued
+[mtrain 11:34:24] drain: pass 2 verdict GREEN merged [Q2 Q3] bounced [] data fake
+[mtrain 11:34:25] drain: race/first-frame-parity fast-forwarded 5653af299 -> 3bb867331
+[mtrain 11:34:25] drain: main 5653af299 -> 3bb867331 (update-ref, old value checked)
+[mtrain 11:34:25] drain: release_due rc=0: DUE x
+[mtrain 11:34:25] drain: DUE, publish.sh running (log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\publish_pass2.log); the next pass waits for it
+[mtrain 11:34:25] drain: publish.sh rc=0 deployed fake
+[mtrain 11:34:25] drain: pass 3 starts, 1 row(s) queued
+[mtrain 11:34:25] drain: pass 3 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:26] drain: race/first-frame-parity fast-forwarded 3bb867331 -> b0579a33a
+[mtrain 11:34:26] drain: main 3bb867331 -> b0579a33a (update-ref, old value checked)
+[mtrain 11:34:26] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:26] drain: queue empty after 3 pass(es)
+[mtrain 11:34:26]   drain case events: pass1,release1,pass2,release2,publish2,pass3,release3 -> GREEN 
+[mtrain 11:34:27]   SELFTEST PASS: drain 1: GREEN x3 (one text-only) = parity and main follow integration after every pass, publish (DUE after pass 2) finishes before pass 3, stops on the empty queue (events pass1,release1,pass2,release2,publish2,pass3,release3)
+[mtrain 11:34:27] drain: pass 1 starts, 5 row(s) queued
+[mtrain 11:34:27] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:28] drain: race/first-frame-parity fast-forwarded b0579a33a -> af2a986c1
+[mtrain 11:34:28] drain: main b0579a33a -> af2a986c1 (update-ref, old value checked)
+[mtrain 11:34:29] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:29] drain: pass 2 starts, 4 row(s) queued
+[mtrain 11:34:29] drain: pass 2 verdict RED merged [Q2] bounced [Q3] data fake
+[mtrain 11:34:29]   drain case events: pass1,release1,pass2 -> RED RED: bounced [Q3: default gates changed]
+[mtrain 11:34:29]   SELFTEST PASS: drain 2: RED pass 2 = stop, no fast-forward and no release after it (verdict RED, stop 'RED: bounced [Q3: default gates changed]')
+[mtrain 11:34:29] drain: pass 1 starts, 4 row(s) queued
+[mtrain 11:34:29] drain: pass 1 verdict INFRA merged [] bounced [] data fake
+[mtrain 11:34:30]   drain case events: pass1 -> INFRA INFRA: D3D9-NOTAVAIL in H_DEF
+[mtrain 11:34:30]   SELFTEST PASS: drain 3: INFRA = stop after the pass, nothing fast-forwarded, no release (INFRA: D3D9-NOTAVAIL in H_DEF)
+[mtrain 11:34:30] drain: pass 1 starts, 4 row(s) queued
+[mtrain 11:34:30] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:30]   drain case events: pass1 -> HASH HASH: gate hashes differ from the refs (G-CTRL aaaaaaaa/eeeeeeee/cccccccc vs aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd vs dddddddd/dddddddd/dddddddd)
+[mtrain 11:34:30]   SELFTEST PASS: drain 4a: GREEN with a hash unlike the refs = stop HASH, no fast-forward (HASH: gate hashes differ from the refs (G-CTRL aaaaaaaa/eeeeeeee/cccccccc vs aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd vs dddddddd/dddddddd/dddddddd))
+[mtrain 11:34:30] drain: pass 1 starts, 4 row(s) queued
+[mtrain 11:34:31] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:31]   drain case events: pass1 -> HASH HASH: merge_train.json refs changed during the pass (G-CTRL 11111111/bbbbbbbb/cccccccc -> aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd -> dddddddd/dddddddd/dddddddd)
+[mtrain 11:34:31]   SELFTEST PASS: drain 4b: refs in merge_train.json moved during the pass = stop HASH (HASH: merge_train.json refs changed during the pass (G-CTRL 11111111/bbbbbbbb/cccccccc -> aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd -> dddddddd/dddddddd/dddddddd))
+[mtrain 11:34:32] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:32] drain: pass 1 verdict FLIP merged [] bounced [] data fake
+[mtrain 11:34:32]   drain case events: pass1 -> FLIP FLIP: decided-flip row(s) in the batch (D4-FLIP-X), left queued: run them alone with -Full after the refs are committed (MERGE_TRAIN.md)
+[mtrain 11:34:32]   SELFTEST PASS: drain 5: decided-flip batch = stop FLIP, nothing moved (FLIP: decided-flip row(s) in the batch (D4-FLIP-X), left queued: run them alone with -Full after the refs are committed (MERGE_TRAIN.md))
+[mtrain 11:34:33] drain: pass 1 starts, 1 row(s) queued
+[mtrain 11:34:33] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:34] drain: ff of race/first-frame-parity blocked by index.lock (attempt 1/3), retry in 0 s: error: Unable to create 'C:/Users/maria/AppData/Local/Temp/mtrain_selftest_drain_20261127_112930/.git/index.lock': File exists. | Another git process seems to be running in this repository, or the lock file may be stale
+[mtrain 11:34:34] drain: race/first-frame-parity fast-forwarded 05f9da954 -> 62b21e093 on attempt 2
+[mtrain 11:34:34] drain: main 05f9da954 -> 62b21e093 (update-ref, old value checked)
+[mtrain 11:34:34] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:34] drain: queue empty after 1 pass(es)
+[mtrain 11:34:35]   drain case events: pass1,wait,release1 -> GREEN 
+[mtrain 11:34:35]   SELFTEST PASS: drain 6: index.lock = one wait and a retry, then both heads equal integration (events pass1,wait,release1)
+[mtrain 11:34:35] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:36] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:36]   drain case events: pass1 -> ERROR ERROR: fast-forward of race/first-frame-parity/main refused: main @ 98b205ac8 is not an ancestor of integration @ 3dc595d3f: not a fast-forward, nothing moved
+[mtrain 11:34:36]   SELFTEST PASS: drain 7: main diverged = refused, race/first-frame-parity not moved either (ERROR: fast-forward of race/first-frame-parity/main refused: main @ 98b205ac8 is not an ancestor of integration @ 3dc595d3f: not a fast-forward, nothing moved)
+[mtrain 11:34:37] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:37] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:37]   drain case events: pass1 -> ERROR ERROR: fast-forward of race/first-frame-parity/main refused: the main checkout has 'other' checked out, not race/first-frame-parity
+[mtrain 11:34:37]   SELFTEST PASS: drain 8: main checkout not on race/first-frame-parity = refused (ERROR: fast-forward of race/first-frame-parity/main refused: the main checkout has 'other' checked out, not race/first-frame-parity)
+[mtrain 11:34:38] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:38] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:39] drain: race/first-frame-parity fast-forwarded 847f560d3 -> 417612694
+[mtrain 11:34:39] drain: main 847f560d3 -> 417612694 (update-ref, old value checked)
+[mtrain 11:34:39] drain: release_due rc=2: ERROR x
+[mtrain 11:34:39]   drain case events: pass1,release1 -> ERROR ERROR: release_due.py rc=2: ERROR x
+[mtrain 11:34:39]   SELFTEST PASS: drain 9a: release_due ERROR = stop before the next pass (ERROR: release_due.py rc=2: ERROR x)
+[mtrain 11:34:39] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:40] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:40] drain: race/first-frame-parity fast-forwarded 417612694 -> 11615bf09
+[mtrain 11:34:40] drain: main 417612694 -> 11615bf09 (update-ref, old value checked)
+[mtrain 11:34:40] drain: release_due rc=0: DUE x
+[mtrain 11:34:40] drain: DUE, publish.sh running (log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\publish_pass1.log); the next pass waits for it
+[mtrain 11:34:40] drain: publish.sh rc=1 deployed fake
+[mtrain 11:34:41]   drain case events: pass1,release1,publish1 -> ERROR ERROR: publish.sh rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\publish_pass1.log)
+[mtrain 11:34:41]   SELFTEST PASS: drain 9b: publish.sh failed = stop, no retry, no next pass (ERROR: publish.sh rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\publish_pass1.log))
+[mtrain 11:34:41] drain: queue empty after 0 pass(es)
+[mtrain 11:34:41]   drain case events:  -> GREEN 
+[mtrain 11:34:41]   SELFTEST PASS: drain 10: empty queue = no pass, GREEN
+[mtrain 11:34:41] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:41] drain: pass 1 verdict RED merged [Q1] bounced [Q2] data fake
+[mtrain 11:34:42] drain: race/first-frame-parity fast-forwarded 11615bf09 -> 61cde27fd
+[mtrain 11:34:42] drain: main 11615bf09 -> 61cde27fd (update-ref, old value checked)
+[mtrain 11:34:42] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:42] drain: pass 2 starts, 1 row(s) queued
+[mtrain 11:34:43] drain: pass 2 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:43] drain: race/first-frame-parity fast-forwarded 61cde27fd -> ea0a5b340
+[mtrain 11:34:43] drain: main 61cde27fd -> ea0a5b340 (update-ref, old value checked)
+[mtrain 11:34:44] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:44] drain: queue empty after 2 pass(es)
+[mtrain 11:34:44]   drain case events: pass1,release1,pass2,release2 -> PARTIAL 
+[mtrain 11:34:44]   SELFTEST PASS: drain 12 (HB-DRAIN-VERDICT: verdict PARTIAL, not GREEN): conflict-only RED pass = the rest is fast-forwarded and released, drain goes on (events pass1,release1,pass2,release2)
+[mtrain 11:34:44] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:44] drain: pass 1 verdict RED merged [] bounced [Q2] data fake
+[mtrain 11:34:44] drain: pass 2 starts, 1 row(s) queued
+[mtrain 11:34:44] drain: pass 2 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:45] drain: race/first-frame-parity fast-forwarded ea0a5b340 -> 5e60effea
+[mtrain 11:34:45] drain: main ea0a5b340 -> 5e60effea (update-ref, old value checked)
+[mtrain 11:34:45] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:45] drain: queue empty after 2 pass(es)
+[mtrain 11:34:45]   drain case events: pass1,pass2,release2 -> PARTIAL 
+[mtrain 11:34:45]   SELFTEST PASS: drain 12 (PARTIAL): conflict-only pass with nothing merged = no fast-forward, no release, next pass (events pass1,pass2,release2)
+[mtrain 11:34:45] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:46] drain: pass 1 verdict RED merged [Q1] bounced [Q2] data fake
+[mtrain 11:34:46]   drain case events: pass1 -> RED RED: bounced [Q2: default gates changed]
+[mtrain 11:34:46]   SELFTEST PASS: drain 12: a gate-RED bounce still stops the drain
+[mtrain 11:34:46] drain: pass 1 starts, 3 row(s) queued
+[mtrain 11:34:46] drain: pass 1 verdict RED merged [Q1] bounced [Q2] data fake
+[mtrain 11:34:47] drain: race/first-frame-parity fast-forwarded 5e60effea -> 6151c0284
+[mtrain 11:34:47] drain: main 5e60effea -> 6151c0284 (update-ref, old value checked)
+[mtrain 11:34:47] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:47] drain: pass 2 starts, 2 row(s) queued
+[mtrain 11:34:47] drain: pass 2 verdict INFRA merged [] bounced [] data fake
+[mtrain 11:34:47]   drain case events: pass1,release1,pass2 -> INFRA INFRA: D3D9-NOTAVAIL in H_DEF
+[mtrain 11:34:47]   SELFTEST PASS: drain 12b: set-aside then INFRA = verdict INFRA, set-aside row still named (INFRA)
+[mtrain 11:34:47] drain: pass 1 starts, 2 row(s) queued
+[mtrain 11:34:48] drain: pass 1 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:48] drain: race/first-frame-parity fast-forwarded 6151c0284 -> e3e8b8673
+[mtrain 11:34:48] drain: main 6151c0284 -> e3e8b8673 (update-ref, old value checked)
+[mtrain 11:34:48] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:48] drain: pass 2 starts, 1 row(s) queued
+[mtrain 11:34:49] drain: pass 2 verdict GREEN merged [Q1] bounced [] data fake
+[mtrain 11:34:49] drain: race/first-frame-parity fast-forwarded e3e8b8673 -> 36edc0263
+[mtrain 11:34:49] drain: main e3e8b8673 -> 36edc0263 (update-ref, old value checked)
+[mtrain 11:34:50] drain: release_due rc=1: NOT_DUE x
+[mtrain 11:34:50] drain: queue empty after 2 pass(es)
+[mtrain 11:34:50]   drain case events: pass1,release1,pass2,release2 -> GREEN 
+[mtrain 11:34:50]   SELFTEST PASS: drain 12c: no set-aside = GREEN, no set-aside clause (GREEN)
+[mtrain 11:34:50]   SELFTEST PASS: drain 12d: -Drain exits 2 on PARTIAL (0 GREEN, 1 any stop)
+[mtrain 11:34:50]   SELFTEST PASS: drain 11: dispatch before the pass body, flip refusal before the priority hold and any merge (offsets 158708 < 158860, 159829 < 161277)
+[mtrain 11:34:50]   SELFTEST PASS: drain 11: the drain driver takes no mashed_lock / priority hold of its own (only the passes do) (0 refs)
+[mtrain 11:34:50]   SELFTEST PASS: gate: 1 row waiting 10 min = WAIT (1 row(s) < 3 and oldest waited 10 min < 60)
+[mtrain 11:34:50]   SELFTEST PASS: gate: 3 rows = START (3 rows queued >= 3)
+[mtrain 11:34:50]   SELFTEST PASS: gate: 2 rows, oldest waited 61 min = START (oldest row waited 61 min >= 60)
+[mtrain 11:34:50]   SELFTEST PASS: gate: -Override starts a 1-row queue (override)
+[mtrain 11:34:50]   SELFTEST PASS: gate: empty queue never starts, even with -Override (queue empty)
+[mtrain 11:34:50]   SELFTEST PASS: gate: 59 min wait is still WAIT (1 row(s) < 3 and oldest waited 59 min < 60)
+[mtrain 11:34:50]   SELFTEST PASS: ddkobj 13: no build json = not run, not a failure (not run (no mashedmod\build\ddkobj\ddkobj_build.json))
+[mtrain 11:34:50]   SELFTEST PASS: ddkobj 13: fatal units fail the step and are named (FAILED: 2 unit(s) in a fail-loudly class: fail:seh-unmarked ddkst_seh.c [registers SEH handlers (__except_handler3)]; fail:unparsed-wrapper-define ddkst_def.c [FUN_00400030: #define FUN_00400030(a, ...) X(a)])
+[mtrain 11:34:50]   SELFTEST PASS: ddkobj 13: a build json with no summary (link or check died) fails the step (FAILED: no ddkobj_summary.json (variant link or byte check did not complete, see build.log))
+[mtrain 11:34:50]   SELFTEST PASS: ddkobj 13: summary = reported step, DIFFERENT reported not failed (IDENTICAL 541/546, DIFFERENT 2 [0x00414060 0x00493900], not-in-map 3, units linked 530/590, refusals 47 (static-register-convention=38, wrapper-redefines-globals=9))
+[mtrain 11:34:50]   SELFTEST PASS: ddkobj 13: AST: every pass that builds sets MASHED_DDKOBJ=1 for build.bat, reads the step before the build-failed check and the gates, and clears the env (offsets 3768<4135<4204<4500<4563<4802<5415)
+[mtrain 11:34:50]   SELFTEST PASS: ddkobj 13: build.bat fails on a failed object build and on a failed byte check (C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-TRAIN-BINDER-SELFTEST\mashedmod\build.bat)
+[mtrain 11:34:50] SELFTEST done: 0 failure(s)
+SELFTEST PASS (0 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261127_112930\merge_train.log
