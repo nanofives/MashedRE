@@ -436,7 +436,7 @@ def _list_worktrees():
 
 
 def _close_step_root(wt):
-    """Row close (HB-MASHEDWT-ROOT-CLEANUP): delete D:\MashedWT\<step>_root*\original of the removed
+    r"""Row close (HB-MASHEDWT-ROOT-CLEANUP): delete D:\MashedWT\<step>_root*\original of the removed
     worktree. Refuses (and says why) when another root links into it, it is a fixed tool root, it was
     written in the last 7 days or a live process names it. Never recurses through a junction."""
     try:

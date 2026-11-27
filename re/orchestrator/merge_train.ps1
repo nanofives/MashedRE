@@ -340,9 +340,11 @@ function Merge-One([string]$wt, $item) {
     $tmp = Join-Path $DATA ("k_" + ($f -replace '[\\/]', '_'))
     foreach ($st in 1, 2, 3) { Git-ShowBytes $wt ":${st}:$f" "$tmp.$st" }
     $m3 = Join-Path $wt 're/tools/tracker_merge3.py'; if (-not (Test-Path -LiteralPath $m3)) { $m3 = Join-Path $HERE '../tools/tracker_merge3.py' }
-    $kout = & py.exe -3.12 $m3 $keyed[$f] "$tmp.2" "$tmp.1" "$tmp.3"; $krc = $LASTEXITCODE
+    $kout = & py.exe -3.12 $m3 $keyed[$f] "$tmp.2" "$tmp.1" "$tmp.3" 2>&1; $krc = $LASTEXITCODE
     if ($krc -ne 0) {
       Git -C $wt merge --abort | Out-Null
+      # HB-TRAIN-DUPKEY-MESSAGE: exit 3 (or 2) is not a key conflict, name it. Run 56 drain 2 printed "same key edited on both sides: []" for a duplicate 0x004ccef0.
+      if ($krc -ne 1) { return @{ ok = $false; why = "tracker_merge3 duplicate key or unreadable input (exit $krc, not a same-key conflict): $f [$(@($kout) -join ' ')]" } }
       return @{ ok = $false; why = "conflict needs a hand merge (same key edited on both sides): $f [$(@($kout) -join ' ')]" }
     }
     $mergedKeyed[$f] = "$tmp.2"
@@ -1116,7 +1118,7 @@ if ($SelfTest) {
   $aTB = Apply-Promotions $wt2 @{ id = 'T-B'; branch = 't-b' }
   Check ($mTB.ok -and (-not $aTB.ok) -and $aTB.why -match 'c4_reclass tag refused') "tracker: a refused tag row (no hooks.csv row) = whole branch set aside ($($aTB.why))"
   Git -C $f2 worktree remove --force $wt2 2>&1 | Out-Null
-  Check ((Get-Content (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') -Raw) -and ((& py.exe -3.12 (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') | Select-Object -Last 1) -match '\[11/11\].*PASS')) "tracker: tracker_merge3_selftest.py 11/11 PASS"
+  Check ((Get-Content (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') -Raw) -and ((& py.exe -3.12 (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') | Select-Object -Last 1) -match '\[13/13\].*PASS')) "tracker: tracker_merge3_selftest.py 13/13 PASS"
 
   # --- HB-V5-SKILL: a RED pass that merged nothing still writes INTEGRATION_LOG.md (one commit, that file only, newest first)
   $h0 = (Git -C $fake rev-parse HEAD) | Select-Object -First 1
