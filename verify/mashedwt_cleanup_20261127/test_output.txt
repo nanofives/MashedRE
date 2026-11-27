@@ -1,0 +1,15 @@
+
+PASS prep_root robocopy rc<8
+PASS prep_root copies the install and leaves hook_dual_install.log out
+PASS plain root: original\ removed
+PASS root files and _data kept
+MEASURED STEPA tree 0.0094 GB, free-bytes delta 0.0094 GB (fake 9 MB install)
+PASS reported bytes == tree size
+PASS root with an inbound junction is refused, target intact
+PASS linked original\: link removed alone, target intact
+PASS junction inside original\ unlinked, not followed
+PASS root written < 7 d ago refused
+PASS root named in a live command line refused
+PASS fixed tool root refused
+PASS diag.py wt-remove calls _close_step_root on both paths
+RESULT PASS 0

@@ -102,7 +102,7 @@ A row that changes the default gates on purpose (a user-decided knob flip, e.g. 
 - In a worktree, `original\` is a junction to the shared install (267-268). So from a worktree, run `set MASHED_NO_DEPLOY=1` and then `cmd /c mashedmod\build.bat`. Outputs land in `<wt>\mashedmod\build\`.
 
 ## 5. Private root (no dedicated script)
-1. Copy the install: `robocopy original\ D:/MashedWT/<lane>_root\original /E`. Robocopy exit codes 0-7 mean success (NEXT_SESSION.md:264; `verify/librwrest_checks_20261016/run_stand.py:39-40`). Some roots keep `original\` inside the root (NEXT_SESSION.md:469).
+1. Copy the install: `py -3.12 scripts/mashedwt_cleanup.py prep original D:/MashedWT/<lane>_root` (= `robocopy original\ D:/MashedWT/<lane>_root\original /E /XF hook_dual_install.log`; the log is left out since 2026-11-27). `diag.py wt-remove` deletes `<lane>_root*\original` at row close and refuses roots other roots junction into. Robocopy exit codes 0-7 mean success (NEXT_SESSION.md:264; `verify/librwrest_checks_20261016/run_stand.py:39-40`). Some roots keep `original\` inside the root (NEXT_SESSION.md:469).
 2. Set an AppCompat layer on that copy's path: `~ RUNASINVOKER WIN98RTM HIGHDPIAWARE EMULATEHEAP` (NEXT_SESSION.md:69-70). `scripts/setup_mashed_compat.ps1` only targets `original\MASHED.exe` (line 35), so a lane has to set the HKCU Layers value for its own root path.
 3. Copy the freshly built `mashed_re_dev.asi` into the root by hand. A `MASHED_NO_DEPLOY` build does not refresh it (NEXT_SESSION.md:103).
 4. Launches must run with the tool sandbox disabled (NEXT_SESSION.md:68).
