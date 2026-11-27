@@ -1,0 +1,29 @@
+base 0x004ccef0 row: 0x004ccef0	FUN_004ccef0	near-match	PortTop_Bound_004ccef0	PORT-TOP-AUDIOTICK-STOPS: re/match/s20/004ccef0.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004ccef0.cpp	3	
+base diff vs fdee19028 (the hand edits undone):
+ mashedmod/exe_sources.rsp            | 2 +-
+ re/tools/dual_copy_allowlist.txt     | 1 +
+ verify/porttop_20261108/BINDINGS.tsv | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+$ porttop_bind.py sync --profile audio
+STALE Match/PortTop_004ccef0.cpp
+rsp - 1
+DROP ORIGTOP-ONLY DUP-IN-TARGET:004ccef0:Match/PortTop_004ccef0.cpp,RwCore/RwCore_Hand.cpp   # PORT-TOP-AUDIO-RWA (L-111 (a), L-126), 2026-11-13: the matched / repla
+allowlist - 1
+rsp + 1
+allowlist + 0 
+$ porttop_bind.py bindings --profile audio --step RO-AUDIOINIT-45D460-REACH-6 --rva 004ccef0
+updated 1 added 0 
+$ porttop_bind.py bindings --profile audio
+updated 0 added 0 
+git diff fdee19028 after the tool (porttop_bind.py excluded): 0 bytes
+
+git status (porttop_bind.py excluded): 3 lines
+ M mashedmod/exe_sources.rsp
+ M re/tools/dual_copy_allowlist.txt
+ M verify/porttop_20261108/BINDINGS.tsv
+  mashedmod/exe_sources.rsp: raw working bytes 93b05b22fc03bd6b2ab3bd67c4c4a4e8bfa16636, fdee19028 blob 93b05b22fc03bd6b2ab3bd67c4c4a4e8bfa16636 -> SAME
+  re/tools/dual_copy_allowlist.txt: raw working bytes d91d60301fa413377605639ee84fedef797b7ac8, fdee19028 blob d91d60301fa413377605639ee84fedef797b7ac8 -> SAME
+  verify/porttop_20261108/BINDINGS.tsv: raw working bytes 7003f1fe03ff4576625cead7a6ff71e912e312fe, fdee19028 blob 7003f1fe03ff4576625cead7a6ff71e912e312fe -> SAME
+mashedmod/src/mashed_re/Match/PortTop_004ccef0.cpp absent after the tool: True (absent in fdee19028 too)
+RESULT B: IDENTICAL byte for byte

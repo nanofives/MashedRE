@@ -1,0 +1,10 @@
+== re/match/s19/004c4dc0.c
+0x004c4dc0 _FUN_004c4dc0: 91.2% (regs 91.2%, ops 98.8%)  80/80 ins  flags=/O2 /GS /Ob1 /G5 tc=ddk
+== re/match/rwl01/004db3e0.c
+0x004db3e0 _FUN_004db3e0: 95.2% (regs 99.0%, ops 99.0%)  105/105 ins  flags=/O2 /Ob1 /G5 tc=ddk
+== re/match/rwl01/004dc8a0.c
+0x004dc8a0 _FUN_004dc8a0: 58.3% (regs 58.3%, ops 66.7%)  12/12 ins  flags=/O2 /Ob1 /G5 tc=ddk
+== re/match/rwl01/004e0920.c
+0x004e0920 _FUN_004e0920: 46.3% (regs 47.7%, ops 91.9%)  141/149 ins  flags=/O2 /Ob1 /G5 tc=ddk
+== re/match/rwl03/0052daf0.c
+0x0052daf0 _FUN_0052daf0: 44.0% (regs 34.5%, ops 53.0%)  160/200 ins  flags=/O2 /Ob1 /G5 tc=rw9044

@@ -30,7 +30,9 @@ Run from the worktree root. Usage (full walk-through: .claude/skills/roadmap-loo
   py -3.12 re/tools/bind/porttop_bind.py externs --profile raceload [--apply]   # extern-guard step (match.py --bytes after)
   py -3.12 re/tools/bind/porttop_bind.py sync    --profile raceload --step <ROW> --evidence <RESULT path>
   py -3.12 re/tools/bind/porttop_bind.py unclean --profile raceload <vs2022 build.log>   # cpp-unclean list from a build
-  py -3.12 re/tools/bind/porttop_bind.py bindings --profile audio [--dry]       # BINDINGS.tsv rows from plan.json
+  py -3.12 re/tools/bind/porttop_bind.py bindings --profile audio [--dry] [--step <ROW> --rva <rva> ...]   # BINDINGS.tsv rows from plan.json
+  (sync also drops the rsp / allowlist lines and generated file of a Match/PortTop_<rva> TU the profile no longer writes;
+   bindings also rewrites a row whose Match/PortTop_<rva> TU is gone, and writes near-match for a reused PROVISIONAL.tsv body)
   py -3.12 re/tools/bind/porttop_bind.py samesrc --profile raceload            # planned binds another TU already compiles
   py -3.12 re/tools/bind/porttop_bind.py prune   --profile raceload [--apply]   # allowlist lines of rvas no longer bound
   py -3.12 re/tools/bind/porttop_bind.py index   [--out <json>]                 # rva -> exe body index (debug)
@@ -1247,11 +1249,90 @@ def cmd_externs(a):
 # --------------------------------------------------------------------------------------------------------------------
 # sync: exe_sources.rsp lines for the new TUs + ORIGTOP-ONLY allowlist lines (was sync_rsp_allowlist.py / rl_sync.py)
 # --------------------------------------------------------------------------------------------------------------------
+GEN_WRAPPER_MARK = 'exe-only port body of rva 0x%s'   # first line of every generated Match/PortTop_<rva> wrapper
+
+
+def stale_tus(prof):
+    """BIND-SYNC-REMOVE-STALE (run 57): Match/PortTop_<rva>.cpp|.c TUs exe_sources.rsp lists that profile `prof` no
+    longer writes. A TU is stale when all hold:
+      - its rva is a key of prof's plan.json whose kind is not 'bind' (the profile planned it, as a reuse or a stop);
+      - no profile's newfiles.txt lists the TU (no profile writes it now);
+      - no profile's plan reuses it (a ('reuse', sym, <path>) entry naming the TU as an existing exe body);
+      - the file is gone, or it is a generated wrapper (first line names GEN_WRAPPER_MARK for that rva).
+    Returns [(rva, 'Match/PortTop_<rva>.<ext>')]."""
+    plan = json.load(open(os.path.join(state_dir(prof), 'plan.json')))
+    written, reused = set(), set()
+    for p in PROFILES:
+        nf = os.path.join(state_dir(p), 'newfiles.txt')
+        if os.path.exists(nf):
+            written |= {os.path.normcase(os.path.normpath(f)) for f in open(nf).read().split()}
+        pp = os.path.join(state_dir(p), 'plan.json')
+        if os.path.exists(pp):
+            for v in json.load(open(pp)).values():
+                if v and v[0] == 'reuse' and len(v) > 2 and isinstance(v[2], str):
+                    reused.add(v[2].replace('\\', '/').lower())
+    out = []
+    for tu in rsp_tus():
+        m = re.match(r'Match/PortTop_([0-9a-f]{8})\.(cpp|c)$', tu)
+        if not m or plan.get(m.group(1), ('bind',))[0] == 'bind':
+            continue
+        fn = '%s/%s' % (SRC, tu)
+        if os.path.normcase(os.path.normpath(fn)) in written or tu.lower() in reused:
+            continue
+        if os.path.exists(fn) and not own_wrapper_line(prof, m.group(1), rd(fn).split('\n', 1)[0]):
+            continue
+        out.append((m.group(1), tu))
+    return out
+
+
+def own_wrapper_line(prof, rva, line):
+    """True when `line` (a TU's first line) is the first header line this profile's `write` gives a wrapper of `rva`:
+    own_mark (hdr profiles) or the first line of header.new / header.missing (audio), up to the first %( field.
+    A hand-written TU with the same shape under another row's tag (Match/PortTop_00458c70.cpp, RACE-RWGLOBALS-FRAMELIST)
+    is not the profile's and is never dropped."""
+    P = PROFILES[prof]
+    pre = []
+    if P['own_mark']:
+        pre.append(P['own_mark'] + ' of rva 0x')
+    for k in ('new', 'missing'):
+        h = (P['header'] or {}).get(k)
+        if h:
+            pre.append(h[0].split('%(')[0])
+    return GEN_WRAPPER_MARK % rva in line and any(line.startswith(p) for p in pre if p)
+
+
 def cmd_sync(a):
     P = PROFILES[a.profile]
     sd = state_dir(a.profile)
+    # BIND-SYNC-REMOVE-STALE: first drop the rsp lines, the allowlist lines and the generated files of the TUs this profile
+    # no longer writes (stale_tus); `write` does this only for prune_stale profiles with an own_mark
+    stale = stale_tus(a.profile)
+    raw = open(RSP, 'rb').read(); nl = '\r\n' if b'\r\n' in raw else '\n'
+    gone = {'"Match\\%s"' % tu.split('/', 1)[1] for _, tu in stale}
+    rl = raw.decode().split(nl)
+    keep = [l for l in rl if l.strip() not in gone]
+    for _, tu in stale:
+        print('STALE', tu)
+    if not a.dry:
+        if len(keep) != len(rl):
+            open(RSP, 'wb').write(nl.join(keep).encode())
+        for _, tu in stale:
+            if os.path.exists('%s/%s' % (SRC, tu)):
+                os.remove('%s/%s' % (SRC, tu))
+    print('rsp -', len(rl) - len(keep))
+    rawa = open(ALLOW, 'rb').read(); nla = '\r\n' if b'\r\n' in rawa else '\n'
+    al = rawa.decode().split(nla)
+    akeep = [l for l in al if not any(tu in l.split('#')[0] for _, tu in stale)]
+    for l in al:
+        if l not in akeep:
+            print('DROP', l[:160])
+    if len(akeep) != len(al) and not a.dry:
+        open(ALLOW, 'wb').write(nla.join(akeep).encode())
+    print('allowlist -', len(al) - len(akeep))
     raw = open(RSP, 'rb').read(); nl = '\r\n' if b'\r\n' in raw else '\n'
     t = raw.decode()
+    if a.dry:   # the adds below are counted against the rsp as it will be after the drop
+        t = nl.join(keep)
     add = []
     nf = os.path.join(sd, 'newfiles.txt')
     for f in (open(nf).read().split() if os.path.exists(nf) else []):   # written by `write`
@@ -1278,7 +1359,7 @@ def cmd_sync(a):
     new, bad = [], []
     for l in seed.splitlines():
         k = l.split('#')[0].strip()
-        if not k or l.startswith('#') or k in have:
+        if not k or l.startswith('#') or k in have or any(tu in k for _, tu in stale):
             continue
         if not k.startswith('ORIGTOP-ONLY '):
             bad.append(l); continue
@@ -1309,6 +1390,13 @@ def foreign_stop_owner(prof, sym):
 SELFTEST_BINDINGS_TOOL = ('bulk',)
 
 
+def row_tu_gone(f):
+    """BIND-SYNC-REMOVE-STALE: a non-missing BINDINGS.tsv row whose note names an exe TU Match/PortTop_<rva>.cpp|.c
+    (the last such name in the note) that no longer exists under mashedmod/src/mashed_re."""
+    m = re.findall(r'Match/PortTop_[0-9a-f]{8}\.c(?:pp)?\b', f[4]) if len(f) > 4 and f[2] != 'missing' else []
+    return bool(m) and not os.path.exists('%s/%s' % (SRC, m[-1]))
+
+
 def cmd_bindings(a):
     P = PROFILES[a.profile]
     plan = json.load(open(os.path.join(state_dir(a.profile), 'plan.json')))
@@ -1334,13 +1422,21 @@ def cmd_bindings(a):
             for cc in pr[3]:
                 q.append((cc, lv + 1, '0x' + r))
     ADM = {l.split('\t')[0][2:].lower() for l in open('re/match/ADMITTED.tsv', encoding='utf-8') if l.startswith('0x')}
+    # BIND-SYNC-REMOVE-STALE: L-126 provisional rows (re/match/PROVISIONAL.tsv: rva, name, source, flags, best_pct, ...,
+    # diagnosis, ..., status). A reuse of an existing exe body that is listed there under the same symbol is near-match.
+    PROV = {}
+    for l in open('re/match/PROVISIONAL.tsv', encoding='utf-8'):
+        f_ = l.rstrip('\r\n').split('\t')
+        if l.startswith('0x') and len(f_) >= 11 and f_[10] == 'provisional':
+            PROV[f_[0][2:].lower()] = f_
+    only = {x.lower().replace('0x', '') for x in (getattr(a, 'rva', None) or [])}
     skip = {r for r, _, _ in P['bindings_roots']} if P['bindings_roots'] else set()
     tag = a.step or P['bindings_tag'] or P['own_tag']
     if not tag:
         sys.exit('profile %s: no bindings_tag, own_tag or --step for the BINDINGS.tsv notes' % a.profile)
     upd = add = 0
     for r, pr in sorted(plan.items()):
-        if r in skip:
+        if r in skip or (only and r not in only):
             continue
         if pr[0] == 'bind':
             # only 'match' is a byte match; an admitted body stays kind matched (L-126); replay / provisional is near-match
@@ -1358,6 +1454,13 @@ def cmd_bindings(a):
             # BIND-LIB-ROUTE: a vendored library body (L-97 / L-177: outside the port count, like the crt rows)
             kind, sym = 'library', pr[1]
             note = '%s: vendored library symbol %s (%s)' % (tag, pr[1], pr[2])
+        elif pr[0] == 'reuse' and r in PROV and PROV[r][1] == pr[1]:
+            # BIND-SYNC-REMOVE-STALE: the reused exe body is only L-126 provisional (e.g. RwCoreHand_004ccef0, a hand body)
+            pv = PROV[r]
+            what = 'hand body' if pv[4].startswith('n/a (hand)') or pv[8].startswith('hand body') else 'provisional body'
+            kind, sym = 'near-match', pr[1]
+            note = ('%s: existing exe body %s (%s, L-126 provisional, re/match/PROVISIONAL.tsv %s; NOT matched, knob path '
+                    'only; one body for the rva)' % (tag, pr[2], what, pv[1]))
         elif pr[0] == 'reuse':
             kind, sym = 'matched', pr[1]
             note = '%s: existing exe body %s' % (tag, pr[2])
@@ -1372,8 +1475,10 @@ def cmd_bindings(a):
             elif f[2] == 'missing' and kind == 'missing' and P['stop_sym_foreign'] and foreign_stop_owner(a.profile, f[3]):
                 pass   # BIND-BINDINGS-BULK-DRIFT: a stop_sym_foreign profile (bulk) keeps a named stop another profile
                 #        wrote (its stop_prefix); the profile that wrote the row first owns it
-            elif f[2] == 'missing':   # only a missing row is updated; a row another row wrote keeps its text
-                if kind == 'missing':
+            elif f[2] == 'missing' or row_tu_gone(f):
+                # only a missing row is updated; a row another row wrote keeps its text, unless the exe TU it names
+                # (Match/PortTop_<rva>.cpp|.c) no longer exists (BIND-SYNC-REMOVE-STALE): then it is rewritten whole
+                if kind == 'missing' and f[2] == 'missing':
                     f[3], f[4] = sym, note
                 else:
                     f[2], f[3], f[4] = kind, sym, note
@@ -1847,6 +1952,7 @@ def main():
     s.add_argument('--step'); s.add_argument('--date'); s.add_argument('--evidence'); s.add_argument('--dry', action='store_true')
     s = sp.add_parser('bindings'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
     s.add_argument('--step'); s.add_argument('--dry', action='store_true')
+    s.add_argument('--rva', nargs='*', help='write only these plan rvas (e.g. one row under its own --step tag)')
     s = sp.add_parser('unclean'); s.add_argument('--profile', required=True, choices=sorted(PROFILES)); s.add_argument('log')
     s = sp.add_parser('samesrc'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
     s = sp.add_parser('prune'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
