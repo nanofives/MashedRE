@@ -156,7 +156,12 @@ def exe_wrappers():
                 # global where the DDK object's absolute symbols put it, so it is accepted. Any other form (a cell
                 # indirection MATCH_CELL_##n, a lookup function) binds the source's globals elsewhere: a DDK object
                 # cannot follow it, so the unit is refused
-                if not MGLOBAL_ADDR_RE.match(line):
+                if MGLOBAL_ENUM_RE.match(line):
+                    # DDKOBJ-ADDR-REGISTERED: the C-unit preamble form (`enum { mglobal_##n }`, each name then a
+                    # `#define n (*(T *)0x00yyyyyyu)`). Accepted per unit only when every source MGLOBAL name is bound
+                    # at the source's own address (checked against the source in main_build)
+                    defs["@mglobal_enum"] = line.strip()
+                elif not MGLOBAL_ADDR_RE.match(line):
                     defs["@mglobal"] = line.strip()
                 continue
             m = DEF_RE.match(line)
@@ -217,7 +222,30 @@ MGLOBAL_ADDR_RE = re.compile(
     r"^\s*#\s*define\s+(?:MGLOBAL\s*\(\s*T\s*,\s*n\s*,\s*a\s*\)\s+static\s+T\s*&\s*n\s*=\s*\*\s*\(\s*T\s*\*\s*\)\s*\(\s*a\s*\)"
     r"|MGLOBALA\s*\(\s*T\s*,\s*n\s*,\s*N\s*,\s*a\s*\)\s+static\s+T\s*\(\s*&\s*n\s*\)\s*\[\s*N\s*\]\s*=\s*\*\s*\(\s*T\s*\(\s*\*\s*\)\s*\[\s*N\s*\]\s*\)\s*\(\s*a\s*\))"
     r"\s*(?://.*)?$")
+# DDKOBJ-ADDR-REGISTERED: `#define MGLOBAL(T, n, a) enum { mglobal_##n }` / `#define MGLOBALA(T, n, N, a) enum { mglobala_##n }`
+MGLOBAL_ENUM_RE = re.compile(
+    r"^\s*#\s*define\s+(?:MGLOBAL\s*\(\s*T\s*,\s*n\s*,\s*a\s*\)\s+enum\s*\{\s*mglobal_\s*##\s*n\s*\}"
+    r"|MGLOBALA\s*\(\s*T\s*,\s*n\s*,\s*N\s*,\s*a\s*\)\s+enum\s*\{\s*mglobala_\s*##\s*n\s*\})\s*(?://.*)?$")
 DEFANY_RE = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)(.*)$")
+_FNADDR_RE = re.compile(r"^(?:thunk_)?FUN_[0-9a-fA-F]{8}$")
+
+
+def mglobal_enum_mismatch(defs: dict, globs: dict):
+    """Source MGLOBAL names the enum-form wrapper does not bind at the source's address ([] = accepted)."""
+    bad = []
+    for n, a in sorted(globs.items()):
+        v = defs.get(n, "")
+        if not (v.startswith("@abs:") and int(v[5:], 16) == a):
+            bad.append(f"{n}@0x{a:08x}->{v or 'no #define'}")
+    return bad
+
+
+def fnaddr_target(defmap, target: str):
+    """The one decorated exe definition of `target` (a C or C++ function name), or None."""
+    hits = [n for n in (("_" + target),) if n in defmap]
+    if not hits:
+        hits = [n for n in defmap if n.startswith(("_" + target + "@", "@" + target + "@", "?" + target + "@@"))]
+    return hits[0] if len(hits) == 1 else None
 KCONST_RE = re.compile(r"^\s*static\s+const\s+[\w:]+\s+([A-Za-z_]\w*)\s*=\s*0x(00[4-9a-fA-F][0-9a-fA-F]{5})u?\s*;")
 _ADDR_RE = re.compile(r"\b0x(00[4-9a-fA-F][0-9a-fA-F]{5})u?\b")
 _DATA_NAME_RE = re.compile(r"^(?!FUN_|thunk_)[A-Za-z_]\w*_([0-9a-fA-F]{8})$")
@@ -748,7 +776,20 @@ def main_build(a):
                 mm = re.search(r"_([0-9a-fA-F]{8})$", plain)
                 if mm and 0x00400000 <= int(mm.group(1), 16) < 0x00a00000:
                     addr = int(mm.group(1), 16)
-            if s.value != 0:
+            # DDKOBJ-ADDR-REGISTERED: a function the source names as data (`extern undefined1 FUN_x;` then `&FUN_x`, the
+            # registrar form of 0x00440bc0) that the wrapper #defines to an exe function: the reference takes the exe
+            # body's address, as in the VS2022 build, not the original code address (`__ddkabs_<rva>`)
+            fn_addr = (s.value == 0 and not s.is_func and plain not in info["globals"] and _FNADDR_RE.match(plain)
+                       and dv and not dv.startswith("@") and re.match(r"^[A-Za-z_]\w*$", dv))
+            if fn_addr:
+                hit = fnaddr_target(defmap, dv)
+                if hit is not None:
+                    s.name = hit
+                    cls = "fn-addr"
+                else:
+                    cls = "unbound:fn-addr"
+                    unb.append(s.name)
+            elif s.value != 0:
                 cls = "common"
             elif addr is not None and not s.is_func and plain in info["port_copies"]:
                 nm = f"__ddkcopy_{addr:08x}"
@@ -808,6 +849,14 @@ def main_build(a):
             rec["evidence"] = defs["@mglobal"]
             report["units"].append(rec)
             continue
+        if "@mglobal_enum" in defs:
+            bad = mglobal_enum_mismatch(defs, info["globals"])
+            if bad:
+                rec["status"] = "fail:wrapper-redefines-globals"
+                rec["evidence"] = defs["@mglobal_enum"] + " ; not at the source address: " + ", ".join(bad)
+                report["units"].append(rec)
+                continue
+            rec["mglobal_enum"] = f"accepted: {len(info['globals'])} source MGLOBAL name(s) #defined at their own address"
         obj, log = ddk_compile(src, info, objdir, u["wrapper"].stem)
         if obj is None:
             rec["status"] = "fail:ddk-compile"
@@ -1435,9 +1484,20 @@ def main_check(a):
             want = oimg[rva - obase:rva - obase + n]
             mask = bytearray(n)
             exact_abs = 0
+            fnaddr_names = {x["name"] for x in u.get("undef", []) if x.get("class") == "fn-addr"}
+            fn_ok, fn_bad = 0, []
             for (off, si, typ) in sec.relocs:
                 tsym = co.slots[si]
                 w = 4
+                if tsym is not None and tsym.name in fnaddr_names and typ == CE.REL_I386_DIR32:
+                    # DDKOBJ-ADDR-REGISTERED: the linked dword must be the exe body's address (masked in the compare,
+                    # since the original holds its own code address there)
+                    tva = syms.get(tsym.name)
+                    got_d = struct.unpack_from("<I", img, va - base + off)[0]
+                    if tva is not None and got_d == tva:
+                        fn_ok += 1
+                    else:
+                        fn_bad.append(f"+0x{off:x}:{tsym.name}=0x{got_d:08x}")
                 if tsym is not None and tsym.name.startswith("__ddkabs_") and typ == CE.REL_I386_DIR32:
                     exact_abs += 1       # absolute data address: compared, not masked
                     continue
@@ -1448,12 +1508,15 @@ def main_check(a):
                         "abs_data_refs_exact": exact_abs, "diff_bytes": len(diff),
                         "result": "IDENTICAL" if not diff else "DIFFERENT",
                         "first_diff": f"+0x{diff[0]:x}" if diff else ""})
+            if fnaddr_names:
+                row["fn_addr_refs_ok"] = fn_ok
+                row["fn_addr_refs_bad"] = ";".join(fn_bad)
             # the wrapper's VS copy must be gone from the image (dead, /OPT:REF) or at least not be the bound name
             row["vs_copy_in_map"] = (d["exe"] + "__vs") in syms
             rows.append(row)
     with open(out / "BYTECHECK.tsv", "w", newline="", encoding="utf-8") as fh:
         cols = ["rva", "exe_symbol", "exe_va", "size", "relocs_masked", "abs_data_refs_exact", "diff_bytes", "result",
-                "first_diff", "vs_copy_in_map", "src"]
+                "first_diff", "vs_copy_in_map", "fn_addr_refs_ok", "fn_addr_refs_bad", "src"]
         w = csv.DictWriter(fh, cols, delimiter="\t", extrasaction="ignore")
         w.writeheader()
         for r in rows:
@@ -1476,7 +1539,10 @@ def main_check(a):
             # source). They are pre-bound: never report them as "the path runs matched bytes".
             "dual_body_rvas": sorted(r["rva"] for r in rows if r["result"] == "IDENTICAL" and _dual(PROV, r)),
             "different_rvas": sorted(r["rva"] for r in rows if r["result"] == "DIFFERENT"),
-            "not_in_map_rvas": sorted(r["rva"] for r in rows if r["result"] == "not-in-map")}
+            "not_in_map_rvas": sorted(r["rva"] for r in rows if r["result"] == "not-in-map"),
+            # DDKOBJ-ADDR-REGISTERED: function addresses a DDK body passes as data, bound to exe bodies
+            "fn_addr_refs_ok": sum(r.get("fn_addr_refs_ok", 0) for r in rows),
+            "fn_addr_refs_bad": [r["rva"] + " " + r["fn_addr_refs_bad"] for r in rows if r.get("fn_addr_refs_bad")]}
     (out / "ddkobj_summary.json").write_text(json.dumps(summ, indent=1))
     ref = ",".join(f"{k[5:]}={v}" for k, v in summ["refusals"].items()) or "none"
     print(f"[ddkobj summary] IDENTICAL {summ['identical']}/{summ['functions']}  DIFFERENT {summ['different']} "
@@ -1484,7 +1550,8 @@ def main_check(a):
           f"{summ['units_linked']}/{summ['units']}  refusals {sum(summ['refusals'].values())} ({ref})  "
           f"provisional kept VS2022 {summ['provisional_units_skipped']} units + "
           f"{len(summ['provisional_functions_vs2022_in_linked_units'])} fns in linked units  "
-          f"dual body {len(summ['dual_body_rvas'])} (IDENTICAL, rva also has a listed provisional body: pre-bound)")
+          f"dual body {len(summ['dual_body_rvas'])} (IDENTICAL, rva also has a listed provisional body: pre-bound)  "
+          f"fn-addr refs ok {summ['fn_addr_refs_ok']} bad {len(summ['fn_addr_refs_bad'])}")
     return 0
 
 
@@ -1546,6 +1613,28 @@ _ST_SRC = {
                "#define FUN_00400090 DdkSt_MgCell\n#define MATCH_PREAMBLE 1\nstatic int g_ddkst_mgcell = 0;\n"
                "#define MATCH_CELL_DAT_00400094 (&g_ddkst_mgcell)\n"
                "#define MGLOBAL(T, n, a) static T &n = *(T *)(MATCH_CELL_##n)\n"),
+    # DDKOBJ-ADDR-REGISTERED: a function named as data and passed by address (the 0x00440bc0 registrar form). The wrapper
+    # #defines it to an exe function: the reference binds to that body (fn-addr). FUN_00400108 has no #define: data-abs.
+    "fnaddr": ("0x00400100", "extern unsigned char FUN_00400104;\nextern unsigned char FUN_00400108;\n"
+                             "void FUN_004000f0(void *p);\nint FUN_00400100(void)\n{\n    FUN_004000f0(&FUN_00400104);\n"
+                             "    FUN_004000f0(&FUN_00400108);\n    return 0;\n}\n",
+               "#define FUN_00400100 DdkSt_FnAddr\n#define FUN_00400104 PortTop_Bound_0047a180\n"
+               "#define FUN_004000f0 PortTop_Bound_0047b980\n"),
+    # the same with an exe name the default link does not define: fail:unbindable-callee (VS2022 body), not fatal
+    "fnaddrnx": ("0x00400110", "extern unsigned char FUN_00400114;\nvoid FUN_004000f0(void *p);\nint FUN_00400110(void)\n{\n"
+                               "    FUN_004000f0(&FUN_00400114);\n    return 0;\n}\n",
+                 "#define FUN_00400110 DdkSt_FnAddrNx\n#define FUN_00400114 DdkSt_NoSuchExeFunction\n"
+                 "#define FUN_004000f0 PortTop_Bound_0047b980\n"),
+    # the C-unit preamble form: MGLOBAL suppressed (enum), each name #defined at the source's address: accepted
+    "mgenum": ("0x00400120", _ST_MGPRE + "MGLOBAL(int, DAT_00400124, 0x00400124);\nint FUN_00400120(void)\n{\n"
+                             "    return DAT_00400124 + 1;\n}\n",
+               "#define FUN_00400120 DdkSt_MgEnum\n#define MATCH_PREAMBLE 1\n#define MGLOBAL(T, n, a) enum { mglobal_##n }\n"
+               "#define MGLOBALA(T, n, N, a) enum { mglobala_##n }\n#define DAT_00400124 (*(int *)0x00400124u)\n"),
+    # the same form with the name #defined at another address: refused, not fatal
+    "mgenumbad": ("0x00400130", _ST_MGPRE + "MGLOBAL(int, DAT_00400134, 0x00400134);\nint FUN_00400130(void)\n{\n"
+                                "    return DAT_00400134 + 1;\n}\n",
+                  "#define FUN_00400130 DdkSt_MgEnumBad\n#define MATCH_PREAMBLE 1\n#define MGLOBAL(T, n, a) enum { mglobal_##n }\n"
+                  "#define DAT_00400134 (*(int *)0x00400138u)\n"),
 }
 
 
@@ -1650,6 +1739,35 @@ def main_selftest(a):
         check(und.get("DAT_00400054", {}).get("class") == "data-abs" and
               und["DAT_00400054"]["name"] == "__ddkabs_00400054", f"same-address data binds to __ddkabs_00400054 ({und.get('DAT_00400054')})")
         check(by.get("same", {}).get("safeseh_marked") is True, "non-SEH object is marked @feat.00")
+        # DDKOBJ-ADDR-REGISTERED
+        rc, rep, by = run(["fnaddr", "fnaddrnx", "mgenum", "mgenumbad"], "addrreg")
+        check(rc == 0, f"address-registration fixtures: build goes on (rc {rc})")
+        und = {x["orig"]: x for x in by.get("fnaddr", {}).get("undef", [])}
+        check(by.get("fnaddr", {}).get("status") == "ok" and
+              und.get("FUN_00400104", {}).get("class") == "fn-addr" and
+              und["FUN_00400104"]["name"] == "_PortTop_Bound_0047a180",
+              f"function passed by address, wrapper-bound -> fn-addr _PortTop_Bound_0047a180 "
+              f"({by.get('fnaddr', {}).get('status')}: {und.get('FUN_00400104')})")
+        check(und.get("FUN_00400108", {}).get("class") == "data-abs" and
+              und["FUN_00400108"]["name"] == "__ddkabs_00400108",
+              f"function passed by address, no wrapper #define -> data-abs __ddkabs_00400108 ({und.get('FUN_00400108')})")
+        und = {x["orig"]: x for x in by.get("fnaddrnx", {}).get("undef", [])}
+        check(by.get("fnaddrnx", {}).get("status") == "fail:unbindable-callee" and not by["fnaddrnx"].get("fatal") and
+              und.get("FUN_00400114", {}).get("class") == "unbound:fn-addr",
+              f"fn-addr to a name the exe does not define -> fail:unbindable-callee, not fatal "
+              f"({by.get('fnaddrnx', {}).get('status')}: {und.get('FUN_00400114')})")
+        und = {x["orig"]: x for x in by.get("mgenum", {}).get("undef", [])}
+        check(by.get("mgenum", {}).get("status") == "ok" and
+              und.get("DAT_00400124", {}).get("name") == "__ddkabs_00400124",
+              f"enum-form MGLOBAL, name at its own address -> ok, __ddkabs_00400124 "
+              f"({by.get('mgenum', {}).get('status')}: {und.get('DAT_00400124')})")
+        check(by.get("mgenumbad", {}).get("status") == "fail:wrapper-redefines-globals" and
+              not by["mgenumbad"].get("fatal") and "DAT_00400134@0x00400134" in by["mgenumbad"].get("evidence", ""),
+              f"enum-form MGLOBAL, name at another address -> refused, not fatal "
+              f"({by.get('mgenumbad', {}).get('status')}: {by.get('mgenumbad', {}).get('evidence')})")
+        check(not MGLOBAL_ENUM_RE.match("#define MGLOBAL(T, n, a) enum { other_##n }") and
+              bool(MGLOBAL_ENUM_RE.match("#define MGLOBALA(T, n, N, a) enum { mglobala_##n }")),
+              "MGLOBAL_ENUM_RE: only the two exact enum forms")
         # DDKOBJ-CRTMATH
         rc, rep, by = run(["math"], "math")
         m = by.get("math", {})
