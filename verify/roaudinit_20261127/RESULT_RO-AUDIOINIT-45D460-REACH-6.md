@@ -149,3 +149,96 @@ Raw (`D:/MashedWT/RO-AUDIOINIT-45D460-REACH-6_data/`, full sha256 in `sha256.txt
 | ro/RO_ROAUDINIT-pr1/meta.json / ticks.bin / ckpt00.data.bin | 3525ad278f564c88 / 9b466500bf2b1297 / df852c44c8d3deb0 |
 | ro/RO_ROAUDINIT-pr1.log | ac64f46f24efb688 |
 | ref1 ckpt201.data.bin (D:/MashedWT/RO-REF-NAME_data/ref1) | fef65df0d21a4f82 |
+
+
+## Rebase (run 57, L0)
+
+**Stopped at step 2(b): BLOCKED, waits for BIND-SYNC-REMOVE-STALE.** Two of REACH-6's hand edits can only be made
+by hand. No builds, ddkobj check or arms ran on the rebased tree. G2 (section Verdict) was measured on base c880ab12e
+and has not been re-measured on 287c10369.
+
+Worker on claude3, Opus 5.5 medium (moved from claude2 at pickup).
+
+### 1. Rebase
+
+- I waited while `mashed_lock.py status` showed merge-train PRIORITY-HOLD (`merge-train:20261127_162413`). It cleared
+  at 16:41:54 and the head was then **orch/integration 287c10369** (bddefb0f6 + HB-LOCK-BARE-LAUNCH-SURVEY).
+- `git -c merge.autoStash=false rebase orch/integration`, 7 commits. Only `verify/porttop_20261108/BINDINGS.tsv`
+  conflicted: in 3c2d49f4d (REACH-5 bind) and 345038cad (REACH-6 bind 0x005c78c0). I took the head's version both times
+  (RULE 3, no hand merge). The second rebase, from bddefb0f6 onto 287c10369, had no conflicts.
+- Regenerated with the tools on the rebased tree:
+  - `porttop_bind.py bindings --profile audio`: updated 6, added 6.
+  - `codeptr_image.py --write`: CODEPTR_IMAGE.tsv and PortTopCodePtrImage.inc, 117 CP_IMG_FIX, 52 extern syms.
+  - `sync --profile audio` would change nothing (rsp + 0, allowlist + 0).
+- **Owner of 0x005c6b40 and 0x005c75b0: profile `bulk`** (rows tagged RACE-BIND-C4-BULK, level 1). Why:
+  - Neither row existed at REACH-6's base c880ab12e.
+  - The bulk rows reached orch/integration first (2382008d2, from 6bfaea322 BIND-BINDINGS-BULK-DRIFT). REACH-6's
+    `PORT-TOP-AUDIOTICK-STOPS` rows were appended later, by its own unmerged `bindings --profile audio` in 37aca6283.
+  - `cmd_bindings` updates only `missing` rows. A matched row another profile wrote keeps its text
+    (porttop_bind.py:1375, "only a missing row is updated; a row another row wrote keeps its text"). So the profile
+    whose row came first owns it. That is the same rule BULK-DRIFT applies to stops through `stop_sym_foreign`
+    (porttop_bind.py:1372-1374). `stop_sym_foreign` itself only covers `missing` rows, and these two are `matched`.
+  - Both profiles name the same exe symbols (`PortTop_Bound_005c6b40`, `AudioVoiceField8cGet`). Only the note tag and
+    the level differ (bulk 1, audio 3). The link is the same either way.
+- Image slots after regeneration: 117 bound. REACH-6's own number was 113.
+  - The 4 new ones are RW core targets that the head's BINDINGS.tsv now names: 0x00618230 -> RwCore_004d7480,
+    0x00618240 -> RwCore_004dba60, 0x00623e0c -> RwCore_00551cf0, 0x00623e10 -> RwCore_00551fd0. They are not this
+    row's RVAs. No build has checked them.
+  - **Ownership:** the 4 slots 0x00635184 / 0x00635188 / 0x0063518c / 0x00635190 are owned by row
+    RO-AUDIOINIT-45D460-REACH-7 (filed). This row owns only 0x006350cc and 0x00636024.
+
+### 2. Checks on the rebased tree
+
+(a) Dry counts.
+
+| profile | sync --dry | bindings --dry |
+|---|---|---|
+| audio | rsp + 0, allowlist + 0 | updated 0 added 0 (after regeneration, with the line from (b) restored) |
+| bulk | rsp + 0, allowlist + 0 | updated 0 added 0 |
+| gates | rsp + 0 | updated 2 added 9 (same as the head) |
+| raceframe | rsp + 0 | updated 4 added 14 (same as the head) |
+| raceload | rsp + 0 | updated 14 added 282 (same as the head) |
+| renderframe | rsp + 0 | updated 0 added 0 (same as the head) |
+
+(b) REACH-6's two hand edits. **The tool produces neither of them.**
+
+1. **The removal of `"Match\PortTop_004ccef0.cpp"` from `mashedmod/exe_sources.rsp`.**
+   - On the rebased tree the line is absent and the file `Match/PortTop_004ccef0.cpp` does not exist.
+   - `sync --profile audio --dry` prints `rsp + 0`, so the tool does not add the line back.
+   - But `sync` only adds lines, so the removal itself can only be made by hand.
+2. **The BINDINGS.tsv row 0x004ccef0.**
+   - The tool writes:
+     `0x004ccef0	FUN_004ccef0	matched	RwCoreHand_004ccef0	PORT-TOP-AUDIOTICK-STOPS: existing exe body RwCore/RwCore_Hand.cpp	3	`
+   - That row says kind `matched` for a hand body that is L-126 provisional (PROVISIONAL.tsv `RwCoreHand_004ccef0`).
+     The reason is that the `reuse` branch of `cmd_bindings` always writes `matched`.
+   - REACH-6's line, which can only be written by hand:
+     `0x004ccef0	FUN_004ccef0	near-match	RwCoreHand_004ccef0	RO-AUDIOINIT-45D460-REACH-6: existing exe body RwCore/RwCore_Hand.cpp (hand body, L-126 provisional, re/match/PROVISIONAL.tsv RwCoreHand_004ccef0; NOT matched, knob path only; one body for the rva)	3	`
+   - I kept the hand line in the committed BINDINGS.tsv so the row does not claim `matched`. With it in place the tool
+     accepts the tree: `bindings --dry` 0/0, and the selftest says "BINDINGS.tsv from the audio plan: IDENTICAL".
+
+Per the L0 task: the row waits for BIND-SYNC-REMOVE-STALE.
+
+(c) `git show HEAD:re/match/PROVISIONAL.tsv | cut -f1 | sort | uniq -d` prints nothing. PROVISIONAL.tsv has 994
+non-empty lines.
+
+(d) equiv verdict for 0x005c78c0.
+- I re-ran `py -3.12 re/tools/match/equiv.py re/match/s28/005c78c0.c` on the rebased tree.
+- `verify/roaudinit_20261127/equiv_005c78c0_rebase.txt:1` = `0x005c78c0	EQUIV	[ORDER]`.
+- The last commit touching `re/tools/match/equiv.py` in the tree is 1ed7ceb1a.
+- `git merge-base --is-ancestor 1ed7ceb1a orch/integration` returns 0 (yes).
+- ADMITTED.tsv:63 records the same verdict.
+
+### 3. Other checks
+
+| check | result |
+|---|---|
+| binder selftest on the rebased tree (`verify/roaudinit_20261127/bind_selftest_rebase57.txt`) | **PASS**, every profile. audio plan IDENTICAL (bind 459 reuse 87 stop 73). BINDINGS from the audio plan and the bulk plan IDENTICAL (0/0). |
+| VS2022 build, object build + ddkobj check, RO_ROAUDINIT-pr1 arm, 0x00604604 record-0 compare | **not run**: the task says to stop at a hand-only line (2b) |
+| Frida temp folders | 0 before, 0 after (no harness run), deleted 0 |
+
+### 4. Left undone
+
+- Step 3 in full: VS2022 build, object build and ddkobj classification against the head's drain, the RO arm, and the
+  G2 compare. All of it is to be run once BIND-SYNC-REMOVE-STALE gives the tool a way to remove the stale rsp line and
+  to write the 0x004ccef0 row as `near-match`.
+- The 4 newly bound RW core image slots (above) need the VS2022 link to confirm the symbols resolve.
