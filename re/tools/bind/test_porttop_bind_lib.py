@@ -16,6 +16,12 @@ as "[N/M] name PASS|FAIL":
   link      the wrapper + the fixture library compile and link with the exe's VS2022 flags and the program prints 14
   voidproto BIND-LIB-VOIDPROTO: a (void)-declared lib callee called with arguments keeps them (paste form), the two
             unsupported shapes are refused, and the C unit compiles, links and prints 20
+BIND-SYNC-REMOVE-STALE (run 57), on temp fixtures with the module globals swapped:
+  sync_stale          sync drops the rsp line, allowlist lines and generated file of a TU the profile no longer writes,
+                      keeps a hand TU under another tag, a TU another profile writes or reuses, and a bound TU; --dry no-op
+  bindings_tu_gone    a non-missing row naming a Match/PortTop_<rva> TU that is gone is rewritten; with the TU it is kept
+  bindings_prov_reuse a reuse of a PROVISIONAL.tsv body (0x004ccef0 RwCoreHand_004ccef0) is near-match with REACH-6's
+                      note byte for byte; a non-listed reuse stays matched; --rva writes only the rvas named
 """
 import contextlib, io, os, shutil, subprocess, sys, tempfile, argparse, json
 
@@ -259,6 +265,151 @@ def voidproto():
         return out == '20'
     finally:
         shutil.rmtree(d, ignore_errors=True)
+
+
+class _Patch:
+    """Swap porttop_bind module globals for one case and put them back."""
+    def __init__(self, **kw):
+        self.kw, self.old = kw, {}
+
+    def __enter__(self):
+        for k, v in self.kw.items():
+            self.old[k] = getattr(pb, k); setattr(pb, k, v)
+
+    def __exit__(self, *e):
+        for k, v in self.old.items():
+            setattr(pb, k, v)
+
+
+def _sync_fixture(d):
+    """Two profiles: tp (audio-shaped header, own_mark null) and other (own_mark). Returns (profiles, state dirs)."""
+    src = os.path.join(d, 'src'); os.makedirs(os.path.join(src, 'Match'))
+    sd = {p: os.path.join(d, 'state', p) for p in ('tp', 'other')}
+    for v in sd.values():
+        os.makedirs(v)
+    tp = dict(pb.PROFILES['audio'])
+    ot = dict(pb.PROFILES['bulk'], own_mark='// OTHER (2026-11-27): exe-only port body', header=None)
+    hdr = tp['header']['new'][0].split('%(')[0]
+    files = {
+        '00400a00': hdr + '00400a00 = re/match/x/00400a00.c\n// body\n',              # tp's, planned reuse: stale
+        '00400b00': '// HAND-ROW (2026-11-27): exe-only port body of rva 0x00400b00 = x\n',   # hand TU, another tag: kept
+        '00400c00': hdr + '00400c00 = re/match/x/00400c00.c\n',                      # tp's, but other writes it: kept
+        '00400d00': hdr + '00400d00 = re/match/x/00400d00.c\n',                      # tp binds it: kept
+        '00400f00': hdr + '00400f00 = re/match/x/00400f00.c\n',                      # tp's, but a plan reuses the TU: kept
+    }
+    for r, t in files.items():
+        open(os.path.join(src, 'Match', 'PortTop_%s.cpp' % r), 'w', newline='\n').write(t)
+    json.dump({'00400a00': ['reuse', 'Sym_a', 'RwCore/X.cpp'], '00400b00': ['stop'], '00400c00': ['stop'],
+               '00400d00': ['bind', 're/match/x/00400d00.c', 'match', [], []], '00400e00': ['stop'],
+               '00400f00': ['stop']}, open(os.path.join(sd['tp'], 'plan.json'), 'w'))
+    json.dump({'00400f10': ['reuse', 'PortTop_Bound_00400f00', 'Match/PortTop_00400f00.cpp']},
+              open(os.path.join(sd['other'], 'plan.json'), 'w'))
+    s_ = src.replace('\\', '/')   # newfiles.txt names files as SRC/Match/... (SRC is patched to this folder)
+    open(os.path.join(sd['tp'], 'newfiles.txt'), 'w').write(s_ + '/Match/PortTop_00400d00.cpp\n')
+    open(os.path.join(sd['other'], 'newfiles.txt'), 'w').write(s_ + '/Match/PortTop_00400c00.cpp\n')
+    rsp = os.path.join(d, 'exe_sources.rsp')
+    open(rsp, 'wb').write(b'"Core\\A.cpp"\r\n' + b''.join(b'"Match\\PortTop_%s.cpp"\r\n' % r.encode()
+                                                          for r in ('00400a00', '00400b00', '00400c00', '00400d00', '00400e00', '00400f00')))
+    allow = os.path.join(d, 'allow.txt')
+    open(allow, 'w', newline='\n').write(
+        'ORIGTOP-ONLY DUP-IN-TARGET:00400a00:Match/PortTop_00400a00.cpp,RwCore/X.cpp   # tp\n'
+        'ORIGTOP-ONLY DUP-IN-TARGET:00400b00:Match/PortTop_00400b00.cpp,Y.cpp   # kept\n'
+        'ORIGTOP-ONLY DUP-IN-TARGET:00400e00:Z.cpp,Match/PortTop_00400e00.cpp   # tp, file already gone\n')
+    return src, sd, rsp, allow, {'tp': tp, 'other': ot}
+
+
+@case
+def sync_stale():
+    """BIND-SYNC-REMOVE-STALE (1): sync drops the rsp line, the allowlist lines and the generated file of a TU the profile
+    no longer writes (00400a00: planned reuse; 00400e00: file already gone), and keeps a hand TU under another tag, a TU
+    another profile writes, a TU the profile binds and a TU another profile's plan reuses. --dry changes nothing."""
+    import types
+    d = tempfile.mkdtemp(prefix='syncstale_')
+    try:
+        src, sd, rsp, allow, profs = _sync_fixture(d)
+        noseed = types.SimpleNamespace(run=lambda *a_, **k_: types.SimpleNamespace(stdout=''))
+        with _Patch(SRC=src.replace('\\', '/'), RSP=rsp, ALLOW=allow, PROFILES=profs, state_dir=lambda p: sd[p], subprocess=noseed):
+            r0, a0 = open(rsp, 'rb').read(), open(allow, 'rb').read()
+            with contextlib.redirect_stdout(io.StringIO()):
+                pb.cmd_sync(argparse.Namespace(profile='tp', step=None, date=None, evidence=None, dry=True))
+            dry_ok = open(rsp, 'rb').read() == r0 and open(allow, 'rb').read() == a0
+            with contextlib.redirect_stdout(io.StringIO()) as o:
+                pb.cmd_sync(argparse.Namespace(profile='tp', step=None, date=None, evidence=None, dry=False))
+            with contextlib.redirect_stdout(io.StringIO()):   # a second run is a no-op
+                pb.cmd_sync(argparse.Namespace(profile='tp', step=None, date=None, evidence=None, dry=False))
+        rsp_ok = open(rsp, 'rb').read() == (b'"Core\\A.cpp"\r\n"Match\\PortTop_00400b00.cpp"\r\n"Match\\PortTop_00400c00.cpp"\r\n'
+                                            b'"Match\\PortTop_00400d00.cpp"\r\n"Match\\PortTop_00400f00.cpp"\r\n')
+        al = open(allow).read().splitlines()
+        files = sorted(os.listdir(os.path.join(src, 'Match')))
+        ok = (dry_ok and rsp_ok and len(al) == 1 and '00400b00' in al[0]
+              and files == ['PortTop_00400b00.cpp', 'PortTop_00400c00.cpp', 'PortTop_00400d00.cpp', 'PortTop_00400f00.cpp']
+              and 'rsp - 2' in o.getvalue() and 'allowlist - 2' in o.getvalue())
+        if not ok:
+            print('   sync_stale: dry %s rsp %s allow %r files %r' % (dry_ok, rsp_ok, al, files))
+        return ok
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
+def _bindings_run(rows, plan, step, rva=None, src=None):
+    d = tempfile.mkdtemp(prefix='bindstale_')
+    try:
+        sd = os.path.join(d, 'state'); os.makedirs(sd)
+        json.dump(plan, open(os.path.join(sd, 'plan.json'), 'w'))
+        bt = os.path.join(d, 'BINDINGS.tsv')
+        open(bt, 'w', newline='\n').write('rva\tname\tkind\texe_symbol\tnote\tlevel\tcaller\n' + ''.join(r + '\n' for r in rows))
+        s = src or os.path.join(d, 'src')
+        os.makedirs(os.path.join(s, 'Match'), exist_ok=True)
+        with _Patch(BINDINGS=bt, state_dir=lambda p: sd, SRC=s.replace('\\', '/')):
+            with contextlib.redirect_stdout(io.StringIO()):
+                pb.cmd_bindings(argparse.Namespace(profile='audio', step=step, dry=False, rva=rva))
+        return open(bt).read().splitlines()[1:], s
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
+@case
+def bindings_tu_gone():
+    """BIND-SYNC-REMOVE-STALE (2): a non-missing row whose note names an exe TU Match/PortTop_<rva>.cpp that no longer
+    exists is rewritten whole from the plan (REACH-5's 0x004ccef0 row before REACH-6); the same row with the TU present
+    keeps its text."""
+    old = ('0x00400a00\tFUN_00400a00\tnear-match\tPortTop_Bound_00400a00\tOLD-ROW: re/match/x/00400a00.c (L-126 provisional, '
+           're/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_00400a00.cpp\t3\t')
+    plan = {'00400a00': ['reuse', 'Sym_a', 'RwCore/X.cpp']}
+    gone, _ = _bindings_run([old], plan, 'NEWROW')
+    d = tempfile.mkdtemp(prefix='bindkeep_')
+    try:
+        os.makedirs(os.path.join(d, 'Match'))
+        open(os.path.join(d, 'Match', 'PortTop_00400a00.cpp'), 'w').write('// x\n')
+        kept, _ = _bindings_run([old], plan, 'NEWROW', src=d)
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+    want = '0x00400a00\tFUN_00400a00\tmatched\tSym_a\tNEWROW: existing exe body RwCore/X.cpp\t3\t'
+    ok = gone == [want] and kept == [old]
+    if not ok:
+        print('   bindings_tu_gone: gone %r kept %r' % (gone, kept))
+    return ok
+
+
+@case
+def bindings_prov_reuse():
+    """BIND-SYNC-REMOVE-STALE (3): a reuse of an exe body that re/match/PROVISIONAL.tsv lists under the same symbol
+    (0x004ccef0 RwCoreHand_004ccef0, a hand body) is written near-match with REACH-6's note, byte for byte; a reuse of a
+    body not listed there (0x004a2d30 RwCoreCrt_pow) stays matched; --rva writes only the rvas named."""
+    miss = '0x%s\tFUN_%s\tmissing\tPortTop_AStop_%s\tPORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body\t3\t'
+    rows = [miss % (r, r, r) for r in ('004ccef0', '004a2d30')]
+    plan = {'004ccef0': ['reuse', 'RwCoreHand_004ccef0', 'RwCore/RwCore_Hand.cpp'],
+            '004a2d30': ['reuse', 'RwCoreCrt_pow', 'RwCore/RwCore_Crt.cpp']}
+    want = ('0x004ccef0\tFUN_004ccef0\tnear-match\tRwCoreHand_004ccef0\tRO-AUDIOINIT-45D460-REACH-6: existing exe body '
+            'RwCore/RwCore_Hand.cpp (hand body, L-126 provisional, re/match/PROVISIONAL.tsv RwCoreHand_004ccef0; NOT matched, '
+            'knob path only; one body for the rva)\t3\t')
+    one, _ = _bindings_run(rows, plan, 'RO-AUDIOINIT-45D460-REACH-6', rva=['0x004CCEF0'])
+    both, _ = _bindings_run(rows, plan, 'T')
+    ok = (one == [want, rows[1]] and both[0].split('\t')[2] == 'near-match'
+          and both[1] == '0x004a2d30\tFUN_004a2d30\tmatched\tRwCoreCrt_pow\tT: existing exe body RwCore/RwCore_Crt.cpp\t3\t')
+    if not ok:
+        print('   bindings_prov_reuse: one %r both %r' % (one, both))
+    return ok
 
 
 def main():
