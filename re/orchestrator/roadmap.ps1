@@ -187,6 +187,12 @@ switch ($Cmd) {
   }
   'enqueue' {
     if (-not $Id) { throw "usage: enqueue <id> -Branch <branch> [-Sha <sha>]" }
+    # HB-TRAIN-DUPKEY-MESSAGE: refuse a branch whose merge3 tables (merge_train.json conflict_keyed) hold a duplicate key.
+    $brChk = if ($Branch) { $Branch } else { (Row (Load) $Id).branch }
+    if ($brChk) {
+      $dk = & py.exe -3.12 (Join-Path $PSScriptRoot '..\tools\tracker_merge3.py') check-ref (Split-Path (Split-Path $PSScriptRoot)) $brChk (Join-Path $PSScriptRoot 'merge_train.json') 2>&1
+      if ($LASTEXITCODE -eq 3) { throw "enqueue refused: $(@($dk) -join '; ')" }
+    }
     With-Lock {
       $s = Load; $r = Row $s $Id
       $br = if ($Branch) { $Branch } elseif ($r.branch) { $r.branch } else { throw "enqueue needs -Branch" }

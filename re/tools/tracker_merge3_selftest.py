@@ -42,6 +42,11 @@ rc, cf, out = run("allow", ao, ab, at)
 case("allowlist: ours removed C, theirs added D = both stand", rc == 0 and out == AH + "X:0040a000:f.cpp  # why\nX:0040b000:g.cpp\nX:0040d000:i.cpp\n")
 rc, cf, out = run("allow", AH + "X:0040a000:f.cpp  # why2\nX:0040b000:g.cpp\nX:0040c000:h.cpp\n", ab, AH + "X:0040a000:f.cpp  # why3\nX:0040b000:g.cpp\nX:0040c000:h.cpp\n")
 case("allowlist: one entry's comment edited on both sides = conflict", rc == 1 and cf == ["X:0040a000:f.cpp"])
+dup = "X:0040a000:f.cpp\nX:0040b000:g.cpp\nX:0040a000:f.cpp  # again\n"
+rc, cf, out = run("allow", ao, ao, dup)
+case("duplicate key on theirs = exit 3 naming the key and the side", rc == 3 and "DUPLICATE" in " ".join(cf) and "X:0040a000:f.cpp" in cf and "theirs" in " ".join(cf) and out == ao)
+rc, cf, out = run("allow", dup, ao, ao)
+case("duplicate key on ours = exit 3 naming the ours side", rc == 3 and "ours" in " ".join(cf))
 bad = [n for n, ok in cases if not ok]
 for i, (n, ok) in enumerate(cases, 1): print(f"[{i}/{len(cases)}] {n} {'PASS' if ok else 'FAIL'}")
 sys.exit(1 if bad else 0)

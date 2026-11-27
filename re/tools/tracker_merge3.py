@@ -6,7 +6,7 @@
                                                       (key = the first whitespace-delimited token of a non-# line)
 
 Same argument order as `git merge-file`: the merged result is written over <ours>. Exit 0 = merged cleanly,
-1 = conflict (<ours> untouched, the conflicting keys are printed one per line on stdout), 2 = usage / unreadable.
+3 = a duplicate key in one input (printed with its side), 1 = conflict (<ours> untouched, the conflicting keys are printed one per line on stdout), 2 = usage / unreadable.
 
 Rule per key (a row is the whole line):
   ours == theirs                -> keep
@@ -117,13 +117,57 @@ def read(p):
         return f.read()
 
 
+def duplicate_keys(raw, keyf):
+    seen, dups = set(), []
+    for ln in raw.splitlines():
+        k = keyf(ln)
+        if k is None:
+            continue
+        if k in seen and k not in dups:
+            dups.append(k)
+        seen.add(k)
+    return dups
+
+
+def check_ref(repo, ref, cfg_path):
+    """Enqueue check (HB-TRAIN-DUPKEY-MESSAGE): every merge3 table of <ref> (merge_train.json conflict_keyed)
+    must have unique keys. One line per duplicate naming the key, the file and the side. Exit 3 if any, else 0."""
+    import json
+    import subprocess
+    with open(cfg_path, encoding="utf-8") as fh:
+        cfg = json.load(fh)
+    bad = False
+    for f, kind in cfg.get("conflict_keyed", {}).items():
+        keyf = key_hooks if kind == "hooks" else key_allow
+        r = subprocess.run(["git", "-C", repo, "show", f"{ref}:{f}"], capture_output=True)
+        if r.returncode != 0:
+            continue
+        for k in duplicate_keys(r.stdout.decode("utf-8", "replace"), keyf):
+            print(f"DUPLICATE KEY {k} in {f} on side branch {ref}")
+            bad = True
+    return 3 if bad else 0
+
+
 def main(argv):
+    if len(argv) == 5 and argv[1] == "check-ref":
+        return check_ref(argv[2], argv[3], argv[4])
     if len(argv) != 5 or argv[1] not in ("hooks", "allow"):
         print(__doc__)
         return 2
     keyf = key_hooks if argv[1] == "hooks" else key_allow
+    texts = []
     try:
-        merged, conflicts = merge(read(argv[2]), read(argv[3]), read(argv[4]), keyf)
+        for side, p in (("ours (the integration head)", argv[2]), ("base", argv[3]), ("theirs (the branch)", argv[4])):
+            texts.append(read(p))
+            dups = duplicate_keys(texts[-1], keyf)
+            if dups:
+                print(f"DUPLICATE KEY {', '.join(dups)} on side {side}: {p}")
+                return 3
+    except (OSError, UnicodeDecodeError) as e:
+        print(f"tracker_merge3: {e}", file=sys.stderr)
+        return 2
+    try:
+        merged, conflicts = merge(texts[0], texts[1], texts[2], keyf)
     except (OSError, ValueError, UnicodeDecodeError) as e:
         print(f"tracker_merge3: {e}", file=sys.stderr)
         return 2
