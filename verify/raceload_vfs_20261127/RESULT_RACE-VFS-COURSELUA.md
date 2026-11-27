@@ -141,6 +141,20 @@ is printed by the tool for reference.
 | arms vfs2 (final) | both exit 0xC0000005, 7-9 s, the COURSE.LUA stop; meta selftest 22196 checks 0 fails, race.n 0, warp n 2402 tick 300 |
 | frida-<hash> folders in %LOCALAPPDATA%\Temp | counts only before: 698 (PowerShell, 10:3x, L0 disk-hold reply) and 3 (bash glob, before the first arm); no name list was taken before. After: 6, names saved to D:/MashedWT/RACE-VFS-COURSELUA_data/frida_dirs_after.txt. **Deleted 0**: this row started no Frida process (its tools were build.bat, ddkobj.py, porttop_bind.py, match.py, relocheck.py, equiv.py, decomp_pc.py on Ghidra headless, knob_boot.py, run_arms.py), so no folder is attributable to it |
 
+### 5.1 Merged tree (orch/integration affd19dd4 merged, merge commit 6680e1d8d, no conflict)
+
+orch/integration moved during the row (BIND-TOOLS-SMALL-3, RO-AUDIOINIT-DEPTH, HB-MASHEDWT-ROOT-CLEANUP, BIND-MOVED-TSV-AUTO,
+BIND-BULK-BINDINGS-TAG). `git -c merge.autoStash=false merge orch/integration`, then `write --profile raceload --roots-only`,
+`write --profile audio`, `sync --profile raceload`, `bindings --profile audio`: 0 files changed, rsp +0, allowlist +0.
+
+| check (merged tree) | result |
+|---|---|
+| binder selftest | **PASS** (selftest_merged.txt) |
+| VS2022 build (build_vs4) / object build (build_ddk4) | `=== Build OK ===` both; rva-lint 659 known, NEW 0 |
+| ddkobj.py check | IDENTICAL 2363/2529, DIFFERENT 78 (set identical to log\orch\run56_headcheck\: 0 new, 0 gone), not-in-map 88, linked 2408/2698, refusals 34, provisional kept 256 + 7 fns (ddkobj_summary.json) |
+| arms RO_ROLOADRWC-vfs3 / RO_ROLOADRWCC-vfs3 (object build caaa5c82, staged image) | same as vfs2: `4 file systems`, `Unable to find COURSE.LUA in piz`, AV exe+0x1E824, exit 0xC0000005, race.n 0, reached false |
+| wall count (index on the merged tree) | identical table: 282 walls + 7 no-row |
+
 ## 6. Follow-ups (for L0 / lead)
 
 - Piz: file system row (section 3): hooks.csv rows + sources for 0x004b6630, 0x004b6c00, 0x004b6f60, 0x004b6cd0, 0x004b6f90,
@@ -157,6 +171,8 @@ Raw (not committed), `D:/MashedWT/RACE-VFS-COURSELUA_data`:
 
 | file | sha256 |
 |---|---|
+| arms/RO_ROLOADRWC-vfs3.log / RO_ROLOADRWCC-vfs3.log (merged) | af04b87f3e0d70d19a96729856127560e4f854e97f95136ca64be2a73d0a7ff5 / 6d36626fa19b1ae92823debad306587613ba3cb04420721309f6eb0396a43e23 |
+| arms/RO_ROLOADRWC-vfs3/meta.json / RO_ROLOADRWCC-vfs3/meta.json (merged) | 7cd23a9291fee623871ff3e5560ce8798e6cbd73373f0610b9aa0d59b972d575 / 00173f65f37030574072e9dc466fc7904107caacf8b25d0666f7e3f38d3ab4d4 |
 | arms/RO_ROLOADRWC-vfs2.log | 8a64c905673b174b5b3dfd74a151b0a94a126e25e2347cbefe0057cbbb0dbb70 |
 | arms/RO_ROLOADRWCC-vfs2.log | ec647bb5e0ce98bbb38cc887e2fda0f63782a931649154a940911a6e7c9e5ece |
 | arms/RO_ROLOADRWC-vfs2/meta.json | 88dda92bda679f9e0fa1b485b26d074488496f57b9ae5dfa7e8f12066f942d28 |
