@@ -1,17 +1,27 @@
-not met: no verdict yet. L0 put a disk hold on (C: 21 GB then 13 GB free, under the 25 GB line), so no arm and no further build ran. Verdict word ("old fault" / "new fault") is open.
+Both exes at head 1379467a6 fault in `Orig_0040d270` (table 005F2728, NULL read, ~frame 300 of the replay arm): object build = same address as G5 (old fault, exe+0x66EC); VS2022 = fault moved (exe+0x176339 -> exe+0x17A159), now named `_Orig_0040d270`+0x109. The G5 VS2022 build has no map kept, so its old function is [UNCERTAIN].
 
-## Done
-- Worktrees: `.worktrees/RO-ARM-VS2022-AV` (orch/RO-ARM-VS2022-AV @ 1379467a6) and `.worktrees/RO-ARM-VS2022-AV-old` (detached @ 77dedfece, run 54 start head). Each about 7.4 GB on C:.
-- Built VS2022 exe at 1379467a6 only: `D:/MashedWT/RO-ARM-VS2022-AV_data/mashed_re_new_vs.exe` (build_new_vs.log, rc 0, 4,444,160 bytes). The object build at 1379467a6 was started and stopped by me on the hold (build_new_ddk.log incomplete). Nothing built at 77dedfece.
-- No arm ran, no game launched, no frida folders created by this row (Temp holds 698 frida-* folders, none mine).
+## Verdict per exe
+| exe | G5 fault (RESULT_KNOBON-BOOTS-G5) | this row, knob-off RO_ROLOADRWC-pr1, no staged mashed_image.bin | function (map) | verdict |
+|---|---|---|---|---|
+| object build (ddkobj, head 1379467a6) | AV 000166EC (exe+0x66EC), esi 005F2728 | AV at 000166EC (exe+0x66EC) read 00000000, esi 005F2728 | `_Orig_0040d270` 0001:00005690 VA 0x16690 +0x5C, ddk_top07_0040d270_PortTop_0040d270.obj (ddk_map.map line 2804) | old fault (identical address and esi) |
+| VS2022 (head 1379467a6) | AV 00186339 (exe+0x176339), esi 1 edi 005F2728 | AV at 0018A159 (exe+0x17A159) read 00000000, esi 00000001 edi 005F2728 | `_Orig_0040d270` 0001:00179050 VA 0x18A050 +0x109, PortTop_0040d270.obj (vs_map.map line 2637) | fault moved (address differs, same registers esi 1 / edi 005F2728, same NULL read) |
 
-## Fault address already in the G5 logs (not new data, from verify/knobonboots_20261121)
-The exe's own VEH (`RwCore_Veh`, RwCore_Knob.cpp:160) logged `AV at` in every failing arm:
-- VS2022 exe, `arms_vs/RO_ROLOADRWC-pr1.log`: AV at 00186339 (exe+0x176339), read of 00000000, esi 00000001 edi 005F2728, return chain +0x176589 +0x1758B3 +0x1755E1 +0x16E364. 005F2728 is the table passed to `Orig_0040d270` in the object-build arm log. exe+0x176339 is a VS2022 address: map it against that build's mashed_re.map to name the function. [UNCERTAIN] function name not looked up.
-- Object build without image, `arms_ddk_noimg/RO_ROLOADRWC-pr1.log`: AV at 000166EC (exe+0x66EC), read 00000000, esi 005F2728.
-So the fault is a NULL read at ~6 s, consumer of table 0x005F2728. Old/new question remains.
+- Preferred load base 0x00010000 in both maps (line 5), so the log's `AV at 0018xxxx` = map VA and `exe+X` = VA - 0x10000.
+- The arm log line before the VS fault: `rva 0x0040d270: MASHED_OT_RACELOAD=1, matched body Orig_0040d270(table 005F2728, row 0) entered, call 1 (PORT-OT-RACE)` (arms_vs_map log line 461), then the AV. Both faults are inside the matched body of 0x0040d270 on table 005F2728.
+- Why the VS2022 address moved: the old G5 exe was built from an older tree, so exe+0x176339 and exe+0x17A159 are different layouts, not necessarily different faults. At head 1379467a6 the old address 0x176339 falls in `_PortTop_Sel_00429290`+0x39 (vs_map.map line 2527), which is not the fault. The old build's own map was not kept, so "same function in the G5 exe" is [UNCERTAIN]. Test: rebuild VS2022 at the G5 head (needs a second worktree, not made, step 3 of the brief) and map exe+0x176339.
 
-## Next (after the hold lifts)
-1. Build VS2022 + object at 77dedfece (and object at 1379467a6). Needs about 1 GB of obj output per build beyond the worktrees.
-2. One knob-off `RO_ROLOADRWC-pr1` arm per setup per head via `verify/knobonboots_20261121/run_arms_wrapped.py` (G5_EXE selects the exe), object build with `original/mashed_image.bin` absent.
-3. Read the `AV at` line, map the exe offset in the build's .map, state the verdict.
+## Checks run
+- VS2022 build at c67f372e7 (head 1379467a6 content), rc 0, build_vs_map.log, map vs_map.map. Object build, rc 0, ddkobj check IDENTICAL 2360/2526, DIFFERENT 78, not-in-map 88, 34 refusals (externalized-static-register-convention=13, wrapper-redefines-globals=21); no newly classified units (build only, no code change).
+- Arms: `verify/roarm_vs2022av_20261127/run_arm.py` (test-slot outside, mashed_lock inside, private root D:\MashedWT\RO-ARM-VS2022-AV_root, `original\` has no mashed_image.bin, timeout 7200000). First attempt failed (root missing, robocopy under bash did not run), second attempt ran.
+- No code changed, no knob flipped, gates not run (evidence row).
+
+## Raw files (D:/MashedWT/RO-ARM-VS2022-AV_data) sha256
+- vs_map.exe 414364d249245c06f2591a3985d1b56c68d2179c24e31d7c683b3f8bdc797108
+- ddk_map.exe 1ecf84d9f7435e4ce9e80c89aa138b511db31e5caaea0f50daabf28b53aebf5c
+- vs_map.map 92cb927eed5866bc1938dfda3c2166b36116816bcd3bd5829195caba6141dd06
+- ddk_map.map 2056302a3fa552c5a52484df50341f7e8bc849ec08416fb3ed7a0e14fc9779a1
+- arms_vs_map/RO_ROLOADRWC-pr1.log 0b7d6e7fb73aa737bf33a562ae191f633baabdda38cda740c50e02354fa312b3
+- arms_ddk_map/RO_ROLOADRWC-pr1.log da60341cc180fbb349fc113a2a4c7bb34232b731c1a326d6ad183bfe55769b4e
+
+## frida-<hash> folders in %LOCALAPPDATA%\Temp
+3 at the end (0 at my first check, earlier worker saw 698). None created by this row (no Frida used).
