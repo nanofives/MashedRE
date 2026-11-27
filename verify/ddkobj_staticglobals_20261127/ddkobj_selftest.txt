@@ -12,8 +12,8 @@
 [ddkobj selftest] PASS: forwarder: void stdcall
 [ddkobj selftest] PASS: forwarder: two static definitions -> refused
 [ddkobj selftest] PASS: decoration -> calling convention
-[ddkobj] FATAL fail:seh-unmarked: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_seh.c (wrapper C:\Users\maria\AppData\Local\Temp\ddkst_j12zb344\w\DdkSt_seh.cpp): registers SEH handlers (__except_handler3): @feat.00 would be a false SafeSEH claim
-[ddkobj] FATAL fail:unparsed-wrapper-define: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_def.c (wrapper C:\Users\maria\AppData\Local\Temp\ddkst_j12zb344\w\DdkSt_def.cpp): FUN_00400030: #define FUN_00400030(a, b) DdkSt_Callee((b), (a))
+[ddkobj] FATAL fail:seh-unmarked: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_seh.c (wrapper C:\Users\maria\AppData\Local\Temp\ddkst_umcy4zb0\w\DdkSt_seh.cpp): registers SEH handlers (__except_handler3): @feat.00 would be a false SafeSEH claim
+[ddkobj] FATAL fail:unparsed-wrapper-define: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_def.c (wrapper C:\Users\maria\AppData\Local\Temp\ddkst_umcy4zb0\w\DdkSt_def.cpp): FUN_00400030: #define FUN_00400030(a, b) DdkSt_Callee((b), (a))
 [ddkobj] object build FAILED: 2 unit(s) in a fail-loudly class (RESULT_DDKOBJ-SPIKE section 10 items 4 and 9)
 [ddkobj selftest] PASS: all four fixtures: build returns 3 (got 3)
 [ddkobj selftest] PASS: SEH object -> fail:seh-unmarked, fatal (fail:seh-unmarked: registers SEH handlers (__except_handler3): @feat.00 would be a false SafeSEH claim)
@@ -23,8 +23,8 @@
 [ddkobj selftest] PASS: build json lists 2 fatal units (2)
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 4  ddk objects 2  wrappers edited 2  absolute data symbols 3
-[ddkobj]   fail:wrapper-redefines-globals: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_port.c
-[ddkobj]   fail:wrapper-redefines-globals: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_mgcell.c
+[ddkobj]   fail:wrapper-redefines-globals: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_port.c
+[ddkobj]   fail:wrapper-redefines-globals: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_mgcell.c
 [ddkobj selftest] PASS: without the two fatal fixtures the build goes on (rc 0)
 [ddkobj selftest] PASS: original-address MGLOBAL -> ok, __ddkabs_00400084 (ok: {'name': '__ddkabs_00400084', 'orig': 'DAT_00400084', 'class': 'data-abs', 'bind': ''})
 [ddkobj selftest] PASS: cell MGLOBAL -> fail:wrapper-redefines-globals, not fatal (fail:wrapper-redefines-globals)
@@ -32,8 +32,8 @@
 [ddkobj selftest] PASS: non-SEH object is marked @feat.00
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 4  ddk objects 2  wrappers edited 2  absolute data symbols 3
-[ddkobj]   fail:unbindable-callee: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_fnaddrnx.c
-[ddkobj]   fail:wrapper-redefines-globals: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_mgenumbad.c
+[ddkobj]   fail:unbindable-callee: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_fnaddrnx.c
+[ddkobj]   fail:wrapper-redefines-globals: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_mgenumbad.c
 [ddkobj selftest] PASS: address-registration fixtures: build goes on (rc 0)
 [ddkobj selftest] PASS: function passed by address, wrapper-bound -> fn-addr _PortTop_Bound_0047a180 (ok: {'name': '_PortTop_Bound_0047a180', 'orig': 'FUN_00400104', 'class': 'fn-addr', 'bind': ''})
 [ddkobj selftest] PASS: function passed by address, no wrapper #define -> data-abs __ddkabs_00400108 ({'name': '__ddkabs_00400108', 'orig': 'FUN_00400108', 'class': 'data-abs', 'bind': ''})
@@ -43,8 +43,8 @@
 [ddkobj selftest] PASS: MGLOBAL_ENUM_RE: only the two exact enum forms
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 3  ddk objects 1  wrappers edited 1  absolute data symbols 3
-[ddkobj]   fail:static-global-unmapped: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_statnomg.c
-[ddkobj]   fail:static-global-address-mismatch: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_statbad.c
+[ddkobj]   fail:static-global-unmapped: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_statnomg.c
+[ddkobj]   fail:static-global-address-mismatch: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_statbad.c
 [ddkobj selftest] PASS: static-global fixtures: build goes on (rc 0)
 [ddkobj selftest] PASS: file-static + MGLOBAL at its own address -> ok, bound to __ddkabs_00400144 / __ddkabs_00400148 (ok: [{'name': 'DAT_00400148', 'addr': '0x00400148', 'refs': 2, 'ddk': '__ddkabs_00400148'}, {'name': 'DAT_00400144', 'addr': '0x00400144', 'refs': 2, 'ddk': '__ddkabs_00400144'}])
 [ddkobj selftest] PASS: no relocation left on the private copies, >= 3 on __ddkabs_ ([]; [('__ddkabs_00400144', 0), ('__ddkabs_00400148', 8), ('__ddkabs_00400148', 12), ('__ddkabs_00400144', 0)])
@@ -62,23 +62,23 @@
 [ddkobj selftest] PASS: its body is defined as __ddkreg_00400060 for the byte check (['___ddkreg_00400060'])
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 1  ddk objects 0  wrappers edited 0  absolute data symbols 1
-[ddkobj]   fail:static-register-convention: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_reg.c
+[ddkobj]   fail:static-register-convention: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_reg.c
 [ddkobj selftest] PASS: DDKOBJ_REGCONV=refuse -> the DDKOBJ-SPIKE refusal (fail:static-register-convention)
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 1  ddk objects 0  wrappers edited 0  absolute data symbols 1
-[ddkobj]   fail:unbindable-callee: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_provmix.c
+[ddkobj]   fail:unbindable-callee: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_provmix.c
 [ddkobj selftest] PASS: mixed unit -> not skipped, only the matched function defined (fixture wrappers are not in the default link, so unbound is expected) (fail:unbindable-callee: ['0x004000b0'])
 [ddkobj selftest] PASS: provisional function -> DDK copy dead, call bound to the exe name _DdkSt_ProvB (['0x004000c0']: {'name': '_DdkSt_ProvB', 'orig': 'FUN_004000c0', 'class': 'unbound:wrapper-bound', 'bind': ''})
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 1  ddk objects 0  wrappers edited 0  absolute data symbols 1
-[ddkobj]   skip:provisional: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_provmix.c
+[ddkobj]   skip:provisional: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_provmix.c
 [ddkobj selftest] PASS: every function provisional -> skip:provisional (skip:provisional)
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 1  ddk objects 1  wrappers edited 1  absolute data symbols 1
 [ddkobj selftest] PASS: lifted rows (listed source RwCore/RwCore_Lifted_NN.cpp) + matched unit -> checked (ok)
 [ddkobj] ddkcrt: 44 renamed definitions in 7 objects, referenced by DDK objects: none; crt math left on VS2022: none
 [ddkobj] units 1  ddk objects 0  wrappers edited 0  absolute data symbols 1
-[ddkobj]   skip:provisional: C:/Users/maria/AppData/Local/Temp/ddkst_j12zb344/re/match/ddkst_provmix.c
+[ddkobj]   skip:provisional: C:/Users/maria/AppData/Local/Temp/ddkst_umcy4zb0/re/match/ddkst_provmix.c
 [ddkobj selftest] PASS: row listing the re/match source -> still skip:provisional (skip:provisional)
 [ddkobj selftest] PASS: prov_applies / dual body: lifted row -> not applied, dual body; re/match row -> applied
 [ddkobj selftest] OK: 0 failure(s)
