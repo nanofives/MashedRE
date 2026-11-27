@@ -43,6 +43,12 @@ ORIGTOP-ONLY, and is deleted at the ORIG_TOP flip like ORIGTOP-ONLY. A pair with
 stays D4 (or ORIGTOP-ONLY when exactly one body is marked). A held pair on an untagged line stays in D4 until its line is tagged
 (so adding the class moves no count by itself). CROSS-TARGET and DUP-INSTALL are never this class.
 
+ORIGTOP-HELD-HAND class (LINT-HELDPAIR-HANDCOPY, L-183 (1), 2026-11-27, a tool rule inside L-111). An rva with two or more
+bodies in marked TUs plus at least one unmarked hand copy in the same target (DUP-IN-TARGET only). ORIGTOP-ONLY needs exactly
+one marked body and ORIGTOP-HELD no unmarked body, so neither covers it. The tag `ORIGTOP-HELD-HAND <CHECK>:<rva>:<files>
+# citation` is counted apart from D4, ORIGTOP-ONLY and ORIGTOP-HELD, and deleted at the ORIG_TOP flip (the hand copy itself is
+frozen until T4). An untagged line of the shape stays in D4 until tagged. CROSS-TARGET and DUP-INSTALL are never this class.
+
   py -3.12 scripts/lint_rva_bodies.py              # guard mode (build.bat calls this)
   py -3.12 scripts/lint_rva_bodies.py --seed       # print an allowlist for today's findings (class lines tagged)
   py -3.12 scripts/lint_rva_bodies.py --verbose    # also print the allowlisted ones
@@ -61,6 +67,7 @@ ROOT = S.ROOT
 ALLOWLIST = ROOT / "re" / "tools" / "dual_copy_allowlist.txt"
 OT_TAG = "ORIGTOP-ONLY"
 HELD_TAG = "ORIGTOP-HELD"
+HAND_TAG = "ORIGTOP-HELD-HAND"
 OT_MARK = re.compile(r"^\s*//\s*RVA-LINT:\s*ORIGTOP-ONLY\b")
 
 
@@ -76,7 +83,7 @@ def parse_allowlist(lines) -> dict[str, str]:
         if not ln:
             continue
         tagged = ""
-        for tag in (OT_TAG, HELD_TAG):
+        for tag in (OT_TAG, HELD_TAG, HAND_TAG):
             if ln.startswith(tag + " ") or ln.startswith(tag + "	"):
                 tagged = tag
                 ln = ln[len(tag):].strip()
@@ -169,9 +176,15 @@ def is_held(check, files, marked) -> bool:
             and not is_origtop(files, marked))
 
 
+def is_held_hand(check, files, marked) -> bool:
+    """ORIGTOP-HELD-HAND: two or more bodies of one rva in marked TUs plus at least one unmarked hand copy."""
+    return (check == "DUP-IN-TARGET" and sum(1 for f in files if f in marked) >= 2
+            and any(f not in marked for f in files))
+
+
 def evaluate(found, allow: dict[str, str], marked: set[str], asi_tus: set[str]):
-    """-> (new, old_d4, old_ot, errors, old_held). `errors` are class / tag / marker violations (each fails the build)."""
-    new, old_d4, old_ot, old_held, errors = [], [], [], [], []
+    """-> (new, old_d4, old_ot, errors, old_held, old_hand). `errors` are class / tag / marker violations (each fails the build)."""
+    new, old_d4, old_ot, old_held, old_hand, errors = [], [], [], [], [], []
     for rel in sorted(marked & asi_tus):
         errors.append(f"{OT_TAG} marker in {rel}, which asi_sources.rsp compiles (ORIG_TOP is an exe path)")
     for f in found:
@@ -179,11 +192,18 @@ def evaluate(found, allow: dict[str, str], marked: set[str], asi_tus: set[str]):
         k = key(check, rva, files)
         cls = check != "DUP-INSTALL" and is_origtop(files, marked)
         held = is_held(check, files, marked)
+        hand = is_held_hand(check, files, marked)
         if k not in allow:
             new.append(f)
             continue
         tagged = allow[k]
-        if tagged == HELD_TAG:
+        if tagged == HAND_TAG:
+            if hand:
+                old_hand.append(f)
+            else:
+                errors.append(f"{k} is tagged {HAND_TAG} but is not of the class (needs two or more bodies in TUs marked "
+                              f"`// RVA-LINT: ORIGTOP-ONLY` plus at least one unmarked body, DUP-IN-TARGET)")
+        elif tagged == HELD_TAG:
             if held:
                 old_held.append(f)
             else:
@@ -198,7 +218,7 @@ def evaluate(found, allow: dict[str, str], marked: set[str], asi_tus: set[str]):
             old_ot.append(f)
         else:
             old_d4.append(f)
-    return new, old_d4, old_ot, errors, old_held
+    return new, old_d4, old_ot, errors, old_held, old_hand
 
 
 def selftest() -> int:
@@ -213,6 +233,9 @@ def selftest() -> int:
     f_plain = ("DUP-IN-TARGET", 0x00401030, sorted([hand, asi_hand]), "synthetic")
     f_triple = ("DUP-IN-TARGET", 0x00401060, sorted([ot, ot2, "Match/OrigTop_Synth3.cpp"]), "synthetic")
     f_cross_marked = ("CROSS-TARGET", 0x00401070, sorted([ot, ot2]), "synthetic")
+    f_hand = ("DUP-IN-TARGET", 0x00401080, sorted([ot, ot2, hand]), "synthetic")
+    f_hand2 = ("DUP-IN-TARGET", 0x00401090, sorted([ot, ot2, hand, "Gameplay/Hand2.cpp"]), "synthetic")
+    f_cross_hand = ("CROSS-TARGET", 0x004010a0, sorted([ot, ot2, asi_hand]), "synthetic")
     cases = [
         ("tagged ORIG_TOP pair is allowed, counted ORIGTOP-ONLY", [f_pair],
          [f"{OT_TAG} {key(*f_pair[:3])}"], set(), (0, 0, 1, 0)),
@@ -246,15 +269,38 @@ def selftest() -> int:
         ("L-178 scaffold dual keeps ORIGTOP-ONLY, not held", [f_dual], [f"{HELD_TAG} {key(*f_dual[:3])}"], set(), (0, 0, 0, 1, 0)),
         ("held pair beside a plain D4 line: counts stay apart", [f_both, f_plain],
          [f"{HELD_TAG} {key(*f_both[:3])}", key(*f_plain[:3])], set(), (0, 1, 0, 0, 1)),
+        # ORIGTOP-HELD-HAND (L-183 (1)): two or more marked bodies plus an unmarked hand copy
+        ("held pair + hand copy tagged ORIGTOP-HELD-HAND lands in the hand class", [f_hand],
+         [f"{HAND_TAG} {key(*f_hand[:3])}"], set(), (0, 0, 0, 0, 0, 1)),
+        ("held pair + hand copy untagged stays D4 burn-down until tagged", [f_hand], [key(*f_hand[:3])], set(), (0, 1, 0, 0, 0, 0)),
+        ("unlisted held pair + hand copy is NEW", [f_hand], [], set(), (1, 0, 0, 0, 0, 0)),
+        ("held pair + hand copy tagged ORIGTOP-HELD fails", [f_hand],
+         [f"{HELD_TAG} {key(*f_hand[:3])}"], set(), (0, 0, 0, 1, 0, 0)),
+        ("held pair + hand copy tagged ORIGTOP-ONLY fails", [f_hand],
+         [f"{OT_TAG} {key(*f_hand[:3])}"], set(), (0, 0, 0, 1, 0, 0)),
+        ("two marked + two unmarked bodies tagged ORIGTOP-HELD-HAND lands in the hand class", [f_hand2],
+         [f"{HAND_TAG} {key(*f_hand2[:3])}"], set(), (0, 0, 0, 0, 0, 1)),
+        ("two marked bodies, no hand copy, tagged ORIGTOP-HELD-HAND fails", [f_both],
+         [f"{HAND_TAG} {key(*f_both[:3])}"], set(), (0, 0, 0, 1, 0, 0)),
+        ("one marked + one unmarked tagged ORIGTOP-HELD-HAND fails", [f_pair],
+         [f"{HAND_TAG} {key(*f_pair[:3])}"], set(), (0, 0, 0, 1, 0, 0)),
+        ("plain dual copy tagged ORIGTOP-HELD-HAND fails", [f_plain],
+         [f"{HAND_TAG} {key(*f_plain[:3])}"], set(), (0, 0, 0, 1, 0, 0)),
+        ("L-178 scaffold dual tagged ORIGTOP-HELD-HAND fails", [f_dual],
+         [f"{HAND_TAG} {key(*f_dual[:3])}"], set(), (0, 0, 0, 1, 0, 0)),
+        ("held pair + hand copy cross-target never hand class", [f_cross_hand],
+         [f"{HAND_TAG} {key(*f_cross_hand[:3])}"], set(), (0, 0, 0, 1, 0, 0)),
+        ("hand class beside held pair and plain D4: counts stay apart", [f_hand, f_both, f_plain],
+         [f"{HAND_TAG} {key(*f_hand[:3])}", f"{HELD_TAG} {key(*f_both[:3])}", key(*f_plain[:3])], set(), (0, 1, 0, 0, 1, 1)),
     ]
     bad = 0
     for name, found, lines, asi, want in cases:
-        new, d4, otl, err, held = evaluate(found, parse_allowlist(lines), marked, asi)
-        got = (len(new), len(d4), len(otl), len(err), len(held))
-        want = want + (0,) * (5 - len(want))
+        new, d4, otl, err, held, hnd = evaluate(found, parse_allowlist(lines), marked, asi)
+        got = (len(new), len(d4), len(otl), len(err), len(held), len(hnd))
+        want = want + (0,) * (6 - len(want))
         ok = got == want
         bad += not ok
-        print(f"[rva-lint selftest] {'PASS' if ok else 'FAIL'} {name}: new/d4/origtop/errors/held {got} want {want}")
+        print(f"[rva-lint selftest] {'PASS' if ok else 'FAIL'} {name}: new/d4/origtop/errors/held/hand {got} want {want}")
     # the marker regex on real text shapes
     for line, want in (("// RVA-LINT: ORIGTOP-ONLY", True), ("  //RVA-LINT:ORIGTOP-ONLY (L-111)", True),
                        ("// RVA-LINT: ORIGTOP-ONLYX", False), ("/* RVA-LINT: ORIGTOP-ONLY */", False)):
@@ -281,7 +327,8 @@ def main(argv) -> int:
               "by `py -3.12 scripts/lint_rva_bodies.py --seed`")
         for check, rva, files, detail in found:
             tag = (f"{OT_TAG} " if check != "DUP-INSTALL" and is_origtop(files, marked)
-                   else f"{HELD_TAG} " if is_held(check, files, marked) else "")
+                   else f"{HELD_TAG} " if is_held(check, files, marked)
+                   else f"{HAND_TAG} " if is_held_hand(check, files, marked) else "")
             print(f"{tag}{key(check, rva, files)}   # {detail}")
         return 0
 
@@ -298,8 +345,8 @@ def main(argv) -> int:
               "lists what a clean `git archive` build needs).")
         return 1
 
-    new, old_d4, old_ot, errors, old_held = evaluate(found, allow, marked, asi_tus)
-    old = old_d4 + old_ot + old_held
+    new, old_d4, old_ot, errors, old_held, old_hand = evaluate(found, allow, marked, asi_tus)
+    old = old_d4 + old_ot + old_held + old_hand
 
     by_check = {}
     for check, _, _, _ in found:
@@ -308,7 +355,7 @@ def main(argv) -> int:
           + ", ".join(f"{k}={v}" for k, v in sorted(by_check.items()))
           + f"  |  allowlisted={len(old)} NEW={len(new)}")
     print(f"[rva-lint] D4 burn-down={len(old_d4)}  {OT_TAG}={len(old_ot)} "
-          f"{HELD_TAG}={len(old_held)} "
+          f"{HELD_TAG}={len(old_held)} {HAND_TAG}={len(old_hand)} "
           f"(classes deleted at the ORIG_TOP flip; {len(marked)} marked TU(s))")
 
     if verbose:
@@ -318,13 +365,16 @@ def main(argv) -> int:
             print(f"[rva-lint]   INFO ({OT_TAG}) {check} 0x{rva:08x}  {detail}")
         for check, rva, files, detail in old_held:
             print(f"[rva-lint]   INFO ({HELD_TAG}) {check} 0x{rva:08x}  {detail}")
+        for check, rva, files, detail in old_hand:
+            print(f"[rva-lint]   INFO ({HAND_TAG}) {check} 0x{rva:08x}  {detail}")
 
     dup_install_new = [f for f in new if f[0] == "DUP-INSTALL"]
     other_new = [f for f in new if f[0] != "DUP-INSTALL"]
 
     for check, rva, files, detail in other_new:
         tag = (f" [{OT_TAG} pair: allowlist it with the `{OT_TAG} ` tag]" if is_origtop(files, marked)
-               else f" [{HELD_TAG} pair: allowlist it with the `{HELD_TAG} ` tag]" if is_held(check, files, marked) else "")
+               else f" [{HELD_TAG} pair: allowlist it with the `{HELD_TAG} ` tag]" if is_held(check, files, marked)
+               else f" [{HAND_TAG} class: allowlist it with the `{HAND_TAG} ` tag]" if is_held_hand(check, files, marked) else "")
         print(f"[rva-lint] ERROR {check} 0x{rva:08x}  {detail}{tag}")
     for check, rva, files, detail in dup_install_new:
         print(f"[rva-lint] ERROR {check} 0x{rva:08x}  {detail}")
