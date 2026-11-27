@@ -1,0 +1,2 @@
+stats 0x004c4680 steps=193 terms=293
+0x004c4680	NOT-PROVEN	call-args: region ours +0x0 / orig 0x004c4680 call 0x4c3b90 arg 0: x87o32(X0(X0(X0(X0(X0(X0(...,'fld',('m4',),...),'fmul',('m4',),ld32(...,...)),'faddp',('st(1)',),None),'fld',('m4',),ld32(M00(),arg32(8))),'fmul',('m4',),ld32(M00(),arg32(8))),'faddp',('st(1)',),None),'fstp') | x87o32(X0(X0(X0(X0(X0(X0(...,'fld',('m4',),...),'fmul',('m4',),ld32(...,...)),'faddp',('st(1)',),None),'fld',('m4',),ld32(M00(),(arg32(8)+0x8))),'fmul',('m4',),ld32(M00(),(arg32(8)+0x8))),'faddp',('st(1)',),None),'fstp')

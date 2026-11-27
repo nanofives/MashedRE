@@ -34,14 +34,6 @@ int PortTop_RLStop_00405730(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_00409680(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00409680u, "0x00426e10", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00409680u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0041a5b0: declared void by 0x0041a8d0; not bound here (--roots-only): matched source re/match/s03/raw_0041a5b0.c
-int PortTop_RLStop_0041a5b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x0041a5b0u, "0x0041a8d0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0041a5b0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0041a5d0: declared void by 0x0041a8d0; not bound here (--roots-only): matched source re/match/s03/h3_0041a5d0.c
-int PortTop_RLStop_0041a5d0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x0041a5d0u, "0x0041a8d0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0041a5d0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00425bf0: declared void by 0x004262f0; cpp-unclean: C2664 'void PortTop_PizFs_Mount_00495280(undefined4)': el argumento 1 no puede convertirse de 'const char [28]' a 'u
 int PortTop_RLStop_00425bf0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00425bf0u, "0x004262f0", n, _ReturnAddress(), ex);
@@ -58,11 +50,7 @@ int PortTop_RLStop_00451730(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_0045de80(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0045de80u, "0x00462950", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0045de80u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004783f0: declared void by 0x00478660; not bound here (--roots-only): matched source re/match/s12/004783f0.c
-int PortTop_RLStop_004783f0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004783f0u, "0x00478660", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004783f0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004785e0: declared static void / void by 0x00478660; not bound here (--roots-only): matched source re/match/s12/004785e0.c
+// stop rva 004785e0: declared static void / void by 0x00478660; register-arg: p in EAX, out in ECX, norm on the stack (re/match/s12/004785e0.c header); the source defines it static with a stand-in caller, so no exe symbol exists to bind
 int PortTop_RLStop_004785e0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004785e0u, "0x00478660", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004785e0u, 0u, _ReturnAddress()); return 0; }
@@ -94,22 +82,20 @@ int PortTop_RLStop_00491590(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_004a332b(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004a332bu, "0x00478200 0x00490e50", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004a332bu, 0u, _ReturnAddress()); return 0; }
+// stop rva 004a3384: declared double by 0x004783f0; no matched or admitted source
+int PortTop_RLStop_004a3384(void) { RlStopLog(0x004a3384u, "0x004783f0", 1u, _ReturnAddress(), 1); PortTop_AudioCalleeStop(0x004a3384u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004b3f50: declared int by 0x00480340; no matched or admitted source
 int PortTop_RLStop_004b3f50(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004b3f50u, "0x00480340", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004b3f50u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004b4550: declared void by 0x00478660 0x00479030; no matched or admitted source
+// stop rva 004b4550: declared void by 0x00478660 0x00479030 0x004b53b0; no matched or admitted source
 int PortTop_RLStop_004b4550(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004b4550u, "0x00478660 0x00479030", n, _ReturnAddress(), ex);
+    if (n == 1 || ex) RlStopLog(0x004b4550u, "0x00478660 0x00479030 0x004b53b0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004b4550u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004b4eb0: declared void * by 0x004b5030; no matched or admitted source
 int PortTop_RLStop_004b4eb0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004b4eb0u, "0x004b5030", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004b4eb0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004b53b0: declared void by 0x00479030 0x0047bf70; not bound here (--roots-only): matched source re/match/s18/004b53b0.c
-int PortTop_RLStop_004b53b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004b53b0u, "0x00479030 0x0047bf70", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004b53b0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004c3d90: declared RwV3d * / int / void by 0x00478660 0x0047bf70 0x00485460; cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
 int PortTop_RLStop_004c3d90(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004c3d90u, "0x00478660 0x0047bf70 0x00485460", n, _ReturnAddress(), ex);
@@ -118,10 +104,6 @@ int PortTop_RLStop_004c3d90(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_004c52f0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004c52f0u, "0x004c1480", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004c52f0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004cf2b0: declared int by 0x00478110; no matched or admitted source
-int PortTop_RLStop_004cf2b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004cf2b0u, "0x00478110", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004cf2b0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004cf7d0: declared int by 0x004b3d20; no matched or admitted source
 int PortTop_RLStop_004cf7d0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004cf7d0u, "0x004b3d20", n, _ReturnAddress(), ex);
@@ -142,14 +124,6 @@ int PortTop_RLStop_00551ad0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_00557a60(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00557a60u, "0x00557d90", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00557a60u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00558cb0: declared undefined4 by 0x005518f0; not bound here (--roots-only): matched source re/match/rwl05/00558cb0.c
-int PortTop_RLStop_00558cb0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00558cb0u, "0x005518f0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00558cb0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00559560: declared int by 0x00559b50; not bound here (--roots-only): matched source re/match/rwl05/00559560.c
-int PortTop_RLStop_00559560(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00559560u, "0x00559b50", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00559560u, 0u, _ReturnAddress()); return 0; }
 // stop rva 005595d0: declared int * by 0x00559b50; no matched or admitted source
 int PortTop_RLStop_005595d0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x005595d0u, "0x00559b50", n, _ReturnAddress(), ex);

@@ -1622,6 +1622,105 @@
 [],
 []
 ],
+"0041a5b0": [
+"bind",
+"re/match/s03/raw_0041a5b0.c",
+"match",
+[],
+[]
+],
+"0041a5d0": [
+"bind",
+"re/match/s03/h3_0041a5d0.c",
+"match",
+[
+"004a2c48",
+"004c1480",
+"004c1520"
+],
+[]
+],
+"00558cb0": [
+"bind",
+"re/match/rwl05/00558cb0.c",
+"replay",
+[
+"0055dec0",
+"005c4e10"
+],
+[]
+],
+"004783f0": [
+"bind",
+"re/match/s12/004783f0.c",
+"replay",
+[
+"00409300",
+"00409330",
+"004a3384",
+"004c39b0",
+"004c3b30"
+],
+[]
+],
+"004b53b0": [
+"bind",
+"re/match/s18/004b53b0.c",
+"replay",
+[
+"004b4550",
+"004c3b30"
+],
+[]
+],
+"00559560": [
+"bind",
+"re/match/rwl05/00559560.c",
+"replay",
+[
+"00563de0"
+],
+[]
+],
+"00409300": [
+"bind",
+"re/match/s01/00409300.c",
+"match",
+[
+"00426090"
+],
+[]
+],
+"00409330": [
+"bind",
+"re/match/s01/00409330.c",
+"match",
+[
+"00426090"
+],
+[]
+],
+"00563de0": [
+"bind",
+"re/match/rwl05/00563de0.c",
+"match",
+[],
+[]
+],
+"004cf2b0": [
+"bind",
+"re/match/rwl01/004cf2b0.c",
+"provisional",
+[
+"004c4670",
+"004c57a0",
+"004cbd30",
+"004cc5e0",
+"004d7ff0",
+"004d8480"
+],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -2031,14 +2130,6 @@
 "RwCore_004e6e00",
 "RwCore/RwCore_004e6e00.cpp"
 ],
-"0041a5b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s03/raw_0041a5b0.c"
-],
-"0041a5d0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s03/h3_0041a5d0.c"
-],
 "0041f260": [
 "reuse",
 "PortTop_Bound_0041f260",
@@ -2216,10 +2307,6 @@
 "reuse",
 "RwCore_00551fd0",
 "RwCore/RwCore_00551fd0.cpp"
-],
-"00558cb0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/rwl05/00558cb0.c"
 ],
 "00562560": [
 "reuse",
@@ -2523,6 +2610,50 @@
 "RwCore_005c4df0",
 "RwCore/RwCore_005c4df0.cpp"
 ],
+"004c1480": [
+"bind",
+"re/match/s19/004c1480.c",
+"match",
+[
+"004c52f0"
+],
+[]
+],
+"004c1520": [
+"bind",
+"re/match/s19/004c1520.c",
+"match",
+[
+"004c4d20"
+],
+[]
+],
+"004a3384": [
+"stop"
+],
+"004c3b30": [
+"reuse",
+"RwCore_004c3b30",
+"RwCore/RwCore_004c3b30.cpp"
+],
+"004b4550": [
+"stop"
+],
+"00426090": [
+"reuse",
+"GlobalDat0066ce58Get",
+"Match/MatchS06_00426090.cpp"
+],
+"004c4670": [
+"reuse",
+"RwCore_004c4670",
+"RwCore/RwCore_004c4670.cpp"
+],
+"004c57a0": [
+"reuse",
+"RwCore_004c57a0",
+"RwCore/RwCore_004c57a0.cpp"
+],
 "0047cdc0": [
 "bind",
 "re/match/s13/0047cdc0.c",
@@ -2658,16 +2789,9 @@
 [],
 []
 ],
-"004783f0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s12/004783f0.c"
-],
 "004785e0": [
 "stop",
-"not bound here (--roots-only): matched source re/match/s12/004785e0.c"
-],
-"004b4550": [
-"stop"
+"register-arg: p in EAX, out in ECX, norm on the stack (re/match/s12/004785e0.c header); the source defines it static with a stand-in caller, so no exe symbol exists to bind"
 ],
 "004b46b0": [
 "reuse",
@@ -2899,24 +3023,6 @@
 "match",
 [
 "004c51a0"
-],
-[]
-],
-"004c1480": [
-"bind",
-"re/match/s19/004c1480.c",
-"match",
-[
-"004c52f0"
-],
-[]
-],
-"004c1520": [
-"bind",
-"re/match/s19/004c1520.c",
-"match",
-[
-"004c4d20"
 ],
 []
 ],
@@ -3215,6 +3321,14 @@
 "RwCore_004c15c0",
 "RwCore/RwCore_004c15c0.cpp"
 ],
+"004c52f0": [
+"stop"
+],
+"004c4d20": [
+"reuse",
+"RwCore_004c4d20",
+"RwCore/RwCore_004c4d20.cpp"
+],
 "004e4380": [
 "bind",
 "re/match/rwl02/004e4380.c",
@@ -3401,13 +3515,6 @@
 ],
 []
 ],
-"004cf2b0": [
-"stop"
-],
-"004b53b0": [
-"stop",
-"not bound here (--roots-only): matched source re/match/s18/004b53b0.c"
-],
 "00543da0": [
 "bind",
 "re/match/rwl04/00543da0.c",
@@ -3513,14 +3620,6 @@
 "reuse",
 "RwCore_004c51a0",
 "RwCore/RwCore_004c51a0.cpp"
-],
-"004c52f0": [
-"stop"
-],
-"004c4d20": [
-"reuse",
-"RwCore_004c4d20",
-"RwCore/RwCore_004c4d20.cpp"
 ],
 "0047b880": [
 "bind",
@@ -3933,10 +4032,6 @@
 "0055f800"
 ],
 []
-],
-"00559560": [
-"stop",
-"not bound here (--roots-only): matched source re/match/rwl05/00559560.c"
 ],
 "005595d0": [
 "stop"

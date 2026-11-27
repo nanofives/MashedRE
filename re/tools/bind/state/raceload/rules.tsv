@@ -252,3 +252,7 @@ prov_bind	004ea220
 prov_bind	004e51e0
 # RACE-LOAD-004E99B0: next stop 0x00558df0 (caller 0x0042a740, Lake.uva), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
 prov_bind	00558df0
+# RACE-LOAD-004E99B0: 0x004785e0 kept a named stop although a replay-C4 source exists
+stop_reason	004785e0	register-arg: p in EAX, out in ECX, norm on the stack (re/match/s12/004785e0.c header); the source defines it static with a stand-in caller, so no exe symbol exists to bind
+# RACE-LOAD-004E99B0: next stop 0x004cf2b0 (caller 0x00478110, after Smoke.mts), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
+prov_bind	004cf2b0

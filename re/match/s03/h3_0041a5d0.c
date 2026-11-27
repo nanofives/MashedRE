@@ -28,11 +28,13 @@ typedef struct RecC4 {
   int    on;          /* +0xc0 */
 } RecC4;
 
-#ifndef MATCH_PORT
+#ifdef MATCH_PORT   /* PORT-OT-RACE: the port reads it at its original address */
+#define DAT_0063c630 (*(RecC4 (*)[1])0x0063c630u)
+#else
 extern RecC4 DAT_0063c630[];
+#endif
 void FUN_004c1480(void *frame, void *m, int c);
 void FUN_004c1520(void *frame, V3 *axis, float angle, int c);
-#endif
 
 void FUN_0041a5d0(int idx)
 {

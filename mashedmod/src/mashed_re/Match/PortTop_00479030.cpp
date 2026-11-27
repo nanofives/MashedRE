@@ -8,7 +8,7 @@
 #define FUN_00479030 PortTop_Bound_00479030
 #define FUN_004790e0 PortTop_RLStop_004790e0   // named stop
 #define FUN_004b4550 PortTop_RLStop_004b4550   // named stop
-#define FUN_004b53b0 PortTop_RLStop_004b53b0   // named stop
+#define FUN_004b53b0 PortTop_Bound_004b53b0
 #define FUN_004e5c70 RwCore_004e5c70   // exe body (RwCore/RwCore_004e5c70.cpp)
 #define FUN_00543da0 PortTop_Bound_00543da0
 #define FUN_00543dc0 PortTop_Bound_00543dc0
