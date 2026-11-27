@@ -1,0 +1,4 @@
+0x0041f330	OK	checked=3	unchecked=0	00420420.c	
+0x0041f360	OK	checked=1	unchecked=0	00420420.c	
+0x0041fe10	OK	checked=8	unchecked=0	00420420.c	
+0x00420420	OK	checked=62	unchecked=2	00420420.c	  unchecked: @__security_check_cookie@4,___security_cookie

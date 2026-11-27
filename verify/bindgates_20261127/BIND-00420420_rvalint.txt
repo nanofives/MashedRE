@@ -1,0 +1,3 @@
+[rva-lint] 659 finding(s): CROSS-TARGET=375, DUP-IN-TARGET=284  |  allowlisted=659 NEW=0
+[rva-lint] D4 burn-down=5  ORIGTOP-ONLY=644 ORIGTOP-HELD=10 (classes deleted at the ORIG_TOP flip; 2162 marked TU(s))
+[rva-lint] OK -- no NEW duplicate bodies (659 known, tracked in re\tools\dual_copy_allowlist.txt)

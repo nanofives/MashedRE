@@ -6,7 +6,8 @@
 "00426460": "already carried by Match/PortTop_004264d0.cpp (same source re/match/s06/004264d0.c)",
 "00462500": "already carried by Match/MatchS10_00462500.cpp (same source re/match/s10/00462500.c)",
 "00462510": "already carried by Match/MatchS10_00462510.cpp (same source re/match/s10/00462510.c)",
-"0041f330": "file-local static copy inside the source of 0x00420230; a second body of the rva would fail rva-lint"
+"0041f330": "file-local static copy inside the source of 0x00420230; a second body of the rva would fail rva-lint",
+"0041fe10": "file-local static copy inside the source of 0x00420420; a second body of the rva would fail rva-lint"
 },
 "group": {
 "004218b0": [
@@ -24,8 +25,8 @@
 "00411d90",
 "0041ecc0",
 "0041f120",
-"0041fe10",
 "00420230",
+"00420420",
 "004218b0",
 "004218d0",
 "00421a90",

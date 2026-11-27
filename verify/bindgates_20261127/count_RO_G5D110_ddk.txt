@@ -1,0 +1,28 @@
+exe D:/MashedWT/BIND-00420420_data/mashed_re_ddk.exe
+map D:/MashedWT/BIND-00420420_data/mashed_re_ddk.map preferred base 0x00010000
+symbol _Orig_0040d270 va 0x00016690
+symbol _PortTop_Bound_0040d110 va 0x00053700
+symbol _PortTop_Bound_00420420 va 0x00070f70
+symbol _PortTop_RL_0040d110 va 0x001eeb20
+symbol _PortTop_Bound_0047b8d0 va 0x0027cde0
+env MASHED_DETERMINISTIC=1
+env MASHED_DET_FRAMES=600
+env MASHED_ORIG_TOP=1
+env MASHED_OT_RACELOAD=1
+env MASHED_OT_RL_D110=1
+env MASHED_PORTSTATE_IMAGE=1
+env MASHED_REPLAY=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\BIND-00420420\verify\replayoracle_20261113\replay_trace.json
+env MASHED_REPLAY_TRACE=D:\MashedWT\BIND-00420420_data\arms\RO_G5D110_ddk
+env MASHED_REPLAY_TRACE_CKPT=1,150,299,301,450,600
+env MASHED_ROOT=D:\MashedWT\BIND-00420420_root
+env MASHED_RWC_CORE=1
+env MASHED_RWC_FRAME=1
+env MASHED_RWC_FRAME_N=100000
+env MASHED_WIN_POS=primary-bl
+module mashed_re_ddk.exe base 0x10000
+ended after 12.6 s: detach reason process-terminated
+COUNT _Orig_0040d270 1
+COUNT _PortTop_Bound_0040d110 0
+COUNT _PortTop_Bound_00420420 0
+COUNT _PortTop_RL_0040d110 0
+COUNT _PortTop_Bound_0047b8d0 1

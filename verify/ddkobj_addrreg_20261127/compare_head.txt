@@ -1,0 +1,22 @@
+identical      head  2360  branch  2436  delta +76
+different      head    78  branch    79  delta +1
+not_in_map     head    88  branch    28  delta -60
+functions      head  2526  branch  2543  delta +17
+units          head  2694  branch  2694  delta +0
+units_linked   head  2405  branch  2422  delta +17
+refusals       head {'fail:externalized-static-register-convention': 13, 'fail:wrapper-redefines-globals': 21}  branch {'fail:externalized-static-register-convention': 13, 'fail:wrapper-redefines-globals': 4}
+dual body      head 33  branch 33
+fn-addr refs ok 66  bad []
+
+in-scope 75:
+  0x0047a320 callback50 DIFFERENT (head not-in-map)
+  callback50 DIFFERENT    1
+  callback50 IDENTICAL    49
+  callee10   IDENTICAL    10
+  refused15  IDENTICAL    15
+
+new DIFFERENT: ['0x0047a320']  no longer DIFFERENT: none
+   0x0047a320 re/match/s12/0047a320.c first_diff +0x2c diff_bytes 54 in scope: callback50
+new not-in-map: none
+in-scope still not-in-map: none
+prov kept VS2022 fns in linked units: head ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00']  branch ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00']

@@ -676,9 +676,52 @@ function Get-DdkobjStep([string]$wt) {
   $line = "IDENTICAL $($s.identical)/$($s.functions), DIFFERENT $($s.different)$(if (@($s.different_rvas).Count) { " [$(@($s.different_rvas) -join ' ')]" }), not-in-map $($s.not_in_map), units linked $($s.units_linked)/$($s.units), refusals $nref$(if ($ref.Count) { " ($($ref -join ', '))" })"
   return @{ ran = $true; ok = $true; line = $line; summary = $s }
 }
+# HB-TRAIN-BINDER-SELFTEST: the binder selftest (re/tools/bind/porttop_bind.py selftest) runs right after the promotions
+# are applied (c4_reclass batch --apply --strict) and fails the pass on a NEW failure against the base head's list, so a
+# promotion that changes what is bindable cannot leave the head's plans stale (run 55: drain 1 took the head from FAIL 14
+# to FAIL 35). A failure line is a `[selftest]` line that names FAIL / FAILS / DIFFERENT / COMPILES (unexpected) or has a
+# non-zero "N fail" / "N failures" count; the closing PASS / FAIL N line is not one. The base list is taken from the
+# head before the batch (a temp worktree at $base), and only when the merged tree has failures at all.
+$script:BinderRunner = $null   # the selftest swaps this for a fake that returns canned output
+function Get-BinderFailLines($out) {
+  @(@($out) | ForEach-Object { "$_".Trim() } | Where-Object {
+    $_ -match '^\[selftest\]' -and $_ -notmatch '^\[selftest\] (PASS|FAIL \d+)$' -and
+    ($_ -match '\bFAILS?\b' -or $_ -match 'DIFFERENT' -or $_ -match 'COMPILES \(unexpected\)' -or $_ -match '(?<![\d.])[1-9]\d* (fail|failures|wrapper-shape failures)\b')
+  } | Sort-Object -Unique)
+}
+function Invoke-BinderSelftest([string]$wt) {
+  if ($script:BinderRunner) { return (& $script:BinderRunner $wt) }
+  $py = Join-Path $wt 're/tools/bind/porttop_bind.py'
+  if (-not (Test-Path -LiteralPath $py)) { return @{ ran = $false; out = @(); rc = 0 } }
+  Push-Location $wt
+  try { $o = @(& py.exe -3.12 $LOCKPY run --label "merge-train-bind:$TS" --wait 7200 -- py.exe -3.12 $py selftest 2>&1 | ForEach-Object { "$_" }); $rc = $LASTEXITCODE } finally { Pop-Location }
+  return @{ ran = $true; out = $o; rc = $rc }
+}
+function Test-BinderStep([string]$wt, [string]$baseRef) {
+  $a = Invoke-BinderSelftest $wt
+  if (-not $a.ran) { Say "  binder selftest: SKIPPED (no re/tools/bind/porttop_bind.py in this tree)"; return @{ ok = $true; skipped = $true } }
+  $after = @(Get-BinderFailLines $a.out)
+  $tail = @($a.out | Where-Object { "$_" -match '^\[selftest\] (PASS|FAIL \d+)$' } | Select-Object -Last 1)
+  if ($a.rc -eq 0 -and -not $after.Count) { Say "  binder selftest: PASS 0 (after promotions)"; return @{ ok = $true; after = 0; base = 0; new = 0 } }
+  if (-not $tail.Count) {
+    # no closing PASS/FAIL line: the tool itself died (crash, lock timeout). Not a list comparison.
+    return @{ ok = $false; why = "binder selftest did not finish (rc=$($a.rc), last line: $(@($a.out | Select-Object -Last 1)))" }
+  }
+  $own = -not $script:BinderRunner   # the selftest's fake runner needs no real base worktree
+  $bwt = if ($own) { New-Temp $baseRef } else { 'FAKE-BASE' }
+  try { $b = Invoke-BinderSelftest $bwt } finally { if ($own) { Remove-Temp $bwt } }
+  $baseList = @(Get-BinderFailLines $b.out)
+  $new = @($after | Where-Object { $baseList -notcontains $_ })
+  $bt = @($b.out | Where-Object { "$_" -match '^\[selftest\] (PASS|FAIL \d+)$' } | Select-Object -Last 1)
+  Say "  binder selftest: $($tail[0] -replace '^\[selftest\] ','') after promotions, base head $(if ($bt.Count) { $bt[0] -replace '^\[selftest\] ','' } else { 'no result' }), $($new.Count) NEW"
+  foreach ($n in ($new | Select-Object -First 5)) { Say "    NEW: $n" }
+  if ($new.Count) { return @{ ok = $false; why = "binder selftest: $($new.Count) NEW failure(s) against the base head's list (first: $($new[0]))"; after = $after.Count; base = $baseList.Count; new = $new.Count } }
+  return @{ ok = $true; after = $after.Count; base = $baseList.Count; new = 0 }
+}
 function Try-Batch($items) {
   $wt = New-Temp $base
   $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false; hashes = $null; textOnly = $false; conflict = $false; ddkobj = 'not run' }
+  $promoted = $false
   try {
     foreach ($it in $items) {
       $m = Merge-One $wt $it
@@ -686,6 +729,12 @@ function Try-Batch($items) {
       Say "  merged $($it.id) ($($it.branch))"
       $pr = Apply-Promotions $wt $it
       if (-not $pr.ok) { $r.ok = $false; $r.why = $pr.why; $r.bad = $it; $r.conflict = $true; return $r }
+      if ($pr.n -gt 0) { $promoted = $true }
+    }
+    # HB-TRAIN-BINDER-SELFTEST: right after the last c4_reclass --apply --strict, before build and gates.
+    if ($promoted) {
+      $bs = Test-BinderStep $wt $base
+      if (-not $bs.ok) { $r.ok = $false; $r.why = $bs.why; return $r }
     }
     $changed = @((Git -C $wt diff --name-only "$base..HEAD") | Where-Object { $_ })
     # HB-TRAIN-MATCH-TEXTONLY: re/match/** is text-only unless the build reads it; a flip pass (effective -Full) is
@@ -1038,6 +1087,30 @@ if ($SelfTest) {
   $mTA = Merge-One $wt2 @{ id = 'T-A'; branch = 't-a' }
   $aTA = Apply-Promotions $wt2 @{ id = 'T-A'; branch = 't-a' }
   $hT = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv')); $cT = [IO.File]::ReadAllText((Join-Path $wt2 're\analysis\CHANGELOG.md'))
+  # HB-TRAIN-BINDER-SELFTEST: the binder selftest step. Fake runner: the merged tree ($wt2) returns $script:fakeAfter, the base ('FAKE-BASE') $script:fakeBase.
+  $script:BinderRunner = { param($w) $o = if ($w -eq 'FAKE-BASE') { $script:fakeBase } else { $script:fakeAfter }; @{ ran = $true; out = $o; rc = $(if (@($o) -match '^\[selftest\] PASS$') { 0 } else { 1 }) } }
+  $lA = '[selftest] raceload roots 122: plan IDENTICAL (bind 259 reuse 129 stop 45), wrappers+stops IDENTICAL (260 checked)'
+  $lF1 = '[selftest] bulk listing vs verify/bindbulk_20261121/tools/last_plan.txt: 60 lines moved, FAIL 1 unnamed, 0 stale'
+  $lF2 = '[selftest] C emit: 3 cpp-unclean rvas bound as .c units, 2 wrapper-shape failures'
+  $script:fakeBase = @($lA, '[selftest] PASS'); $script:fakeAfter = @($lA, '[selftest] PASS')
+  $bs0 = Test-BinderStep $wt2 'HEAD'
+  Check ($bs0.ok -and $bs0.after -eq 0 -and $bs0.new -eq 0) "binder selftest step: an unchanged list (PASS 0 before and after) passes the pass"
+  $script:fakeBase = @($lA, $lF1, '[selftest] FAIL 1'); $script:fakeAfter = @($lA, $lF1, '[selftest] FAIL 1')
+  $bs1 = Test-BinderStep $wt2 'HEAD'
+  Check ($bs1.ok -and $bs1.after -eq 1 -and $bs1.base -eq 1 -and $bs1.new -eq 0) "binder selftest step: failures already in the base head's list are not NEW, the pass stands"
+  $script:fakeBase = @($lA, $lF1, '[selftest] FAIL 1'); $script:fakeAfter = @($lA, $lF1, $lF2, '[selftest] FAIL 3')
+  $bs2 = Test-BinderStep $wt2 'HEAD'
+  Check ((-not $bs2.ok) -and $bs2.new -eq 1 -and $bs2.why -match 'binder selftest: 1 NEW failure' -and $bs2.why -match 'wrapper-shape failures') "binder selftest step: a NEW failure against the base list fails the pass ($($bs2.why))"
+  $script:fakeBase = @($lA, '[selftest] PASS'); $script:fakeAfter = @($lA, $lF1, '[selftest] FAIL 1')
+  $bs3 = Test-BinderStep $wt2 'HEAD'
+  Check ((-not $bs3.ok) -and $bs3.new -eq 1) "binder selftest step: PASS 0 on the base head and FAIL 1 after the promotions (the run 55 shape) fails the pass"
+  $script:fakeBase = @($lA, '[selftest] PASS'); $script:fakeAfter = @($lA)
+  $bs4 = Test-BinderStep $wt2 'HEAD'
+  Check ((-not $bs4.ok) -and $bs4.why -match 'did not finish') "binder selftest step: a selftest that never prints PASS / FAIL N fails the pass (not a list comparison)"
+  $script:BinderRunner = $null
+  $tsrc = [IO.File]::ReadAllText($PSCommandPath)
+  $iTb = $tsrc.IndexOf('function Try-Batch'); $iAp = $tsrc.IndexOf('$pr = Apply-Promotions $wt $it', $iTb); $iBs = $tsrc.IndexOf('Test-BinderStep $wt $base', $iTb); $iAl = $tsrc.IndexOf('archive_lint.py', $iTb)
+  Check ($iAp -gt 0 -and $iBs -gt $iAp -and $iAl -gt $iBs) "binder selftest step: placed in Try-Batch right after Apply-Promotions (c4_reclass --apply --strict) and before archive lint, build and gates"
   Check ($mTA.ok -and $aTA.ok -and $aTA.n -eq 1 -and $hT -match '00401000,FunA,boot,C3,impl,a.cpp,,,na edited by A.*lever=volatile' -and $cT -match '(?m)^<!-- ENTRIES -->\r?\n.*tag .*0x00401000' -and (Test-Path (Join-Path $wt2 're\promotions\applied\TA-tag.tsv')) -and -not (Test-Path (Join-Path $wt2 're\promotions\TA-tag.tsv'))) "tracker: a <ID>-tag.tsv is applied at merge time (c4_reclass tag --strict): notes tagged, confidence untouched, CHANGELOG line written, TSV moved to applied/"
   $mTB = Merge-One $wt2 @{ id = 'T-B'; branch = 't-b' }
   $aTB = Apply-Promotions $wt2 @{ id = 'T-B'; branch = 't-b' }
