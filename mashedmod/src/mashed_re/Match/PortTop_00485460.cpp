@@ -9,7 +9,7 @@
 #define FUN_00451730 PortTop_RLStop_00451730   // named stop
 #define FUN_004c1800 Orig_004c1800   // exe body (Match/PortTop_004c1800.cpp)
 #define FUN_004c1840 Orig_004c1840   // exe body (Match/PortTop_004c1840.cpp)
-#define FUN_004c3d90 PortTop_RLStop_004c3d90   // named stop
+#define FUN_004c3d90 RwCoreLift_004c3d90   // exe body (RwCore/RwCore_Lifted_00.cpp)
 extern "C" {
 #include "../../../../re/match/s14/00485460.c"
 }

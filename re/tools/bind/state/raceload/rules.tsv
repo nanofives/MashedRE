@@ -33,7 +33,12 @@ prov_bind	00479330
 prov_bind	00478660
 prov_bind	00462950
 # PORT-OT-RACE-BIND-PROV4: rvas kept as named stops although a matched source exists, with the reason.
-stop_reason	004790e0	register-arg: world pointer in EAX (re/match/s12/004790e0.c header; caller 0x00479330 loads [ebx+0x105d4] into EAX at 0x00479e2e), declared void(void) by re/match/s12/00479330.c under MATCH_PORT and static in its own source; no exe body takes EAX
+# RACE-LOAD-004E99B0 (run 57): 0x004790e0 binds the stack-argument entry over its C4 source (was a stop_reason: register-arg, world in EAX);
+# 0x00479330 passes the world under MATCH_PORT (re/match/s12/00479330.c)
+alias	004790e0	PortTop_RL_004790e0	Match/PortTop_RL_004790e0.cpp
+# RACE-LOAD-004E99B0 fix round (run 57): 0x004783f0 binds the replay-verified source re/match/pilot/a4_004783f0.c
+# (verify/provinsitu_ref1_20261121/PROMOTIONS.tsv line 41), not the default re/match/s12/004783f0.c (a different unit)
+alias	004783f0	PortTop_RL_004783f0	Match/PortTop_RL_004783f0.cpp
 # PORT-OT-RACE-BIND-PROV4: a source that defines its function under a name other than FUN_<rva>
 # re/match/rwl02/004e5c30.c line 34
 name_def	004e5c30	RpWorldForAllAtomics
@@ -242,3 +247,23 @@ prov_bind	004b6cd0
 alias	004a34b0	PortTop_PizCrt_strncpy_004a34b0	Match/PortTop_00402750_Pieces.cpp
 alias	004b6b10	PortTop_PizCrt_stricmp_004b6b10	Match/PortTop_00402750_Pieces.cpp
 alias	004b302f	PortTop_PizCrt_stricmp_004b302f	Match/PortTop_00402750_Pieces.cpp
+# RACE-LOAD-004E99B0 (run 57, L-184): 0x004e99b0 RW world stream read, source rewritten from the disassembly, NOT-PROVEN (equiv.py), listed in re/match/PROVISIONAL.tsv, knob path only
+prov_bind	004e99b0
+# RACE-LOAD-004E99B0: 0x004f3e90 (called by 0x004e99b0 at 0x004e9bd0) binds the lifted RW core body the exe already compiles (RwCore/RwCore_Lifted_04.cpp:4397, PROVISIONAL.tsv row RwCoreLift_004f3e90, L-137 scaffolding)
+alias	004f3e90	RwCoreLift_004f3e90	RwCore/RwCore_Lifted_04.cpp
+# RACE-LOAD-004E99B0: world sector / plane sector stream reads and the BSP cell box walk under 0x004e99b0, sources rewritten from the disassembly (0x004e9e40, 0x004ea220) or checked against it (0x004e51e0), NOT-PROVEN (equiv.py), re/match/PROVISIONAL.tsv, knob path only
+prov_bind	004e9e40
+prov_bind	004ea220
+prov_bind	004e51e0
+# RACE-LOAD-004E99B0: next stop 0x00558df0 (caller 0x0042a740, Lake.uva), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
+prov_bind	00558df0
+# RACE-LOAD-004E99B0: 0x004785e0 (register-arg in the original, static in its replay-C4 source) binds the stack-argument entry over that source
+alias	004785e0	PortTop_RL_004785e0	Match/PortTop_RL_004785e0.cpp
+# RACE-LOAD-004E99B0: next stop 0x004cf2b0 (caller 0x00478110, after Smoke.mts), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
+prov_bind	004cf2b0
+# RACE-LOAD-004E99B0: stop 0x004b4550 (after the H_Anim_*.anm loads), C3 hand source, NOT-PROVEN, re/match/PROVISIONAL.tsv
+prov_bind	004b4550
+# RACE-LOAD-004E99B0: stop 0x004b4eb0 (callback of 0x004b5030, after LAPDATA.LUA search), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
+prov_bind	004b4eb0
+# RACE-LOAD-004E99B0: stop 0x004c3d90 (after the LAPDATA.LUA search; callers 0x00478660 / 0x0047bf70 / 0x00485460) binds the lifted RW core body the exe already compiles (RwCore/RwCore_Lifted_00.cpp:976, PROVISIONAL.tsv row RwCoreLift_004c3d90); its c_hold line is removed
+alias	004c3d90	RwCoreLift_004c3d90	RwCore/RwCore_Lifted_00.cpp

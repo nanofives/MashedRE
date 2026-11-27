@@ -1,0 +1,7 @@
+instrumented 6445 race_load (anchor - warp > 0) 1179 cut (0 at 0x0047a020:enter , > 0 at anchor) 303
+bound	217	31282 B
+c4_unbound	52	10081 B
+source_not_c4	23	12851 B
+no_source	10	2777 B
+no_row	1	181 B
+CUT walls (not bound): 86 functions, 25890 B

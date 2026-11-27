@@ -1,0 +1,2 @@
+stats 0x004b4550 steps=34 terms=45
+0x004b4550	NOT-PROVEN	branch-condition: region ours +0x0 / orig 0x004b4550: P1('slt',(arg32(12)+-0x1),0x8) | P1('slt',(arg32(12)+-0x1),0x4)

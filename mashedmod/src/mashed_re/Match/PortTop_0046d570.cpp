@@ -6,7 +6,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_0046d570 PortTop_Bound_0046d570
-#define FUN_004a3384 PortTop_RFStop_004a3384   // named stop
+#define FUN_004a3384 MashedCrt_acos_004a3384   // exe body (Match/PortTop_CrtMath.cpp)
 #define FUN_004c39b0 RwCore_004c39b0   // exe body (RwCore/RwCore_004c39b0.cpp)
 extern "C" {
 #include "../../../../re/match/s11/0046d570.c"

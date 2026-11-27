@@ -51,7 +51,11 @@ int FUN_00474fd0(int p0);
 int FUN_00478110(char *p0, int p1);
 void FUN_00478200(int p0);
 void FUN_00478cc0(int p0);
+#ifdef MATCH_PORT   /* RACE-LOAD-004E99B0: the exe entry takes the world pointer on the stack (Match/PortTop_RL_004790e0.cpp) */
+void FUN_004790e0(int world);
+#else
 void FUN_004790e0(void);
+#endif
 int FUN_004850e0(int p0, void *p1, void *p2, int p3);
 void FUN_00485460(int p0, void *p1);
 void FUN_004987b0(const char *p0, ...);
@@ -177,7 +181,7 @@ static void FUN_004790e0_h(int world)
 }
 #define FUN_004790e0_CALL(w) FUN_004790e0_h(w)
 #else
-#define FUN_004790e0_CALL(w) FUN_004790e0()
+#define FUN_004790e0_CALL(w) FUN_004790e0(w)
 #endif
 
 // MATCH: 0x00479330 FUN_00479330

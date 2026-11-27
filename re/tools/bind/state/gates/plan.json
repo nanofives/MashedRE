@@ -188,8 +188,9 @@
 "stop"
 ],
 "00409330": [
-"stop",
-"outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s01/00409330.c"
+"reuse",
+"PortTop_Bound_00409330",
+"Match/PortTop_00409330.cpp"
 ],
 "0040e350": [
 "reuse",

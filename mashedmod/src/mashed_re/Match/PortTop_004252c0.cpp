@@ -17,7 +17,7 @@
 #define FUN_0046cbb0 PortTop_RFStop_0046cbb0   // named stop
 #define FUN_0046cc10 VehicleFloatFieldAsInt   // exe body (Match/MatchS11_0046cc10.cpp)
 #define FUN_0046d510 PortTop_Bound_0046d510
-#define FUN_004a3384 PortTop_RFStop_004a3384   // named stop
+#define FUN_004a3384 MashedCrt_acos_004a3384   // exe body (Match/PortTop_CrtMath.cpp)
 extern "C" {
 #include "../../../../re/match/s05/004252c0.c"
 }

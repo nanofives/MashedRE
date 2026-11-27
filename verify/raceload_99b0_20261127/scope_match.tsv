@@ -1,0 +1,27 @@
+class	rva	source	match	bytes	relocheck
+match	0x004e5280	re/match/rwl02/004e5280.c	100.0%	122 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x005c4d20	re/match/s28/005c4d20.c	100.0%	12 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x005c4e10	re/match/s28/005c4e10.c	100.0%	16 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x0041a5b0	re/match/s03/raw_0041a5b0.c	100.0%	21 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x0041a5d0	re/match/s03/h3_0041a5d0.c	100.0%	617 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x00409300	re/match/s01/00409300.c	100.0%	48 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x00409330	re/match/s01/00409330.c	100.0%	120 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x00563de0	re/match/rwl05/00563de0.c	100.0%	16 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x0057c4b0	re/match/rwl06/0057c4b0.c	100.0%	71 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x004790e0	re/match/s12/004790e0.c	100.0%	17 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+match	0x005518f0	re/match/rwtb/005518f0.c	100.0%	339 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
+replay	0x00558cb0	re/match/rwl05/00558cb0.c	78.4%	106 B whole symbol, 92 differing unmasked bytes (first at +0x0)	BAD
+replay	0x004783f0	re/match/pilot/a4_004783f0.c	90.8%	491 B whole symbol, 209 differing unmasked bytes (first at +0x80)	BAD
+replay	0x004b53b0	re/match/s18/004b53b0.c	45.4%	669 B whole symbol, 409 differing unmasked bytes (first at +0x28)	BAD
+replay	0x00559560	re/match/rwl05/00559560.c	68.3%	106 B whole symbol, 102 differing unmasked bytes (first at +0x0)	BAD
+replay	0x004785e0	re/match/s12/004785e0.c	97.8%	121 B whole symbol, 7 differing unmasked bytes (first at +0x2d)	OK
+provisional	0x004e99b0	re/match/rwl02/004e99b0.c	69.5%	1105 B whole symbol, 734 differing unmasked bytes (first at +0x24)	BAD
+provisional	0x004e9e40	re/match/rwl02/004e9e40.c	34.1%	931 B whole symbol, 705 differing unmasked bytes (first at +0x22)	BAD
+provisional	0x004ea220	re/match/rwl02/004ea220.c	60.5%	676 B whole symbol, 475 differing unmasked bytes (first at +0xc)	BAD
+provisional	0x004e51e0	re/match/rwl02/004e51e0.c	90.7%	158 B whole symbol, 48 differing unmasked bytes (first at +0x1f)	OK
+provisional	0x00558df0	re/match/rwl05/00558df0.c	49.8%	585 B whole symbol, 312 differing unmasked bytes (first at +0xcf)	BAD
+provisional	0x004cf2b0	re/match/rwl01/004cf2b0.c	47.8%	315 B whole symbol, 234 differing unmasked bytes (first at +0x1f)	BAD
+provisional	0x004b4550	re/match/s18/004b4550.c	63.3%	355 B whole symbol, 287 differing unmasked bytes (first at +0x27)	BAD
+provisional	0x004b4eb0	re/match/tlr/004b4eb0.c	22.0%	338 B whole symbol, 297 differing unmasked bytes (first at +0xf)	BAD
+provisional	0x004c4680	re/match/s19/004c4680.c	34.1%	935 B whole symbol, 841 differing unmasked bytes (first at +0x2)	BAD
+edited-caller	0x00479330	re/match/s12/00479330.c	97.2%	2894 B whole symbol, 72 differing unmasked bytes (first at +0x932)	BAD
