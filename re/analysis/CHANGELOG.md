@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-27  0x0057c4b0  FUN_0057c4b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl06/0057c4b0.c; evidence: verify/raceload_99b0_20261127/RESULT_RACE-LOAD-004E99B0.md
 2026-11-27  0x005a66c0  FUN_005a66c0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a66c0.c; evidence: verify/roaudinit_20261127/RESULT_RO-AUDIOINIT-45D460-REACH-5.md
 2026-11-27  0x005c78c0  FUN_005c78c0  (none)->C1  added (RO-AUDIOINIT-45D460-REACH-6): its address is stored in .data at 0x006350cc and 0x00636024 (file dwords); the port executes it from PortTop_Bound_005a6d60+0x21 (RO-AUDIOINIT-45D460-REACH-5 stop); source from the listing 0x005c78c0..0x005c792c, match.py 97.1%, equiv EQUIV [ORDER] (L-126 admitted); evidence: verify/roaudinit_20261127/RESULT_RO-AUDIOINIT-45D460-REACH-6.md
 2026-11-27  0x004b6630  FUN_004b6630  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6630.c; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
