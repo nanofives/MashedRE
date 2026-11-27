@@ -140,3 +140,5 @@
 00495780
 004955d0
 00550790
+# RACE-VFS-COURSELUA: the RtFS exists method 0x005512d0 calls 0x00551460 (provisional, the stop the arm reached next)
+00551460

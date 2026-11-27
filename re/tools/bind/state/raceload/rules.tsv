@@ -238,3 +238,5 @@ extra_pre	0047b250	#define MGLOBALA(T, n, N, a) enum { mglobala_##n }
 extra_pre	0047b250	#define DAT_006132fc (*(undefined4 *)0x006132fcu)   // MGLOBAL re/match/s13/0047b250.c:28
 extra_pre	0047b250	#define DAT_00613300 (*(undefined4 *)0x00613300u)   // MGLOBAL re/match/s13/0047b250.c:29
 extra_pre	0047b250	#define DAT_006bf1bc (*(undefined1 *)0x006bf1bcu)   // MGLOBAL re/match/s13/0047b250.c:30
+# RACE-VFS-COURSELUA (run 56): 0x00551460 RtFS path join, NOT-PROVEN (equiv.py), listed in re/match/PROVISIONAL.tsv
+prov_bind	00551460
