@@ -228,6 +228,7 @@ MGLOBAL_ENUM_RE = re.compile(
     r"|MGLOBALA\s*\(\s*T\s*,\s*n\s*,\s*N\s*,\s*a\s*\)\s+enum\s*\{\s*mglobala_\s*##\s*n\s*\})\s*(?://.*)?$")
 DEFANY_RE = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)(.*)$")
 _FNADDR_RE = re.compile(r"^(?:thunk_)?FUN_[0-9a-fA-F]{8}$")
+_STATICDAT_RE = re.compile(r"^DAT_[0-9a-fA-F]{8}$")   # DDKOBJ-STATIC-GLOBALS: a file-static original global
 
 
 def mglobal_enum_mismatch(defs: dict, globs: dict):
@@ -665,6 +666,34 @@ def main_build(a):
                 skip = {s.sec} | {x.index for x in co.sections if x.name.startswith(".debug")}
                 co.repoint(s.index, ref.index, skip_sections=skip)
                 rec.setdefault("externalized", []).append(deco)
+                continue
+            if s.cls == CE.IMAGE_SYM_CLASS_STATIC and not s.is_func and _STATICDAT_RE.match(plain):
+                # DDKOBJ-STATIC-GLOBALS: an original global the C view declares as a file-static (`static T DAT_x;`
+                # under #ifndef __cplusplus, pilot finding 2: the static is what gives the original's register use)
+                # while the port view maps it (`MGLOBAL(T, DAT_x, 0x00xxxxxx)`). The DDK object would read a private
+                # zero copy (0x0047ab30, RESULT_RACE-PIZ-DEVICE section 3). Its references go to `__ddkabs_<addr>`,
+                # the address the VS2022 body uses; `check` then compares those dwords exactly (not masked).
+                sfx = int(plain[4:], 16)
+                maddr = info["globals"].get(plain)
+                if maddr is None:
+                    rec["status"] = "fail:static-global-unmapped"
+                    rec["evidence"] = (f"{plain}: file-static in the C view and no MGLOBAL in the source (the port view "
+                                       "keeps a private copy as well); no address to bind")
+                    rec["unbindable"] = []
+                    return rec
+                if maddr != sfx or not (0x00400000 <= maddr < 0x00a00000):
+                    rec["status"] = "fail:static-global-address-mismatch"
+                    rec["evidence"] = f"{plain}: MGLOBAL address 0x{maddr:08x} differs from the name or is out of range"
+                    rec["unbindable"] = []
+                    return rec
+                nm = f"__ddkabs_{maddr:08x}"
+                abs_syms[nm] = maddr
+                ref = co.add_symbol(nm, 0, 0, s.type, CE.IMAGE_SYM_CLASS_EXTERNAL)
+                skip = {x.index for x in co.sections if x.name.startswith(".debug")}
+                n = co.repoint(s.index, ref.index, skip_sections=skip)
+                rec.setdefault("static_globals", []).append({"name": plain, "addr": f"0x{maddr:08x}", "refs": n,
+                                                             "ddk": nm})
+                s.name = s.name + f"__ddkstatic{u['rvas'][0]:08x}"
                 continue
             if s.cls == CE.IMAGE_SYM_CLASS_STATIC and not (s.is_func and is_port_match):
                 continue
@@ -1565,7 +1594,9 @@ def _dual(prov, row):
 # range 0x00400010..0x00400050 so no real unit is selected with them). Needs the default build's objects (link.rsp)
 # and tools\vc7ddk, like `build`.
 _ST_MGPRE = ("#ifndef MATCH_PREAMBLE\n#define MATCH_PREAMBLE\n#ifdef __cplusplus\n"
-             "#define MGLOBAL(T, n, a) static T &n = *(T *)(a)\n#else\n#define MGLOBAL(T, n, a) extern T n\n"
+             "#define MGLOBAL(T, n, a) static T &n = *(T *)(a)\n"
+             "#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)\n#else\n"
+             "#define MGLOBAL(T, n, a) extern T n\n#define MGLOBALA(T, n, N, a) extern T n[N]\n"
              "#endif\n#endif\n")
 _ST_SRC = {
     # an object that registers an SEH handler (__try/__except -> __except_handler3 + .sxdata): fails the build
@@ -1635,6 +1666,26 @@ _ST_SRC = {
                                 "    return DAT_00400134 + 1;\n}\n",
                   "#define FUN_00400130 DdkSt_MgEnumBad\n#define MATCH_PREAMBLE 1\n#define MGLOBAL(T, n, a) enum { mglobal_##n }\n"
                   "#define DAT_00400134 (*(int *)0x00400138u)\n"),
+    # DDKOBJ-STATIC-GLOBALS: an original global the C view holds as a file-static (pilot finding 2) and the port view
+    # maps with MGLOBAL at its own address: every reference binds to __ddkabs_<addr>, the private copy goes dead.
+    # The array form keeps its element addend on the repointed relocation.
+    "stat": ("0x00400140", _ST_MGPRE + "#ifndef __cplusplus\nstatic int DAT_00400144;\nstatic int DAT_00400148[4];\n#else\n"
+                           "MGLOBAL(int, DAT_00400144, 0x00400144);\nMGLOBALA(int, DAT_00400148, 4, 0x00400148);\n#endif\n"
+                           "int FUN_00400140(int a)\n{\n    DAT_00400144 += a;\n    DAT_00400148[2] = a;\n"
+                           "    return DAT_00400144 + DAT_00400148[3];\n}\n",
+             "#define FUN_00400140 DdkSt_Stat\n#define MATCH_PREAMBLE 1\n"
+             "#define MGLOBAL(T, n, a) static T &n = *(T *)(a)\n"
+             "#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)\n"),
+    # a file-static with no MGLOBAL in the source (the port keeps a private copy too): refused, not fatal
+    "statnomg": ("0x00400150", "static int DAT_00400154;\nint FUN_00400150(int a)\n{\n    DAT_00400154 += a;\n"
+                               "    return DAT_00400154;\n}\n",
+                 "#define FUN_00400150 DdkSt_StatNoMg\n"),
+    # a file-static whose MGLOBAL names another address: refused, not fatal
+    "statbad": ("0x00400160", _ST_MGPRE + "#ifndef __cplusplus\nstatic int DAT_00400164;\n#else\n"
+                              "MGLOBAL(int, DAT_00400164, 0x00400168);\n#endif\nint FUN_00400160(int a)\n{\n"
+                              "    DAT_00400164 += a;\n    return DAT_00400164;\n}\n",
+                "#define FUN_00400160 DdkSt_StatBad\n#define MATCH_PREAMBLE 1\n"
+                "#define MGLOBAL(T, n, a) static T &n = *(T *)(a)\n"),
 }
 
 
@@ -1768,6 +1819,37 @@ def main_selftest(a):
         check(not MGLOBAL_ENUM_RE.match("#define MGLOBAL(T, n, a) enum { other_##n }") and
               bool(MGLOBAL_ENUM_RE.match("#define MGLOBALA(T, n, N, a) enum { mglobala_##n }")),
               "MGLOBAL_ENUM_RE: only the two exact enum forms")
+        # DDKOBJ-STATIC-GLOBALS
+        rc, rep, by = run(["stat", "statnomg", "statbad"], "statglob")
+        check(rc == 0, f"static-global fixtures: build goes on (rc {rc})")
+        s_ = by.get("stat", {})
+        sg = {x["name"]: x for x in s_.get("static_globals", [])}
+        check(s_.get("status") == "ok" and sg.get("DAT_00400144", {}).get("ddk") == "__ddkabs_00400144" and
+              sg["DAT_00400144"].get("refs", 0) >= 1 and sg.get("DAT_00400148", {}).get("ddk") == "__ddkabs_00400148"
+              and sg["DAT_00400148"].get("refs", 0) >= 1,
+              f"file-static + MGLOBAL at its own address -> ok, bound to __ddkabs_00400144 / __ddkabs_00400148 "
+              f"({s_.get('status')}: {s_.get('static_globals')})")
+        sco = CE.Coff.load(s_["obj"]) if s_.get("obj") else None
+        left, abs_rel = [], []
+        for x in (sco.sections if sco else []):
+            if x.name.startswith(".debug"):
+                continue
+            for off, si, _typ in x.relocs:
+                tn = sco.slots[si].name if sco.slots[si] is not None else ""
+                if "DAT_0040014" in tn:
+                    left.append(tn)
+                if tn.startswith("__ddkabs_0040014"):
+                    abs_rel.append((tn, struct.unpack_from("<i", bytes(x.data), off)[0]))
+        check(sco is not None and not left and len(abs_rel) >= 3,
+              f"no relocation left on the private copies, >= 3 on __ddkabs_ ({left}; {abs_rel})")
+        check(any(tn == "__ddkabs_00400148" and ad in (8, 12) for tn, ad in abs_rel),
+              f"array element addend kept on the repointed relocation ({abs_rel})")
+        check(by.get("statnomg", {}).get("status") == "fail:static-global-unmapped" and not by["statnomg"].get("fatal"),
+              f"file-static, no MGLOBAL -> fail:static-global-unmapped, not fatal ({by.get('statnomg', {}).get('status')})")
+        check(by.get("statbad", {}).get("status") == "fail:static-global-address-mismatch" and
+              not by["statbad"].get("fatal"),
+              f"file-static, MGLOBAL at another address -> fail:static-global-address-mismatch, not fatal "
+              f"({by.get('statbad', {}).get('status')}: {by.get('statbad', {}).get('evidence')})")
         # DDKOBJ-CRTMATH
         rc, rep, by = run(["math"], "math")
         m = by.get("math", {})
