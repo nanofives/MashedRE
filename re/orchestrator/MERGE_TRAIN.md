@@ -74,6 +74,15 @@ id/title rule 43 rows, decision alone 100 (88 new), decision + `default ON` titl
 To make the train treat a flip row as one, name it `-FLIP`, put "decided flip" in its title, or give it its L-n and a
 `... default ON` title.
 
+### Binder selftest step (HB-TRAIN-BINDER-SELFTEST, run 56)
+
+After the last promotion of a batch is applied (`c4_reclass.py batch|tag|refresh --apply --strict`, `Apply-Promotions`) and before archive lint, build and gates, `Try-Batch` runs `py -3.12 re/tools/bind/porttop_bind.py selftest` in the merged temp worktree (under `mashed_lock.py run`). Only a batch that applied promotions runs it. A pass fails (the batch is bounced, the one-at-a-time re-merge finds the row) on a NEW failure against the base head's list.
+
+- Failure list: the `[selftest]` lines that name FAIL / FAILS / DIFFERENT / COMPILES (unexpected) or carry a non-zero `N fail` / `N failures` count. The closing `PASS` / `FAIL N` line is not one. A line is compared as exact text, so a failing line whose numbers moved counts as NEW.
+- Base list: taken from the head before the batch. When the merged tree has no failure line the step ends PASS 0 and no base run happens. Otherwise the selftest runs once more in a temp worktree at the base commit and the two lists are diffed.
+- A selftest with no closing `PASS` / `FAIL N` line (crash, lock timeout) fails the pass as "did not finish".
+- Log lines (drain log and pass log): `binder selftest: PASS 0 (after promotions)` when clean, or `binder selftest: FAIL <n> after promotions, base head <PASS|FAIL m>, <k> NEW` followed by up to five `    NEW: <line>` lines. `binder selftest: SKIPPED (no re/tools/bind/porttop_bind.py in this tree)` for an old tree.
+- Merge bar for a promotion that makes bodies bindable: regenerate the plans (`porttop_bind.py write`) in the same row, so the selftest stays at the head's list.
 ### Decided default flips
 A row that changes the default gates on purpose (a user-decided knob flip, e.g. L-4) would be bounced RED against the old refs. Protocol:
 1. The flip row records its expected new G-CTRL and B hashes (ledger note + its RESULT).
