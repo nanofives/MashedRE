@@ -918,6 +918,15 @@
 ],
 []
 ],
+"005c78c0": [
+"bind",
+"re/match/s28/005c78c0.c",
+"admitted",
+[
+"005a6dc0"
+],
+[]
+],
 "0040e340": [
 "reuse",
 "GetLiveCarCount",
@@ -3080,13 +3089,9 @@
 "Match/PortTop_CrtHeap.cpp"
 ],
 "004ccef0": [
-"bind",
-"re/match/s20/004ccef0.c",
-"provisional",
-[
-"004a45fb"
-],
-[]
+"reuse",
+"RwCoreHand_004ccef0",
+"RwCore/RwCore_Hand.cpp"
 ],
 "005aead0": [
 "stop"

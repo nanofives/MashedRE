@@ -1,0 +1,5 @@
+# Code-pointer slots of the file-backed image that Ghidra holds no data reference from (read by codeptr_image.py).
+# Each row: the file dword of MASHED.exe.unpatched at slot equals target, and target is a re/console/pc_funcs.csv entry.
+slot	target	evidence
+0x006350cc	0x005c78c0	RO-AUDIOINIT-45D460-REACH-5: execute AV at 0x005c78c0 from PortTop_Bound_005a6d60+0x21; byte search of the exe (verify/roaudinit_20261127/RESULT_RO-AUDIOINIT-45D460-REACH-6.md)
+0x00636024	0x005c78c0	RO-AUDIOINIT-45D460-REACH-5: as 0x006350cc (24-byte record of the same shape, verify/roaudinit_20261127/RESULT_RO-AUDIOINIT-45D460-REACH-6.md)
