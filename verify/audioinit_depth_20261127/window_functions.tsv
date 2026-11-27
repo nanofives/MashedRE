@@ -1,0 +1,53 @@
+rva	class	calls_in_window	calls_before_window	size	confidence	c4_route	name	subsystem	bound_in	stop_in	src
+0x004a4554	c4_unbound	34	502	111	C4	libid	__heap_alloc	third-party-library[msvc-crt-main]		bulk	
+0x004a45cf	c4_unbound	34	502	44	C4	libid	__nh_malloc	third-party-library[msvc-crt-main]		bulk	
+0x004a45fb	bound	34	334	18	C4	libid	_malloc	third-party-library[msvc-crt-main]	audio:reuse:MashedCrt_malloc_004a45fb;bulk:reuse:MashedCrt_malloc_004a45fb		
+0x004a5984	no_source	34	916	59	C2		CrtSehProlog	boot			
+0x004a59bf	c4_unbound	34	914	17	C4	libid	CrtSehEpilog	third-party-library[msvc-crt-main]		bulk	
+0x004ccef0	no_source	34	220	14	C1		FUN_004ccef0	third-party-library[renderware]		audio	
+0x005a6280	bound	200	0	39	C4	match	FUN_005a6280	audio	audio:bind:match		re/match/s25/005a6280.c
+0x005a65d0	source_not_c4	200	0	112	C2		FUN_005a65d0	audio		audio	re/match/s25/005a65d0.c
+0x005a66c0	no_row	200	0	15						audio	
+0x005a6710	bound	4	0	86	C4	match	FUN_005a6710	audio	audio:bind:match;raceload:reuse:PortTop_Bound_005a6710		re/match/s25/005a6710.c
+0x005a6b70	bound	29	0	233	C2		FUN_005a6b70	audio	audio:bind:admitted		re/match/s25/005a6b70.c
+0x005a6c60	bound	29	0	45	C4	match	FUN_005a6c60	audio	audio:bind:match		re/match/s25/005a6c60.c
+0x005a6d60	bound	1	0	48	C4	frida-replay	FUN_005a6d60	audio	audio:bind:replay;raceframe:reuse:PortTop_Bound_005a6d60		re/match/s25/005a6d60.c
+0x005a6df0	bound	1	0	18	C4	match	FUN_005a6df0	audio	audio:bind:match		re/match/s25/005a6df0.c
+0x005a71f0	bound	1	0	428	C2		FUN_005a71f0	audio	audio:bind:provisional		re/match/s25/005a71f0.c
+0x005a73a0	bound	2	0	15	C4	match	FUN_005a73a0	audio	audio:bind:match		re/match/s25/005a73a0.c
+0x005a7420	c4_unbound	200	0	64	C4	match	FUN_005a7420	audio			re/match/s25/005a7420.c
+0x005a9e60	bound	2	4	161	C4	match	FUN_005a9e60	audio	audio:bind:match		re/match/s25/005a9e60.c
+0x005a9f10	bound	255	4	65	C4	frida-replay	FUN_005a9f10	audio	audio:bind:replay		re/match/s25/005a9f10.c
+0x005aa030	bound	255	4	38	C4	match	FUN_005aa030	audio	audio:bind:match		re/match/s25/005aa030.c
+0x005aa560	bound	255	5	568	C2		FUN_005aa560	audio	audio:bind:provisional		re/match/s25/005aa560.c
+0x005aa7a0	bound	255	4	60	C4	frida-replay	FUN_005aa7a0	audio	audio:bind:replay		re/match/s25/005aa7a0.c
+0x005aa7e0	bound	255	5	177	C4	match	FUN_005aa7e0	audio	audio:bind:match		re/match/s25/005aa7e0.c
+0x005aa900	bound	255	5	192	C4	match	FUN_005aa900	audio	audio:bind:match		re/match/s25/005aa900.c
+0x005aabe0	bound	255	5	24	C4	match	FUN_005aabe0	audio	audio:bind:match		re/match/s25/005aabe0.c
+0x005aac00	bound	33632	10	24	C4	match	FUN_005aac00	audio	audio:bind:match		re/match/s25/005aac00.c
+0x005aad40	bound	200	3	6	C4	match	FUN_005aad40	audio	audio:bind:match		re/match/s25/005aad40.c
+0x005ab040	bound	28	1	41	C4	match	FUN_005ab040	util	audio:bind:match;bulk:reuse:PortTop_Bound_005ab040		re/match/s25/005ab040.c
+0x005ad0b0	bound	29	0	545	C2		FUN_005ad0b0	audio	audio:bind:provisional		re/match/s26/005ad0b0.c
+0x005ad320	bound	2	9	251	C4	frida-replay	FUN_005ad320	audio	audio:bind:replay		re/match/s26/005ad320.c
+0x005ad6a0	bound	2	2	67	C4	match	FUN_005ad6a0	audio	audio:bind:match		re/match/s26/005ad6a0.c
+0x005adef0	bound	255	5	53	C4	match	FUN_005adef0	audio	audio:bind:match		re/match/s26/005adef0.c
+0x005adf30	bound	1403	6110	38	C4	match	AudioFmtKeyCompare	audio	audio:reuse:AudioFmtKeyCompare		re/match/s26/005adf30.c
+0x005ae250	bound	1	2	162	C2		FUN_005ae250	audio	audio:bind:provisional		re/match/s26/005ae250.c
+0x005ae300	bound	28	1	43	C4	match	FUN_005ae300	audio	audio:bind:match		re/match/s26/005ae300.c
+0x005ae3a0	bound	227	1	93	C4	frida-replay	FUN_005ae3a0	audio	audio:bind:replay		re/match/s26/005ae3a0.c
+0x005ae470	bound	28	1	55	C4	match	FUN_005ae470	audio	audio:bind:match		re/match/s26/005ae470.c
+0x005ae4c0	bound	533	1	139	C3		FUN_005ae4c0	audio	audio:bind:provisional		re/match/s26/005ae4c0.c
+0x005ae650	bound	1	19	292	C3		AudioPoolConstruct	audio	audio:bind:provisional		re/match/s26/005ae650.c
+0x005ae800	bound	30	130	279	C3		AudioPoolBlockAlloc	audio	audio:bind:provisional		re/match/s26/005ae800.c
+0x005aea00	bound	34	55	12	C4	match	FUN_005aea00	audio	audio:bind:match		re/match/s26/005aea00.c
+0x005aeb90	c4_unbound	28	0	98	C4	frida-replay	FUN_005aeb90	audio			re/match/s26/005aeb90.c
+0x005b8570	bound	27	1	39	C4	match	FUN_005b8570	audio	audio:bind:match		re/match/s27/005b8570.c
+0x005b8910	no_row	27	1	715						audio	
+0x005b8c40	source_not_c4	28	0	1676	C2		FUN_005b8c40	audio		audio	re/match/s27/005b8c40.c
+0x005b92d0	bound	27	1	15	C4	match	FUN_005b92d0	audio	audio:bind:match		re/match/s27/005b92d0.c
+0x005b9320	bound	28	0	118	C4	match	FUN_005b9320	audio	audio:bind:match;bulk:reuse:PortTop_Bound_005b9320		re/match/s27/005b9320.c
+0x005b9460	bound	28	0	190	C4	match	FUN_005b9460	audio	audio:bind:match;bulk:reuse:PortTop_Bound_005b9460		re/match/s27/005b9460.c
+0x005c6b40	bound	56	0	21	C4	match	FUN_005c6b40	boot	bulk:bind:match		re/match/s28/005c6b40.c
+0x005c6bb0	c4_unbound	28	0	36	C4	match	FUN_005c6bb0	boot			re/match/s28/005c6bb0.c
+0x005c6f50	no_row	28	0	278						audio	
+0x005c75c0	bound	28	0	71	C4	match	FUN_005c75c0	audio	audio:bind:match;bulk:reuse:PortTop_Bound_005c75c0		re/match/s28/005c75c0.c
