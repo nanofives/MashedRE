@@ -45,7 +45,22 @@ void PortTop_Missing_00495780(void) {
 }
 // rva 0x004951e0: `jmp 0x00495780` (the pilot source's comment), the call 0x00493710 makes for HardwareInstallFileSystem.
 // The pilot source discards its return value. Forwards to the missing stub above.
+// RACE-VFS-COURSELUA (run 56): on the RW core frame route (MASHED_RWC_CORE + MASHED_RWC_FRAME, both default OFF), where
+// RtFSManagerOpen already runs its core body RwCore_00550350 (LibRw/RwApiBind.cpp, [RWC-FRAME]), the thunk runs the
+// matched HardwareInstallFileSystem PortTop_Bound_00495780 (re/match/s16/00495780.c) -> PortTop_Bound_004955d0
+// (re/match/s16/004955d0.c): the disk file systems through 0x00551190 + 0x00550430 on the core's FS globals
+// (DAT_007dc754 list, DAT_007dc75c count) and the default device through 0x00550790 (DAT_007dc76c), as the original
+// does (verify/racelua2_20261122/RESULT_RACE-LOAD-LUA-2.md section 4, vfs_boot2.jsonl). Off that route: missing, as before.
+bool RwCore_FrameRoute(void);
+bool PortTop_Bound_00495780(void);
 int PortTop_Thunk_004951e0(void) {
+    if (RwCore_FrameRoute()) {
+        const bool r = PortTop_Bound_00495780();
+        PortTop93_Log("0x00495780 HardwareInstallFileSystem (matched, RW core FS) returned %d: [0x007dc75c] %d file "
+                      "systems, default [0x007dc76c] %08X", r ? 1 : 0, *reinterpret_cast<volatile int*>(0x007dc75cu),
+                      *reinterpret_cast<volatile unsigned*>(0x007dc76cu));
+        return r ? 1 : 0;
+    }
     PortTop_Missing_00495780();
     return 0;
 }

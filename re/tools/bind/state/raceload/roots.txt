@@ -135,3 +135,8 @@
 00490ff0
 00491010
 00491030
+# RACE-VFS-COURSELUA (run 56): the RW file-system install of 0x00493710 (verify/raceload_vfs_20261127/RESULT_RACE-VFS-COURSELUA.md):
+# HardwareInstallFileSystem 0x00495780 -> 0x004955d0 (disk devices through 0x00551190 / 0x00550430, default device 0x00550790)
+00495780
+004955d0
+00550790
