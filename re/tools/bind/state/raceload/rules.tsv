@@ -242,3 +242,13 @@ prov_bind	004b6cd0
 alias	004a34b0	PortTop_PizCrt_strncpy_004a34b0	Match/PortTop_00402750_Pieces.cpp
 alias	004b6b10	PortTop_PizCrt_stricmp_004b6b10	Match/PortTop_00402750_Pieces.cpp
 alias	004b302f	PortTop_PizCrt_stricmp_004b302f	Match/PortTop_00402750_Pieces.cpp
+# RACE-LOAD-004E99B0 (run 57, L-184): 0x004e99b0 RW world stream read, source rewritten from the disassembly, NOT-PROVEN (equiv.py), listed in re/match/PROVISIONAL.tsv, knob path only
+prov_bind	004e99b0
+# RACE-LOAD-004E99B0: 0x004f3e90 (called by 0x004e99b0 at 0x004e9bd0) binds the lifted RW core body the exe already compiles (RwCore/RwCore_Lifted_04.cpp:4397, PROVISIONAL.tsv row RwCoreLift_004f3e90, L-137 scaffolding)
+alias	004f3e90	RwCoreLift_004f3e90	RwCore/RwCore_Lifted_04.cpp
+# RACE-LOAD-004E99B0: world sector / plane sector stream reads and the BSP cell box walk under 0x004e99b0, sources rewritten from the disassembly (0x004e9e40, 0x004ea220) or checked against it (0x004e51e0), NOT-PROVEN (equiv.py), re/match/PROVISIONAL.tsv, knob path only
+prov_bind	004e9e40
+prov_bind	004ea220
+prov_bind	004e51e0
+# RACE-LOAD-004E99B0: next stop 0x00558df0 (caller 0x0042a740, Lake.uva), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
+prov_bind	00558df0

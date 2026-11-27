@@ -1,5 +1,14 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL02 h1 0x004ea220: best 46.5% (regs 55.3%), residual class b. structure only (663 B), Ghidra gotos kept; orig frame is 0x24 vs ours 0x18 (more locals live); 46.5. */
+/* MATCH-RWL02 0x004ea220, rewritten by RACE-LOAD-004E99B0 (run 57, 2026-11-27) from the disassembly of
+   0x004ea220..0x004ea4b6 (Ghidra pool slot Mashed_pool0, read-only). The earlier h1 body (46.5%) read the 0x18-byte chunk
+   header through separate locals. Frame (S = esp after `sub esp,0x24`):
+     S+0x00 struct chunk size, S+0x28 (the stream argument's slot, the stream is in EBX first) its version (0x004ea223)
+     S+0x04 2-dword error record {2, FUN_004d7ff0(code, ...)} (0x004ea2a4)
+     S+0x0c 0x18-byte header read by FUN_004cbd30 (zeroed first, rep stosd 6 at 0x004ea26d)
+   Args: stream, int *next (memory cursor), world, format. Takes 0x18 bytes of the cursor (0x004ea296). Child 0 -> +0x08 and
+   child 1 -> +0x0c: chunk 9 + 0x004e9e40 when header +0x08 / +0x0c != 0, else chunk 10 + this function. Any child failure:
+   when +0x08 != 0, 0x004e4f70(+0x08) if world byte +3 bit 0 else 0x004e5020(+0x08), then +0x08 = 0 (0x004ea43e). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -22,122 +31,126 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef unsigned char byte;
-uint FUN_004cbd30(uint p0, void * p1, uint p2);
-undefined4 FUN_004cc5e0(uint p0, int p1, void * p2, void * p3);
-undefined4 FUN_004d7ff0(undefined4 p0, ...);
-undefined4 * FUN_004d8480(void * p0);
-undefined4 * FUN_004e9e40(undefined4 p0, int * p1, int p2, uint p3);
-void FUN_004e4f70(int p0);
-void FUN_004e5020(int p0);
-// MATCH: 0x004ea220 FUN_004ea220
-undefined4 * FUN_004ea220(uint param_1,int *param_2,int param_3,uint param_4)
+void *memset(void *, int, unsigned int);
+#pragma intrinsic(memset)
 
+/* the 0x18-byte struct chunk body (S+0x0c); field names are offsets */
+typedef struct {
+    int h00;          /* -> plane +0x00 (0x004ea2cc) */
+    int h04;          /* -> plane +0x04, and +0x10 / +0x14 when format bit 0x40000000 is clear (0x004ea2d6) */
+    int h08;          /* != 0: child 0 is a chunk-9 sector (0x004ea302) */
+    int h0c;          /* != 0: child 1 is a chunk-9 sector (0x004ea3a2) */
+    int h10;          /* -> plane +0x10 when format bit 0x40000000 (0x004ea2e4) */
+    int h14;          /* -> plane +0x14 (0x004ea2eb) */
+} Hdr_004ea220;
+
+typedef struct { int a; int b; } Err_004ea220;
+
+int FUN_004cc5e0(int stream, int type, uint *size, uint *version);
+uint FUN_004cbd30(int stream, void *buf, uint size);
+int FUN_004d7ff0(int code, ...);
+void FUN_004d8480(Err_004ea220 *err);
+int FUN_004e9e40(int stream, int *next, int world, uint format);
+int FUN_004ea220(int stream, int *next, int world, uint format);
+void FUN_004e4f70(int sector);
+void FUN_004e5020(int sector);
+
+// MATCH: 0x004ea220 FUN_004ea220
+int FUN_004ea220(int stream, int *next, int world, uint format)
 {
-  int *piVar1;
-  uint uVar2;
-  int iVar3;
-  int iVar4;
-  int *piVar5;
-  int local_24;
-  undefined4 local_20;
-  undefined4 local_1c;
-  int local_18 [4];
-  int local_8;
-  int local_4;
-  
-  uVar2 = param_1;
-  iVar3 = FUN_004cc5e0(param_1,1,&local_24,&param_1);
-  if (iVar3 == 0) {
-    return (undefined4 *)0x0;
-  }
-  if ((param_1 < 0x35000) || (0x37002 < param_1)) {
-    local_20 = 2;
-    local_1c = FUN_004d7ff0(0x80000004);
-    FUN_004d8480(&local_20);
-    return (undefined4 *)0x0;
-  }
-  piVar5 = local_18;
-  for (iVar3 = 6; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *piVar5 = 0;
-    piVar5 = piVar5 + 1;
-  }
-  iVar4 = FUN_004cbd30(uVar2,local_18,local_24);
-  iVar3 = param_3;
-  piVar5 = param_2;
-  if (iVar4 != local_24) {
-    return (undefined4 *)0x0;
-  }
-  piVar1 = (int *)*param_2;
-  *param_2 = (int)(piVar1 + 6);
-  if (piVar1 == (int *)0x0) {
-    local_20 = 2;
-    local_1c = FUN_004d7ff0(0x80000013,0x18);
-    FUN_004d8480(&local_20);
-    return (undefined4 *)0x0;
-  }
-  *piVar1 = local_18[0];
-  piVar1[1] = local_18[1];
-  if ((param_4 & 0x40000000) == 0) {
-    piVar1[4] = local_18[1];
-    piVar1[5] = local_18[1];
-  }
-  else {
-    piVar1[4] = local_8;
-    piVar1[5] = local_4;
-  }
-  if (local_18[2] == 0) {
-    iVar4 = FUN_004cc5e0(uVar2,10,0,&param_1);
-    if (iVar4 == 0) goto LAB_004ea43e;
-    if ((0x34fff < param_1) && (param_1 < 0x37003)) {
-      iVar4 = (int)FUN_004ea220(uVar2,piVar5,iVar3,param_4);
-      piVar1[2] = iVar4;
-      goto joined_r0x004ea39c;
+    uint size;
+    uint version;
+    Err_004ea220 err;
+    Hdr_004ea220 h;
+    int plane;
+    int child;
+
+    if (!FUN_004cc5e0(stream, 1, &size, &version)) {
+        return 0;
     }
-  }
-  else {
-    iVar4 = FUN_004cc5e0(uVar2,9,0,&param_1);
-    if (iVar4 == 0) goto LAB_004ea43e;
-    if ((0x34fff < param_1) && (param_1 < 0x37003)) {
-      iVar4 = (int)FUN_004e9e40(uVar2,piVar5,iVar3,param_4);
-      piVar1[2] = iVar4;
-joined_r0x004ea39c:
-      if (iVar4 == 0) goto LAB_004ea43e;
-      if (local_18[3] == 0) {
-        iVar4 = FUN_004cc5e0(uVar2,10,0,&param_1);
-        if (iVar4 == 0) goto LAB_004ea43e;
-        if ((param_1 < 0x35000) || (0x37002 < param_1)) goto LAB_004ea402;
-        iVar4 = (int)FUN_004ea220(uVar2,piVar5,iVar3,param_4);
-      }
-      else {
-        iVar4 = FUN_004cc5e0(uVar2,9,0,&param_1);
-        if (iVar4 == 0) goto LAB_004ea43e;
-        if ((param_1 < 0x35000) || (0x37002 < param_1)) goto LAB_004ea402;
-        iVar4 = (int)FUN_004e9e40(uVar2,piVar5,iVar3,param_4);
-      }
-      piVar1[3] = iVar4;
-      if (iVar4 != 0) {
-        return (undefined4 *)piVar1;
-      }
-      goto LAB_004ea43e;
+    if (version < 0x35000 || version > 0x37002) {
+        err.a = 2;
+        err.b = FUN_004d7ff0(0x80000004);
+        FUN_004d8480(&err);
+        return 0;
     }
-  }
-LAB_004ea402:
-  local_20 = 2;
-  local_1c = FUN_004d7ff0(0x80000004);
-  FUN_004d8480(&local_20);
-LAB_004ea43e:
-  if (piVar1[2] == 0) {
-    return (undefined4 *)0x0;
-  }
-  if ((*(byte *)(iVar3 + 3) & 1) == 0) {
-    FUN_004e5020(piVar1[2]);
-    piVar1[2] = 0;
-    return (undefined4 *)0x0;
-  }
-  FUN_004e4f70(piVar1[2]);
-  piVar1[2] = 0;
-  return (undefined4 *)0x0;
+    memset(&h, 0, sizeof(h));
+    if (FUN_004cbd30(stream, &h, size) != size) {
+        return 0;
+    }
+    plane = *next;
+    *next = plane + 0x18;
+    if (plane == 0) {
+        err.a = 2;
+        err.b = FUN_004d7ff0(0x80000013, 0x18);
+        FUN_004d8480(&err);
+        return 0;
+    }
+    *(int *)(plane + 0x0) = h.h00;
+    *(int *)(plane + 0x4) = h.h04;
+    if (format & 0x40000000) {
+        *(int *)(plane + 0x10) = h.h10;
+        *(int *)(plane + 0x14) = h.h14;
+    } else {
+        *(int *)(plane + 0x10) = h.h04;
+        *(int *)(plane + 0x14) = h.h04;
+    }
+    if (h.h08 != 0) {
+        if (!FUN_004cc5e0(stream, 9, 0, &version)) {
+            goto fail;
+        }
+        if (version < 0x35000 || version > 0x37002) {
+            goto bad_version;
+        }
+        child = FUN_004e9e40(stream, next, world, format);
+    } else {
+        if (!FUN_004cc5e0(stream, 10, 0, &version)) {
+            goto fail;
+        }
+        if (version < 0x35000 || version > 0x37002) {
+            goto bad_version;
+        }
+        child = FUN_004ea220(stream, next, world, format);
+    }
+    *(int *)(plane + 0x8) = child;
+    if (child == 0) {
+        goto fail;
+    }
+    if (h.h0c != 0) {
+        if (!FUN_004cc5e0(stream, 9, 0, &version)) {
+            goto fail;
+        }
+        if (version < 0x35000 || version > 0x37002) {
+            goto bad_version;
+        }
+        child = FUN_004e9e40(stream, next, world, format);
+    } else {
+        if (!FUN_004cc5e0(stream, 10, 0, &version)) {
+            goto fail;
+        }
+        if (version < 0x35000 || version > 0x37002) {
+            goto bad_version;
+        }
+        child = FUN_004ea220(stream, next, world, format);
+    }
+    *(int *)(plane + 0xc) = child;
+    if (child != 0) {
+        return plane;
+    }
+    goto fail;
+bad_version:
+    err.a = 2;
+    err.b = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(&err);
+fail:
+    if (*(int *)(plane + 0x8) != 0) {
+        if (*(unsigned char *)(world + 3) & 1) {
+            FUN_004e4f70(*(int *)(plane + 0x8));
+        } else {
+            FUN_004e5020(*(int *)(plane + 0x8));
+        }
+        *(int *)(plane + 0x8) = 0;
+    }
+    return 0;
 }
+

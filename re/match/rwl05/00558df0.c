@@ -1,6 +1,14 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL05 0x00558df0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl05_20261107/results.tsv. */
+/* MATCH-RWL05 0x00558df0, rewritten by RACE-LOAD-004E99B0 (run 57, 2026-11-27) from the disassembly of
+   0x00558df0..0x00559032 (Ghidra pool slot Mashed_pool0, read-only). The earlier raw g2s.py body (39.7%) kept the error
+   record as two separate locals passed by address and did not compile as C++. Frame (S = esp after `sub esp,0x10`):
+     S+0x00 chunk version, S+0x04 chunk size (0x00558df3 / 0x00558df7, FUN_004cc5e0(stream, 1, &size, &version))
+     S+0x08 2-dword error record {0x1bf, FUN_004d7ff0(0x80000013, 8)} (0x00558e7e / 0x00558e8f)
+     S+0x18 the stream argument's slot, overwritten with the entry count FUN_004cbd30 reads (0x00558e3c; stream stays in EBP)
+   Args: desc (a 0x30+ byte record: +0x04 alloc hint, +0x08 entry chunk type, +0x0c version floor, +0x10 list, +0x14,
+   +0x18 / +0x1c / +0x28 / +0x2c code pointers), stream. Version below desc +0x0c: tail call (*(desc+0x2c))(stream)
+   (0x00558e24). Allocs through RwGlobals (DAT_007d3ff8) +0x108, frees through +0x10c. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,114 +31,106 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef int code();
-#ifndef __cplusplus
-#define true 1
-#endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
-uint FUN_004cbd30(undefined4 * p0, undefined4 * p1, uint p2);
-undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 * p2, uint * p3);
-undefined4 FUN_004d7ff0(undefined4 p0);
-undefined4 * FUN_004d8480(undefined4 * p0);
-undefined4 FUN_0055deb0(int p0);
-undefined4 FUN_0055dec0(undefined4 * p0);
-int * FUN_005c4ad0(int p0, uint p1);
-int FUN_005c4bb0(int * p0, undefined4 p1);
-void FUN_005c4d20(int p0, int p1);
-undefined4 FUN_005c4d50(int * p0);
-int FUN_005c4df0(int * p0, int p1);
-int FUN_005c4e10(int * p0);
-// MATCH: 0x00558df0 FUN_00558df0
-int * FUN_00558df0(int param_1,int param_2)
 
+typedef struct { int a; int b; } Err_00558df0;
+typedef int (*Fn1_00558df0)(int);
+typedef int (*Alloc_00558df0)(uint size, uint hint);
+
+int FUN_004cc5e0(int stream, int type, uint *size, uint *version);
+uint FUN_004cbd30(int stream, void *buf, uint size);
+int FUN_004d7ff0(int code, ...);
+void FUN_004d8480(Err_00558df0 *err);
+int FUN_0055deb0(int list);
+int FUN_0055dec0(int list);
+int FUN_005c4ad0(int size, uint hint);
+int FUN_005c4bb0(int list, uint hint);
+void FUN_005c4d20(int list, int n);
+void FUN_005c4d50(int list);
+int FUN_005c4df0(int list, int i);
+int FUN_005c4e10(int list);
+
+#define F1_00558df0(rec, off) (*(Fn1_00558df0 *)((rec) + (off)))
+
+// MATCH: 0x00558df0 FUN_00558df0
+int FUN_00558df0(int desc, int stream)
 {
-  int iVar1;
-  int iVar2;
-  int *piVar3;
-  undefined4 *puVar4;
-  int *piVar5;
-  int *piVar6;
-  undefined4 *puVar7;
-  uint local_10;
-  undefined4 local_c;
-  undefined4 uStack_8;
-  undefined4 uStack_4;
-  
-  iVar1 = param_2;
-  iVar2 = FUN_004cc5e0(param_2,1,&local_c,&local_10);
-  if (iVar2 == 0) {
-    return (int *)0x0;
-  }
-  if (local_10 < *(uint *)(param_1 + 0xc)) {
-    piVar3 = (int *)(**(code **)(param_1 + 0x2c))(iVar1);
-    return piVar3;
-  }
-  iVar2 = FUN_004cbd30(iVar1,&param_2,local_c);
-  if (iVar2 == 0) {
-    return (int *)0x0;
-  }
-  piVar3 = (int *)(**(code **)(DAT_007d3ff8 + 0x108))(8,*(uint *)(param_1 + 4) | 0x30000);
-  if (piVar3 == (int *)0x0) {
-    uStack_8 = 0x1bf;
-    uStack_4 = FUN_004d7ff0(0x80000013,8);
-    FUN_004d8480(&uStack_8);
-    return (int *)0x0;
-  }
-  iVar2 = FUN_005c4ad0(4,*(uint *)(param_1 + 4) | 0x30000);
-  piVar3[1] = iVar2;
-  if (iVar2 != 0) {
-    *piVar3 = param_1;
-    puVar4 = (undefined4 *)
-             FUN_005c4bb0(*(undefined4 *)(param_1 + 0x10),*(uint *)(param_1 + 4) | 0x30000);
-    if (puVar4 != (undefined4 *)0x0) {
-      *puVar4 = piVar3;
-      if (param_2 == 0) {
-        return piVar3;
-      }
-      while( true ) {
-        param_2 = param_2 + -1;
-        iVar2 = FUN_004cc5e0(iVar1,*(undefined4 *)(param_1 + 8),&local_c,&local_10);
-        if ((iVar2 == 0) || (iVar2 = (**(code **)(param_1 + 0x28))(iVar1), iVar2 == 0)) break;
-        piVar5 = (int *)FUN_005c4bb0(piVar3[1],*(uint *)(*piVar3 + 4) | 0x30000);
-        *piVar5 = iVar2;
-        (**(code **)(*piVar3 + 0x18))(iVar2);
-        (**(code **)(param_1 + 0x1c))(iVar2);
-        if (param_2 == 0) {
-          return piVar3;
-        }
-      }
-      if (piVar3 == *(int **)(*piVar3 + 0x14)) {
-        *(undefined4 *)(*piVar3 + 0x14) = 0;
-      }
-      iVar1 = *piVar3;
-      piVar5 = (int *)FUN_0055dec0(*(undefined4 *)(iVar1 + 0x10));
-      piVar6 = (int *)FUN_005c4e10(*(undefined4 *)(iVar1 + 0x10));
-      do {
-        if (piVar5 == piVar6) {
-LAB_00558fd8:
-          puVar7 = (undefined4 *)FUN_005c4e10(piVar3[1]);
-          for (puVar4 = (undefined4 *)FUN_0055dec0(piVar3[1]); puVar4 != puVar7; puVar4 = puVar4 + 1
-              ) {
-            (**(code **)(*piVar3 + 0x1c))(*puVar4);
-          }
-          FUN_005c4d50(piVar3[1]);
-          (**(code **)(DAT_007d3ff8 + 0x10c))(piVar3);
-          return (int *)0x0;
-        }
-        if (piVar3 == (int *)*piVar5) {
-          iVar2 = FUN_0055deb0(*(undefined4 *)(iVar1 + 0x10));
-          piVar6 = (int *)FUN_005c4df0(*(undefined4 *)(iVar1 + 0x10),iVar2 + -1);
-          *piVar5 = *piVar6;
-          FUN_005c4d20(*(undefined4 *)(iVar1 + 0x10),1);
-          goto LAB_00558fd8;
-        }
-        piVar5 = piVar5 + 1;
-      } while( true );
+    uint version;
+    uint size;
+    Err_00558df0 err;
+    int count;
+    int dict;
+    int *slot;
+    int entry;
+    int list;
+    int *p;
+    int *end;
+
+    if (!FUN_004cc5e0(stream, 1, &size, &version)) {
+        return 0;
     }
-    FUN_005c4d50(piVar3[1]);
-  }
-  (**(code **)(DAT_007d3ff8 + 0x10c))(piVar3);
-  return (int *)0x0;
+    if (version < *(uint *)(desc + 0xc)) {
+        return F1_00558df0(desc, 0x2c)(stream);
+    }
+    if (FUN_004cbd30(stream, &count, size) == 0) {
+        return 0;
+    }
+    dict = (*(Alloc_00558df0 *)(DAT_007d3ff8 + 0x108))(8, *(uint *)(desc + 4) | 0x30000);
+    if (dict == 0) {
+        err.a = 0x1bf;
+        err.b = FUN_004d7ff0(0x80000013, 8);
+        FUN_004d8480(&err);
+        return 0;
+    }
+    *(int *)(dict + 4) = FUN_005c4ad0(4, *(uint *)(desc + 4) | 0x30000);
+    if (*(int *)(dict + 4) == 0) {
+        (*(Fn1_00558df0 *)(DAT_007d3ff8 + 0x10c))(dict);
+        return 0;
+    }
+    *(int *)dict = desc;
+    slot = (int *)FUN_005c4bb0(*(int *)(desc + 0x10), *(uint *)(desc + 4) | 0x30000);
+    if (slot == 0) {
+        FUN_005c4d50(*(int *)(dict + 4));
+        (*(Fn1_00558df0 *)(DAT_007d3ff8 + 0x10c))(dict);
+        return 0;
+    }
+    *slot = dict;
+    if (count == 0) {
+        return dict;
+    }
+    do {
+        count--;
+        if (!FUN_004cc5e0(stream, *(int *)(desc + 8), &size, &version)) {
+            goto fail;
+        }
+        entry = F1_00558df0(desc, 0x28)(stream);
+        if (entry == 0) {
+            goto fail;
+        }
+        *(int *)FUN_005c4bb0(*(int *)(dict + 4), *(uint *)(*(int *)dict + 4) | 0x30000) = entry;
+        F1_00558df0(*(int *)dict, 0x18)(entry);
+        F1_00558df0(desc, 0x1c)(entry);
+    } while (count != 0);
+    return dict;
+fail:
+    if (dict == *(int *)(*(int *)dict + 0x14)) {
+        *(int *)(*(int *)dict + 0x14) = 0;
+    }
+    list = *(int *)dict;   /* desc; its +0x10 list is re-read at every call, as 0x00558f8a..0x00558fcc do */
+    p = (int *)FUN_0055dec0(*(int *)(list + 0x10));
+    end = (int *)FUN_005c4e10(*(int *)(list + 0x10));
+    for (; p != end; p++) {
+        if (*p == dict) {
+            *p = *(int *)FUN_005c4df0(*(int *)(list + 0x10), FUN_0055deb0(*(int *)(list + 0x10)) - 1);
+            FUN_005c4d20(*(int *)(list + 0x10), 1);
+            break;
+        }
+    }
+    end = (int *)FUN_005c4e10(*(int *)(dict + 4));
+    for (p = (int *)FUN_0055dec0(*(int *)(dict + 4)); p != end; p++) {
+        F1_00558df0(*(int *)dict, 0x1c)(*p);
+    }
+    FUN_005c4d50(*(int *)(dict + 4));
+    (*(Fn1_00558df0 *)(DAT_007d3ff8 + 0x10c))(dict);
+    return 0;
 }

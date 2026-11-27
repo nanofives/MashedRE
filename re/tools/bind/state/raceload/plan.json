@@ -1517,6 +1517,111 @@
 [],
 []
 ],
+"004e99b0": [
+"bind",
+"re/match/rwl02/004e99b0.c",
+"provisional",
+[
+"004cbd30",
+"004cc5e0",
+"004d7ff0",
+"004d8000",
+"004d8480",
+"004e1b60",
+"004e1c90",
+"004e51e0",
+"004e5280",
+"004e5300",
+"004e5700",
+"004e5820",
+"004e8090",
+"004e9e40",
+"004ea220",
+"004f3e90"
+],
+[]
+],
+"004e9e40": [
+"bind",
+"re/match/rwl02/004e9e40.c",
+"provisional",
+[
+"004cbd30",
+"004cc5e0",
+"004cc790",
+"004d7ff0",
+"004d8000",
+"004d8480",
+"004e1b60",
+"004e1c90",
+"004e4f70",
+"004e5020"
+],
+[]
+],
+"004ea220": [
+"bind",
+"re/match/rwl02/004ea220.c",
+"provisional",
+[
+"004cbd30",
+"004cc5e0",
+"004d7ff0",
+"004d8480",
+"004e4f70",
+"004e5020",
+"004e9e40"
+],
+[]
+],
+"004e51e0": [
+"bind",
+"re/match/rwl02/004e51e0.c",
+"provisional",
+[],
+[]
+],
+"004e5280": [
+"bind",
+"re/match/rwl02/004e5280.c",
+"match",
+[],
+[]
+],
+"00558df0": [
+"bind",
+"re/match/rwl05/00558df0.c",
+"provisional",
+[
+"004cbd30",
+"004cc5e0",
+"004d7ff0",
+"004d8480",
+"0055deb0",
+"0055dec0",
+"005c4ad0",
+"005c4bb0",
+"005c4d20",
+"005c4d50",
+"005c4df0",
+"005c4e10"
+],
+[]
+],
+"005c4d20": [
+"bind",
+"re/match/s28/005c4d20.c",
+"match",
+[],
+[]
+],
+"005c4e10": [
+"bind",
+"re/match/s28/005c4e10.c",
+"match",
+[],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -2343,6 +2448,81 @@
 "005c1d63": [
 "stop"
 ],
+"004d8000": [
+"reuse",
+"RwCore_004d8000",
+"RwCore/RwCore_004d8000.cpp"
+],
+"004e1b60": [
+"reuse",
+"RwCore_004e1b60",
+"RwCore/RwCore_004e1b60.cpp"
+],
+"004e1c90": [
+"reuse",
+"RwCore_004e1c90",
+"RwCore/RwCore_004e1c90.cpp"
+],
+"004e5300": [
+"reuse",
+"RwCore_004e5300",
+"RwCore/RwCore_004e5300.cpp"
+],
+"004e5700": [
+"reuse",
+"RwCore_004e5700",
+"RwCore/RwCore_004e5700.cpp"
+],
+"004e5820": [
+"reuse",
+"RwCore_004e5820",
+"RwCore/RwCore_004e5820.cpp"
+],
+"004f3e90": [
+"reuse",
+"RwCoreLift_004f3e90",
+"RwCore/RwCore_Lifted_04.cpp"
+],
+"004e4f70": [
+"reuse",
+"RwCore_004e4f70",
+"RwCore/RwCore_004e4f70.cpp"
+],
+"004e5020": [
+"reuse",
+"RwCore_004e5020",
+"RwCore/RwCore_004e5020.cpp"
+],
+"0055deb0": [
+"reuse",
+"RwCore_0055deb0",
+"RwCore/RwCore_0055deb0.cpp"
+],
+"0055dec0": [
+"reuse",
+"UtilDeref55dec0",
+"Util/UtilLeaves_ab6.cpp"
+],
+"005c4ad0": [
+"reuse",
+"RwCore_005c4ad0",
+"RwCore/RwCore_005c4ad0.cpp"
+],
+"005c4bb0": [
+"reuse",
+"RwCore_005c4bb0",
+"RwCore/RwCore_005c4bb0.cpp"
+],
+"005c4d50": [
+"reuse",
+"Orig_005c4d50",
+"Match/PortTop_005c4d50.cpp"
+],
+"005c4df0": [
+"reuse",
+"RwCore_005c4df0",
+"RwCore/RwCore_005c4df0.cpp"
+],
 "0047cdc0": [
 "bind",
 "re/match/s13/0047cdc0.c",
@@ -3080,11 +3260,6 @@
 ],
 []
 ],
-"0055dec0": [
-"reuse",
-"UtilDeref55dec0",
-"Util/UtilLeaves_ab6.cpp"
-],
 "0057c220": [
 "bind",
 "re/match/rwl06/0057c220.c",
@@ -3182,9 +3357,6 @@
 "reuse",
 "Orig_004b3d80",
 "Match/PortTop_004b3d80.cpp"
-],
-"00558df0": [
-"stop"
 ],
 "004b3cc0": [
 "bind",
@@ -3413,11 +3585,6 @@
 [],
 []
 ],
-"0055deb0": [
-"reuse",
-"RwCore_0055deb0",
-"RwCore/RwCore_0055deb0.cpp"
-],
 "0055fe10": [
 "bind",
 "re/match/rwl05/0055fe10.c",
@@ -3616,9 +3783,6 @@
 "RwCore/RwCore_004e66d0.cpp"
 ],
 "00545340": [
-"stop"
-],
-"004e99b0": [
 "stop"
 ],
 "004cf7d0": [

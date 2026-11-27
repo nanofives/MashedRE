@@ -191,6 +191,9 @@ EXE_BODY = {
     # ORIGTOP-ONLY copy of each is a DUP-IN-TARGET the lint does not pair)
     '00552750': ('Orig_00552750', 'Match/PortTop_00552750.cpp'),
     '005c4d30': ('Orig_005c4d30', 'Match/PortTop_005c4d30.cpp'),
+    # RACE-LOAD-004E99B0 (run 57, L-184): the race load reaches 0x005518f0 from RwCore_005515a0 after Lake.dff; its C4 match body is
+    # the raceload C unit (re/match/rwtb/005518f0.c, BIND-CUNCLEAN-AS-C), so the core callers bind to it instead of a missing stop
+    '005518f0': ('PortTop_Bound_005518f0', 'Match/PortTop_005518f0.c'),
 }
 # RWC-BIND-4C5890 (L-129 b): RW-band RVAs whose callers in other TUs bind to an exe binding entry instead of the body.
 # The body is still generated as RwCore_<rva> from its source; every top-down caller (RW core and game) reaches the

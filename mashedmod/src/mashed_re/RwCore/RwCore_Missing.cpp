@@ -138,9 +138,8 @@ int RwCoreMissing_0054a452() { RwCore_Stop(0x0054a452u, 0x52570000u | 130u); ret
 int RwCoreMissing_0054a575() { RwCore_Stop(0x0054a575u, 0x52570000u | 131u); return 0; }
 int RwCoreMissing_005508ee() { RwCore_Stop(0x005508eeu, 0x52570000u | 132u); return 0; }
 int RwCoreMissing_00551770() { RwCore_Stop(0x00551770u, 0x52570000u | 133u); return 0; }
-int RwCoreMissing_005518f0() { RwCore_Stop(0x005518f0u, 0x52570000u | 134u); return 0; }
-int RwCoreMissing_0057c3a0() { RwCore_Stop(0x0057c3a0u, 0x52570000u | 135u); return 0; }
-int RwCoreMissing_0057c3f0() { RwCore_Stop(0x0057c3f0u, 0x52570000u | 136u); return 0; }
-int RwCoreMissing_0057c590() { RwCore_Stop(0x0057c590u, 0x52570000u | 137u); return 0; }
+int RwCoreMissing_0057c3a0() { RwCore_Stop(0x0057c3a0u, 0x52570000u | 134u); return 0; }
+int RwCoreMissing_0057c3f0() { RwCore_Stop(0x0057c3f0u, 0x52570000u | 135u); return 0; }
+int RwCoreMissing_0057c590() { RwCore_Stop(0x0057c590u, 0x52570000u | 136u); return 0; }
 }
 #endif // MASHED_STANDALONE

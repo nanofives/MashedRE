@@ -161,3 +161,13 @@
 004b65e0
 004b67e0
 005507a0
+# RACE-LOAD-004E99B0 (run 57, L-184): the RW world stream read 0x004e99b0 (caller 0x004b3c60) and its provisional callees 0x004e9e40, 0x004ea220, 0x004e51e0 (verify/raceload_99b0_20261127/RESULT_RACE-LOAD-004E99B0.md)
+004e99b0
+004e9e40
+004ea220
+004e51e0
+004e5280
+00558df0
+# RACE-LOAD-004E99B0: C4 list helpers called by 0x00558df0
+005c4d20
+005c4e10

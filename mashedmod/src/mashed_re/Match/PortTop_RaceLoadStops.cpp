@@ -126,10 +126,6 @@ int PortTop_RLStop_004cf2b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_004cf7d0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004cf7d0u, "0x004b3d20", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004cf7d0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004e99b0: declared undefined4 by 0x004b3c60; no matched or admitted source
-int PortTop_RLStop_004e99b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004e99b0u, "0x004b3c60", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004e99b0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00545260: declared undefined4 by 0x004b3cc0; no matched or admitted source
 int PortTop_RLStop_00545260(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00545260u, "0x004b3cc0", n, _ReturnAddress(), ex);
@@ -150,10 +146,6 @@ int PortTop_RLStop_00557a60(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_00558cb0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00558cb0u, "0x005518f0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00558cb0u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00558df0: declared undefined4 by 0x0042a740; no matched or admitted source
-int PortTop_RLStop_00558df0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00558df0u, "0x0042a740", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00558df0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 00559560: declared int by 0x00559b50; not bound here (--roots-only): matched source re/match/rwl05/00559560.c
 int PortTop_RLStop_00559560(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00559560u, "0x00559b50", n, _ReturnAddress(), ex);

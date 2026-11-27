@@ -15,7 +15,7 @@
 #define FUN_005516e0 RwCoreLift_005516e0
 #define FUN_00551770 RwCoreMissing_00551770
 #define FUN_00551840 RwCore_00551840
-#define FUN_005518f0 RwCoreMissing_005518f0
+#define FUN_005518f0 PortTop_Bound_005518f0
 #define FUN_00551bf0 RwCoreLift_00551bf0
 extern "C" {
 #include "../../../../re/match/rwl04/005515a0.c"

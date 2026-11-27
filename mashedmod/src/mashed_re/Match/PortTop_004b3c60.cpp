@@ -9,7 +9,7 @@
 #define FUN_004cc160 PortTop_RwStreamClose_004cc160   // exe body (Match/PortTop_RwStream04F.cpp)
 #define FUN_004cc230 PortTop_RwStreamOpen_004cc230   // exe body (Match/PortTop_RwStream04F.cpp)
 #define FUN_004cc5e0 RwCore_004cc5e0   // exe body (RwCore/RwCore_004cc5e0.cpp)
-#define FUN_004e99b0 PortTop_RLStop_004e99b0   // named stop
+#define FUN_004e99b0 PortTop_Bound_004e99b0
 extern "C" {
 #include "../../../../re/match/s18/004b3c60.c"
 }
