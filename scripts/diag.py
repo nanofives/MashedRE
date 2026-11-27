@@ -435,6 +435,22 @@ def _list_worktrees():
             if os.path.normcase(os.path.normpath(w["path"])) != main_path]
 
 
+def _close_step_root(wt):
+    """Row close (HB-MASHEDWT-ROOT-CLEANUP): delete D:\MashedWT\<step>_root*\original of the removed
+    worktree. Refuses (and says why) when another root links into it, it is a fixed tool root, it was
+    written in the last 7 days or a live process names it. Never recurses through a junction."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import mashedwt_cleanup as mc
+        step = os.path.basename(wt.rstrip("\\/"))
+        if step.endswith("_wt"):
+            step = step[:-3]
+        for root, st, nb, note in mc.cleanup_for_step(step):
+            print(f"wt-remove: root {root}: {st} {nb / 1e9:.3f} GB: {note}")
+    except Exception as e:  # cleanup must never fail the row close
+        print(f"wt-remove: root cleanup skipped: {e}")
+
+
 def cmd_wt_remove(args):
     """The ONLY sanctioned way to remove worktrees. NEVER uses --force.
 
@@ -465,6 +481,7 @@ def cmd_wt_remove(args):
                   "(it wipes junction targets like original/).")
             return 1
         sh(["git", "worktree", "prune"])
+        _close_step_root(wt)
         return 0
 
     # --all-stale: deepest paths first so nested worktrees go before parents.
@@ -493,6 +510,8 @@ def cmd_wt_remove(args):
                 continue
         ok, msg = _safe_remove_wt(wt)
         (removed if ok else kept).append(f"{wt} [{msg}]")
+        if ok:
+            _close_step_root(wt)
     sh(["git", "worktree", "prune"])
     print(f"wt-remove --all-stale: removed {len(removed)}, kept {len(kept)}")
     for line in removed:

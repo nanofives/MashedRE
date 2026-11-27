@@ -90,7 +90,7 @@ PROFILE_DEFAULTS = dict(
     c_emit=True, listing='full', stops={'style': 'count'}, stops_subst=[], hdr=None, header=None, stop_force_note=None,
     refs_file=None, foreign_keep_marks=[], stop_reasons=None, static_stop=False, group_same_source=False,
     held_external=False, thunk_names=False, bindings_keep_missing=False, root_external={},
-    local_shared_note='', local_bound_note='', bindings_roots=None, bindings_root_caller=None,
+    local_shared_note='', local_bound_note='', bindings_roots=None, bindings_root_caller=None, bindings_tag=None,
     selftest_order=99, selftest_roots_only=False, selftest_bindings=False,
     # BIND-BULK-PROFILE (2026-11-21), the keys the RACE-BIND-C4-BULK cp1 generator (bulk_bind_gen.py) needed:
     #   force_roots false        a root that already has an exe body is reused, never bound twice
@@ -1260,7 +1260,7 @@ def cmd_bindings(a):
         called = {c for v in plan.values() if v[0] == 'bind' for c in v[3] + v[4]}
         rc = P['bindings_root_caller']
         lv = int(lines[idx[rc]].split('\t')[5]) + 1 if rc in idx else 1
-        roots = [(r, lv, rc) for r in sorted(plan) if r not in called]
+        roots = [(r, lv, rc or '') for r in sorted(plan) if r not in called]
     level, caller = {}, {}
     q = list(roots)
     while q:   # level / caller by BFS from the roots (default level 3 for the rest, as bindings_update.py did)
@@ -1273,7 +1273,9 @@ def cmd_bindings(a):
                 q.append((cc, lv + 1, '0x' + r))
     ADM = {l.split('\t')[0][2:].lower() for l in open('re/match/ADMITTED.tsv', encoding='utf-8') if l.startswith('0x')}
     skip = {r for r, _, _ in P['bindings_roots']} if P['bindings_roots'] else set()
-    tag = a.step or P['bindings_tag']
+    tag = a.step or P['bindings_tag'] or P['own_tag']
+    if not tag:
+        sys.exit('profile %s: no bindings_tag, own_tag or --step for the BINDINGS.tsv notes' % a.profile)
     upd = add = 0
     for r, pr in sorted(plan.items()):
         if r in skip:
@@ -1587,6 +1589,62 @@ def selftest_history(b):
     return len(unnamed) + len(stale)
 
 
+def moved_cause(old, new):
+    """BIND-MOVED-TSV-AUTO: the cause text of one moved line, from the two listing lines: the kind change and, when the
+    plan now binds or reuses a PortTop body, the RVA it is bound as ("RVA now bound")."""
+    ok = old.split(' ')[1] if old != '-' and len(old.split(' ')) > 1 else '-'
+    nk = new.split(' ')[1] if new != '-' and len(new.split(' ')) > 1 else '-'
+    m = re.search(r'PortTop_Bound_([0-9a-f]{8})', new)
+    t = '%s -> %s' % (ok, nk)
+    if m and nk in ('bind', 'reuse'):
+        t += ', now bound as PortTop_Bound_%s (RVA 0x%s)' % (m.group(1), m.group(1))
+    return t
+
+
+def cmd_moved(a):
+    """BIND-MOVED-TSV-AUTO (RULE 3): append to state/<profile>/<moved> a line for every listing line that moved from the
+    frozen listing and is not named yet (only --rva ones when given), with its cause (--cause text first, then the
+    automatic kind change and RVA now bound), and a totals line carrying the current totals. Existing lines stay as
+    written (the reader keeps the last row of a key)."""
+    P = PROFILES[a.profile]
+    h = P['selftest_history']
+    if not h:
+        sys.exit('profile %s has no selftest_history' % a.profile)
+    b = Binder(a.profile, profile_roots(a.profile).split(','), roots_only=P['selftest_roots_only'])
+    b.build_plan()
+    mp = os.path.join(b.sd, h['moved'])
+    text = open(mp, encoding='utf-8', newline='').read() if os.path.exists(mp) else ''
+    nl = '\r\n' if '\r\n' in text else '\n'
+    named = {}
+    for l in text.splitlines():
+        f = l.split('\t')
+        if len(f) >= 3 and not l.startswith('#') and f[0] != 'rva':
+            named[f[0]] = (f[1], f[2])
+    want = {r.lower() for r in a.rva} if a.rva else None
+    out, tot = [], None
+    for k, o, n in history_moves(b):
+        if k == 'totals':
+            tot = (o, n)
+        elif named.get(k) != (o, n) and (want is None or k in want):
+            c = moved_cause(o, n)
+            out.append('\t'.join([k, o, n, (a.cause + ': ' if a.cause else '') + c]))
+    if want:
+        miss = want - {l.split('\t')[0] for l in out} - set(named)
+        for r in sorted(miss):
+            print('   --rva %s: not moved from the frozen listing, nothing written' % r)
+    if tot and out:
+        out.append('\t'.join(['totals', tot[0], tot[1], 'plan totals after the moves (%s; supersedes the totals rows above)'
+                              % (a.cause or 'porttop_bind.py moved')]))
+    for l in out:
+        print(l)
+    print('moved: %d line(s) %s' % (len(out), 'would be added (dry run)' if a.dry else 'added to ' + mp))
+    if out and not a.dry:
+        if text and not text.endswith('\n'):
+            text += nl
+        open(mp, 'w', encoding='utf-8', newline='').write(text + nl.join(out) + nl)
+    return 0
+
+
 def selftest_libs():
     """BIND-LIB-ROUTE: every lib rule (shared and per profile) resolves to one non-static definition in its library."""
     bad, n = 0, 0
@@ -1731,6 +1789,8 @@ def main():
     s = sp.add_parser('index'); s.add_argument('--profile', choices=sorted(PROFILES)); s.add_argument('--out')
     s = sp.add_parser('refs'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
     s.add_argument('--dry', action='store_true')
+    s = sp.add_parser('moved'); s.add_argument('--profile', required=True, choices=sorted(PROFILES))
+    s.add_argument('--rva', nargs='*'); s.add_argument('--cause'); s.add_argument('--dry', action='store_true')
     sp.add_parser('selftest')
     a = ap.parse_args()
     if not os.path.exists('hooks.csv') or not os.path.exists(RSP):
@@ -1738,7 +1798,7 @@ def main():
     return {'plan': lambda: cmd_plan(a, False), 'write': lambda: cmd_plan(a, True), 'externs': lambda: cmd_externs(a),
             'sync': lambda: cmd_sync(a), 'bindings': lambda: cmd_bindings(a), 'unclean': lambda: cmd_unclean(a),
             'samesrc': lambda: cmd_samesrc(a), 'prune': lambda: cmd_prune(a), 'index': lambda: cmd_index(a),
-            'selftest': lambda: cmd_selftest(a), 'refs': lambda: cmd_refs(a)}[a.cmd]()
+            'selftest': lambda: cmd_selftest(a), 'moved': lambda: cmd_moved(a), 'moved': lambda: cmd_moved(a), 'refs': lambda: cmd_refs(a)}[a.cmd]()
 
 
 if __name__ == '__main__':

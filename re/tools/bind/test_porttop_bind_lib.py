@@ -129,6 +129,32 @@ def bindings():
 
 
 @case
+def moved():
+    """BIND-MOVED-TSV-AUTO: cmd_moved appends a line with cause + RVA now bound and a totals line, once."""
+    d = tempfile.mkdtemp(prefix='moved_')
+    keep = (pb.Binder, pb.history_moves, pb.profile_roots)
+    try:
+        class FakeB:
+            def __init__(s, *a, **k): s.sd = d
+            def build_plan(s): pass
+        mv = [('00400100', '00400100 stop  C2 FUN_00400100', '00400100 reuse PortTop_Bound_00400100 C4 FUN_00400100'),
+              ('totals', 'Counter({})', 'Counter({})')]
+        pb.Binder, pb.history_moves, pb.profile_roots = FakeB, (lambda b: mv), (lambda p: '00400100')
+        ns = argparse.Namespace(profile='bulk', rva=None, cause='TESTROW', dry=False)
+        with contextlib.redirect_stdout(io.StringIO()):
+            pb.cmd_moved(ns)
+            pb.cmd_moved(ns)   # second run adds nothing
+        mp = os.path.join(d, pb.PROFILES['bulk']['selftest_history']['moved'])
+        lines = open(mp).read().splitlines()
+        f = lines[0].split(chr(9))
+        return (len(lines) == 2 and f[0] == '00400100' and 'TESTROW: stop -> reuse' in f[3]
+                and 'RVA 0x00400100' in f[3] and lines[1].startswith('totals' + chr(9)))
+    finally:
+        pb.Binder, pb.history_moves, pb.profile_roots = keep
+        shutil.rmtree(d, ignore_errors=True)
+
+
+@case
 def link():
     if not os.path.exists(pb.VCVARS):
         print('   link: SKIPPED (no %s)' % pb.VCVARS)
