@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-27  0x004b6630  FUN_004b6630  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6630.c; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6f90  FUN_004b6f90  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6f90.c; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6f60  FUN_004b6f60  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6f60.c; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6ba0  FUN_004b6ba0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6ba0.c; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6ed0  FUN_004b6ed0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6ed0.c; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
 2026-11-27  0x004b6ba0  FUN_004b6ba0  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x4c; DAT_008ad860 += 1, __stricmp 0x004b6b10 over the 0x0090dac0 entry table; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
 2026-11-27  0x004b6ed0  FUN_004b6ed0  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x38; modes 1 / 2 / 3 on +0x20070, two calls to 0x004b6b00; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
 2026-11-27  0x004b6f90  FUN_004b6f90  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x44; DAT_008ad874 += 1, compares +0x20070 with entry +0x78; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
