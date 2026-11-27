@@ -1,0 +1,7 @@
+[1/6] audio old: updated 0 added 0 | new: updated 0 added 0 | BINDINGS.tsv written IDENTICAL
+[2/6] bulk old: updated 0 added 0 | new: updated 0 added 0 | BINDINGS.tsv written IDENTICAL
+[3/6] gates old: updated 2 added 9 | new: updated 2 added 9 | BINDINGS.tsv written IDENTICAL
+[4/6] raceframe old: updated 4 added 14 | new: updated 4 added 14 | BINDINGS.tsv written IDENTICAL
+[5/6] raceload old: updated 14 added 282 | new: updated 14 added 282 | BINDINGS.tsv written DIFFERENT
+[6/6] renderframe old: updated 0 added 0 | new: updated 0 added 0 | BINDINGS.tsv written IDENTICAL
+bindings old vs new: FAIL 1
