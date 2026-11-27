@@ -266,7 +266,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00550390	RtFSManagerClose	shim	MashedRw_RtFSManagerClose_00550390	LibRw/RwApiBind.cpp: no-op (no RtFSManager in librw). Also called by 0x004938c0	3	0x00493710
 0x004c9eb0	DeviceModeBestBelowSet	shim	MashedRw_D3D9SetRefreshRate_004c9eb0	LibRw/RwApiBind.cpp: keeps the value (0x3c); the exe device is windowed	3	0x00493710
 0x004c9f60	FUN_004c9f60	shim	MashedRw_D3D9Set7d413c_004c9f60	LibRw/RwApiBind.cpp: keeps the value; RW D3D9-driver setting with no librw equivalent	3	0x00493710
-0x00495780	HardwareInstallFileSystem	matched	PortTop_Bound_00495780	RACE-LOAD-004E99B0: re/match/s16/00495780.c (c4=match), Match/PortTop_00495780.cpp	3	0x00493710
+0x00495780	HardwareInstallFileSystem	missing	PortTop_Missing_00495780	Match/PortTop_00493710.cpp: no-op (0x004955d0 unported; no RtFSManager in librw)	3	0x00493710
 0x00495270	HWNDGet	matched	HWNDGet	Match/MatchS16_00495270.cpp, now also in the exe list	3	0x00493710
 0x00499710	Global7e9584Get	matched	Global7e9584Get	Match/MatchS16_00499710.cpp, now also in the exe list	4	0x00495270
 0x00493640	RenderwareAttachPlugins	shim	MashedRw_AttachPlugins_00493640	PORT-TOP-04I: LibRw/RwApiBind.cpp (TOP-03): now also stores 0x70, the PTank record's plugin slot, at 0x007dc57c (RpPTankPluginAttach's offset)	2	0x00493710
@@ -704,11 +704,11 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0047d150	FUN_0047d150	matched	PortTop_Bound_0047d150	PORT-TOP-AUDIOTICK-STOPS: re/match/s13/0047d150.c (c4=match), Match/PortTop_0047d150.cpp	5	0x0044b000
 0x00493f70	FUN_00493f70	matched	RwCore_00493f70	PORT-TOP-AUDIOTICK-STOPS: existing exe body RwCore/RwCore_00493f70.cpp	4	0x0045dbe0
 0x004943f0	FUN_004943f0	matched	PortTop_Bound_004943f0	PORT-TOP-AUDIOTICK-STOPS: re/match/s15/004943f0.c (c4=match), Match/PortTop_004943f0.cpp	4	0x0045dbe0
-0x004a34b0	FUN_004a34b0	matched	PortTop_PizCrt_strncpy_004a34b0	RACE-LOAD-004E99B0: existing exe body Match/PortTop_00402750_Pieces.cpp	7	0x005a86a0
+0x004a34b0	FUN_004a34b0	missing	PortTop_AStop_004a34b0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	7	0x005a86a0
 0x004b44f0	FUN_004b44f0	matched	PortTop_Bound_004b44f0	PORT-TOP-AUDIOTICK-STOPS: re/match/s18/004b44f0.c (c4=match), Match/PortTop_004b44f0.cpp	4	0x0045f5f0
 0x00534870	FUN_00534870	matched	RwCore_00534870	PORT-TOP-AUDIOTICK-STOPS: existing exe body RwCore/RwCore_00534870.cpp	5	0x00472650
 0x005459c0	FUN_005459c0	missing	PortTop_AStop_005459c0	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	4	0x00464e10
-0x0057c210	FUN_0057c210	missing	PortTop_RLStop_0057c210	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	6	0x0047d150
+0x0057c210	FUN_0057c210	missing	PortTop_AStop_0057c210	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	6	0x0047d150
 0x005a66d0	FUN_005a66d0	matched	PortTop_Bound_005a66d0	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005a66d0.c (c4=match), Match/PortTop_005a66d0.cpp	4	0x0045e460
 0x005a6d60	FUN_005a6d60	near-match	PortTop_Bound_005a6d60	AUDIO-STACK-5-UNMATCHED-BOUND: L-126 PROVISIONAL body, NOT matched (re/match/PROVISIONAL.tsv, port axis only, never C4 by this status; hooks.csv C4 by c4=frida-replay is the RE axis, equiv NOT-PROVEN, verify/audio_20261114/RESULT_AUDIO-STACK-5-UNMATCHED-BOUND.md): re/match/s25/005a6d60.c, Match/PortTop_005a6d60.cpp	4	0x0045e460
 0x005a6d90	FUN_005a6d90	matched	PortTop_Bound_005a6d90	PORT-TOP-AUDIOTICK-STOPS: re/match/s25/005a6d90.c (c4=match), Match/PortTop_005a6d90.cpp	8	0x005a6e10
@@ -1537,11 +1537,11 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00491490	FUN_00491490	matched	PortTop_Bound_00491490	PORT-TOP-06: re/match/s15/00491490.c (c4=match), Match/PortTop_00491490.cpp	4	0x00426ab0
 0x004922e0	FUN_004922e0	matched	PortTop_Bound_004922e0	PORT-TOP-06: re/match/s15/004922e0.c (c4=match), Match/PortTop_004922e0.cpp	5	0x00410d10
 0x00493590	FUN_00493590	matched	PortTop_Bound_00493590	PORT-TOP-06: re/match/s15/00493590.c (c4=match), Match/PortTop_00493590.cpp	4	0x00403250
-0x004a3384	FUN_004a3384	matched	MashedCrt_acos_004a3384	RACE-LOAD-004E99B0: existing exe body Match/PortTop_CrtMath.cpp	5	0x004252c0
+0x004a3384	FUN_004a3384	missing	PortTop_RFStop_004a3384	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x004252c0
 0x004b4070	FUN_004b4070	matched	RwCore_004b4070	PORT-TOP-06: existing exe body RwCore/RwCore_004b4070.cpp	6	0x004b40f0
 0x004b40f0	FUN_004b40f0	matched	PortTop_Bound_004b40f0	PORT-TOP-06: re/match/s18/004b40f0.c (c4=match), Match/PortTop_004b40f0.cpp	5	0x0048a5d0
 0x004b4510	FUN_004b4510	matched	PortTop_Bound_004b4510	PORT-TOP-06: re/match/s18/004b4510.c (c4=match), Match/PortTop_004b4510.cpp	5	0x00421d20
-0x004b4550	FUN_004b4550	near-match	PortTop_Bound_004b4550	RACE-LOAD-004E99B0: re/match/s18/004b4550.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004b4550.cpp	6	0x0044e0a0
+0x004b4550	FUN_004b4550	missing	PortTop_RFStop_004b4550	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	6	0x0044e0a0
 0x004b47e0	FUN_004b47e0	matched	PortTop_Bound_004b47e0	PORT-TOP-06: re/match/s18/004b47e0.c (c4=match), Match/PortTop_004b47e0.cpp	4	0x004073b0
 0x004b49b0	FUN_004b49b0	missing	PortTop_RFStop_004b49b0	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	9	0x004b4a80
 0x004b4a80	FUN_004b4a80	matched	PortTop_Bound_004b4a80	PORT-TOP-06: re/match/s18/004b4a80.c (c4=match), Match/PortTop_004b4a80.cpp	8	0x004b4b60
@@ -1554,13 +1554,13 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004c1b40	FUN_004c1b40	near-match	PortTop_Bound_004c1b40	PORT-TOP-06: re/match/s19/004c1b40.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_004c1b40.cpp	5	0x0047c160
 0x004c3b30	FUN_004c3b30	matched	RwCore_004c3b30	PORT-TOP-06: existing exe body RwCore/RwCore_004c3b30.cpp	8	0x004762c0
 0x004c3bf0	FUN_004c3bf0	matched	RwCore_004c3bf0	PORT-TOP-06: existing exe body RwCore/RwCore_004c3bf0.cpp	6	0x0040ae30
-0x004c3d90	FUN_004c3d90	near-match	RwCoreLift_004c3d90	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_Lifted_00.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCoreLift_004c3d90; NOT matched, knob path only; one body for the rva)	6	0x0040c690
+0x004c3d90	FUN_004c3d90	missing	PortTop_RFStop_004c3d90	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	6	0x0040c690
 0x004c3df0	FUN_004c3df0	matched	RwV3dTransformPoints	PORT-TOP-06: existing exe body Match/MatchS19_004c3df0.cpp	6	0x00480720
 0x004c45f0	FUN_004c45f0	matched	RwCore_004c45f0	PORT-TOP-06: existing exe body RwCore/RwCore_004c45f0.cpp	5	0x0047d180
 0x004c4d20	FUN_004c4d20	matched	RwCore_004c4d20	PORT-TOP-06: existing exe body RwCore/RwCore_004c4d20.cpp	6	0x0048b7c0
 0x004c5010	FUN_004c5010	matched	RwCore_004c5010	PORT-TOP-06: existing exe body RwCore/RwCore_004c5010.cpp	6	0x0048b7c0
 0x004c51a0	FUN_004c51a0	matched	RwCore_004c51a0	PORT-TOP-06: existing exe body RwCore/RwCore_004c51a0.cpp	4	0x0041c090
-0x004c52f0	FUN_004c52f0	missing	PortTop_RLStop_004c52f0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x0047d180
+0x004c52f0	FUN_004c52f0	missing	PortTop_RFStop_004c52f0	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x0047d180
 0x004e5f90	FUN_004e5f90	matched	RwCore_004e5f90	PORT-TOP-06: existing exe body RwCore/RwCore_004e5f90.cpp	7	0x00558100
 0x004e6680	FUN_004e6680	matched	PortTop_Bound_004e6680	PORT-TOP-LAND-06-RF: existing exe body Match/PortTop_004e6680.cpp	4	0x00401570
 0x004e68a0	FUN_004e68a0	matched	RwCore_004e68a0	PORT-TOP-06: existing exe body RwCore/RwCore_004e68a0.cpp	7	0x00557fb0
@@ -1576,17 +1576,17 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00557fb0	FUN_00557fb0	matched	PortTop_Bound_00557fb0	PORT-TOP-06: re/match/rwl05/00557fb0.c (c4=match), Match/PortTop_00557fb0.cpp	6	0x0044df80
 0x00558100	FUN_00558100	matched	PortTop_Bound_00558100	PORT-TOP-06: re/match/s24/00558100.c (c4=match), Match/PortTop_00558100.cpp	6	0x0044df80
 0x00558140	FUN_00558140	matched	PortTop_Bound_00558140	PORT-TOP-06: re/match/s24/00558140.c (c4=match), Match/PortTop_00558140.cpp	6	0x0044df80
-0x00559c40	FUN_00559c40	missing	PortTop_RLStop_00559c40	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x00421d20
-0x00559ee0	FUN_00559ee0	missing	PortTop_RLStop_00559ee0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	4	0x004222d0
-0x0055ab30	FUN_0055ab30	missing	PortTop_RLStop_0055ab30	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x0047d180
-0x0055ac00	FUN_0055ac00	missing	PortTop_RLStop_0055ac00	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x0047d180
+0x00559c40	FUN_00559c40	missing	PortTop_RFStop_00559c40	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x00421d20
+0x00559ee0	FUN_00559ee0	missing	PortTop_RFStop_00559ee0	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	4	0x004222d0
+0x0055ab30	FUN_0055ab30	missing	PortTop_RFStop_0055ab30	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x0047d180
+0x0055ac00	FUN_0055ac00	missing	PortTop_RFStop_0055ac00	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x0047d180
 0x0055ac50	FUN_0055ac50	matched	PortTop_Bound_0055ac50	PORT-TOP-06: re/match/rwl05/0055ac50.c (c4=match), Match/PortTop_0055ac50.cpp	6	0x0047cea0
 0x0055ad30	FUN_0055ad30	matched	PortTop_Bound_0055ad30	PORT-TOP-06: re/match/rwl05/0055ad30.c (c4=match), Match/PortTop_0055ad30.cpp	6	0x00421750
 0x0055ade0	FUN_0055ade0	matched	PortTop_Bound_0055ade0	PORT-TOP-06: existing exe body Match/PortTop_0055ade0.cpp	5	0x0047d180
 0x0055ae70	FUN_0055ae70	matched	PortTop_Bound_0055ae70	PORT-TOP-06: re/match/rwl05/0055ae70.c (c4=match), Match/PortTop_0055ae70.cpp	5	0x00421d20
 0x0055b650	FUN_0055b650	near-match	PortTop_Bound_0055b650	PORT-TOP-LAND-06-RF: re/match/rwl05/0055b650.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_0055b650.cpp	6	0x00421750
 0x0055dec0	FUN_0055dec0	matched	UtilDeref55dec0	PORT-TOP-06: existing exe body Util/UtilLeaves_ab6.cpp	3	0x004111c0
-0x0055dff0	FUN_0055dff0	missing	PortTop_RLStop_0055dff0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x0047d180
+0x0055dff0	FUN_0055dff0	missing	PortTop_RFStop_0055dff0	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x0047d180
 0x00564c80	FUN_00564c80	missing	PortTop_RFStop_00564c80	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	6	0x0055ae70
 0x00565200	FUN_00565200	missing	PortTop_RFStop_00565200	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	6	0x0055ae70
 0x00565260	FUN_00565260	missing	PortTop_RFStop_00565260	PORT-TOP-06: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	6	0x0055ae70
@@ -1762,7 +1762,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00476860	FUN_00476860	matched	PortTop_Bound_00476860	PORT-TOP-LAND-06-RF: re/match/s12/00476860.c (c4=match), Match/PortTop_00476860.cpp	6	0x004818d0
 0x0047cd50	FUN_0047cd50	missing	PortTop_RFStop_0047cd50	PORT-TOP-LAND-06-RF: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x00481a30
 0x004818d0	FUN_004818d0	near-match	PortTop_Bound_004818d0	PORT-TOP-LAND-06-RF: re/match/s13/004818d0.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_004818d0.cpp	5	0x00481a30
-0x00487280	FUN_00487280	missing	PortTop_RLStop_00487280	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x00481a30
+0x00487280	FUN_00487280	missing	PortTop_RFStop_00487280	PORT-TOP-LAND-06-RF: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x00481a30
 0x00487d00	FUN_00487d00	missing	PortTop_RFStop_00487d00	PORT-TOP-LAND-06-RF: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x00481a30
 0x00487d60	FUN_00487d60	missing	PortTop_RFStop_00487d60	PORT-TOP-LAND-06-RF: named stop (log + exit code = rva, Match/PortTop_RaceFrameStops.cpp). No matched or admitted body	5	0x00481a30
 0x0048a4e0	FUN_0048a4e0	matched	PortTop_Bound_0048a4e0	PORT-TOP-LAND-06-RF: re/match/s14/0048a4e0.c (L-126 admitted, re/match/ADMITTED.tsv, not a byte match), Match/PortTop_0048a4e0.cpp	6	0x004818d0
@@ -1794,7 +1794,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0040d110	FUN_0040d110	matched	PortTop_Bound_0040d110	RACE-BIND-C4-BULK: re/match/topm01/0040d110.c (c4=match), Match/PortTop_0040d110.cpp	1	
 0x00411750	FUN_00411750	matched	PortTop_Bound_00411750	RACE-BIND-C4-BULK: re/match/s02/00411750.c (c4=match), Match/PortTop_00411750.cpp	2	0x00411d90
 0x00411d90	FUN_00411d90	matched	PortTop_Bound_00411d90	RACE-BIND-C4-BULK: re/match/topm01/00411d90.c (c4=match), Match/PortTop_00411d90.cpp	1	
-0x0041a8d0	FUN_0041a8d0	matched	PortTop_Bound_0041a8d0	RACE-LOAD-004E99B0: re/match/s03/h1_0041a4a0.c (c4=match), Match/PortTop_0041a8d0.cpp	2	0x0040d110
+0x0041a8d0	FUN_0041a8d0	missing	PortTop_BulkStop_0041a8d0	RACE-BIND-C4-BULK: named stop (log + exit code = rva, Match/PortTop_BulkStops.cpp). No matched or admitted body	2	0x0040d110
 0x0041e980	FUN_0041e980	matched	PortTop_Bound_0041e980	RACE-BIND-C4-BULK: existing exe body Match/PortTop_0041e980.cpp	1	
 0x0041ecc0	FUN_0041ecc0	matched	PortTop_Bound_0041ecc0	RACE-BIND-C4-BULK: re/match/s04/0041ecc0.c (c4=match), Match/PortTop_0041ecc0.cpp	1	
 0x0041f120	FUN_0041f120	matched	PortTop_Bound_0041f120	RACE-BIND-C4-BULK: re/match/s04/0041f120.c (c4=match), Match/PortTop_0041f120.cpp	1	
@@ -2192,7 +2192,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00551cf0	FUN_00551cf0	matched	RwCore_00551cf0	RACE-BIND-C4-BULK: existing exe body RwCore/RwCore_00551cf0.cpp	1	
 0x00551fd0	FUN_00551fd0	matched	RwCore_00551fd0	RACE-BIND-C4-BULK: existing exe body RwCore/RwCore_00551fd0.cpp	1	
 0x00557d90	FUN_00557d90	matched	PortTop_Bound_00557d90	RACE-BIND-C4-BULK: existing exe body Match/PortTop_00557d90.c	1	
-0x0055b940	FUN_0055b940	missing	PortTop_RLStop_0055b940	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	2	0x004218b0
+0x0055b940	FUN_0055b940	missing	PortTop_BulkStop_0055b940	RACE-BIND-C4-BULK: named stop (log + exit code = rva, Match/PortTop_BulkStops.cpp). No matched or admitted body	2	0x004218b0
 0x0055c4a0	FUN_0055c4a0	matched	PortTop_Bound_0055c4a0	RACE-BIND-C4-BULK: existing exe body Match/PortTop_0055c4a0.cpp	2	0x004218b0
 0x0055c4f0	FUN_0055c4f0	matched	PortTop_Bound_0055c4f0	RACE-BIND-C4-BULK: existing exe body Match/PortTop_0055c4f0.cpp	2	0x004218b0
 0x0055c540	FUN_0055c540	matched	PortTop_Bound_0055c540	RACE-BIND-C4-BULK: existing exe body Match/PortTop_0055c540.cpp	2	0x004218b0
@@ -2217,304 +2217,3 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005c7500	FUN_005c7500	matched	PortTop_Bound_005c7500	RACE-BIND-C4-BULK: re/match/s28/005c7500.c (c4=match), Match/PortTop_005c7500.cpp	1	
 0x005c7570	FUN_005c7570	matched	PortTop_Bound_005c7570	RACE-BIND-C4-BULK: re/match/s28/005c7570.c (c4=match), Match/PortTop_005c7570.cpp	1	
 0x005c75b0	FUN_005c75b0	matched	AudioVoiceField8cGet	RACE-BIND-C4-BULK: existing exe body Audio/AudioLeaves_ab4.cpp	1	
-0x00404e00	FUN_00404e00	matched	IdxPtr404e00	RACE-LOAD-004E99B0: existing exe body Vehicle/CarMaterialTables.cpp	2	0x0040cea0
-0x00404e20	FUN_00404e20	matched	IdxPtr404e20	RACE-LOAD-004E99B0: existing exe body Vehicle/CarMaterialTables.cpp	2	0x0040cea0
-0x004053d0	FUN_004053d0	matched	Orig_004053d0	RACE-LOAD-004E99B0: existing exe body Match/PortTop_00405400.cpp	2	0x00426e10
-0x00405730	FUN_00405730	missing	PortTop_RLStop_00405730	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x0047b7d0
-0x00405780	FUN_00405780	matched	PortTop_Bound_00405780	RACE-LOAD-004E99B0: re/match/s01/00405780.c (c4=match), Match/PortTop_00405780.cpp	5	0x0047b720
-0x00409300	FUN_00409300	matched	PortTop_Bound_00409300	RACE-LOAD-004E99B0: re/match/s01/00409300.c (c4=match), Match/PortTop_00409300.cpp	4	0x004783f0
-0x00409330	FUN_00409330	matched	PortTop_Bound_00409330	RACE-LOAD-004E99B0: re/match/s01/00409330.c (c4=match), Match/PortTop_00409330.cpp	4	0x004783f0
-0x00409680	FUN_00409680	missing	PortTop_RLStop_00409680	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	2	0x00426e10
-0x00409710	FUN_00409710	matched	PortTop_Bound_00409710	RACE-LOAD-004E99B0: existing exe body Match/PortTop_00409710.c	2	0x00426e10
-0x00412050	FUN_00412050	matched	PortTop_Bound_00412050	RACE-LOAD-004E99B0: re/match/s02/00412050.c (c4=match), Match/PortTop_00412050.cpp	2	0x00426e10
-0x0041a5b0	FUN_0041a5b0	matched	PortTop_Bound_0041a5b0	RACE-LOAD-004E99B0: re/match/s03/raw_0041a5b0.c (c4=match), Match/PortTop_0041a5b0.cpp	2	0x0041a8d0
-0x0041a5d0	FUN_0041a5d0	matched	PortTop_Bound_0041a5d0	RACE-LOAD-004E99B0: re/match/s03/h3_0041a5d0.c (c4=match), Match/PortTop_0041a5d0.cpp	2	0x0041a8d0
-0x0041e870	FUN_0041e870	matched	TrackNodeRecordScan	RACE-LOAD-004E99B0: existing exe body Match/MatchS04_0041e870.cpp	2	0x00426e10
-0x0041e8b0	FUN_0041e8b0	matched	PortTop_Bound_0041e8b0	RACE-LOAD-004E99B0: re/match/s04/0041e8b0.c (c4=match), Match/PortTop_0041e8b0.cpp	2	0x00426e10
-0x0041e970	FUN_0041e970	matched	PortTop_Bound_0041e970	RACE-LOAD-004E99B0: re/match/s04/0041e970.c (c4=match), Match/PortTop_0041e970.cpp	2	0x00426e10
-0x0041e9d0	FUN_0041e9d0	matched	PortTop_Bound_0041e9d0	RACE-LOAD-004E99B0: re/match/s04/0041e9d0.c (c4=match), Match/PortTop_0041e9d0.cpp	2	0x00426e10
-0x0041ea90	FUN_0041ea90	matched	PortTop_Bound_0041ea90	RACE-LOAD-004E99B0: re/match/s04/0041ea90.c (c4=match), Match/PortTop_0041ea90.cpp	2	0x00426e10
-0x00423480	FUN_00423480	matched	PortTop_Bound_00423480	RACE-LOAD-004E99B0: re/match/s05/00423480.c (c4=match), Match/PortTop_00423480.cpp	3	0x004235b0
-0x004235b0	FUN_004235b0	matched	PortTop_Bound_004235b0	RACE-LOAD-004E99B0: re/match/s05/004235b0.c (c4=match), Match/PortTop_004235b0.cpp	2	0x00426e10
-0x00425ab0	FUN_00425ab0	matched	PortTop_Bound_00425ab0	RACE-LOAD-004E99B0: re/match/s05/00425ab0.c (c4=match), Match/PortTop_00425ab0.cpp	2	0x00426e10
-0x00425b70	FUN_00425b70	matched	SlotFieldSetter	RACE-LOAD-004E99B0: existing exe body Match/MatchS05_00425b70.cpp	3	0x004262f0
-0x00425b90	FUN_00425b90	matched	PortTop_Bound_00425b90	RACE-LOAD-004E99B0: re/match/s05/00425b90.c (c4=match), Match/PortTop_00425b90.cpp	4	0x00425c00
-0x00425bf0	FUN_00425bf0	missing	PortTop_RLStop_00425bf0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	3	0x004262f0
-0x00425c00	FUN_00425c00	matched	PortTop_Bound_00425c00	RACE-LOAD-004E99B0: re/match/s05/00425c00.c (c4=match), Match/PortTop_00425c00.cpp	3	0x004262f0
-0x004260e0	FUN_004260e0	matched	PortTop_Bound_004260e0	RACE-LOAD-004E99B0: re/match/pilot/a7_004260e0.c (c4=match), Match/PortTop_004260e0.cpp	2	0x00426e10
-0x004262f0	FUN_004262f0	matched	PortTop_Bound_004262f0	RACE-LOAD-004E99B0: re/match/s06/004262f0.c (c4=match), Match/PortTop_004262f0.cpp	2	0x00426e10
-0x00426cd0	FUN_00426cd0	matched	PortTop_Bound_00426cd0	RACE-LOAD-004E99B0: re/match/s06/00426cd0.c (c4=match), Match/PortTop_00426cd0.cpp	2	0x00426e10
-0x00426e10	FUN_00426e10	matched	PortTop_Bound_00426e10	RACE-LOAD-004E99B0: re/match/s06/00426e10.c (c4=match), Match/PortTop_00426e10.cpp	1	0x0040d270
-0x0042a640	FUN_0042a640	matched	PortTop_Bound_0042a640	RACE-LOAD-004E99B0: re/match/s06/0042a640.c (c4=match), Match/PortTop_0042a640.cpp	3	0x00479330
-0x0042a740	FUN_0042a740	matched	PortTop_Bound_0042a740	RACE-LOAD-004E99B0: re/match/s06/0042a740.c (c4=match), Match/PortTop_0042a740.cpp	3	0x00479330
-0x0042a7f0	FUN_0042a7f0	matched	PortTop_Bound_0042a7f0	RACE-LOAD-004E99B0: re/match/s06/0042a7f0.c (c4=match), Match/PortTop_0042a7f0.cpp	3	0x00479330
-0x0042a860	FUN_0042a860	matched	PortTop_Bound_0042a860	RACE-LOAD-004E99B0: re/match/s06/0042a860.c (c4=match), Match/PortTop_0042a860.cpp	3	0x00479330
-0x00430250	FUN_00430250	missing	PortTop_RLStop_00430250	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x0047b280
-0x00440bc0	FUN_00440bc0	matched	PortTop_Bound_00440bc0	RACE-LOAD-004E99B0: re/match/tlr/00440bc0.c (c4=match), Match/PortTop_00440bc0.cpp	3	0x0047a130
-0x0044d6e0	FUN_0044d6e0	matched	PortTop_Bound_0044d6e0	RACE-LOAD-004E99B0: re/match/s08/0044d6e0.c (c4=match), Match/PortTop_0044d6e0.cpp	3	0x00480340
-0x004516d0	FUN_004516d0	matched	PortTop_Bound_004516d0	RACE-LOAD-004E99B0: re/match/s09/004516d0.c (c4=match), Match/PortTop_004516d0.cpp	5	0x00425b90
-0x00451730	FUN_00451730	missing	PortTop_RLStop_00451730	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	4	0x00485460
-0x004576b0	FUN_004576b0	matched	AnyActive4576b0	RACE-LOAD-004E99B0: existing exe body Match/MatchS09_004576b0.cpp	5	0x00458d00
-0x00458630	FUN_00458630	matched	PortTop_Bound_00458630	RACE-LOAD-004E99B0: re/match/s09/00458630.c (c4=match), Match/PortTop_00458630.cpp	5	0x00458dd0
-0x00458d00	FUN_00458d00	matched	PortTop_Bound_00458d00	RACE-LOAD-004E99B0: re/match/s09/00458d00.c (c4=match), Match/PortTop_00458d00.cpp	4	0x00458e00
-0x00458dd0	FUN_00458dd0	matched	PortTop_Bound_00458dd0	RACE-LOAD-004E99B0: re/match/s09/00458dd0.c (c4=match), Match/PortTop_00458dd0.cpp	4	0x00458e00
-0x00458e00	FUN_00458e00	matched	PortTop_Bound_00458e00	RACE-LOAD-004E99B0: re/match/s09/00458e00.c (c4=match), Match/PortTop_00458e00.cpp	3	0x00458fd0
-0x00458fa0	FUN_00458fa0	matched	TtlSet68b1b0	RACE-LOAD-004E99B0: existing exe body Match/MatchS09_00458fa0.cpp	3	0x00458fd0
-0x0045de80	FUN_0045de80	missing	PortTop_RLStop_0045de80	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	3	0x00462950
-0x0045e160	FUN_0045e160	matched	PortTop_Bound_0045e160	RACE-LOAD-004E99B0: re/match/s10/0045e160.c (c4=match), Match/PortTop_0045e160.cpp	3	0x00462950
-0x0045e2a0	FUN_0045e2a0	matched	PortTop_Bound_0045e2a0	RACE-LOAD-004E99B0: re/match/s10/0045e2a0.c (c4=match), Match/PortTop_0045e2a0.cpp	3	0x00462950
-0x00462950	FUN_00462950	near-match	PortTop_Bound_00462950	RACE-LOAD-004E99B0: re/match/s10/00462950.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_00462950.cpp	2	0x00426e10
-0x00471430	FUN_00471430	matched	PortTop_Bound_00471430	RACE-LOAD-004E99B0: re/match/s11/00471430.c (c4=match), Match/PortTop_00471430.cpp	5	0x0047b3c0
-0x00471450	FUN_00471450	matched	PortTop_Bound_00471450	RACE-LOAD-004E99B0: re/match/s11/00471450.c (c4=match), Match/PortTop_00471450.cpp	5	0x0047b3c0
-0x00471490	FUN_00471490	matched	PortTop_Bound_00471490	RACE-LOAD-004E99B0: re/match/s11/00471490.c (c4=match), Match/PortTop_00471490.cpp	5	0x0047b3c0
-0x00471560	FUN_00471560	matched	PortTop_Bound_00471560	RACE-LOAD-004E99B0: re/match/s11/00471560.c (c4=match), Match/PortTop_00471560.cpp	5	0x0047b630
-0x004715a0	FUN_004715a0	matched	PortTop_Bound_004715a0	RACE-LOAD-004E99B0: re/match/pilot/a3_004715a0.c (c4=match), Match/PortTop_004715a0.cpp	2	0x00426e10
-0x00474f30	FUN_00474f30	matched	PortTop_Bound_00474f30	RACE-LOAD-004E99B0: re/match/s12/00474f30.c (c4=match), Match/PortTop_00474f30.cpp	4	0x00474fd0
-0x00474f90	FUN_00474f90	matched	PortTop_Bound_00474f90	RACE-LOAD-004E99B0: re/match/tlr/00474f90.c (c4=match), Match/PortTop_00474f90.cpp	5	0x00474fb0
-0x00474fd0	FUN_00474fd0	matched	PortTop_Bound_00474fd0	RACE-LOAD-004E99B0: re/match/s12/00474fd0.c (c4=match), Match/PortTop_00474fd0.cpp	3	0x00479330
-0x00478110	FUN_00478110	matched	PortTop_Bound_00478110	RACE-LOAD-004E99B0: re/match/s12/00478110.c (c4=match), Match/PortTop_00478110.cpp	3	0x00479330
-0x00478200	FUN_00478200	matched	PortTop_Bound_00478200	RACE-LOAD-004E99B0: re/match/s12/00478200.c (c4=match), Match/PortTop_00478200.cpp	3	0x00479330
-0x004783f0	FUN_004783f0	near-match	PortTop_Bound_004783f0	RACE-LOAD-004E99B0: re/match/s12/004783f0.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_004783f0.cpp	3	0x00478660
-0x004785e0	FUN_004785e0	matched	PortTop_RL_004785e0	RACE-LOAD-004E99B0: existing exe body Match/PortTop_RL_004785e0.cpp	3	0x00478660
-0x00478660	FUN_00478660	near-match	PortTop_Bound_00478660	RACE-LOAD-004E99B0: re/match/s12/00478660.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_00478660.cpp	2	0x00426e10
-0x00478cb0	FUN_00478cb0	matched	PortTop_Bound_00478cb0	RACE-LOAD-004E99B0: re/match/s12/00478cb0.c (c4=match), Match/PortTop_00478cb0.cpp	3	0x0047a020
-0x00478cc0	FUN_00478cc0	matched	RenderWorldStateZeroFill	RACE-LOAD-004E99B0: existing exe body Match/MatchS12_00478cc0.cpp	3	0x00479330
-0x00479030	FUN_00479030	matched	PortTop_Bound_00479030	RACE-LOAD-004E99B0: re/match/s12/00479030.c (c4=match), Match/PortTop_00479030.cpp	3	0x00479330
-0x004790e0	FUN_004790e0	matched	PortTop_RL_004790e0	RACE-LOAD-004E99B0: existing exe body Match/PortTop_RL_004790e0.cpp	3	0x00479330
-0x00479330	FUN_00479330	near-match	PortTop_Bound_00479330	RACE-LOAD-004E99B0: re/match/s12/00479330.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_00479330.cpp	2	0x00426e10
-0x0047a020	FUN_0047a020	near-match	PortTop_Bound_0047a020	RACE-LOAD-004E99B0: re/match/s12/0047a020.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_0047a020.cpp	2	0x00426e10
-0x0047a0f0	FUN_0047a0f0	matched	PortTop_Bound_0047a0f0	RACE-LOAD-004E99B0: re/match/s12/0047a0f0.c (c4=match), Match/PortTop_0047a0f0.cpp	2	0x00426e10
-0x0047a180	FUN_0047a180	matched	PortTop_Bound_0047a180	RACE-LOAD-004E99B0: re/match/s12/0047a180.c (c4=match), Match/PortTop_0047a180.cpp	4	0x00440bc0
-0x0047a1b0	FUN_0047a1b0	matched	PortTop_Bound_0047a1b0	RACE-LOAD-004E99B0: re/match/s12/0047a1b0.c (c4=match), Match/PortTop_0047a1b0.cpp	4	0x00440bc0
-0x0047a1e0	FUN_0047a1e0	matched	PortTop_Bound_0047a1e0	RACE-LOAD-004E99B0: re/match/s12/0047a1e0.c (c4=match), Match/PortTop_0047a1e0.cpp	4	0x00440bc0
-0x0047a280	FUN_0047a280	matched	PortTop_Bound_0047a280	RACE-LOAD-004E99B0: re/match/s12/0047a280.c (c4=match), Match/PortTop_0047a280.cpp	4	0x00440bc0
-0x0047a320	FUN_0047a320	near-match	PortTop_Bound_0047a320	RACE-LOAD-004E99B0: re/match/s12/0047a320.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_0047a320.cpp	4	0x00440bc0
-0x0047a3a0	FUN_0047a3a0	matched	PortTop_Bound_0047a3a0	RACE-LOAD-004E99B0: re/match/s12/0047a3a0.c (c4=match), Match/PortTop_0047a3a0.cpp	4	0x00440bc0
-0x0047a440	FUN_0047a440	matched	PortTop_Bound_0047a440	RACE-LOAD-004E99B0: re/match/s12/0047a440.c (c4=match), Match/PortTop_0047a440.cpp	4	0x00440bc0
-0x0047a4a0	FUN_0047a4a0	matched	PortTop_Bound_0047a4a0	RACE-LOAD-004E99B0: re/match/s12/0047a4a0.c (c4=match), Match/PortTop_0047a4a0.cpp	4	0x00440bc0
-0x0047a540	FUN_0047a540	matched	PortTop_Bound_0047a540	RACE-LOAD-004E99B0: re/match/s12/0047a540.c (c4=match), Match/PortTop_0047a540.cpp	4	0x00440bc0
-0x0047a580	FUN_0047a580	matched	PortTop_Bound_0047a580	RACE-LOAD-004E99B0: re/match/s12/0047a580.c (c4=match), Match/PortTop_0047a580.cpp	4	0x00440bc0
-0x0047a5b0	FUN_0047a5b0	matched	PortTop_Bound_0047a5b0	RACE-LOAD-004E99B0: re/match/s12/0047a5b0.c (c4=match), Match/PortTop_0047a5b0.cpp	4	0x00440bc0
-0x0047a5e0	FUN_0047a5e0	matched	PortTop_Bound_0047a5e0	RACE-LOAD-004E99B0: re/match/s12/0047a5e0.c (c4=match), Match/PortTop_0047a5e0.cpp	4	0x00440bc0
-0x0047a610	FUN_0047a610	matched	PortTop_Bound_0047a610	RACE-LOAD-004E99B0: re/match/s12/0047a610.c (c4=match), Match/PortTop_0047a610.cpp	4	0x00440bc0
-0x0047a6b0	FUN_0047a6b0	matched	PortTop_Bound_0047a6b0	RACE-LOAD-004E99B0: re/match/s12/0047a6b0.c (c4=match), Match/PortTop_0047a6b0.cpp	4	0x00440bc0
-0x0047a6f0	FUN_0047a6f0	matched	PortTop_Bound_0047a6f0	RACE-LOAD-004E99B0: re/match/s12/0047a6f0.c (c4=match), Match/PortTop_0047a6f0.cpp	4	0x00440bc0
-0x0047a720	FUN_0047a720	matched	PortTop_Bound_0047a720	RACE-LOAD-004E99B0: re/match/s12/0047a720.c (c4=match), Match/PortTop_0047a720.cpp	4	0x00440bc0
-0x0047a750	FUN_0047a750	matched	PortTop_Bound_0047a750	RACE-LOAD-004E99B0: re/match/s12/0047a750.c (c4=match), Match/PortTop_0047a750.cpp	4	0x00440bc0
-0x0047a790	FUN_0047a790	matched	PortTop_Bound_0047a790	RACE-LOAD-004E99B0: re/match/s12/0047a790.c (c4=match), Match/PortTop_0047a790.cpp	4	0x00440bc0
-0x0047a7d0	FUN_0047a7d0	matched	PortTop_Bound_0047a7d0	RACE-LOAD-004E99B0: re/match/s12/0047a7d0.c (c4=match), Match/PortTop_0047a7d0.cpp	4	0x00440bc0
-0x0047a7f0	FUN_0047a7f0	matched	PortTop_Bound_0047a7f0	RACE-LOAD-004E99B0: re/match/s12/0047a7f0.c (c4=match), Match/PortTop_0047a7f0.cpp	4	0x00440bc0
-0x0047a810	FUN_0047a810	matched	PortTop_Bound_0047a810	RACE-LOAD-004E99B0: re/match/s12/0047a810.c (c4=match), Match/PortTop_0047a810.cpp	4	0x00440bc0
-0x0047a880	FUN_0047a880	matched	PortTop_Bound_0047a880	RACE-LOAD-004E99B0: re/match/s12/0047a880.c (c4=match), Match/PortTop_0047a880.cpp	4	0x00440bc0
-0x0047a8b0	FUN_0047a8b0	matched	PortTop_Bound_0047a8b0	RACE-LOAD-004E99B0: re/match/s12/0047a8b0.c (c4=match), Match/PortTop_0047a8b0.cpp	4	0x00440bc0
-0x0047a950	FUN_0047a950	matched	PortTop_Bound_0047a950	RACE-LOAD-004E99B0: re/match/s12/0047a950.c (c4=match), Match/PortTop_0047a950.cpp	4	0x00440bc0
-0x0047a9b0	FUN_0047a9b0	matched	PortTop_Bound_0047a9b0	RACE-LOAD-004E99B0: re/match/s12/0047a9b0.c (c4=match), Match/PortTop_0047a9b0.cpp	4	0x00440bc0
-0x0047aa20	FUN_0047aa20	matched	PortTop_Bound_0047aa20	RACE-LOAD-004E99B0: re/match/s12/0047aa20.c (c4=match), Match/PortTop_0047aa20.cpp	4	0x00440bc0
-0x0047aa50	FUN_0047aa50	matched	PortTop_Bound_0047aa50	RACE-LOAD-004E99B0: re/match/s12/0047aa50.c (c4=match), Match/PortTop_0047aa50.cpp	4	0x00440bc0
-0x0047aaa0	FUN_0047aaa0	matched	PortTop_Bound_0047aaa0	RACE-LOAD-004E99B0: re/match/s12/0047aaa0.c (c4=match), Match/PortTop_0047aaa0.cpp	4	0x00440bc0
-0x0047aad0	FUN_0047aad0	matched	PortTop_Bound_0047aad0	RACE-LOAD-004E99B0: re/match/s13/0047aad0.c (c4=match), Match/PortTop_0047aad0.cpp	4	0x00440bc0
-0x0047ab30	FUN_0047ab30	matched	PortTop_Bound_0047ab30	RACE-LOAD-004E99B0: re/match/s13/0047ab30.c (c4=match), Match/PortTop_0047ab30.cpp	4	0x00440bc0
-0x0047abd0	FUN_0047abd0	matched	PortTop_Bound_0047abd0	RACE-LOAD-004E99B0: re/match/s13/0047abd0.c (c4=match), Match/PortTop_0047abd0.cpp	4	0x00440bc0
-0x0047ac80	FUN_0047ac80	matched	PortTop_Bound_0047ac80	RACE-LOAD-004E99B0: re/match/s13/0047ac80.c (c4=match), Match/PortTop_0047ac80.cpp	4	0x00440bc0
-0x0047acd0	FUN_0047acd0	matched	PortTop_Bound_0047acd0	RACE-LOAD-004E99B0: re/match/s13/0047acd0.c (c4=match), Match/PortTop_0047acd0.cpp	4	0x00440bc0
-0x0047ad00	FUN_0047ad00	matched	PortTop_Bound_0047ad00	RACE-LOAD-004E99B0: re/match/s13/0047ad00.c (c4=match), Match/PortTop_0047ad00.cpp	4	0x00440bc0
-0x0047ad40	FUN_0047ad40	matched	PortTop_Bound_0047ad40	RACE-LOAD-004E99B0: re/match/s13/0047ad40.c (c4=match), Match/PortTop_0047ad40.cpp	4	0x00440bc0
-0x0047ade0	FUN_0047ade0	matched	PortTop_Bound_0047ade0	RACE-LOAD-004E99B0: re/match/s13/0047ade0.c (c4=match), Match/PortTop_0047ade0.cpp	4	0x00440bc0
-0x0047ae80	FUN_0047ae80	matched	PortTop_Bound_0047ae80	RACE-LOAD-004E99B0: re/match/s13/0047ae80.c (c4=match), Match/PortTop_0047ae80.cpp	4	0x00440bc0
-0x0047aef0	FUN_0047aef0	matched	PortTop_Bound_0047aef0	RACE-LOAD-004E99B0: re/match/s13/0047aef0.c (c4=match), Match/PortTop_0047aef0.cpp	4	0x00440bc0
-0x0047af50	FUN_0047af50	matched	PortTop_Bound_0047af50	RACE-LOAD-004E99B0: re/match/s13/0047af50.c (c4=match), Match/PortTop_0047af50.cpp	4	0x00440bc0
-0x0047afa0	FUN_0047afa0	matched	PortTop_Bound_0047afa0	RACE-LOAD-004E99B0: re/match/s13/0047afa0.c (c4=match), Match/PortTop_0047afa0.cpp	4	0x00440bc0
-0x0047b000	FUN_0047b000	matched	PortTop_Bound_0047b000	RACE-LOAD-004E99B0: re/match/s13/0047b000.c (c4=match), Match/PortTop_0047b000.cpp	4	0x00440bc0
-0x0047b0a0	FUN_0047b0a0	matched	PortTop_Bound_0047b0a0	RACE-LOAD-004E99B0: re/match/s13/0047b0a0.c (c4=match), Match/PortTop_0047b0a0.cpp	4	0x00440bc0
-0x0047b110	FUN_0047b110	matched	PortTop_Bound_0047b110	RACE-LOAD-004E99B0: re/match/s13/0047b110.c (c4=match), Match/PortTop_0047b110.cpp	4	0x00440bc0
-0x0047b160	FUN_0047b160	matched	PortTop_Bound_0047b160	RACE-LOAD-004E99B0: re/match/s13/0047b160.c (c4=match), Match/PortTop_0047b160.cpp	4	0x00440bc0
-0x0047b1b0	FUN_0047b1b0	matched	PortTop_Bound_0047b1b0	RACE-LOAD-004E99B0: re/match/s13/0047b1b0.c (c4=match), Match/PortTop_0047b1b0.cpp	4	0x00440bc0
-0x0047b200	FUN_0047b200	matched	PortTop_Bound_0047b200	RACE-LOAD-004E99B0: re/match/s13/0047b200.c (c4=match), Match/PortTop_0047b200.cpp	4	0x00440bc0
-0x0047b230	FUN_0047b230	matched	PortTop_Bound_0047b230	RACE-LOAD-004E99B0: re/match/s13/0047b230.c (c4=match), Match/PortTop_0047b230.cpp	4	0x00440bc0
-0x0047b250	FUN_0047b250	matched	PortTop_Bound_0047b250	RACE-LOAD-004E99B0: re/match/s13/0047b250.c (c4=match), Match/PortTop_0047b250.cpp	4	0x00440bc0
-0x0047b280	FUN_0047b280	matched	PortTop_Bound_0047b280	RACE-LOAD-004E99B0: re/match/s13/0047b280.c (c4=match), Match/PortTop_0047b280.cpp	4	0x00440bc0
-0x0047b350	FUN_0047b350	matched	PortTop_Bound_0047b350	RACE-LOAD-004E99B0: re/match/s13/0047b350.c (c4=match), Match/PortTop_0047b350.cpp	4	0x00440bc0
-0x0047b3c0	FUN_0047b3c0	matched	PortTop_Bound_0047b3c0	RACE-LOAD-004E99B0: re/match/s13/0047b3c0.c (c4=match), Match/PortTop_0047b3c0.cpp	4	0x00440bc0
-0x0047b420	FUN_0047b420	matched	PortTop_Bound_0047b420	RACE-LOAD-004E99B0: re/match/s13/0047b420.c (c4=match), Match/PortTop_0047b420.cpp	4	0x00440bc0
-0x0047b480	FUN_0047b480	matched	PortTop_Bound_0047b480	RACE-LOAD-004E99B0: re/match/s13/0047b480.c (c4=match), Match/PortTop_0047b480.cpp	4	0x00440bc0
-0x0047b500	FUN_0047b500	matched	PortTop_Bound_0047b500	RACE-LOAD-004E99B0: re/match/s13/0047b500.c (c4=match), Match/PortTop_0047b500.cpp	4	0x00440bc0
-0x0047b5b0	FUN_0047b5b0	matched	PortTop_Bound_0047b5b0	RACE-LOAD-004E99B0: re/match/s13/0047b5b0.c (c4=match), Match/PortTop_0047b5b0.cpp	4	0x00440bc0
-0x0047b630	FUN_0047b630	matched	PortTop_Bound_0047b630	RACE-LOAD-004E99B0: re/match/s13/0047b630.c (c4=match), Match/PortTop_0047b630.cpp	4	0x00440bc0
-0x0047b6b0	FUN_0047b6b0	matched	PortTop_Bound_0047b6b0	RACE-LOAD-004E99B0: re/match/s13/0047b6b0.c (c4=match), Match/PortTop_0047b6b0.cpp	4	0x00440bc0
-0x0047b720	FUN_0047b720	matched	PortTop_Bound_0047b720	RACE-LOAD-004E99B0: re/match/s13/0047b720.c (c4=match), Match/PortTop_0047b720.cpp	4	0x00440bc0
-0x0047b7d0	FUN_0047b7d0	matched	PortTop_Bound_0047b7d0	RACE-LOAD-004E99B0: re/match/s13/0047b7d0.c (c4=match), Match/PortTop_0047b7d0.cpp	4	0x00440bc0
-0x0047b860	FUN_0047b860	matched	PortTop_Bound_0047b860	RACE-LOAD-004E99B0: re/match/s13/0047b860.c (c4=match), Match/PortTop_0047b860.cpp	4	0x0047b9b0
-0x0047b880	FUN_0047b880	matched	PortTop_Bound_0047b880	RACE-LOAD-004E99B0: re/match/s13/0047b880.c (c4=match), Match/PortTop_0047b880.cpp	4	0x0047b9b0
-0x0047b8a0	FUN_0047b8a0	matched	PortTop_Bound_0047b8a0	RACE-LOAD-004E99B0: re/match/s13/0047b8a0.c (c4=match), Match/PortTop_0047b8a0.cpp	5	0x0047b8d0
-0x0047b8d0	FUN_0047b8d0	matched	PortTop_Bound_0047b8d0	RACE-LOAD-004E99B0: re/match/s13/0047b8d0.c (c4=match), Match/PortTop_0047b8d0.cpp	4	0x0047b9b0
-0x0047b980	FUN_0047b980	matched	PortTop_Bound_0047b980	RACE-LOAD-004E99B0: re/match/s13/0047b980.c (c4=match), Match/PortTop_0047b980.cpp	4	0x00440bc0
-0x0047be80	FUN_0047be80	missing	PortTop_RLStop_0047be80	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	4	0x0047bf70
-0x0047bf70	FUN_0047bf70	matched	PortTop_Bound_0047bf70	RACE-LOAD-004E99B0: re/match/s13/0047bf70.c (c4=match), Match/PortTop_0047bf70.cpp	3	0x0047c0f0
-0x0047c0b0	FUN_0047c0b0	matched	PortTop_Bound_0047c0b0	RACE-LOAD-004E99B0: re/match/s13/0047c0b0.c (c4=match), Match/PortTop_0047c0b0.cpp	2	0x00426e10
-0x0047c0f0	FUN_0047c0f0	matched	PortTop_Bound_0047c0f0	RACE-LOAD-004E99B0: re/match/s13/0047c0f0.c (c4=match), Match/PortTop_0047c0f0.cpp	2	0x00426e10
-0x0047cdc0	FUN_0047cdc0	matched	PortTop_Bound_0047cdc0	RACE-LOAD-004E99B0: re/match/s13/0047cdc0.c (c4=match), Match/PortTop_0047cdc0.cpp	3	0x00412050
-0x0047f4c0	FUN_0047f4c0	matched	PortTop_Bound_0047f4c0	RACE-LOAD-004E99B0: re/match/pilot/a5_0047f4c0.c (c4=match), Match/PortTop_0047f4c0.cpp	4	0x0047f840
-0x0047f7d0	FUN_0047f7d0	missing	PortTop_RLStop_0047f7d0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	4	0x0047f840
-0x0047f840	FUN_0047f840	matched	PortTop_Bound_0047f840	RACE-LOAD-004E99B0: re/match/s13/0047f840.c (c4=match), Match/PortTop_0047f840.cpp	3	0x00480340
-0x0047f940	FUN_0047f940	matched	PortTop_Bound_0047f940	RACE-LOAD-004E99B0: re/match/s13/0047f940.c (c4=match), Match/PortTop_0047f940.cpp	3	0x00480340
-0x0047fad0	FUN_0047fad0	matched	PortTop_Bound_0047fad0	RACE-LOAD-004E99B0: re/match/s13/0047fad0.c (c4=match), Match/PortTop_0047fad0.cpp	3	0x00412050
-0x0047fc40	FUN_0047fc40	matched	PortTop_Bound_0047fc40	RACE-LOAD-004E99B0: re/match/s13/0047fc40.c (c4=match), Match/PortTop_0047fc40.cpp	3	0x00480340
-0x0047fe00	FUN_0047fe00	matched	PortTop_Bound_0047fe00	RACE-LOAD-004E99B0: re/match/s13/0047fe00.c (c4=match), Match/PortTop_0047fe00.cpp	3	0x00480340
-0x0047ff70	FUN_0047ff70	matched	PortTop_Bound_0047ff70	RACE-LOAD-004E99B0: re/match/s13/0047ff70.c (c4=match), Match/PortTop_0047ff70.cpp	3	0x00480340
-0x00480340	FUN_00480340	matched	PortTop_Bound_00480340	RACE-LOAD-004E99B0: re/match/s13/00480340.c (c4=match), Match/PortTop_00480340.cpp	2	0x00426e10
-0x004850e0	FUN_004850e0	matched	PortTop_Bound_004850e0	RACE-LOAD-004E99B0: re/match/s14/004850e0.c (c4=match), Match/PortTop_004850e0.cpp	3	0x00479330
-0x00485460	FUN_00485460	matched	PortTop_Bound_00485460	RACE-LOAD-004E99B0: re/match/s14/00485460.c (c4=match), Match/PortTop_00485460.cpp	3	0x00479330
-0x004854e0	FUN_004854e0	missing	PortTop_RLStop_004854e0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x004858c0
-0x004858c0	FUN_004858c0	matched	PortTop_Bound_004858c0	RACE-LOAD-004E99B0: re/match/s14/004858c0.c (c4=match), Match/PortTop_004858c0.cpp	4	0x004850e0
-0x00485a00	FUN_00485a00	matched	PortTop_Bound_00485a00	RACE-LOAD-004E99B0: re/match/s14/00485a00.c (c4=match), Match/PortTop_00485a00.cpp	4	0x004850e0
-0x00485a70	FUN_00485a70	matched	PortTop_Bound_00485a70	RACE-LOAD-004E99B0: re/match/s14/00485a70.c (c4=match), Match/PortTop_00485a70.cpp	4	0x004850e0
-0x00485bd0	FUN_00485bd0	matched	PortTop_Bound_00485bd0	RACE-LOAD-004E99B0: re/match/s14/00485bd0.c (c4=match), Match/PortTop_00485bd0.cpp	4	0x004850e0
-0x00490e50	FUN_00490e50	matched	PortTop_Bound_00490e50	RACE-LOAD-004E99B0: re/match/s15/00490e50.c (c4=match), Match/PortTop_00490e50.cpp	5	0x004917c0
-0x00490f50	FUN_00490f50	matched	ByteQuadSet50Body	RACE-LOAD-004E99B0: existing exe body Match/MatchS15_00490f50.cpp	5	0x004917c0
-0x00490f80	FUN_00490f80	matched	ByteQuadSet80Body	RACE-LOAD-004E99B0: existing exe body Match/MatchS15_00490f80.cpp	5	0x00491860
-0x00490fb0	FUN_00490fb0	matched	PortTop_Bound_00490fb0	RACE-LOAD-004E99B0: re/match/s15/00490fb0.c (c4=match), Match/PortTop_00490fb0.cpp	5	0x00491900
-0x00490ff0	FUN_00490ff0	matched	PortTop_Bound_00490ff0	RACE-LOAD-004E99B0: re/match/s15/00490ff0.c (c4=match), Match/PortTop_00490ff0.cpp	5	0x004919b0
-0x00491010	FUN_00491010	matched	PortTop_Bound_00491010	RACE-LOAD-004E99B0: re/match/s15/00491010.c (c4=match), Match/PortTop_00491010.cpp	5	0x00491a10
-0x00491030	FUN_00491030	matched	PortTop_Bound_00491030	RACE-LOAD-004E99B0: re/match/s15/00491030.c (c4=match), Match/PortTop_00491030.cpp	5	0x00491a70
-0x00491590	FUN_00491590	missing	PortTop_RLStop_00491590	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	3	0x00491780
-0x00491780	FUN_00491780	matched	PortTop_Bound_00491780	RACE-LOAD-004E99B0: re/match/s15/00491780.c (c4=match), Match/PortTop_00491780.cpp	2	0x00426e10
-0x004917c0	FUN_004917c0	matched	PortTop_Bound_004917c0	RACE-LOAD-004E99B0: re/match/s15/004917c0.c (c4=match), Match/PortTop_004917c0.cpp	4	0x00440bc0
-0x00491860	FUN_00491860	matched	PortTop_Bound_00491860	RACE-LOAD-004E99B0: re/match/s15/00491860.c (c4=match), Match/PortTop_00491860.cpp	4	0x00440bc0
-0x00491900	FUN_00491900	matched	PortTop_Bound_00491900	RACE-LOAD-004E99B0: re/match/s15/00491900.c (c4=match), Match/PortTop_00491900.cpp	4	0x00440bc0
-0x004919b0	FUN_004919b0	matched	PortTop_Bound_004919b0	RACE-LOAD-004E99B0: re/match/s15/004919b0.c (c4=match), Match/PortTop_004919b0.cpp	4	0x00440bc0
-0x00491a10	FUN_00491a10	matched	PortTop_Bound_00491a10	RACE-LOAD-004E99B0: re/match/s15/00491a10.c (c4=match), Match/PortTop_00491a10.cpp	4	0x00440bc0
-0x00491a70	FUN_00491a70	matched	PortTop_Bound_00491a70	RACE-LOAD-004E99B0: re/match/s15/00491a70.c (c4=match), Match/PortTop_00491a70.cpp	4	0x00440bc0
-0x004924c0	FUN_004924c0	matched	PortTop_Bound_004924c0	RACE-LOAD-004E99B0: re/match/s15/004924c0.c (c4=match), Match/PortTop_004924c0.cpp	2	0x00426e10
-0x004955d0	FUN_004955d0	matched	PortTop_Bound_004955d0	RACE-LOAD-004E99B0: re/match/s16/004955d0.c (c4=match), Match/PortTop_004955d0.cpp	2	0x00495780
-0x004b3c60	FUN_004b3c60	matched	PortTop_Bound_004b3c60	RACE-LOAD-004E99B0: re/match/s18/004b3c60.c (c4=match), Match/PortTop_004b3c60.cpp	4	0x0042a640
-0x004b3cc0	FUN_004b3cc0	matched	PortTop_Bound_004b3cc0	RACE-LOAD-004E99B0: re/match/s18/004b3cc0.c (c4=match), Match/PortTop_004b3cc0.cpp	4	0x0042a7f0
-0x004b3de0	FUN_004b3de0	matched	PortTop_Bound_004b3de0	RACE-LOAD-004E99B0: re/match/s18/004b3de0.c (c4=match), Match/PortTop_004b3de0.cpp	4	0x0042a860
-0x004b3f50	FUN_004b3f50	missing	PortTop_RLStop_004b3f50	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	3	0x00480340
-0x004b4000	FUN_004b4000	matched	PortTop_Bound_004b4000	RACE-LOAD-004E99B0: re/match/s18/004b4000.c (c4=match), Match/PortTop_004b4000.cpp	3	0x00479330
-0x004b4010	FUN_004b4010	matched	PortTop_Bound_004b4010	RACE-LOAD-004E99B0: re/match/s18/004b4010.c (c4=match), Match/PortTop_004b4010.cpp	3	0x00479330
-0x004b4050	FUN_004b4050	matched	PortTop_Bound_004b4050	RACE-LOAD-004E99B0: re/match/s18/004b4050.c (c4=match), Match/PortTop_004b4050.cpp	6	0x004b4080
-0x004b41f0	FUN_004b41f0	matched	PortTop_Bound_004b41f0	RACE-LOAD-004E99B0: re/match/s18/004b41f0.c (c4=match), Match/PortTop_004b41f0.cpp	3	0x00479330
-0x004b4280	FUN_004b4280	matched	PortTop_Bound_004b4280	RACE-LOAD-004E99B0: re/match/s18/004b4280.c (c4=match), Match/PortTop_004b4280.cpp	3	0x00479330
-0x004b46b0	FUN_004b46b0	matched	Vec3Equal	RACE-LOAD-004E99B0: existing exe body Render/RenderLeaves_ae1.cpp	3	0x00478660
-0x004b4eb0	FUN_004b4eb0	near-match	PortTop_Bound_004b4eb0	RACE-LOAD-004E99B0: re/match/tlr/004b4eb0.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004b4eb0.cpp	4	0x004b5030
-0x004b5030	FUN_004b5030	matched	PortTop_Bound_004b5030	RACE-LOAD-004E99B0: re/match/s18/004b5030.c (c4=match), Match/PortTop_004b5030.cpp	3	0x00478660
-0x004b51d0	FUN_004b51d0	matched	Orig_004b51d0	RACE-LOAD-004E99B0: existing exe body Match/PortTop_004b51d0.cpp	2	0x0041a8d0
-0x004b53b0	FUN_004b53b0	near-match	PortTop_Bound_004b53b0	RACE-LOAD-004E99B0: re/match/s18/004b53b0.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_004b53b0.cpp	4	0x00479030
-0x004b6570	FUN_004b6570	matched	PortTop_Bound_004b6570	RACE-LOAD-004E99B0: re/match/s18/004b6570.c (c4=match), Match/PortTop_004b6570.cpp	1	0x0040d270
-0x004b65e0	FUN_004b65e0	matched	PortTop_Bound_004b65e0	RACE-LOAD-004E99B0: re/match/s18/004b65e0.c (c4=match), Match/PortTop_004b65e0.cpp	2	0x004b67a0
-0x004b6630	FUN_004b6630	matched	PortTop_Bound_004b6630	RACE-LOAD-004E99B0: re/match/s18/004b6630.c (c4=match), Match/PortTop_004b6630.cpp	2	0x004b6640
-0x004b6640	FUN_004b6640	near-match	PortTop_Bound_004b6640	RACE-LOAD-004E99B0: re/match/s18/004b6640.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004b6640.cpp	1	0x0040d270
-0x004b6770	FUN_004b6770	matched	PortTop_Bound_004b6770	RACE-LOAD-004E99B0: re/match/s18/004b6770.c (c4=match), Match/PortTop_004b6770.cpp	2	0x004b67a0
-0x004b67e0	FUN_004b67e0	matched	PortTop_Bound_004b67e0	RACE-LOAD-004E99B0: re/match/s18/004b67e0.c (c4=match), Match/PortTop_004b67e0.cpp	3	0x004b6940
-0x004b6940	FUN_004b6940	matched	PortTop_Bound_004b6940	RACE-LOAD-004E99B0: re/match/s18/004b6940.c (c4=match), Match/PortTop_004b6940.cpp	2	0x004b6570
-0x004b6b10	FUN_004b6b10	matched	PortTop_PizCrt_stricmp_004b6b10	RACE-LOAD-004E99B0: existing exe body Match/PortTop_00402750_Pieces.cpp	3	0x004b6ba0
-0x004b6ba0	FUN_004b6ba0	matched	PortTop_Bound_004b6ba0	RACE-LOAD-004E99B0: re/match/s18/004b6ba0.c (c4=match), Match/PortTop_004b6ba0.cpp	2	0x004b6640
-0x004b6c00	FUN_004b6c00	near-match	PortTop_Bound_004b6c00	RACE-LOAD-004E99B0: re/match/s18/004b6c00.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004b6c00.cpp	2	0x004b6640
-0x004b6cd0	FUN_004b6cd0	near-match	PortTop_Bound_004b6cd0	RACE-LOAD-004E99B0: re/match/s18/004b6cd0.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004b6cd0.cpp	2	0x004b6640
-0x004b6ed0	FUN_004b6ed0	matched	PortTop_Bound_004b6ed0	RACE-LOAD-004E99B0: re/match/s18/004b6ed0.c (c4=match), Match/PortTop_004b6ed0.cpp	2	0x004b6640
-0x004b6f60	FUN_004b6f60	matched	PortTop_Bound_004b6f60	RACE-LOAD-004E99B0: re/match/s18/004b6f60.c (c4=match), Match/PortTop_004b6f60.cpp	2	0x004b6640
-0x004b6f90	FUN_004b6f90	matched	PortTop_Bound_004b6f90	RACE-LOAD-004E99B0: re/match/s18/004b6f90.c (c4=match), Match/PortTop_004b6f90.cpp	2	0x004b6640
-0x004b6fc0	FUN_004b6fc0	library	lua_gettop	RACE-LOAD-004E99B0: vendored library symbol lua_gettop (lib:lua-4.0:src/lapi.c:68)	5	0x0047a180
-0x004b7090	FUN_004b7090	library	lua_tonumber	RACE-LOAD-004E99B0: vendored library symbol lua_tonumber (lib:lua-4.0:src/lapi.c:157)	5	0x0047a180
-0x004b70d0	FUN_004b70d0	library	lua_tostring	RACE-LOAD-004E99B0: vendored library symbol lua_tostring (lib:lua-4.0:src/lapi.c:162)	5	0x0047a1b0
-0x004b7140	FUN_004b7140	library	lua_pushnumber	RACE-LOAD-004E99B0: vendored library symbol lua_pushnumber (lib:lua-4.0:src/lapi.c:208)	5	0x0047b350
-0x004b7200	FUN_004b7200	library	lua_pushcclosure	RACE-LOAD-004E99B0: vendored library symbol lua_pushcclosure (lib:lua-4.0:src/lapi.c:230)	5	0x0047b980
-0x004b7250	FUN_004b7250	library	lua_setglobal	RACE-LOAD-004E99B0: vendored library symbol lua_setglobal (lib:lua-4.0:src/lapi.c:315)	5	0x0047b980
-0x004b7330	FUN_004b7330	library	lua_open	RACE-LOAD-004E99B0: vendored library symbol lua_open (lib:lua-4.0:src/lstate.c:66)	5	0x0047b860
-0x004b7480	FUN_004b7480	library	lua_close	RACE-LOAD-004E99B0: vendored library symbol lua_close (lib:lua-4.0:src/lstate.c:100)	5	0x0047b880
-0x004b7a70	FUN_004b7a70	library	lua_dobuffer	RACE-LOAD-004E99B0: vendored library symbol lua_dobuffer (lib:lua-4.0:src/ldo.c:304)	6	0x0047b8a0
-0x004c0510	FUN_004c0510	library	lua_mathlibopen	RACE-LOAD-004E99B0: vendored library symbol lua_mathlibopen (lib:lua-4.0:src/lib/lmathlib.c:231)	5	0x0047b860
-0x004c4600	FUN_004c4600	matched	RwCore_004c4600	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004c4600.cpp	5	0x0055bd80
-0x004c4dc0	FUN_004c4dc0	near-match	RwCore_004c4dc0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004c4dc0.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCore_004c4dc0; NOT matched, knob path only; one body for the rva)	3	0x00478660
-0x004c59c0	FUN_004c59c0	matched	PortTop_Bound_004c59c0	RACE-LOAD-004E99B0: re/match/s19/004c59c0.c (c4=match), Match/PortTop_004c59c0.cpp	4	0x004b4280
-0x004c9ad0	FUN_004c9ad0	matched	RwCore_004c9ad0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004c9ad0.cpp	2	0x004cac10
-0x004cc790	FUN_004cc790	matched	RwCore_004cc790	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004cc790.cpp	2	0x005444a0
-0x004cf2b0	FUN_004cf2b0	near-match	PortTop_Bound_004cf2b0	RACE-LOAD-004E99B0: re/match/rwl01/004cf2b0.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004cf2b0.cpp	4	0x00478110
-0x004cf7d0	FUN_004cf7d0	missing	PortTop_RLStop_004cf7d0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x004b3d20
-0x004d1e30	FUN_004d1e30	matched	RwCore_004d1e30	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004d1e30.cpp	2	0x004cac10
-0x004d6200	FUN_004d6200	matched	RwCore_004d6200	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004d6200.cpp	2	0x004cac10
-0x004d8000	FUN_004d8000	matched	RwCore_004d8000	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004d8000.cpp	6	0x004e99b0
-0x004db3e0	FUN_004db3e0	near-match	RwCore_004db3e0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004db3e0.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCore_004db3e0; NOT matched, knob path only; one body for the rva)	2	0x004cac10
-0x004dc8a0	FUN_004dc8a0	near-match	RwCore_004dc8a0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004dc8a0.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCore_004dc8a0; NOT matched, knob path only; one body for the rva)	2	0x004cac10
-0x004dc970	FUN_004dc970	matched	RwCore_004dc970	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004dc970.cpp	2	0x004cac10
-0x004e0920	FUN_004e0920	near-match	RwCore_004e0920	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e0920.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCore_004e0920; NOT matched, knob path only; one body for the rva)	2	0x004cac10
-0x004e1b60	FUN_004e1b60	matched	RwCore_004e1b60	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e1b60.cpp	6	0x004e99b0
-0x004e1c90	FUN_004e1c90	matched	RwCore_004e1c90	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e1c90.cpp	6	0x004e99b0
-0x004e4380	FUN_004e4380	matched	PortTop_Bound_004e4380	RACE-LOAD-004E99B0: re/match/rwl02/004e4380.c (c4=match), Match/PortTop_004e4380.cpp	4	0x0047fad0
-0x004e4f70	FUN_004e4f70	matched	RwCore_004e4f70	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e4f70.cpp	7	0x004e9e40
-0x004e5020	FUN_004e5020	near-match	RwCore_004e5020	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e5020.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCore_004e5020; NOT matched, knob path only; one body for the rva)	7	0x004e9e40
-0x004e51e0	FUN_004e51e0	near-match	PortTop_Bound_004e51e0	RACE-LOAD-004E99B0: re/match/rwl02/004e51e0.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004e51e0.cpp	6	0x004e99b0
-0x004e5280	FUN_004e5280	matched	PortTop_Bound_004e5280	RACE-LOAD-004E99B0: re/match/rwl02/004e5280.c (c4=match), Match/PortTop_004e5280.cpp	6	0x004e99b0
-0x004e5300	FUN_004e5300	near-match	RwCore_004e5300	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e5300.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCore_004e5300; NOT matched, knob path only; one body for the rva)	6	0x004e99b0
-0x004e55d0	FUN_004e55d0	matched	RwCore_004e55d0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e55d0.cpp	5	0x004b4eb0
-0x004e5c30	FUN_004e5c30	matched	PortTop_Bound_004e5c30	RACE-LOAD-004E99B0: re/match/rwl02/004e5c30.c (c4=match), Match/PortTop_004e5c30.cpp	4	0x004b41f0
-0x004e6650	FUN_004e6650	matched	PortTop_Bound_004e6650	RACE-LOAD-004E99B0: re/match/rwl02/004e6650.c (c4=match), Match/PortTop_004e6650.cpp	3	0x00479330
-0x004e6760	FUN_004e6760	matched	RwCore_004e6760	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e6760.cpp	4	0x004b4010
-0x004e6f80	FUN_004e6f80	matched	RwCore_004e6f80	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e6f80.cpp	3	0x00479330
-0x004e8ea0	FUN_004e8ea0	matched	RwCore_004e8ea0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_004e8ea0.cpp	2	0x00557d90
-0x004e99b0	FUN_004e99b0	near-match	PortTop_Bound_004e99b0	RACE-LOAD-004E99B0: re/match/rwl02/004e99b0.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004e99b0.cpp	5	0x004b3c60
-0x004e9e40	FUN_004e9e40	near-match	PortTop_Bound_004e9e40	RACE-LOAD-004E99B0: re/match/rwl02/004e9e40.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004e9e40.cpp	6	0x004e99b0
-0x004ea220	FUN_004ea220	near-match	PortTop_Bound_004ea220	RACE-LOAD-004E99B0: re/match/rwl02/004ea220.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_004ea220.cpp	6	0x004e99b0
-0x004f3e90	FUN_004f3e90	near-match	RwCoreLift_004f3e90	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_Lifted_04.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCoreLift_004f3e90; NOT matched, knob path only; one body for the rva)	6	0x004e99b0
-0x0052daf0	FUN_0052daf0	near-match	RwCore_0052daf0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_0052daf0.cpp (provisional body, L-126 provisional, re/match/PROVISIONAL.tsv RwCore_0052daf0; NOT matched, knob path only; one body for the rva)	5	0x004b3de0
-0x00530090	FUN_00530090	matched	RwCore_00530090	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_00530090.cpp	2	0x0052e500
-0x00538a80	FUN_00538a80	matched	PortTop_Bound_00538a80	RACE-LOAD-004E99B0: re/match/rwl03/00538a80.c (c4=match), Match/PortTop_00538a80.cpp	3	0x00479330
-0x0053eca0	FUN_0053eca0	matched	RwCore_0053eca0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_0053eca0.cpp	2	0x0053ec60
-0x00543da0	FUN_00543da0	matched	PortTop_Bound_00543da0	RACE-LOAD-004E99B0: re/match/rwl04/00543da0.c (c4=match), Match/PortTop_00543da0.cpp	4	0x00479030
-0x00543dc0	FUN_00543dc0	matched	PortTop_Bound_00543dc0	RACE-LOAD-004E99B0: re/match/rwl04/00543dc0.c (c4=match), Match/PortTop_00543dc0.cpp	4	0x00479030
-0x00543e30	FUN_00543e30	matched	PortTop_Bound_00543e30	RACE-LOAD-004E99B0: re/match/rwl04/00543e30.c (c4=match), Match/PortTop_00543e30.cpp	4	0x00479030
-0x00545260	FUN_00545260	missing	PortTop_RLStop_00545260	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x004b3cc0
-0x00545340	FUN_00545340	missing	PortTop_RLStop_00545340	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x00546380
-0x00546380	FUN_00546380	matched	PortTop_Bound_00546380	RACE-LOAD-004E99B0: re/match/rwl04/00546380.c (c4=match), Match/PortTop_00546380.cpp	4	0x0045e160
-0x005495a0	FUN_005495a0	matched	RwCore_005495a0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_005495a0.cpp	2	0x00549310
-0x005495b0	FUN_005495b0	matched	RwCore_005495b0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_005495b0.cpp	2	0x005492d0
-0x00550790	FUN_00550790	matched	PortTop_Bound_00550790	RACE-LOAD-004E99B0: re/match/s24/00550790.c (c4=match), Match/PortTop_00550790.cpp	2	0x004b67a0
-0x005507a0	FUN_005507a0	matched	PortTop_Bound_005507a0	RACE-LOAD-004E99B0: re/match/rwl04/005507a0.c (c4=match), Match/PortTop_005507a0.cpp	3	0x004b6940
-0x00551ad0	FUN_00551ad0	missing	PortTop_RLStop_00551ad0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	2	0x005518f0
-0x00552020	FUN_00552020	matched	PortTop_Bound_00552020	RACE-LOAD-004E99B0: re/match/rwl04/00552020.c (c4=match), Match/PortTop_00552020.cpp	5	0x00474f30
-0x00557a60	FUN_00557a60	missing	PortTop_RLStop_00557a60	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	2	0x00557d90
-0x00558ca0	FUN_00558ca0	matched	PortTop_Bound_00558ca0	RACE-LOAD-004E99B0: re/match/rwl05/00558ca0.c (c4=match), Match/PortTop_00558ca0.cpp	3	0x00479330
-0x00558cb0	FUN_00558cb0	near-match	PortTop_Bound_00558cb0	RACE-LOAD-004E99B0: re/match/rwl05/00558cb0.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_00558cb0.cpp	2	0x005518f0
-0x00558df0	FUN_00558df0	near-match	PortTop_Bound_00558df0	RACE-LOAD-004E99B0: re/match/rwl05/00558df0.c (L-126 provisional, re/match/PROVISIONAL.tsv, NOT matched, knob path only), Match/PortTop_00558df0.cpp	4	0x0042a740
-0x00559560	FUN_00559560	near-match	PortTop_Bound_00559560	RACE-LOAD-004E99B0: re/match/rwl05/00559560.c (hooks.csv C4 by c4=frida-replay, NOT a byte match; L-126 provisional, re/match/PROVISIONAL.tsv), Match/PortTop_00559560.cpp	8	0x00559b50
-0x005595d0	FUN_005595d0	missing	PortTop_RLStop_005595d0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	8	0x00559b50
-0x00559b50	FUN_00559b50	matched	PortTop_Bound_00559b50	RACE-LOAD-004E99B0: re/match/rwl05/00559b50.c (c4=match), Match/PortTop_00559b50.cpp	7	0x0055dca0
-0x0055ad20	FUN_0055ad20	matched	PortTop_Bound_0055ad20	RACE-LOAD-004E99B0: re/match/rwl05/0055ad20.c (c4=match), Match/PortTop_0055ad20.cpp	4	0x0047f840
-0x0055af40	FUN_0055af40	matched	PortTop_Bound_0055af40	RACE-LOAD-004E99B0: re/match/rwl05/0055af40.c (c4=match), Match/PortTop_0055af40.cpp	5	0x0047f4c0
-0x0055b860	FUN_0055b860	matched	PortTop_Bound_0055b860	RACE-LOAD-004E99B0: re/match/rwl05/0055b860.c (c4=match), Match/PortTop_0055b860.cpp	5	0x0057c500
-0x0055b930	FUN_0055b930	matched	PortTop_Bound_0055b930	RACE-LOAD-004E99B0: re/match/rwl05/0055b930.c (c4=match), Match/PortTop_0055b930.cpp	5	0x0057c550
-0x0055bab0	FUN_0055bab0	matched	PortTop_Bound_0055bab0	RACE-LOAD-004E99B0: re/match/rwl05/0055bab0.c (c4=match), Match/PortTop_0055bab0.cpp	4	0x0047fad0
-0x0055bac0	FUN_0055bac0	matched	PortTop_Bound_0055bac0	RACE-LOAD-004E99B0: re/match/rwl05/0055bac0.c (c4=match), Match/PortTop_0055bac0.cpp	4	0x0047f840
-0x0055bad0	FUN_0055bad0	matched	PortTop_Bound_0055bad0	RACE-LOAD-004E99B0: re/match/rwl05/0055bad0.c (c4=match), Match/PortTop_0055bad0.cpp	6	0x0055b930
-0x0055bd80	FUN_0055bd80	matched	PortTop_Bound_0055bd80	RACE-LOAD-004E99B0: re/match/rwl05/0055bd80.c (c4=match), Match/PortTop_0055bd80.cpp	4	0x00480100
-0x0055c380	FUN_0055c380	matched	PortTop_Bound_0055c380	RACE-LOAD-004E99B0: re/match/rwl05/0055c380.c (c4=match), Match/PortTop_0055c380.cpp	5	0x0055c810
-0x0055c490	FUN_0055c490	matched	PortTop_Bound_0055c490	RACE-LOAD-004E99B0: re/match/rwl05/0055c490.c (c4=match), Match/PortTop_0055c490.cpp	4	0x0047f840
-0x0055c810	FUN_0055c810	matched	PortTop_Bound_0055c810	RACE-LOAD-004E99B0: re/match/s24/0055c810.c (c4=match), Match/PortTop_0055c810.cpp	4	0x0047fad0
-0x0055dc70	FUN_0055dc70	matched	PortTop_Bound_0055dc70	RACE-LOAD-004E99B0: re/match/rwl05/0055dc70.c (c4=match), Match/PortTop_0055dc70.cpp	5	0x0047f4c0
-0x0055dca0	FUN_0055dca0	matched	PortTop_Bound_0055dca0	RACE-LOAD-004E99B0: re/match/rwl05/0055dca0.c (c4=match), Match/PortTop_0055dca0.cpp	6	0x0055dc70
-0x0055ddd0	FUN_0055ddd0	matched	PortTop_Bound_0055ddd0	RACE-LOAD-004E99B0: re/match/rwl05/0055ddd0.c (c4=match), Match/PortTop_0055ddd0.cpp	4	0x0047f840
-0x0055ded0	FUN_0055ded0	missing	PortTop_RLStop_0055ded0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x0057c300
-0x0055e440	FUN_0055e440	matched	PortTop_Bound_0055e440	RACE-LOAD-004E99B0: re/match/rwl05/0055e440.c (c4=match), Match/PortTop_0055e440.cpp	4	0x0047f940
-0x0055f450	FUN_0055f450	matched	PortTop_Bound_0055f450	RACE-LOAD-004E99B0: re/match/rwl05/0055f450.c (c4=match), Match/PortTop_0055f450.cpp	7	0x0055dca0
-0x0055f800	FUN_0055f800	missing	PortTop_RLStop_0055f800	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	8	0x0055f450
-0x0055fe10	FUN_0055fe10	matched	PortTop_Bound_0055fe10	RACE-LOAD-004E99B0: re/match/rwl05/0055fe10.c (c4=match), Match/PortTop_0055fe10.cpp	4	0x0047f840
-0x0055fe30	FUN_0055fe30	matched	PortTop_Bound_0055fe30	RACE-LOAD-004E99B0: re/match/rwl05/0055fe30.c (c4=match), Match/PortTop_0055fe30.cpp	4	0x0047f840
-0x0055fe40	FUN_0055fe40	matched	PortTop_Bound_0055fe40	RACE-LOAD-004E99B0: re/match/rwl05/0055fe40.c (c4=match), Match/PortTop_0055fe40.cpp	4	0x0047f840
-0x00562520	FUN_00562520	matched	PortTop_Bound_00562520	RACE-LOAD-004E99B0: re/match/rwl05/00562520.c (c4=match), Match/PortTop_00562520.cpp	5	0x0047f4c0
-0x00562560	FUN_00562560	matched	RwCore_00562560	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_00562560.cpp	2	0x005518f0
-0x00562580	FUN_00562580	matched	PortTop_Bound_00562580	RACE-LOAD-004E99B0: re/match/rwl05/00562580.c (c4=match), Match/PortTop_00562580.cpp	5	0x0047f4c0
-0x005625e0	FUN_005625e0	matched	PortTop_Bound_005625e0	RACE-LOAD-004E99B0: re/match/rwl05/005625e0.c (c4=match), Match/PortTop_005625e0.cpp	5	0x0047f4c0
-0x00562600	FUN_00562600	matched	PortTop_Bound_00562600	RACE-LOAD-004E99B0: re/match/rwl05/00562600.c (c4=match), Match/PortTop_00562600.cpp	4	0x0047f840
-0x00562ac0	FUN_00562ac0	missing	PortTop_RLStop_00562ac0	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	5	0x00562600
-0x00562fd0	FUN_00562fd0	matched	PortTop_Bound_00562fd0	RACE-LOAD-004E99B0: re/match/rwl05/00562fd0.c (c4=match), Match/PortTop_00562fd0.cpp	4	0x0047ff70
-0x00563de0	FUN_00563de0	matched	PortTop_Bound_00563de0	RACE-LOAD-004E99B0: re/match/rwl05/00563de0.c (c4=match), Match/PortTop_00563de0.cpp	9	0x00559560
-0x00564130	FUN_00564130	matched	PortTop_Bound_00564130	RACE-LOAD-004E99B0: re/match/rwl05/00564130.c (c4=match), Match/PortTop_00564130.cpp	5	0x0057c500
-0x00564190	FUN_00564190	matched	PortTop_Bound_00564190	RACE-LOAD-004E99B0: re/match/rwl05/00564190.c (c4=match), Match/PortTop_00564190.cpp	5	0x0057c550
-0x00565590	FUN_00565590	matched	PortTop_Bound_00565590	RACE-LOAD-004E99B0: re/match/rwl06/00565590.c (c4=match), Match/PortTop_00565590.cpp	6	0x0055af40
-0x0057c1b0	FUN_0057c1b0	matched	PortTop_Bound_0057c1b0	RACE-LOAD-004E99B0: re/match/rwl06/0057c1b0.c (c4=match), Match/PortTop_0057c1b0.cpp	5	0x0057c500
-0x0057c4b0	FUN_0057c4b0	matched	PortTop_Bound_0057c4b0	RACE-LOAD-004E99B0: re/match/rwl06/0057c4b0.c (c4=match), Match/PortTop_0057c4b0.cpp	5	0x0047f4c0
-0x005c1d63	FUN_005c1d63	missing	PortTop_RLStop_005c1d63	RACE-LOAD-004E99B0: named stop (log + exit code = rva, Match/PortTop_RaceLoadStops.cpp). No matched or admitted body	4	0x004b67e0
-0x005c4bb0	FUN_005c4bb0	matched	RwCore_005c4bb0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_005c4bb0.cpp	5	0x00558df0
-0x005c4d20	FUN_005c4d20	matched	PortTop_Bound_005c4d20	RACE-LOAD-004E99B0: re/match/s28/005c4d20.c (c4=match), Match/PortTop_005c4d20.cpp	5	0x00558df0
-0x005c4df0	FUN_005c4df0	matched	RwCore_005c4df0	RACE-LOAD-004E99B0: existing exe body RwCore/RwCore_005c4df0.cpp	5	0x00558df0
-0x005c4e10	FUN_005c4e10	matched	PortTop_Bound_005c4e10	RACE-LOAD-004E99B0: re/match/s28/005c4e10.c (c4=match), Match/PortTop_005c4e10.cpp	3	0x00558cb0
