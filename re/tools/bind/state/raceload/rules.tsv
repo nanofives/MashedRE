@@ -262,3 +262,5 @@ prov_bind	004cf2b0
 prov_bind	004b4550
 # RACE-LOAD-004E99B0: stop 0x004b4eb0 (callback of 0x004b5030, after LAPDATA.LUA search), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
 prov_bind	004b4eb0
+# RACE-LOAD-004E99B0: stop 0x004c3d90 (after the LAPDATA.LUA search; callers 0x00478660 / 0x0047bf70 / 0x00485460) binds the lifted RW core body the exe already compiles (RwCore/RwCore_Lifted_00.cpp:976, PROVISIONAL.tsv row RwCoreLift_004c3d90); its c_hold line is removed
+alias	004c3d90	RwCoreLift_004c3d90	RwCore/RwCore_Lifted_00.cpp

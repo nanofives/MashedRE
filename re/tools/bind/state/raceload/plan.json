@@ -2645,7 +2645,9 @@
 []
 ],
 "004a3384": [
-"stop"
+"reuse",
+"MashedCrt_acos_004a3384",
+"Match/PortTop_CrtMath.cpp"
 ],
 "004c3b30": [
 "reuse",
@@ -2828,8 +2830,9 @@
 []
 ],
 "004c3d90": [
-"stop",
-"cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada"
+"reuse",
+"RwCoreLift_004c3d90",
+"RwCore/RwCore_Lifted_00.cpp"
 ],
 "004c45f0": [
 "reuse",

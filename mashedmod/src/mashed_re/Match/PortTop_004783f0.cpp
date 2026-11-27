@@ -8,7 +8,7 @@
 #define FUN_004783f0 PortTop_Bound_004783f0
 #define FUN_00409300 PortTop_Bound_00409300
 #define FUN_00409330 PortTop_Bound_00409330
-#define FUN_004a3384 PortTop_RLStop_004a3384   // named stop
+#define FUN_004a3384 MashedCrt_acos_004a3384   // exe body (Match/PortTop_CrtMath.cpp)
 #define FUN_004c39b0 RwCore_004c39b0   // exe body (RwCore/RwCore_004c39b0.cpp)
 #define FUN_004c3b30 RwCore_004c3b30   // exe body (RwCore/RwCore_004c3b30.cpp)
 extern "C" {

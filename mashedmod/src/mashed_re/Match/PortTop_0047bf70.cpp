@@ -10,7 +10,7 @@
 #define FUN_004b53b0 PortTop_Bound_004b53b0
 #define FUN_004c0ed0 RwCore_004c0ed0   // exe body (RwCore/RwCore_004c0ed0.cpp)
 #define FUN_004c39b0 RwCore_004c39b0   // exe body (RwCore/RwCore_004c39b0.cpp)
-#define FUN_004c3d90 PortTop_RLStop_004c3d90   // named stop
+#define FUN_004c3d90 RwCoreLift_004c3d90   // exe body (RwCore/RwCore_Lifted_00.cpp)
 #define FUN_0047bc90 PortTop_Local_0047bf70_0047bc90   // file-local in this source
 #define FUN_0047bcc0 PortTop_Local_0047bf70_0047bcc0   // file-local in this source
 extern "C" {

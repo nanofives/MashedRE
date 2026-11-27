@@ -74,16 +74,10 @@ int PortTop_RLStop_00491590(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_004a332b(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004a332bu, "0x00478200 0x00490e50", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004a332bu, 0u, _ReturnAddress()); return 0; }
-// stop rva 004a3384: declared double by 0x004783f0; no matched or admitted source
-int PortTop_RLStop_004a3384(void) { RlStopLog(0x004a3384u, "0x004783f0", 1u, _ReturnAddress(), 1); PortTop_AudioCalleeStop(0x004a3384u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004b3f50: declared int by 0x00480340; no matched or admitted source
 int PortTop_RLStop_004b3f50(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004b3f50u, "0x00480340", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004b3f50u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004c3d90: declared RwV3d * / int / void by 0x00478660 0x0047bf70 0x00485460; cpp-unclean: C2197 'code (__cdecl *)': hay demasiados argumentos para la llamada
-int PortTop_RLStop_004c3d90(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x004c3d90u, "0x00478660 0x0047bf70 0x00485460", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004c3d90u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004c52f0: declared void * by 0x004c1480; no matched or admitted source
 int PortTop_RLStop_004c52f0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004c52f0u, "0x004c1480", n, _ReturnAddress(), ex);

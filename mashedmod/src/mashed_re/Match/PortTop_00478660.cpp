@@ -13,7 +13,7 @@
 #define FUN_004b46b0 Vec3Equal   // exe body (Render/RenderLeaves_ae1.cpp)
 #define FUN_004b5030 PortTop_Bound_004b5030
 #define FUN_004c39b0 RwCore_004c39b0   // exe body (RwCore/RwCore_004c39b0.cpp)
-#define FUN_004c3d90 PortTop_RLStop_004c3d90   // named stop
+#define FUN_004c3d90 RwCoreLift_004c3d90   // exe body (RwCore/RwCore_Lifted_00.cpp)
 #define FUN_004c45f0 RwCore_004c45f0   // exe body (RwCore/RwCore_004c45f0.cpp)
 #define FUN_004c4dc0 RwCore_004c4dc0   // exe body (RwCore/RwCore_004c4dc0.cpp)
 extern "C" {
