@@ -75,3 +75,4 @@ prov_bind	005c92f0
 prov_bind	005c9310
 # RO-AUDIOINIT-45D460-REACH-4: next stop after 0x005b92d0 (called from 0x005ae3a0); source 35.5%, equiv NOT-PROVEN, checked against the listing, PROVISIONAL.tsv class P3
 prov_bind	005ae4c0
+alias	00551460	PortTop_Bound_00551460	Match/PortTop_00551460.cpp

@@ -1,0 +1,47 @@
+== RO_ROLOADRWC-vfs1_noimage.log
+2:[portstate-image] REFUSED(missing) mashed_image.bin: nothing written; the per-address seed runs instead
+101:[ORIG_TOP] cfglog: Calling RtFSManagerOpen
+103:[ORIG_TOP] 0x00495780 HardwareInstallFileSystem (matched, RW core FS) returned 1: [0x007dc75c] 4 file systems, default [0x007dc76c] 01883FD0
+191:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\font36.piz -> original/toastart/common/font36.piz: OK, 26 entries (depth 1)
+192:[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x00551460 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 00048F20
+== RO_ROLOADRWC-vfs1.log
+4:[portstate-image] loaded D:\MashedWT\RACE-VFS-COURSELUA_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+90:[ORIG_TOP] cfglog: Calling RtFSManagerOpen
+92:[ORIG_TOP] 0x00495780 HardwareInstallFileSystem (matched, RW core FS) returned 1: [0x007dc75c] 4 file systems, default [0x007dc76c] 0182C2A8
+180:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\font36.piz -> original/toastart/common/font36.piz: OK, 26 entries (depth 1)
+181:[ORIG_TOP] [OT_TIMER] STOP: the matched 0x00000000 called original 0x00551460 (DAT_006904e8 = 0, DAT_006904ec = 0); the exe has no body for it. Return address 00048F20
+== RO_ROLOADRWC-vfs2.log
+4:[portstate-image] loaded D:\MashedWT\RACE-VFS-COURSELUA_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+90:[ORIG_TOP] cfglog: Calling RtFSManagerOpen
+92:[ORIG_TOP] 0x00495780 HardwareInstallFileSystem (matched, RW core FS) returned 1: [0x007dc75c] 4 file systems, default [0x007dc76c] 017F9E58
+180:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\font36.piz -> original/toastart/common/font36.piz: OK, 26 entries (depth 1)
+226:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\sfx.piz -> original/toastart/common/sfx.piz: OK, 30 entries (depth 1)
+255:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\powerups\powerups.piz -> original/toastart/common/powerups/powerups.piz: OK, 36 entries (depth 1)
+312:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\Panel\Panel.piz -> original/toastart/common/Panel/Panel.piz: OK, 15 entries (depth 1)
+328:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\ToastArt\common\perm.piz -> original/ToastArt/common/perm.piz: OK, 26 entries (depth 1)
+449:[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+455:[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+456:[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+457:[ORIG_TOP] cfglog: Unable to find COURSE.LUA in piz
+458:[RWC_CORE] AV at 0002E824 (exe+0x1E824) read 00000038; eax 00000000 ecx 4C45D81A edx 00000000 ebx 0153FCC0 esi 003832E0 edi 00000000 esp 01537C60
+459:[RWC_CORE] AV stack exe offsets: +0x26CAFF +0x3732E0 +0x634378 +0x634158
+460:[RWC_CORE] AV raw stack: [esp+0]=0027CAFF(mashed_re_ddk.exe+0x26CAFF) [esp+4]=00000000(-) [esp+8]=00000000(-) [esp+C]=00000002(-) [esp+10]=003832E0(mashed_re_ddk.exe+0x3732E0) [esp+14]=0000000A(-) [esp+18]=01537C8C(-) [esp+1C]=00008000(-)
+== RO_ROLOADRWCC-vfs2.log
+4:[portstate-image] loaded D:\MashedWT\RACE-VFS-COURSELUA_root\original\mashed_image.bin: 3 ranges, 434252 bytes, nonzero bytes in the ranges before the copy 2; IAT 0x005CC000..0x005CC2E8 zeroed
+90:[ORIG_TOP] cfglog: Calling RtFSManagerOpen
+92:[ORIG_TOP] 0x00495780 HardwareInstallFileSystem (matched, RW core FS) returned 1: [0x007dc75c] 4 file systems, default [0x007dc76c] 017FB888
+180:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\font36.piz -> original/toastart/common/font36.piz: OK, 26 entries (depth 1)
+226:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\sfx.piz -> original/toastart/common/sfx.piz: OK, 30 entries (depth 1)
+255:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\powerups\powerups.piz -> original/toastart/common/powerups/powerups.piz: OK, 36 entries (depth 1)
+312:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\toastart\common\Panel\Panel.piz -> original/toastart/common/Panel/Panel.piz: OK, 15 entries (depth 1)
+328:[ORIG_TOP] [PIZ_FS] 0x00495280 mount d:\ToastArt\common\perm.piz -> original/ToastArt/common/perm.piz: OK, 26 entries (depth 1)
+449:[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+455:[ORIG_TOP] [PIZ_FS] 0x00495280 mount c:\toastart\tracks\training.piz -> original/toastart/tracks/training.piz: OK, 43 entries (depth 1)
+456:[ORIG_TOP] cfglog: Searching piz for COURSE.LUA 
+457:[ORIG_TOP] cfglog: Unable to find COURSE.LUA in piz
+458:[RWC_CORE] AV at 0002E824 (exe+0x1E824) read 00000038; eax 00000000 ecx 0490CD05 edx 00000000 ebx 0153FCC0 esi 003832E0 edi 00000000 esp 01537C60
+459:[RWC_CORE] AV stack exe offsets: +0x26CAFF +0x3732E0 +0x634378 +0x634158
+460:[RWC_CORE] AV raw stack: [esp+0]=0027CAFF(mashed_re_ddk.exe+0x26CAFF) [esp+4]=00000000(-) [esp+8]=00000000(-) [esp+C]=00000002(-) [esp+10]=003832E0(mashed_re_ddk.exe+0x3732E0) [esp+14]=0000000A(-) [esp+18]=01537C8C(-) [esp+1C]=00008000(-)
+== kb_vs1.log (VS2022, knob off for RWC)
+98:[ORIG_TOP] 0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)
+1424:[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames

@@ -1,0 +1,1338 @@
+rva	class	confidence	c4	subsystem	listed	source	exe_body
+00095280	no_source	C2		util			
+000952f0	no_source	C2		util			
+000b6570	no_source	C2		util			
+000b6710	no_source	C2		util			
+000b6770	no_source	C2		util			
+000b67e0	no_source	C2		util			
+000b6940	no_source	C2		util			
+00150c30	no_source	C2		util			
+00150c50	no_source	C2		util			
+00150d80	no_source	C2		util			
+00150da0	no_source	C2		util			
+001514e0	no_source	C2		util			
+00401570	bound	C4	match	frontend		re/match/s01/00401570.c	EntryTableScanByKey@Match/MatchS01.cpp;EntryTableScanByKey@Match/MatchS01.cpp
+00401da0	src_not_c4	C2		frontend		re/match/s01/00401da0.c	
+00401ee0	hand	C4	match	frontend			EntityTableSelectUpdate@Match/MatchS01.cpp
+00402b70	c4_unbound	C4	match	util		re/match/s01/00402b70.c	
+00404e00	bound	C4	match	vehicle		re/match/s01/00404e00.c;re/match/s01/raw/00404e00.c	IdxPtr404e00@Vehicle/CarMaterialTables.cpp;IdxPtr404e00@Vehicle/CarMaterialTables.cpp
+00404e20	hand	C4	match	vehicle		re/match/s01/raw/00404e20.c	IdxPtr404e20@Vehicle/CarMaterialTables.cpp
+004053d0	bound	C4	match	render		re/match/s01/004053d0.c	Orig_004053d0@Match/PortTop_00405400.cpp
+004074a0	bound	C4	match	gameplay		re/match/s01/004074a0.c	PortTop_Bound_004074a0@Match/PortTop_004074a0.cpp
+00407a60	bound	C4	match	util		re/match/s01/00407a60.c;re/match/s01/raw/00407a60.c	UtilTableInit8a9620@Match/MatchS01.cpp;UtilTableInit8a9620@Match/MatchS01.cpp
+00409300	hand	C4	match	gameplay		re/match/s01/00409300.c	RangeTableFirstOfGroup@Gameplay/RangeTable_ah1.cpp
+00409330	hand	C4	match	gameplay		re/match/s01/00409330.c	RangeTableSuccessorByGroup@Gameplay/RangeTable_ah1.cpp
+004095a0	c4_unbound	C4	match	gameplay		re/match/s01/004095a0.c	
+00409680	c4_unbound	C4	match	render		re/match/s01/raw/00409680.c;re/match/tlr/00409680.c	
+00409710	bound	C4	match	render		re/match/s01/raw/00409710.c;re/match/tlr/00409710.c	PortTop_Bound_00409710@Match/PortTop_00409710.c
+0040b180	bound	C4	match	util		re/match/s02/0040b180.c	PortTop_Bound_0040b180@Match/PortTop_0040b180.cpp
+0040b890	bound	C4	match	gameplay		re/match/s02/0040b890.c	GetGridCount8or12@Gameplay/Thresholds_ah4.cpp;PortTop_Bound_0040b890@Match/PortTop_0040b890.cpp
+0040bb30	bound	C4	match	boot		re/match/s02/0040bb30.c	Search40bb30@Match/MatchS02_0040bb30.cpp;Search40bb30@Match/MatchS02_0040bb30.cpp
+0040bb70	bound	C4	match	frontend		re/match/s02/0040bb70.c	SpriteLookupTableA@Match/MatchS02_0040bb70.cpp;SpriteLookupTableA@Match/MatchS02_0040bb70.cpp
+0040bd80	bound	C4	match	util		re/match/s02/0040bd80.c	PortTop_Bound_0040bd80@Match/PortTop_0040bd80.cpp
+0040ce80	bound	C4	match	gameplay		re/match/s02/0040ce80.c	PtrTable5f2770Get@Match/MatchS02_0040ce80.cpp;PtrTable5f2770Get@Match/MatchS02_0040ce80.cpp
+0040cea0	bound	C4	frida-replay	track		re/match/s02/0040cea0.c	PortTop_Bound_0040cea0@Match/PortTop_0040cea0.cpp
+0040cf80	bound	C4	match	boot		re/match/s02/0040cf80.c	Orig_0040cf80@Match/PortTop_0040cf80.cpp
+0040d020	bound	C4	match	track		re/match/s02/0040d020.c	Orig_0040d020@Match/PortTop_0040d020.cpp
+0040d110	bound	C4	match	track		re/match/topm01/0040d110.c	PortTop_Bound_0040d110@Match/PortTop_0040d110.cpp
+0040d250	bound	C4	match	frontend		re/match/s02/0040d250.c	DoubleDerefIndexedGetter@Match/MatchS02_0040d250.cpp;DoubleDerefIndexedGetter@Match/MatchS02_0040d250.cpp
+0040d270	bound	C4	match	track		re/match/top07/0040d270.c	Orig_0040d270@Match/PortTop_0040d270.cpp
+0040d440	bound	C4		track		re/match/s02/0040d440.c	Orig_0040d440@Match/PortTop_0040d440.cpp
+0040e340	bound	C4	match	util		re/match/s02/0040e340.c	GetLiveCarCount@Match/MatchS02_0040e340.cpp;GetLiveCarCount@Match/MatchS02_0040e340.cpp
+00410b30	bound	C4	match	render		re/match/s02/00410b30.c	PortTop_Bound_00410b30@Match/PortTop_00410b30.cpp
+004111c0	bound	C4	match	util		re/match/t01g/004111c0.c	FUN_004111c0@Match/MatchT01G_004111c0.cpp;PortTop_Bound_004111c0@Match/PortTop_004111c0.cpp
+00411750	bound	C4	match	vehicle		re/match/s02/00411750.c	PortTop_Bound_00411750@Match/PortTop_00411750.cpp
+00411d90	bound	C4	match	vehicle		re/match/topm01/00411d90.c	PortTop_Bound_00411d90@Match/PortTop_00411d90.cpp
+00412050	bound	C4	match	render		re/match/s02/00412050.c	PortTop_Bound_00412050@Match/PortTop_00412050.cpp
+00412130	c4_unbound	C4	match	gameplay		re/match/s03/h2_00412130.c	
+00412190	no_source	C4	frida-replay	render			
+00412880	c4_unbound	C4	match	render		re/match/s03/h1_00412880.c	
+00413c70	c4_unbound	C4	match	vehicle		re/match/s03/h2_00413c70.c	
+00413f20	c4_unbound	C4	match	util		re/match/s03/h1_00413f20.c	
+00413fa0	bound	C4	match	gameplay		re/match/s03/h2_00413fa0.c	Calc413fa0@Match/MatchS03_00413fa0.cpp;Calc413fa0@Match/MatchS03_00413fa0.cpp
+00414060	bound	C4	match	util		re/match/s03/h3_00414060.c	Race89a360Compute@Match/MatchS03_00414060.cpp;Race89a360Compute@Match/MatchS03_00414060.cpp
+00418990	c4_unbound	C4	match	hud		re/match/s03/h1_00418990.c	
+00418a30	c4_unbound	C4	match	vehicle		re/match/s03/h1_00418a30.c	
+00418de0	no_source	C4	match	vehicle			
+00418e30	no_source	C4	match	render			
+00418e50	c4_unbound	C4	match	render		re/match/s03/raw_00418e50.c	
+004190f0	no_source	C4	match	gameplay			
+004194f0	no_source	C4	match	gameplay			
+0041a400	no_source	C4	frida-replay	gameplay	provisional		
+0041a8d0	no_source	C4	match	gameplay			
+0041adb0	no_source	C4	match	render			
+0041b4d0	c4_unbound	C4	match	hud		re/match/s03/raw_0041b4d0.c	
+0041c380	bound	C4	match	render		re/match/pilot/a7_0041c380.c;re/match/s04/0041c380.c	PortTop_Local_0041cb80_0041c380@Match/PortTop_0041cb80.cpp
+0041cb80	c4_unbound	C4	match	util		re/match/s04/0041cb80.c	
+0041e870	bound	C4	match	render		re/match/s04/0041e870.c	TrackNodeRecordScan@Match/MatchS04_0041e870.cpp;TrackNodeRecordScan@Match/MatchS04_0041e870.cpp
+0041e8b0	bound	C4	match	render		re/match/s04/0041e8b0.c	PortTop_Bound_0041e8b0@Match/PortTop_0041e8b0.cpp
+0041e8f0	c4_unbound	C4	match	render		re/match/s04/0041e8f0.c	
+0041e920	bound	C4	match	gameplay		re/match/s04/0041e920.c	PortTop_Bound_0041e920@Match/PortTop_0041e920.cpp
+0041e980	bound	C4	match	render		re/match/s04/0041e980.c	PortTop_Bound_0041e980@Match/PortTop_0041e980.cpp
+0041e9b0	bound	C4	match	render		re/match/s04/0041e9b0.c	PortTop_Bound_0041e9b0@Match/PortTop_0041e9b0.cpp
+0041e9d0	bound	C4	match	render		re/match/s04/0041e9d0.c	PortTop_Bound_0041e9d0@Match/PortTop_0041e9d0.cpp
+0041ea00	bound	C4	match	gameplay		re/match/s04/0041ea00.c	PortTop_Bound_0041ea00@Match/PortTop_0041ea00.cpp
+0041ea10	c4_unbound	C4	match	render		re/match/s04/0041ea10.c	
+0041ea40	bound	C4	match	gameplay		re/match/s04/0041ea40.c	PortTop_Bound_0041ea40@Match/PortTop_0041ea40.cpp
+0041ea90	bound	C4	match	render		re/match/s04/0041ea90.c	PortTop_Bound_0041ea90@Match/PortTop_0041ea90.cpp
+0041ecc0	bound	C4	match	render		re/match/s04/0041ecc0.c	PortTop_Bound_0041ecc0@Match/PortTop_0041ecc0.cpp
+0041eda0	bound	C4	match	util		re/match/s04/0041eda0.c	TimerBitFieldSet@Match/MatchS04_0041eda0.cpp;TimerBitFieldSet@Match/MatchS04_0041eda0.cpp
+0041f000	bound	C4	match	util		re/match/s04/0041f000.c	TimerSlotDataCopy@Match/MatchS04_0041f000.cpp;TimerSlotDataCopy@Match/MatchS04_0041f000.cpp
+0041f120	bound	C4	match	util		re/match/s04/0041f120.c	PortTop_Bound_0041f120@Match/PortTop_0041f120.cpp
+0041f320	bound	C4	match	util		re/match/s04/0041f320.c	Table63d830Get@Match/MatchS04_0041f320.cpp;Table63d830Get@Match/MatchS04_0041f320.cpp
+0041f330	c4_unbound	C4	match	gameplay		re/match/s04/0041f330.c	
+0041f360	hand	C4	match	gameplay		re/match/s04/0041f360.c	GatedSwitch636ad0@Vehicle/CarMaterialTables.cpp
+0041fe10	bound	C4	match	gameplay		re/match/s05/0041fe10.c	PortTop_Bound_0041fe10@Match/PortTop_0041fe10.cpp
+00420230	bound	C4	match	track		re/match/s05/00420230.c	PortTop_Bound_00420230@Match/PortTop_00420230.cpp
+00420290	src_not_c4	C2		gameplay		re/match/s05/00420290.c	
+00420420	c4_unbound	C4	match	track		re/match/s05/00420420.c	
+00420d40	bound	C4	match	util		re/match/s05/00420d40.c	TimerStructArrayClear@Match/MatchS05_00420d40.cpp;TimerStructArrayClear@Match/MatchS05_00420d40.cpp
+00421080	bound	C4	match	gameplay		re/match/s05/00421080.c	Orig_00421080@Match/PortTop_00421080.cpp
+004218b0	bound	C4	match	render		re/match/s05/004218b0.c	PortTop_Bound_004218b0@Match/PortTop_004218b0.cpp
+004218d0	no_source	C4	match	render			
+00421930	bound	C4	match	render		re/match/s05/00421930.c	BodyGeometryFirstDword@Match/MatchS05_00421930.cpp;BodyGeometryFirstDword@Match/MatchS05_00421930.cpp
+00421a90	no_source	C4	match	render			
+00421ba0	no_source	C4	match	render			
+00421c10	bound	C4	match	render		re/match/s05/00421c10.c	PortTop_Bound_00421c10@Match/PortTop_00421c10.cpp
+00421c50	no_source	C4	match	render			
+004220d0	bound	C4	match	render		re/match/s05/004220d0.c	PortTop_Local_00421a90_004220d0@Match/PortTop_00421a90.cpp;PortTop_Bound_004220d0@Match/PortTop_00421a90.cpp
+00422120	bound	C4	match	util		re/match/s05/00422120.c	TimerInitLoop@Util/TimerInit.cpp;PortTop_Bound_00422120@Match/PortTop_00422120.cpp
+004222c0	bound	C4	match	util		re/match/s05/004222c0.c	TimerInitThunk@Match/MatchS05_004222c0.cpp;TimerInitThunk@Match/MatchS05_004222c0.cpp
+004223b0	bound	C4	match	render		re/match/s05/004223b0.c	PortTop_Bound_004223b0@Match/PortTop_004223b0.cpp
+004224d0	bound	C4	match	frontend		re/match/s05/004224d0.c	PortTop_Bound_004224d0@Match/PortTop_004224d0.cpp
+00422b10	bound	C4	match	util		re/match/s05/00422b10.c	TimerDwordClear@Match/MatchS05_00422b10.cpp;TimerDwordClear@Match/MatchS05_00422b10.cpp
+00423480	bound	C4	match	ai		re/match/s05/00423480.c	AiFilenameBuild@Match/MatchS05_00423480.cpp;AiFilenameBuild@Match/MatchS05_00423480.cpp
+004235b0	bound	C4	match	render		re/match/s05/004235b0.c	PortTop_Bound_004235b0@Match/PortTop_004235b0.cpp
+00423630	bound	C4	match	render		re/match/s05/00423630.c	PortTop_Bound_00423630@Match/PortTop_00423630.cpp
+00425ab0	bound	C4	match	render		re/match/s05/00425ab0.c	PortTop_Bound_00425ab0@Match/PortTop_00425ab0.cpp
+00425b10	bound	C4	match	util		re/match/s05/00425b10.c	TimerGlobalZero@Match/MatchS05_00425b10.cpp;TimerGlobalZero@Match/MatchS05_00425b10.cpp
+00425b70	bound	C4	match	frontend		re/match/s05/00425b70.c	SlotFieldSetter@Match/MatchS05_00425b70.cpp;SlotFieldSetter@Match/MatchS05_00425b70.cpp
+00425b90	bound	C4	match	frontend		re/match/s05/00425b90.c	PortTop_Bound_00425b90@Match/PortTop_00425b90.cpp
+00425bf0	c4_unbound	C4	match	frontend		re/match/s05/00425bf0.c	
+00425c00	bound	C4	match	frontend		re/match/s05/00425c00.c	CopterClumpRegister@Match/MatchS05_00425c00.cpp;PortTop_Bound_00425c00@Match/PortTop_00425c00.cpp
+00426030	c4_unbound	C4	match	render		re/match/s05/00426030.c	
+00426060	bound	C4	match	render		re/match/s05/00426060.c	PortTop_Bound_00426060@Match/PortTop_00426060.cpp
+00426070	bound	C4	match	render		re/match/s06/00426070.c	TrackPhysWorld2Get@Match/MatchS06_00426070.cpp;TrackPhysWorld2Get@Match/MatchS06_00426070.cpp
+00426090	bound	C4	match	frontend		re/match/s06/00426090.c	GlobalDat0066ce58Get@Match/MatchS06_00426090.cpp;GlobalDat0066ce58Get@Match/MatchS06_00426090.cpp
+004260a0	bound	C4	match	frontend		re/match/s06/004260a0.c	GetDat00657438@Match/MatchS06_004260a0.cpp;GetDat00657438@Match/MatchS06_004260a0.cpp
+004260b0	bound	C4	match	frontend		re/match/s06/004260b0.c	GetDat0065743c@Match/MatchS06_004260b0.cpp;GetDat0065743c@Match/MatchS06_004260b0.cpp
+004260e0	bound	C4	match	render		re/match/pilot/a7_004260e0.c;re/match/s06/004260e0.c	PortTop_Bound_004260e0@Match/PortTop_004260e0.cpp
+004262f0	bound	C4	match	render		re/match/s06/004262f0.c	PortTop_Bound_004262f0@Match/PortTop_004262f0.cpp
+00426460	no_source	C4	match	frontend			
+004264d0	bound	C4	match	track		re/match/s06/004264d0.c	PortTop_Bound_004264d0@Match/PortTop_004264d0.cpp
+00426670	bound	C4	match	render		re/match/s06/00426670.c	PortTop_Bound_00426670@Match/PortTop_00426670.cpp
+00426ba0	bound	C4	match	hud		re/match/s06/00426ba0.c	HudDrawEnabled@Match/MatchS06_00426ba0.cpp;HudDrawEnabled@Match/MatchS06_00426ba0.cpp
+00426c00	bound	C4	match	ai		re/match/s06/00426c00.c	GameStateFlagGet@Match/MatchS06_00426c00.cpp;GameStateFlagGet@Match/MatchS06_00426c00.cpp
+00426c10	bound	C4	match	util		re/match/s06/00426c10.c	TimerDispatch10@Match/MatchS06_00426c10.cpp;TimerDispatch10@Match/MatchS06_00426c10.cpp
+00426cd0	bound	C4	match	render		re/match/s06/00426cd0.c	PortTop_Bound_00426cd0@Match/PortTop_00426cd0.cpp
+00426cf0	bound	C4	match	frontend		re/match/s06/00426cf0.c	GetDat0066d6e4@Match/MatchS06_00426cf0.cpp;GetDat0066d6e4@Match/MatchS06_00426cf0.cpp
+00426d20	bound	C4	match	frontend		re/match/s06/00426d20.c	PortTop_Bound_00426d20@Match/PortTop_00426d20.cpp
+00426d90	bound	C4	match	frontend		re/match/s06/00426d90.c	HandleArrayRelease@Match/MatchS06_00426d90.cpp;PortTop_Bound_00426d90@Match/PortTop_00426d90.cpp
+00426de0	bound	C4	match	frontend		re/match/s06/00426de0.c	FrontendFloatGet426de0@Match/MatchS06_00426de0.cpp;FrontendFloatGet426de0@Match/MatchS06_00426de0.cpp
+00426df0	bound	C4	match	frontend		re/match/s06/00426df0.c	FrontendFloatGet426df0@Match/MatchS06_00426df0.cpp;FrontendFloatGet426df0@Match/MatchS06_00426df0.cpp
+00426e10	bound	C4	match	render		re/match/s06/00426e10.c	PortTop_Bound_00426e10@Match/PortTop_00426e10.cpp
+004270f0	bound	C4	match	render		re/match/s06/004270f0.c	PortTop_Bound_004270f0@Match/PortTop_004270f0.cpp
+00427680	bound	C4	match	hud		re/match/s06/00427680.c	RwCore_00427680@RwCore/RwCore_00427680.cpp
+00427780	bound	C4	match	hud		re/match/s06/00427780.c	FontText_StringTableLookup@Match/MatchS06_00427780.cpp;FontText_StringTableLookup@Match/MatchS06_00427780.cpp
+004277a0	bound	C4	match	frontend		re/match/s06/004277a0.c	TextCtrlCodeRemapBody@Match/MatchS06_004277a0.cpp;TextCtrlCodeRemap@Match/MatchS06_004277a0.cpp
+00427e00	bound	C4	match	frontend		re/match/s06/00427e00.c	RwCore_00427e00@RwCore/RwCore_00427e00.cpp
+00428450	bound	C4	frida-replay	hud	provisional	re/match/s06/00428450.c	RwCore_00428450@RwCore/RwCore_00428450.cpp
+00428610	bound	C4	match	hud		re/match/s06/00428610.c	ViewportScaledRectDraw@Match/MatchS06_00428610.cpp;ViewportScaledRectDraw@Match/MatchS06_00428610.cpp
+00428760	bound	C4	match	hud		re/match/s06/00428760.c	ViewportScaledRectDraw_Arg7Zero@Match/MatchS06_00428760.cpp;ViewportScaledRectDraw_Arg7Zero@Match/MatchS06_00428760.cpp
+00428d30	bound	C4	match	frontend		re/match/s06/00428d30.c	FUN_00428d30@Match/MatchS06_00428d30.cpp;PortTop_Bound_00428d30@Match/PortTop_00428d30.cpp
+00429240	no_source	C4	match	frontend			
+00429290	bound	C4	match	frontend		re/match/s06/00429290.c	FUN_00429290@Match/MatchS06_00429290.cpp;PortTop_Bound_00429290@Match/PortTop_00429290.cpp
+0042a470	bound	C4	match	render		re/match/s06/0042a470.c	PortTop_Bound_0042a470@Match/PortTop_0042a470.cpp
+0042a530	bound	C4	match	render		re/match/s06/0042a530.c	PortTop_Bound_0042a530@Match/PortTop_0042a530.cpp
+0042a5d0	bound	C4	match	render		re/match/s06/0042a5d0.c	PortTop_Bound_0042a5d0@Match/PortTop_0042a5d0.cpp
+0042a640	bound	C4	match	frontend		re/match/s06/0042a640.c	PathBuilderLoad@Match/MatchS06_0042a640.cpp;PortTop_Bound_0042a640@Match/PortTop_0042a640.cpp
+0042a6b0	bound	C4	match	vehicle		re/match/s06/0042a6b0.c	PortTop_Bound_0042a6b0@Match/PortTop_0042a6b0.cpp
+0042a740	bound	C4	match	render		re/match/s06/0042a740.c	PortTop_Bound_0042a740@Match/PortTop_0042a740.cpp
+0042a860	bound	C4	match	render		re/match/s06/0042a860.c	PortTop_Bound_0042a860@Match/PortTop_0042a860.cpp
+0042a8d0	bound	C4	match	render		re/match/s06/0042a8d0.c	PortTop_Bound_0042a8d0@Match/PortTop_0042a8d0.cpp
+0042b8b0	bound	C4	match	hud		re/match/s07/0042b8b0.c	ScreenWidthGet@Match/MatchS07_0042b8b0.cpp;ScreenWidthGet@Match/MatchS07_0042b8b0.cpp
+0042b8c0	bound	C4	match	hud		re/match/s07/0042b8c0.c	ScreenHeightGet@Match/MatchS07_0042b8c0.cpp;ScreenHeightGet@Match/MatchS07_0042b8c0.cpp
+0042b8d0	bound	C4	match	util		re/match/s07/0042b8d0.c	StatePhaseIsIdle@Match/MatchS07_0042b8d0.cpp;StatePhaseIsIdle@Match/MatchS07_0042b8d0.cpp
+0042b930	bound	C4	match	frontend		re/match/s07/0042b930.c	MenuAlphaGet@Match/MatchS07_0042b930.cpp;MenuAlphaGet@Match/MatchS07_0042b930.cpp
+0042e590	bound	C4	match	frontend		re/match/s07/0042e590.c	RwCore_0042e590@RwCore/RwCore_0042e590.cpp
+0042f0b0	bound	C4	match	frontend		re/match/s07/0042f0b0.c	GetFrameCounterPlus73@Match/MatchS07_0042f0b0.cpp;GetFrameCounterPlus73@Match/MatchS07_0042f0b0.cpp
+0042f500	bound	C4	match	util		re/match/s07/0042f500.c	GetDat0067ea64@Match/MatchS07_0042f500.cpp;GetDat0067ea64@Match/MatchS07_0042f500.cpp
+0042f510	bound	C4	match	render		re/match/s07/0042f510.c	Vehicle0HandleGet@Match/MatchS07_0042f510.cpp;Vehicle0HandleGet@Match/MatchS07_0042f510.cpp
+0042f6a0	bound	C4	match	util		re/match/s07/0042f6a0.c	GetRaceSubMode@Match/MatchS07_0042f6a0.cpp;GetRaceSubMode@Match/MatchS07_0042f6a0.cpp
+0042f760	bound	C4	match	audio		re/match/s07/0042f760.c	PortTop_Bound_0042f760@Match/PortTop_0042f760.cpp
+0042f770	bound	C4	match	audio		re/match/s07/0042f770.c	PortTop_Bound_0042f770@Match/PortTop_0042f770.cpp
+0042f780	bound	C4	match	audio		re/match/s07/0042f780.c	PortTop_Bound_0042f780@Match/PortTop_0042f780.cpp
+0042f7a0	bound	C4	match	util		re/match/s07/0042f7a0.c	GhostFlagReset@Match/MatchS07_0042f7a0.cpp;GhostFlagReset@Match/MatchS07_0042f7a0.cpp
+0042fe30	bound	C4	match	frontend		re/match/s07/0042fe30.c	RaceEndFlagIfEndMode@Match/MatchS07_0042fe30.cpp;RaceEndFlagIfEndMode@Match/MatchS07_0042fe30.cpp
+0042fe80	bound	C4	match	frontend		re/match/s07/0042fe80.c	GetRaceEndFlag@Match/MatchS07_0042fe80.cpp;GetRaceEndFlag@Match/MatchS07_0042fe80.cpp
+00430790	bound	C4	match	util		re/match/s07/00430790.c	GetDat0067f17c@Match/MatchS07_00430790.cpp;GetDat0067f17c@Match/MatchS07_00430790.cpp
+00431b20	bound	C4	match	audio		re/match/s07/00431b20.c	SinGlobalProduct431b20@Match/MatchS07_00431b20.cpp;SinGlobalProduct431b20@Match/MatchS07_00431b20.cpp
+00431b50	bound	C4	match	util		re/match/s07/00431b50.c	SinGlobalProduct431b50@Match/MatchS07_00431b50.cpp;SinGlobalProduct431b50@Match/MatchS07_00431b50.cpp
+00431b60	bound	C4	match	util		re/match/s07/00431b60.c	SinGlobalProduct431b60@Match/MatchS07_00431b60.cpp;SinGlobalProduct431b60@Match/MatchS07_00431b60.cpp
+00431d70	bound	C4	match	util		re/match/s07/00431d70.c	PortTop_Bound_00431d70@Match/PortTop_00431d70.cpp
+00432230	bound	C4	match	audio		re/match/s07/00432230.c	PortTop_Bound_00432230@Match/PortTop_00432230.cpp
+00432260	bound	C4	match	audio		re/match/s08/00432260.c	PortTop_Bound_00432260@Match/PortTop_00432260.cpp
+00432290	bound	C4	match	util		re/match/s08/00432290.c	PortTop_Bound_00432290@Match/PortTop_00432290.cpp
+00440bc0	bound	C4	match	track		re/match/tlr/00440bc0.c	PortTop_Bound_00440bc0@Match/PortTop_00440bc0.c
+004417e0	bound	C4	match	util		re/match/s08/004417e0.c	PortTop_Bound_004417e0@Match/PortTop_004417e0.cpp
+004425d0	bound	C4	match	util		re/match/s08/004425d0.c	UtilZeroTable8964c0@Match/MatchS08_004425d0.cpp;UtilZeroTable8964c0@Match/MatchS08_004425d0.cpp
+0044d6e0	bound	C4	match	render		re/match/s08/0044d6e0.c	PortTop_Bound_0044d6e0@Match/PortTop_0044d6e0.cpp
+00450b10	bound	C3		hud	provisional	re/match/s08/00450b10.c	HudIm2DQuad@Frontend/DrawQuadPrimitives.cpp;RwCore_00450b10@RwCore/RwCore_00450b10.cpp
+004516d0	bound	C4	match	render		re/match/s09/004516d0.c	PortTop_Bound_004516d0@Match/PortTop_004516d0.cpp
+00454170	c4_unbound	C4	match	gameplay		re/match/s09/00454170.c	
+004547c0	c4_unbound	C4	match	gameplay		re/match/s09/004547c0.c	
+004548a0	bound	C4	match	vehicle		re/match/s09/004548a0.c	Orig_004548a0@Match/PortTop_004548a0.cpp
+00454a20	c4_unbound	C4	match	gameplay		re/match/s09/00454a20.c	
+00454bd0	c4_unbound	C4	match	render		re/match/s09/00454bd0.c	
+00454c00	c4_unbound	C4	match	render		re/match/s09/00454c00.c	
+00454e40	bound	C4	match	render		re/match/s29/00454e40.c	Orig_00454e40@Match/PortTop_00454e40.cpp
+00454fa0	no_source	C4	match	render			
+00454ff0	no_source	C4	match	render			
+00455030	c4_unbound	C4	match	render		re/match/s09/00455030.c	
+00457ba0	no_source	C4	match	gameplay			
+00458020	no_source	C4	match	gameplay			
+00458360	bound	C4	match	gameplay		re/match/s09/00458360.c	Orig_00458360@Match/PortTop_00458360.cpp
+00458630	bound	C4	match	frontend		re/match/s09/00458630.c	PortTop_Bound_00458630@Match/PortTop_00458630.cpp
+00458bf0	bound	C4	match	util		re/match/s09/00458bf0.c	PortTop_Bound_00458bf0@Match/PortTop_00458bf0.cpp
+00458c70	bound	C4	match	gameplay		re/match/s09/00458c70.c	PortTop_Bound_00458c70@Match/PortTop_00458c70.cpp
+00458dd0	bound	C4	match	gameplay		re/match/s09/00458dd0.c	PortTop_Bound_00458dd0@Match/PortTop_00458dd0.c
+00458e00	bound	C4	match	gameplay		re/match/s09/00458e00.c	PickupPoolSpawn@Gameplay/PickupPoolSpawn.cpp;PortTop_Bound_00458e00@Match/PortTop_00458e00.cpp
+00458fa0	bound	C4	match	gameplay		re/match/s09/00458fa0.c	TtlSet68b1b0@Match/MatchS09_00458fa0.cpp;TtlSet68b1b0@Match/MatchS09_00458fa0.cpp
+00458fd0	bound	C4	match	gameplay		re/match/s09/00458fd0.c	PortTop_Bound_00458fd0@Match/PortTop_00458fd0.cpp
+00459560	bound	C4	match	util		re/match/s09/00459560.c	PortTop_Bound_00459560@Match/PortTop_00459560.cpp
+0045b350	bound	C4	match	render		re/match/s09/0045b350.c;re/match/s30/0045b350.c	RwInitNullStub@Match/MatchS09_0045b350.cpp;RwInitNullStub@Match/MatchS09_0045b350.cpp
+0045b360	c4_unbound	C4	match	gameplay		re/match/s09/0045b360.c	
+0045b810	bound	C4	match	gameplay		re/match/s29/0045b810.c	Orig_0045b810@Match/PortTop_0045b810.cpp
+0045ba00	bound	C4	match	frontend		re/match/s10/0045ba00.c	RaceResultIndexedStore@Match/MatchS10_0045ba00.cpp;RaceResultIndexedStore@Match/MatchS10_0045ba00.cpp
+0045ba10	no_source	C4	match	vehicle			
+0045be90	c4_unbound	C4	match	powerups		re/match/s10/0045be90.c	
+0045c030	c4_unbound	C4	frida-replay	gameplay		re/match/s10/0045c030.c	
+0045c110	bound	C4	match	gameplay		re/match/s10/0045c110.c	PortTop_Bound_0045c110@Match/PortTop_0045c110.cpp
+0045d3f0	bound	C4	match	util		re/match/s10/0045d3f0.c	PortTop_Bound_0045d3f0@Match/PortTop_0045d3f0.cpp
+0045d430	bound	C4	match	util		re/match/s10/0045d430.c	PortTop_Bound_0045d430@Match/PortTop_0045d430.cpp
+0045d7a0	src_not_c4	C2		util		re/match/s10/0045d7a0.c	
+0045db50	bound	C4	match	util		re/match/s10/0045db50.c	FloatSliderStep@Match/MatchS10_0045db50.cpp;FloatSliderStep@Match/MatchS10_0045db50.cpp
+0045dbe0	bound	C4	match	util		re/match/s10/0045dbe0.c	PortTop_Bound_0045dbe0@Match/PortTop_0045dbe0.cpp
+0045dd60	src_not_c4	C2		audio		re/match/s10/0045dd60.c	
+0045de80	src_not_c4	C2		render		re/match/s10/0045de80.c	
+0045e0f0	bound	C4	match	audio		re/match/s10/0045e0f0.c	PortTop_Bound_0045e0f0@Match/PortTop_0045e0f0.cpp
+004623e0	bound	C4	match	audio		re/match/s10/004623e0.c	PortTop_Bound_004623e0@Match/PortTop_004623e0.cpp
+00462500	bound	C4	match	track		re/match/s10/00462500.c	Set603868_1@Match/MatchS10_00462500.cpp;Set603868_1@Match/MatchS10_00462500.cpp
+00462510	bound	C4	match	track		re/match/s10/00462510.c	Set603868_0@Match/MatchS10_00462510.cpp;Set603868_0@Match/MatchS10_00462510.cpp
+004627b0	bound	C4	match	audio		re/match/s10/004627b0.c	PortTop_Bound_004627b0@Match/PortTop_004627b0.cpp
+00462950	bound	C2		render	provisional	re/match/s10/00462950.c	PortTop_Bound_00462950@Match/PortTop_00462950.cpp
+00462ec0	bound	C4	match	audio		re/match/s10/00462ec0.c	PortTop_Bound_00462ec0@Match/PortTop_00462ec0.cpp
+004631f0	bound	C4	match	audio		re/match/s10/004631f0.c	PortTop_Bound_004631f0@Match/PortTop_004631f0.cpp
+004647f0	bound	C4	frida-replay	audio	provisional	re/match/s10/004647f0.c	PortTop_Bound_004647f0@Match/PortTop_004647f0.cpp
+004661a0	c4_unbound	C4	match	audio		re/match/s10/004661a0.c	
+00466b50	bound	C4	match	util		re/match/s10/00466b50.c	PortTop_Bound_00466b50@Match/PortTop_00466b50.cpp
+004671a0	bound	C4	match	render		re/match/s11/004671a0.c	BackBuffRasterOpen@Match/MatchS11_004671a0.cpp;RwCore_004671a0@RwCore/RwCore_004671a0.cpp
+00467210	bound	C4	match	render		re/match/s11/00467210.c	FollowTargetField10_impl@Match/MatchS11_00467210.cpp;FollowTargetField10@Camera/FollowTargetFieldPtr.cpp
+0046b1c0	hand	C4		vehicle		re/match/s11/0046b1c0.c	VehicleSlotAabbExpand@Vehicle/VehicleContactHull.cpp
+0046b540	bound	C4	frida-replay	vehicle		re/match/s11/0046b540.c	PortTop_Bound_0046b540@Match/PortTop_0046b540.cpp
+004715a0	bound	C4	match	ai		re/match/pilot/a3_004715a0.c;re/match/s11/004715a0.c	PortTop_Bound_004715a0@Match/PortTop_004715a0.cpp
+00471cf0	bound	C4	match	camera		re/match/s11/00471cf0.c	PortTop_Bound_00471cf0@Match/PortTop_00471cf0.cpp
+004722e0	bound	C4	match	gameplay		re/match/s11/004722e0.c	RwCore_004722e0@RwCore/RwCore_004722e0.cpp
+004726f0	bound	C4	match	gameplay		re/match/s11/004726f0.c	PortTop_Bound_004726f0@Match/PortTop_004726f0.cpp
+00472820	bound	C4	match	util		re/match/s11/00472820.c	PortTop_Bound_00472820@Match/PortTop_00472820.cpp
+004728a0	bound	C4	match	util		re/match/s11/004728a0.c	PortTop_Bound_004728a0@Match/PortTop_004728a0.cpp
+00472c60	bound	C4	match	frontend		re/match/s11/00472c60.c	ChromeBaseDraw@Match/MatchS11_00472c60.cpp;ChromeBaseDraw@Match/MatchS11_00472c60.cpp
+00472f40	bound	C4	match	frontend		re/match/s11/00472f40.c	TextGradientV0V1Override@Match/MatchS11_00472f40.cpp;TextGradientV0V1Override@Match/MatchS11_00472f40.cpp
+004730b0	bound	C4	match	frontend		re/match/s11/004730b0.c	TextGradientV2V3Override@Match/MatchS11_004730b0.cpp;TextGradientV2V3Override@Match/MatchS11_004730b0.cpp
+00473220	bound	C4	match	render		re/match/s11/00473220.c	RwCore_00473220@RwCore/RwCore_00473220.cpp
+004744a0	bound	C4	frida-replay	render		re/match/s11/004744a0.c	PortTop_Bound_004744a0@Match/PortTop_004744a0.cpp
+00474d60	bound	C4	match	vehicle		re/match/s11/00474d60.c	Orig_00474d60@Match/PortTop_00474d60.cpp
+00474f30	bound	C4	match	render		re/match/s12/00474f30.c	PortTop_Bound_00474f30@Match/PortTop_00474f30.cpp
+00474f90	bound	C4	match	render		re/match/tlr/00474f90.c	PortTop_Bound_00474f90@Match/PortTop_00474f90.cpp
+00474fb0	bound	C4	match	render		re/match/s12/00474fb0.c	PortTop_Bound_00474fb0@Match/PortTop_00474fb0.cpp
+00474fd0	bound	C4	match	render		re/match/s12/00474fd0.c	PortTop_Bound_00474fd0@Match/PortTop_00474fd0.cpp
+00475a60	bound	C4	match	util		re/match/s12/00475a60.c	PortTop_Bound_00475a60@Match/PortTop_00475a60.cpp
+00475ef0	bound	C4	match	render		re/match/pilot/a1_00475ef0.c;re/match/s12/00475ef0.c	Orig_00475ef0@Match/PortTop_00475ef0.cpp
+00476430	bound	C4	match	util		re/match/s12/00476430.c	PortTop_Bound_00476430@Match/PortTop_00476430.cpp
+004773f0	c4_unbound	C4	match	render		re/match/s12/004773f0.c	
+00477730	bound	C4	match	render		re/match/s12/00477730.c	PortTop_Bound_00477730@Match/PortTop_00477730.cpp
+00477b40	bound	C4	match	util		re/match/s12/00477b40.c	Orig_00477b40@Match/PortTop_00477b40.cpp
+00478110	bound	C4	match	render		re/match/s12/00478110.c	PortTop_Bound_00478110@Match/PortTop_00478110.cpp
+004781b0	bound	C4	match	vehicle		re/match/s12/004781b0.c	Orig_004781b0@Match/PortTop_004781b0.cpp
+004783f0	c4_unbound	C4	frida-replay	ai		re/match/pilot/a4_004783f0.c;re/match/s12/004783f0.c	
+004785e0	c4_unbound	C4	frida-replay	util		re/match/s12/004785e0.c	
+00478660	bound	C4	frida-replay	ai	provisional	re/match/s12/00478660.c	PortTop_Bound_00478660@Match/PortTop_00478660.cpp
+00478cb0	bound	C4	match	physics		re/match/s12/00478cb0.c	PortTop_Bound_00478cb0@Match/PortTop_00478cb0.cpp
+00478cc0	bound	C4	match	render		re/match/s12/00478cc0.c	RenderWorldStateZeroFill@Match/MatchS12_00478cc0.cpp;RenderWorldStateZeroFill@Match/MatchS12_00478cc0.cpp
+00478cd0	bound	C4	match	render		re/match/s12/00478cd0.c	PortTop_Bound_00478cd0@Match/PortTop_00478cd0.cpp
+00479030	bound	C4	match	track		re/match/s12/00479030.c	PortTop_Bound_00479030@Match/PortTop_00479030.cpp
+004790e0	c4_unbound	C4	match	track		re/match/s12/004790e0.c	
+00479330	bound	C2		track	provisional	re/match/s12/00479330.c	PortTop_Bound_00479330@Match/PortTop_00479330.cpp
+0047a020	bound	C4	frida-replay	vehicle	provisional	re/match/s12/0047a020.c	PortTop_Bound_0047a020@Match/PortTop_0047a020.cpp
+0047a0f0	bound	C4	match	track		re/match/s12/0047a0f0.c	PortTop_Bound_0047a0f0@Match/PortTop_0047a0f0.cpp
+0047a180	bound	C4	match	render		re/match/s12/0047a180.c	PortTop_Bound_0047a180@Match/PortTop_0047a180.cpp
+0047a1b0	bound	C4	match	track		re/match/s12/0047a1b0.c	PortTop_Bound_0047a1b0@Match/PortTop_0047a1b0.c
+0047a1e0	bound	C4	match	track		re/match/s12/0047a1e0.c	PortTop_Bound_0047a1e0@Match/PortTop_0047a1e0.cpp
+0047a280	bound	C4	match	track		re/match/s12/0047a280.c	PortTop_Bound_0047a280@Match/PortTop_0047a280.cpp
+0047a320	bound	C4	frida-replay	track		re/match/s12/0047a320.c	PortTop_Bound_0047a320@Match/PortTop_0047a320.cpp
+0047a3a0	bound	C4	match	track		re/match/s12/0047a3a0.c	PortTop_Bound_0047a3a0@Match/PortTop_0047a3a0.cpp
+0047a440	bound	C4	match	track		re/match/s12/0047a440.c	PortTop_Bound_0047a440@Match/PortTop_0047a440.cpp
+0047a540	bound	C4	match	track		re/match/s12/0047a540.c	PortTop_Bound_0047a540@Match/PortTop_0047a540.c
+0047a5b0	bound	C4	match	track		re/match/s12/0047a5b0.c	PortTop_Bound_0047a5b0@Match/PortTop_0047a5b0.c
+0047a6b0	bound	C4	match	track		re/match/s12/0047a6b0.c	PortTop_Bound_0047a6b0@Match/PortTop_0047a6b0.c
+0047a6f0	bound	C4	match	track		re/match/s12/0047a6f0.c	PortTop_Bound_0047a6f0@Match/PortTop_0047a6f0.c
+0047a720	bound	C4	match	track		re/match/s12/0047a720.c	PortTop_Bound_0047a720@Match/PortTop_0047a720.cpp
+0047a750	bound	C4	match	track		re/match/s12/0047a750.c	PortTop_Bound_0047a750@Match/PortTop_0047a750.cpp
+0047a790	bound	C4	match	track		re/match/s12/0047a790.c	PortTop_Bound_0047a790@Match/PortTop_0047a790.cpp
+0047a7d0	bound	C4	match	track		re/match/s12/0047a7d0.c	PortTop_Bound_0047a7d0@Match/PortTop_0047a7d0.cpp
+0047a810	bound	C4	match	track		re/match/s12/0047a810.c	PortTop_Bound_0047a810@Match/PortTop_0047a810.cpp
+0047a8b0	bound	C4	match	track		re/match/s12/0047a8b0.c	PortTop_Bound_0047a8b0@Match/PortTop_0047a8b0.cpp
+0047aa20	bound	C4	match	track		re/match/s12/0047aa20.c	PortTop_Bound_0047aa20@Match/PortTop_0047aa20.cpp
+0047aaa0	bound	C4	match	render		re/match/s12/0047aaa0.c	PortTop_Bound_0047aaa0@Match/PortTop_0047aaa0.c
+0047ab30	bound	C4	match	track		re/match/s13/0047ab30.c	PortTop_Bound_0047ab30@Match/PortTop_0047ab30.cpp
+0047ac80	bound	C4	match	vehicle		re/match/s13/0047ac80.c	PortTop_Bound_0047ac80@Match/PortTop_0047ac80.cpp
+0047ade0	bound	C4	match	render		re/match/s13/0047ade0.c	PortTop_Bound_0047ade0@Match/PortTop_0047ade0.cpp
+0047ae80	bound	C4	match	render		re/match/s13/0047ae80.c	PortTop_Bound_0047ae80@Match/PortTop_0047ae80.cpp
+0047afa0	bound	C4	match	render		re/match/s13/0047afa0.c	PortTop_Bound_0047afa0@Match/PortTop_0047afa0.cpp
+0047b000	bound	C4	match	render		re/match/s13/0047b000.c	PortTop_Bound_0047b000@Match/PortTop_0047b000.cpp
+0047b110	bound	C4	match	render		re/match/s13/0047b110.c	PortTop_Bound_0047b110@Match/PortTop_0047b110.cpp
+0047b160	bound	C4	match	render		re/match/s13/0047b160.c	PortTop_Bound_0047b160@Match/PortTop_0047b160.cpp
+0047b860	bound	C4	match	track		re/match/s13/0047b860.c	PortTop_Bound_0047b860@Match/PortTop_0047b860.c
+0047b880	bound	C4	match	track		re/match/s13/0047b880.c	PortTop_Bound_0047b880@Match/PortTop_0047b880.cpp
+0047b8a0	bound	C4	match	track		re/match/s13/0047b8a0.c	PortTop_Bound_0047b8a0@Match/PortTop_0047b8a0.cpp
+0047b8d0	bound	C4	match	track		re/match/s13/0047b8d0.c	PortTop_Bound_0047b8d0@Match/PortTop_0047b8d0.c
+0047b980	bound	C4	match	track		re/match/s13/0047b980.c	PortTop_Bound_0047b980@Match/PortTop_0047b980.cpp
+0047b9b0	bound	C4	match	track		re/match/s13/0047b9b0.c	PortTop_Bound_0047b9b0@Match/PortTop_0047b9b0.cpp
+0047bc90	no_source	C4	match	gameplay			
+0047bcc0	no_source	C4	match	track			
+0047be80	no_source	C4	frida-replay	track			
+0047bf70	bound	C4	match	track		re/match/s13/0047bf70.c	PortTop_Bound_0047bf70@Match/PortTop_0047bf70.cpp
+0047c0b0	bound	C4	match	track		re/match/s13/0047c0b0.c	PortTop_Bound_0047c0b0@Match/PortTop_0047c0b0.cpp
+0047c0f0	bound	C4	match	track		re/match/s13/0047c0f0.c	PortTop_Bound_0047c0f0@Match/PortTop_0047c0f0.cpp
+0047c270	bound	C4	match	camera		re/match/s13/0047c270.c	CameraPathAllNodesEq2@Match/MatchS13_0047c270.cpp;CameraPathAllNodesEq2@Match/MatchS13_0047c270.cpp
+0047c2d0	bound	C4	match	camera		re/match/s13/0047c2d0.c	CameraPathAnyNodeNonzero@Match/MatchS13_0047c2d0.cpp;CameraPathAnyNodeNonzero@Match/MatchS13_0047c2d0.cpp
+0047cdc0	bound	C4	match	render		re/match/s13/0047cdc0.c	PortTop_Bound_0047cdc0@Match/PortTop_0047cdc0.cpp
+0047d080	bound	C4	match	physics		re/match/s13/0047d080.c	PortTop_Bound_0047d080@Match/PortTop_0047d080.cpp
+0047d100	bound	C4	match	physics		re/match/s13/0047d100.c	PortTop_Bound_0047d100@Match/PortTop_0047d100.cpp
+0047f4c0	bound	C4	match	physics		re/match/pilot/a5_0047f4c0.c;re/match/s13/0047f4c0.c	PortTop_Bound_0047f4c0@Match/PortTop_0047f4c0.cpp
+0047f840	bound	C4	match	physics		re/match/s13/0047f840.c	PortTop_Bound_0047f840@Match/PortTop_0047f840.cpp
+0047fad0	bound	C4	match	gameplay		re/match/s13/0047fad0.c	PortTop_Bound_0047fad0@Match/PortTop_0047fad0.cpp
+0047fc40	bound	C4	match	physics		re/match/s13/0047fc40.c	PortTop_Bound_0047fc40@Match/PortTop_0047fc40.cpp
+0047ff70	bound	C4	match	physics		re/match/s13/0047ff70.c	PortTop_Bound_0047ff70@Match/PortTop_0047ff70.cpp
+00480100	bound	C4	match	physics		re/match/s13/00480100.c	PortTop_Bound_00480100@Match/PortTop_00480100.cpp
+00480340	bound	C4	match	render		re/match/s13/00480340.c	PortTop_Bound_00480340@Match/PortTop_00480340.cpp
+00484280	c4_unbound	C4	match	debug-overlay		re/match/s14/00484280.c	
+004842b0	bound	C4	match	debug-overlay		re/match/s14/004842b0.c	PortTop_Bound_004842b0@Match/PortTop_004842b0.cpp
+004844a0	bound	C4	match	debug-overlay		re/match/racepath/004844a0.c	PortTop_Local_00484580_004844a0@Match/PortTop_00484580.cpp
+00484580	no_source	C4	match	debug-overlay			
+00484c90	bound	C4	match	util		re/match/s14/00484c90.c	Zero484c90@Match/MatchS14_00484c90.cpp;Zero484c90@Match/MatchS14_00484c90.cpp
+00486270	bound	C4	match	particle		re/match/s14/00486270.c	PortTop_Bound_00486270@Match/PortTop_00486270.cpp
+00486f90	bound	C4	match	particle		re/match/s14/00486f90.c	PortTop_Bound_00486f90@Match/PortTop_00486f90.cpp
+00487180	src_not_c4	C1		render	provisional	re/match/tlr/00487180.c	
+00487280	no_source	C2		render			
+00487df0	c4_unbound	C4		particle		re/match/s14/00487df0.c	
+004894f0	bound	C4	match	gameplay		re/match/s14/004894f0.c	PortTop_Bound_004894f0@Match/PortTop_004894f0.cpp
+00489ce0	bound	C4	match	particle		re/match/s14/00489ce0.c	PortTop_Bound_00489ce0@Match/PortTop_00489ce0.cpp
+00489da0	bound	C4	match	particle		re/match/s14/00489da0.c	PortTop_Bound_00489da0@Match/PortTop_00489da0.cpp
+00489dc0	src_not_c4	C2		particle		re/match/s14/00489dc0.c	
+0048a5d0	c4_unbound	C4	match	particle		re/match/s14/0048a5d0.c	
+0048ade0	bound	C4	match	particle		re/match/s14/0048ade0.c	PortTop_Bound_0048ade0@Match/PortTop_0048ade0.cpp
+0048bb70	bound	C4	match	particle		re/match/s14/0048bb70.c	PortTop_Bound_0048bb70@Match/PortTop_0048bb70.cpp
+0048f260	bound	C4	match	util		re/match/s15/0048f260.c	PortTop_Bound_0048f260@Match/PortTop_0048f260.cpp
+0048f680	bound	C4	match	util		re/match/s15/0048f680.c	PortTop_Bound_0048f680@Match/PortTop_0048f680.cpp
+0048f6b0	bound	C4	match	util		re/match/s15/0048f6b0.c	PortTop_Bound_0048f6b0@Match/PortTop_0048f6b0.cpp
+0048f6e0	bound	C4	match	util		re/match/s15/0048f6e0.c	PortTop_Bound_0048f6e0@Match/PortTop_0048f6e0.cpp
+0048f710	bound	C4	match	util		re/match/s15/0048f710.c	PortTop_Bound_0048f710@Match/PortTop_0048f710.cpp
+0048f740	bound	C4	match	util		re/match/s15/0048f740.c	PortTop_Bound_0048f740@Match/PortTop_0048f740.cpp
+004904d0	bound	C4	match	util		re/match/s15/004904d0.c	UtilZeroTable86a4a0@Match/MatchS15_004904d0.cpp;UtilZeroTable86a4a0@Match/MatchS15_004904d0.cpp
+00491780	bound	C4	match	render		re/match/s15/00491780.c	PortTop_Bound_00491780@Match/PortTop_00491780.cpp
+00492440	bound	C4	match	render		re/match/s15/00492440.c	RenderStatsAccumulate@Match/MatchS15_00492440.cpp;RenderStatsAccumulate@Match/MatchS15_00492440.cpp
+004924c0	bound	C4	match	render		re/match/s15/004924c0.c	PortTop_Bound_004924c0@Match/PortTop_004924c0.cpp
+004924e0	bound	C4	match	render		re/match/s15/004924e0.c	PortTop_Bound_004924e0@Match/PortTop_004924e0.cpp
+004926c0	bound	C4	match	boot		re/match/s15/004926c0.c	AudioTickAndAvg@Match/MatchS15_004926c0.cpp;AudioTickAndAvg@Match/MatchS15_004926c0.cpp
+004927c0	bound	C4	match	vehicle		re/match/gffu/004927c0.c;re/match/s15/004927c0.c	Step771980Advance@Match/MatchGFFU_004927c0.cpp
+004929d0	bound	C4	match	util		re/match/gffu/004929d0.c;re/match/s15/004929d0.c	Orig_004929d0@Match/PortTop_004929d0.cpp;GameModeMachine_004929d0@Race/GameModeMachine.cpp
+00492d10	bound	C4	match	util		re/match/s15/00492d10.c	PortTop_Bound_00492d10@Match/PortTop_00492d10.cpp
+00492d20	bound	C4	match	frontend		re/match/s15/00492d20.c	IntroSplashFrameTickShim@Match/MatchS15_00492d20.cpp;IntroSplashFrameTickShim@Match/MatchS15_00492d20.cpp
+00492d30	bound	C4	match	util		re/match/s15/00492d30.c	Orig_00492d30@Match/PortTop_00492d30.cpp
+00492e90	bound	C4	match	boot		re/match/s15/00492e90.c	RwCore_00492e90@RwCore/RwCore_00492e90.cpp
+00493390	bound	C4	match	util		re/match/s15/00493390.c	PortTop_Body_00493390@Match/PortTop_00493390.cpp
+00493480	bound	C4	match	util		re/match/s15/00493480.c	FpsDiscretise@Match/MatchS15_00493480.cpp;FpsDiscretise@Match/MatchS15_00493480.cpp
+004935d0	c4_unbound	C4	match	render		re/match/s15/004935d0.c	
+00493f70	bound	C4	match	frontend		re/match/s15/00493f70.c	RwCore_00493f70@RwCore/RwCore_00493f70.cpp
+004943f0	bound	C4	match	audio		re/match/s15/004943f0.c	PortTop_Bound_004943f0@Match/PortTop_004943f0.cpp
+004950b0	bound	C4	match	util		re/match/s16/004950b0.c	QpcTimeScaledTo3Mhz@Match/MatchS16_004950b0.cpp;QpcTimeScaledTo3Mhz@Match/MatchS16_004950b0.cpp
+00495280	c4_unbound	C4	match	render		re/match/s16/00495280.c	
+004952f0	c4_unbound	C4	match	render		re/match/s16/004952f0.c	
+00495790	bound	C4	match	input		re/match/s16/00495790.c	Orig_00495790@Match/PortTop_00495790.cpp
+00495fe0	bound	C4	match	input		re/match/s16/00495fe0.c	PortTop_Bound_00495fe0@Match/PortTop_00495fe0.cpp
+00496100	bound	C4	match	input		re/match/s16/00496100.c	PortTop_Bound_00496100@Match/PortTop_00496100.cpp
+004963e0	bound	C4	match	save		re/match/s16/004963e0.c	ConfigLogError@Save/SettingsConfig.cpp;ConfigLogError@Save/SettingsConfig.cpp
+00496400	bound	C4	match	save		re/match/s16/00496400.c	ConfigLogDebug@Save/SettingsConfig.cpp;ConfigLogDebug@Match/PortSave01_Config.cpp
+00496530	no_source	C4	match	input			
+004967e0	bound	C2		input	provisional	re/match/s16/004967e0.c	PortTop_Local_00496530_004967e0@Match/PortTop_00496530.cpp
+00496920	bound	C4	match	util		re/match/s16/00496920.c	TimerTable772ffcGet@Match/MatchS16_00496920.cpp;TimerTable772ffcGet@Match/MatchS16_00496920.cpp
+00496930	bound	C4	match	util		re/match/s16/00496930.c	Table773030Get@Match/MatchS16_00496930.cpp;Table773030Get@Match/MatchS16_00496930.cpp
+004972b0	bound	C4	match	input		re/match/s16/004972b0.c	PortTop_Bound_004972b0@Match/PortTop_004972b0.cpp
+00497310	bound	C4	match	input		re/match/s16/00497310.c	PortTop_Bound_00497310@Match/PortTop_00497310.cpp
+00497450	bound	C4	match	input		re/match/gffu/00497450.c;re/match/s16/00497450.c	Pred497450@Match/MatchGFFU_00497450.cpp;Pred497450@Match/MatchGFFU_00497450.cpp
+004987b0	bound	C4	match	input		re/match/s16/004987b0.c	DbgPrintf_004987b0@Match/PortTop_004987b0.cpp
+00499690	bound	C4	match	boot		re/match/s16/00499690.c	WindowMsgPump@Match/MatchS16_00499690.cpp;WindowMsgPump@Match/MatchS16_00499690.cpp
+0049c790	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049c800	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049c810	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049c840	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049c8c0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049c990	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d0a0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d0c0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d1d0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d240	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d270	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d320	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d490	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049d8f0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049e0d0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049e6c0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049e850	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049e9d0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049eae0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049fcc0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+0049ffb0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+004a21a0	no_source	C4	libid	third-party-library[directshow-baseclasses]			
+004a2b60	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a2be9	c4_unbound	C4	frida-replay	boot		re/match/s17/004a2be9.c	
+004a2c48	hand	C4	libid	third-party-library[msvc-crt-main]			FPURound_4a2c48@Math/FPURound.cpp
+004a2cbd	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a2d18	no_source	C2		render			
+004a2fd0	lib	C2		third-party-library[msvc-crt-main]			
+004a3384	no_source	C2		util			
+004a338d	lib	C2		third-party-library[msvc-crt-main]			
+004a3440	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a34b0	no_source	C2		boot			
+004a3860	lib	C2		third-party-library[msvc-crt-main]			
+004a3907	lib	C4	libid	third-party-library[msvc-crt-main]	provisional		
+004a3a90	lib	C2		third-party-library[msvc-crt-main]			
+004a4170	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a4220	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a42c5	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a4554	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a45cf	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a45fb	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a460d	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a467e	bound	C4	match	boot		re/match/s17/004a467e.c	PortTop_Bound_004a467e@Match/PortTop_004a467e.cpp
+004a4739	lib	C2		third-party-library[msvc-crt-main]			
+004a4da0	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a4e40	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a4fc1	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a4ff4	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a5018	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a504f	bound	C4	match	render		re/match/s17/004a504f.c	PortTop_Bound_004a504f@Match/PortTop_004a504f.cpp
+004a5984	no_source	C2		boot			
+004a59bf	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a5aaf	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a5bee	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a5c8a	lib	C2		third-party-library[msvc-crt-main]			
+004a5d92	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a5f4a	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a5f9c	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a5fbf	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a6047	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a7047	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a70a5	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a70d5	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a713b	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a77eb	bound	C4	match	boot		re/match/s17/004a77eb.c	PortTop_Bound_004a77eb@Match/PortTop_004a77eb.cpp
+004a787f	bound	C4	match	boot		re/match/s17/004a787f.c	PortTop_Bound_004a787f@Match/PortTop_004a787f.cpp
+004a820b	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a842d	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a877a	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a879e	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a8828	lib	C4	libid	third-party-library[msvc-crt-main]			
+004a9410	no_source	C2		boot			
+004ac3ab	lib	C4	libid	third-party-library[msvc-crt-main]			
+004ac560	no_source	C2		boot			
+004ac570	no_source	C2		boot			
+004ac777	lib	C4	libid	third-party-library[msvc-crt-main]			
+004ac7f0	lib	C4	libid	third-party-library[msvc-crt-main]			
+004ac953	lib	C4	libid	third-party-library[msvc-crt-main]			
+004ac985	lib	C4	libid	third-party-library[msvc-crt-main]			
+004ac9d2	lib	C4	libid	third-party-library[msvc-crt-main]			
+004aca44	lib	C4	libid	third-party-library[msvc-crt-main]			
+004aca5f	lib	C4	libid	third-party-library[msvc-crt-main]			
+004aca78	lib	C4	libid	third-party-library[msvc-crt-main]			
+004acaf3	lib	C4	libid	third-party-library[msvc-crt-main]			
+004acc4b	lib	C2		third-party-library[msvc-crt-main]			
+004acd00	no_source	C2		boot			
+004ad03d	lib	C2		third-party-library[msvc-crt-main]			
+004ad0b4	lib	C4	libid	third-party-library[msvc-crt-main]			
+004ad16e	lib	C2		third-party-library[msvc-crt-main]			
+004ae17b	lib	C2		third-party-library[msvc-crt-main]			
+004af340	lib	C2		third-party-library[msvc-crt-main]			
+004b044b	lib	C4	libid	third-party-library[msvc-crt-main]			
+004b046c	lib	C4	libid	third-party-library[msvc-crt-main]			
+004b04ca	lib	C4	libid	third-party-library[msvc-crt-main]			
+004b04f8	lib	C4	libid	third-party-library[msvc-crt-main]			
+004b0525	lib	C2		third-party-library[msvc-crt-main]			
+004b0609	lib	C2		third-party-library[msvc-crt-main]			
+004b0a43	lib	C2		third-party-library[msvc-crt-main]			
+004b2bdd	lib	C2		third-party-library[msvc-crt-main]			
+004b2e15	lib	C2		third-party-library[msvc-crt-main]			
+004b2eb0	lib	C2		third-party-library[msvc-crt-main]			
+004b302f	lib	C4	libid	third-party-library[msvc-crt-main]			
+004b3bf0	bound	C4	match	vehicle		re/match/s18/004b3bf0.c	Orig_004b3bf0@Match/PortTop_004b3bf0.cpp
+004b3c60	bound	C4	match	render		re/match/s18/004b3c60.c	PortTop_Bound_004b3c60@Match/PortTop_004b3c60.cpp
+004b3d80	bound	C4	match	render		re/match/s18/004b3d80.c	Orig_004b3d80@Match/PortTop_004b3d80.cpp
+004b3de0	bound	C4	match	render		re/match/s18/004b3de0.c	PortTop_Bound_004b3de0@Match/PortTop_004b3de0.cpp
+004b3f20	bound	C4	match	render		re/match/s29/004b3f20.c	Orig_004b3f20@Match/PortTop_004b3f20.cpp
+004b3f90	bound	C4	match	third-party-library[msvc-crt-main]		re/match/rwfc/004b3f90.c	RwCore_004b3f90@RwCore/RwCore_004b3f90.cpp
+004b3fc0	bound	C4	match	render		re/match/s29/004b3fc0.c	Orig_004b3fc0@Match/PortTop_004b3fc0.cpp
+004b4010	bound	C4	match	render		re/match/s18/004b4010.c	PortTop_Bound_004b4010@Match/PortTop_004b4010.cpp
+004b4050	bound	C4	match	render		re/match/s18/004b4050.c	ClumpQueryField18@Render/SlotObjectAccessors.cpp;PortTop_Bound_004b4050@Match/PortTop_004b4050.cpp
+004b4080	bound	C4	match	render		re/match/s18/004b4080.c	PortTop_Bound_004b4080@Match/PortTop_004b4080.cpp
+004b40c0	hand	C4	match	render		re/match/s18/004b40c0.c	RenderElemArrayCopy@Render/RenderLeaves_ae2.cpp
+004b4130	bound	C4	match	render		re/match/s18/004b4130.c	PortTop_Bound_004b4130@Match/PortTop_004b4130.cpp
+004b4140	bound	C4	match	render		re/match/s18/004b4140.c	PortTop_Bound_004b4140@Match/PortTop_004b4140.cpp
+004b41b0	bound	C4	match	render		re/match/s18/004b41b0.c	PortTop_Bound_004b41b0@Match/PortTop_004b41b0.cpp
+004b4280	bound	C4	match	render		re/match/s18/004b4280.c	PortTop_Bound_004b4280@Match/PortTop_004b4280.cpp
+004b4550	hand	C3		util		re/match/s18/004b4550.c	Vec3Centroid@Util/Vec3Centroid.cpp
+004b46b0	hand	C4	match	render		re/match/s18/004b46b0.c	Vec3Equal@Render/RenderLeaves_ae1.cpp
+004b4eb0	src_not_c4	C1		render		re/match/tlr/004b4eb0.c	
+004b5030	bound	C4	match	render		re/match/s18/004b5030.c	PortTop_Bound_004b5030@Match/PortTop_004b5030.cpp
+004b5190	bound	C4	match	vehicle		re/match/s18/004b5190.c	RwCore_004b5190@RwCore/RwCore_004b5190.cpp
+004b51d0	bound	C4	match	render		re/match/s18/004b51d0.c	Orig_004b51d0@Match/PortTop_004b51d0.cpp
+004b5240	bound	C4	match	vehicle		re/match/s18/004b5240.c	Orig_004b5240@Match/PortTop_004b5240.cpp
+004b5260	bound	C4	match	render		re/match/s18/004b5260.c	PortTop_Bound_004b5260@Match/PortTop_004b5260.cpp
+004b52c0	bound	C4	match	render		re/match/s18/004b52c0.c	RwCore_004b52c0@RwCore/RwCore_004b52c0.cpp
+004b52f0	bound	C4	match	render		re/match/s18/004b52f0.c	RwCore_004b52f0@RwCore/RwCore_004b52f0.cpp
+004b5320	bound	C4	match	vehicle		re/match/s18/004b5320.c	Orig_004b5320@Match/PortTop_004b5320.cpp
+004b5350	bound	C4	match	render		re/match/s18/004b5350.c	PortTop_Bound_004b5350@Match/PortTop_004b5350.cpp
+004b5360	bound	C4	match	render		re/match/s18/004b5360.c	PortTop_Bound_004b5360@Match/PortTop_004b5360.cpp
+004b5370	bound	C4	match	render		re/match/s18/004b5370.c	PortTop_Bound_004b5370@Match/PortTop_004b5370.cpp
+004b5380	bound	C4	match	render		re/match/s18/004b5380.c	PortTop_Bound_004b5380@Match/PortTop_004b5380.cpp
+004b5390	bound	C4	match	render		re/match/s18/004b5390.c	PortTop_Bound_004b5390@Match/PortTop_004b5390.cpp
+004b53a0	bound	C4	match	render		re/match/s18/004b53a0.c	PortTop_Bound_004b53a0@Match/PortTop_004b53a0.cpp
+004b53b0	c4_unbound	C4	frida-replay	render		re/match/s18/004b53b0.c	
+004b6480	bound	C4	match	util		re/match/s18/004b6480.c	Orig_004b6480@Match/PortTop_004b6480.cpp
+004b64e0	hand	C4	match	util		re/match/s18/004b64e0.c	MemsetInline@Input/MemsetInline_ag1.cpp
+004b6520	bound	C4	match	util		re/match/s18/004b6520.c	ZeroFillWrapper@Util/TimerSlot.cpp;Orig_004b6520@Match/PortTop_004b6520.cpp
+004b6570	c4_unbound	C4	match	render		re/match/s18/004b6570.c	
+004b6590	bound	C4	match	render		re/match/s18/004b6590.c	PortTop_Bound_004b6590@Match/PortTop_004b6590.cpp
+004b65c0	c4_unbound	C4	match	render		re/match/s18/004b65c0.c	
+004b65e0	hand	C4	match	render		re/match/s18/004b65e0.c	PizGlobalsZero6@Render/RenderLeaves_ae3.cpp
+004b6710	c4_unbound	C4	match	render		re/match/s18/004b6710.c	
+004b6770	c4_unbound	C4	match	render		re/match/s18/004b6770.c	
+004b67a0	c4_unbound	C4	match	render		re/match/s18/004b67a0.c	
+004b67e0	c4_unbound	C4	match	render		re/match/s18/004b67e0.c	
+004b6940	c4_unbound	C4	match	render		re/match/s18/004b6940.c	
+004b6b00	c4_unbound	C4	match	render		re/match/s18/004b6b00.c	
+004b6b10	lib	C2		third-party-library[msvc-crt]			
+004b6b20	c4_unbound	C4	frida-replay	render		re/match/s18/004b6b20.c	
+004b6b90	bound	C4	match	render		re/match/s18/004b6b90.c	PortTop_Bound_004b6b90@Match/PortTop_004b6b90.cpp
+004b6fc0	lib	C4	libid	third-party-library[lua-4.0]			
+004b6ff0	lib	C2		third-party-library[lua-4.0]			
+004b7090	lib	C2		third-party-library[lua-4.0]			
+004b70d0	lib	C2		third-party-library[lua-4.0]			
+004b7140	lib	C4	libid	third-party-library[lua-4.0]			
+004b7200	lib	C4	libid	third-party-library[lua-4.0]			
+004b7210	lib	C4	libid	third-party-library[lua-4.0]			
+004b7250	lib	C4	libid	third-party-library[lua-4.0]			
+004b7280	lib	C4	libid	third-party-library[lua-4.0]			
+004b7330	lib	C2		third-party-library[lua-4.0]			
+004b7480	lib	C2		third-party-library[lua-4.0]			
+004b7530	lib	C4	libid	third-party-library[lua-4.0]			
+004b7570	lib	C2		third-party-library[lua-4.0]			
+004b75d0	lib	C4	libid	third-party-library[lua-4.0]			
+004b7740	lib	C2		third-party-library[lua-4.0]			
+004b78e0	lib	C2		third-party-library[lua-4.0]			
+004b7960	lib	C4	libid	third-party-library[lua-4.0]			
+004b79a0	lib	C4	libid	third-party-library[lua-4.0]			
+004b79c0	lib	C2		third-party-library[lua-4.0]			
+004b7a20	lib	C4	libid	third-party-library[lua-4.0]			
+004b7a70	lib	C2		third-party-library[lua-4.0]			
+004b7aa0	lib	C2		third-party-library[lua-4.0]			
+004b7be0	lib	C2		third-party-library[lua-4.0]			
+004b7ca0	lib	C4	libid	third-party-library[lua-4.0]			
+004b7cc0	lib	C4	libid	third-party-library[lua-4.0]			
+004b7d20	lib	C4	libid	third-party-library[lua-4.0]			
+004b7d60	lib	C2		third-party-library[lua-4.0]			
+004b7fd0	bound	C4	match	render		re/match/s18/004b7fd0.c	PortTop_Bound_004b7fd0@Match/PortTop_004b7fd0.cpp
+004b7ff0	lib	C2		third-party-library[lua-4.0]			
+004b8080	bound	C4	match	render		re/match/s18/004b8080.c	PortTop_Bound_004b8080@Match/PortTop_004b8080.cpp
+004b82a0	lib	C4	libid	third-party-library[lua-4.0]			
+004b8340	lib	C4	libid	third-party-library[lua-4.0]			
+004b87e0	lib	C2		third-party-library[lua-4.0]			
+004b9540	lib	C4	libid	third-party-library[lua-4.0]			
+004b9570	lib	C2		third-party-library[lua-4.0]			
+004b95c0	lib	C2		third-party-library[lua-4.0]			
+004b9600	lib	C2		third-party-library[lua-4.0]			
+004b9630	lib	C4	libid	third-party-library[lua-4.0]			
+004b9650	lib	C2		third-party-library[lua-4.0]			
+004b96c0	lib	C2		third-party-library[lua-4.0]			
+004b9730	lib	C2		third-party-library[lua-4.0]			
+004b97f0	lib	C4	libid	third-party-library[lua-4.0]			
+004b9850	lib	C4	libid	third-party-library[lua-4.0]			
+004b9890	lib	C4	libid	third-party-library[lua-4.0]			
+004b9950	lib	C2		third-party-library[lua-4.0]			
+004b9a10	lib	C2		third-party-library[lua-4.0]			
+004b9a50	lib	C2		third-party-library[lua-4.0]			
+004b9aa0	lib	C2		third-party-library[lua-4.0]			
+004b9b00	lib	C4	libid	third-party-library[lua-4.0]			
+004b9bb0	lib	C4	libid	third-party-library[lua-4.0]			
+004b9dc0	lib	C2		third-party-library[lua-4.0]			
+004b9e20	lib	C2		third-party-library[lua-4.0]			
+004b9eb0	lib	C4	libid	third-party-library[lua-4.0]			
+004b9ef0	lib	C2		third-party-library[lua-4.0]			
+004b9fe0	lib	C2		third-party-library[lua-4.0]			
+004ba090	lib	C2		third-party-library[lua-4.0]			
+004ba140	lib	C4	libid	third-party-library[lua-4.0]			
+004ba1b0	lib	C2		third-party-library[lua-4.0]			
+004ba210	lib	C2		third-party-library[lua-4.0]			
+004ba250	lib	C2		third-party-library[lua-4.0]			
+004ba290	lib	C2		third-party-library[lua-4.0]			
+004ba2d0	lib	C2		third-party-library[lua-4.0]			
+004ba310	lib	C2		third-party-library[lua-4.0]			
+004ba3a0	lib	C2		third-party-library[lua-4.0]			
+004ba3e0	lib	C2		third-party-library[lua-4.0]			
+004ba470	lib	C2		third-party-library[lua-4.0]			
+004ba570	lib	C2		third-party-library[lua-4.0]			
+004ba9a0	lib	C2		third-party-library[lua-4.0]			
+004ba9e0	lib	C4	libid	third-party-library[lua-4.0]			
+004bab00	lib	C4	libid	third-party-library[lua-4.0]			
+004baba0	lib	C2		third-party-library[lua-4.0]			
+004bb160	lib	C2		third-party-library[lua-4.0]			
+004bb1b0	lib	C2		third-party-library[lua-4.0]			
+004bb260	lib	C2		third-party-library[lua-4.0]			
+004bb7a0	lib	C2		third-party-library[lua-4.0]			
+004bc440	lib	C4	libid	third-party-library[lua-4.0]			
+004bc500	lib	C2		third-party-library[lua-4.0]			
+004bc590	lib	C2		third-party-library[lua-4.0]			
+004bc5e0	lib	C2		third-party-library[lua-4.0]			
+004bc600	lib	C2		third-party-library[lua-4.0]			
+004bc670	lib	C2		third-party-library[lua-4.0]			
+004bc750	lib	C2		third-party-library[lua-4.0]			
+004bc790	lib	C2		third-party-library[lua-4.0]			
+004bc7c0	lib	C2		third-party-library[lua-4.0]			
+004bc7f0	lib	C2		third-party-library[lua-4.0]			
+004bc840	lib	C2		third-party-library[lua-4.0]			
+004bca50	lib	C2		third-party-library[lua-4.0]			
+004bccc0	lib	C4	libid	third-party-library[lua-4.0]			
+004bcce0	lib	C2		third-party-library[lua-4.0]			
+004bcda0	lib	C2		third-party-library[lua-4.0]			
+004bcfc0	lib	C2		third-party-library[lua-4.0]			
+004bcfe0	lib	C2		third-party-library[lua-4.0]			
+004bd040	lib	C2		third-party-library[lua-4.0]			
+004bd0b0	lib	C2		third-party-library[lua-4.0]			
+004bd0f0	lib	C2		third-party-library[lua-4.0]			
+004bd140	lib	C2		third-party-library[lua-4.0]			
+004bd2c0	lib	C2		third-party-library[lua-4.0]			
+004bd4d0	lib	C2		third-party-library[lua-4.0]			
+004bd570	lib	C2		third-party-library[lua-4.0]			
+004bda10	lib	C2		third-party-library[lua-4.0]			
+004bda30	lib	C2		third-party-library[lua-4.0]			
+004bdd50	lib	C2		third-party-library[lua-4.0]			
+004bdda0	lib	C2		third-party-library[lua-4.0]			
+004bdea0	lib	C2		third-party-library[lua-4.0]			
+004be0a0	lib	C2		third-party-library[lua-4.0]			
+004be110	lib	C2		third-party-library[lua-4.0]			
+004be220	lib	C2		third-party-library[lua-4.0]			
+004bee20	lib	C4	libid	third-party-library[lua-4.0]			
+004bee60	lib	C4	libid	third-party-library[lua-4.0]			
+004beec0	lib	C2		third-party-library[lua-4.0]			
+004beef0	lib	C2		third-party-library[lua-4.0]			
+004bef20	lib	C2		third-party-library[lua-4.0]			
+004befa0	lib	C2		third-party-library[lua-4.0]			
+004bf080	lib	C4	libid	third-party-library[lua-4.0]			
+004bf0b0	lib	C4	libid	third-party-library[lua-4.0]			
+004bf0f0	lib	C4	libid	third-party-library[lua-4.0]			
+004bf110	lib	C4	libid	third-party-library[lua-4.0]			
+004bf180	lib	C4	libid	third-party-library[lua-4.0]			
+004bf200	lib	C4	libid	third-party-library[lua-4.0]			
+004bf230	lib	C2		third-party-library[lua-4.0]			
+004bf260	lib	C2		third-party-library[lua-4.0]			
+004bf280	lib	C4	libid	third-party-library[lua-4.0]			
+004bf320	lib	C2		third-party-library[lua-4.0]			
+004bf360	lib	C2		third-party-library[lua-4.0]			
+004bf600	lib	C2		third-party-library[lua-4.0]			
+004bf6e0	lib	C2		third-party-library[lua-4.0]			
+004bfa40	lib	C4	libid	third-party-library[lua-4.0]			
+004bfa60	lib	C4	libid	third-party-library[lua-4.0]			
+004bfa80	lib	C2		third-party-library[lua-4.0]			
+004bfe30	lib	C2		third-party-library[lua-4.0]			
+004c0510	lib	C4	libid	third-party-library[lua-4.0]			
+004c06c0	lib	C4	libid	third-party-library[lua-4.0]			
+004c0740	bound	C4	match	render		re/match/s19/004c0740.c	RwCore_004c0740@RwCore/RwCore_004c0740.cpp
+004c0790	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c0790.c	RwCore_004c0790@RwCore/RwCore_004c0790.cpp
+004c0870	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c0870.c	RwCore_004c0870@RwCore/RwCore_004c0870.cpp
+004c0910	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c0910.c	RwCore_004c0910@RwCore/RwCore_004c0910.cpp
+004c0a60	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c0a60.c	RwCore_004c0a60@RwCore/RwCore_004c0a60.cpp
+004c0ad0	bound	C4	match	unknown		re/match/s19/004c0ad0.c	RwCore_004c0ad0@RwCore/RwCore_004c0ad0.cpp
+004c0b10	bound	C4	match	render		re/match/s19/004c0b10.c	RwCore_004c0b10@RwCore/RwCore_004c0b10.cpp
+004c0b30	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c0b30.c	RwCore_004c0b30@RwCore/RwCore_004c0b30.cpp
+004c0b70	bound	C4	match	unknown		re/match/s19/004c0b70.c	RwCore_004c0b70@RwCore/RwCore_004c0b70.cpp
+004c0d70	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c0d70.c	RwCore_004c0d70@RwCore/RwCore_004c0d70.cpp
+004c0de0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c0de0.c	RwCore_004c0de0@RwCore/RwCore_004c0de0.cpp
+004c0e50	bound	C4	match	render		re/match/s19/004c0e50.c	RwCore_004c0e50@RwCore/RwCore_004c0e50.cpp
+004c0ed0	bound	C4	match	render		re/match/s19/004c0ed0.c	RwCore_004c0ed0@RwCore/RwCore_004c0ed0.cpp
+004c0ef0	bound	C4	match	unknown		re/match/s19/004c0ef0.c	RwCore_004c0ef0@RwCore/RwCore_004c0ef0.cpp
+004c1040	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c1040.c	RwCore_004c1040@RwCore/RwCore_004c1040.cpp
+004c1210	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c1210.c	RwCore_004c1210@RwCore/RwCore_004c1210.cpp
+004c1340	bound	C4	match	render		re/match/s19/004c1340.c	PortTop_Bound_004c1340@Match/PortTop_004c1340.cpp
+004c1480	bound	C4	match	render		re/match/s19/004c1480.c	PortTop_Bound_004c1480@Match/PortTop_004c1480.cpp
+004c1520	bound	C4	match	render		re/match/s19/004c1520.c	PortTop_Bound_004c1520@Match/PortTop_004c1520.cpp
+004c15c0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c15c0.c	RwCore_004c15c0@RwCore/RwCore_004c15c0.cpp
+004c1740	bound	C4	match	unknown		re/match/s19/004c1740.c	RwCore_004c1740@RwCore/RwCore_004c1740.cpp
+004c1800	bound	C4	match	unknown		re/match/s19/004c1800.c	Orig_004c1800@Match/PortTop_004c1800.cpp
+004c1840	bound	C4	match	unknown		re/match/s19/004c1840.c	Orig_004c1840@Match/PortTop_004c1840.cpp
+004c19f0	bound	C4	match	frontend		re/match/s19/004c19f0.c	RwVtableSlot07Call@Match/MatchS19_004c19f0.cpp;RwVtableSlot07Call@Match/MatchS19_004c19f0.cpp
+004c1a00	bound	C4	match	frontend		re/match/s19/004c1a00.c	IntroSplashVtableSlot6@Match/MatchS19_004c1a00.cpp;IntroSplashVtableSlot6@Match/MatchS19_004c1a00.cpp
+004c1a70	bound	C4	frida-replay	render	provisional	re/match/s19/004c1a70.c	CameraRecomputeProjCoeffs@Render/CameraProjCoeffs.cpp;RwCore_004c1a70@RwCore/RwCore_004c1a70.cpp
+004c1b10	bound	C4	match	render		re/match/s19/004c1b10.c	RwCore_004c1b10@RwCore/RwCore_004c1b10.cpp
+004c1b40	bound	C4	frida-replay	unknown		re/match/s19/004c1b40.c	PortTop_Bound_004c1b40@Match/PortTop_004c1b40.cpp
+004c1bb0	bound	C4	match	frontend		re/match/s19/004c1bb0.c	RwCore_004c1bb0@RwCore/RwCore_004c1bb0.cpp
+004c1be0	bound	C4	match	frontend		re/match/s19/004c1be0.c	Orig_004c1be0@Match/PortTop_004c1be0.cpp;RwCore_004c1be0@RwCore/RwCore_004c1be0.cpp
+004c1c80	bound	C4	match	hud		re/match/s19/004c1c80.c	RwCore_004c1c80@RwCore/RwCore_004c1c80.cpp
+004c1de0	no_source	C1		third-party-library[renderware]	provisional		
+004c1f80	bound	C2		render	provisional	re/match/s19/004c1f80.c	RwCore_004c1f80@RwCore/RwCore_004c1f80.cpp
+004c2b80	c4_unbound	C4	match	third-party-library[renderware]	provisional	re/match/rwta/004c2b80.c	
+004c2bb0	c4_unbound	C4	match	third-party-library[renderware]	provisional	re/match/rwta/004c2bb0.c	
+004c2dc0	bound	C4	match	render		re/match/s19/004c2dc0.c	RwCore_004c2dc0@RwCore/RwCore_004c2dc0.cpp
+004c39b0	bound	C4	frida-replay	render	provisional	re/match/s19/004c39b0.c	RwV3dNormalize@Math/RwV3dNormalize.cpp;RwCore_004c39b0@RwCore/RwCore_004c39b0.cpp
+004c3ac0	bound	C4	match	util		re/match/s19/004c3ac0.c	Vec3Magnitude@Math/Vec3.cpp;RwCore_004c3ac0@RwCore/RwCore_004c3ac0.cpp
+004c3b30	bound	C4	match	util		re/match/s19/004c3b30.c	FastSqrt@Math/RwSqrt.cpp;RwCore_004c3b30@RwCore/RwCore_004c3b30.cpp
+004c3b90	bound	C4	match	util		re/match/s19/004c3b90.c	FastInvSqrt@Math/RwSqrt.cpp;RwCore_004c3b90@RwCore/RwCore_004c3b90.cpp
+004c3d60	bound	C4	match	render		re/match/s19/004c3d60.c	RwCore_004c3d60@RwCore/RwCore_004c3d60.cpp
+004c3d90	c4_unbound	C4	match	render	provisional	re/match/s19/004c3d90.c	
+004c3df0	bound	C4	match	render		re/match/s19/004c3df0.c	RwV3dTransformPoints@Match/MatchS19_004c3df0.cpp;RwV3dTransformPoints@Match/MatchS19_004c3df0.cpp
+004c4220	bound	C4	frida-replay	third-party-library[renderware]	provisional	re/match/rwl01/004c4220.c	RwCore_004c4220@RwCore/RwCore_004c4220.cpp
+004c4270	bound	C4	match	render		re/match/s19/004c4270.c	MatrixOrthoResidual4c4270@Math/MatrixOrthoResidual.cpp;RwCore_004c4270@RwCore/RwCore_004c4270.cpp
+004c42d0	bound	C4	match	render		re/match/s19/004c42d0.c	MatrixNormResidual4c42d0@Math/MatrixOrthoResidual.cpp;RwCore_004c42d0@RwCore/RwCore_004c42d0.cpp
+004c4360	bound	C4	frida-replay	render	provisional	re/match/s19/004c4360.c	MatrixIdentityResidual4c4360@Math/MatrixOrthoResidual.cpp;RwCore_004c4360@RwCore/RwCore_004c4360.cpp
+004c4530	bound	C4	match	render		re/match/s19/004c4530.c	RwCore_004c4530@RwCore/RwCore_004c4530.cpp
+004c45f0	bound	C4	match	render		re/match/s19/004c45f0.c	RwCore_004c45f0@RwCore/RwCore_004c45f0.cpp
+004c4600	bound	C4	match	render		re/match/s19/004c4600.c	FUN_004c4600@Collision/RwpSolverMath2.cpp;RwCore_004c4600@RwCore/RwCore_004c4600.cpp
+004c4670	bound	C4	match	render		re/match/s19/004c4670.c	RwCore_004c4670@RwCore/RwCore_004c4670.cpp
+004c4680	bound	C2		render	provisional	re/match/s19/004c4680.c	RwCore_004c4680@RwCore/RwCore_004c4680.cpp
+004c4a50	bound	C3		render	admitted	re/match/s19/004c4a50.c	RwMatrixRotateInner@Math/RwMatrixRotateInner.cpp;RwCore_004c4a50@RwCore/RwCore_004c4a50.cpp
+004c4d20	bound	C4	frida-replay	render	provisional	re/match/s19/004c4d20.c	RwMatrixRotate@Math/RwMatrixRotate.cpp;RwCore_004c4d20@RwCore/RwCore_004c4d20.cpp
+004c4dc0	bound	C3		util	provisional	re/match/s19/004c4dc0.c	RwMatrixInvertEntry@Render/RwMatrixInvert.cpp;RwCore_004c4dc0@RwCore/RwCore_004c4dc0.cpp
+004c4eb0	bound	C4	frida-replay	render	provisional	re/match/s19/004c4eb0.c	RwMatrixInvert@Render/RwMatrixInvert.cpp;RwCore_004c4eb0@RwCore/RwCore_004c4eb0.cpp
+004c5010	bound	C3		render	provisional	re/match/s19/004c5010.c	RwMatrixScale@Math/RwMatrixScale.cpp;RwCore_004c5010@RwCore/RwCore_004c5010.cpp
+004c51a0	bound	C3		render	provisional	re/match/s19/004c51a0.c	FUN_004c51a0@Collision/RwpSolverMath2.cpp;RwCore_004c51a0@RwCore/RwCore_004c51a0.cpp
+004c52f0	hand	C3		render		re/match/s19/004c52f0.c	FUN_004c52f0@Collision/RwpSolverMath2.cpp
+004c57a0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c57a0.c	RwCore_004c57a0@RwCore/RwCore_004c57a0.cpp
+004c5800	bound	C4	match	render		re/match/s19/004c5800.c	RwCore_004c5800@RwCore/RwCore_004c5800.cpp
+004c5820	bound	C4	match	render		re/match/s19/004c5820.c	RwCore_004c5820@RwCore/RwCore_004c5820.cpp
+004c5830	bound	C4	match	render		re/match/s19/004c5830.c	RwCore_004c5830@RwCore/RwCore_004c5830.cpp
+004c5850	bound	C4	match	render		re/match/s19/004c5850.c	RwCore_004c5850@RwCore/RwCore_004c5850.cpp
+004c5860	bound	C4	match	render		re/match/s19/004c5860.c	RwCore_004c5860@RwCore/RwCore_004c5860.cpp
+004c5890	bound	C4	match	render		re/match/s19/004c5890.c	RwCore_004c5890@RwCore/RwCore_004c5890.cpp
+004c59c0	bound	C4	match	render		re/match/s19/004c59c0.c	PortTop_Bound_004c59c0@Match/PortTop_004c59c0.cpp
+004c5a00	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c5a00.c	RwCore_004c5a00@RwCore/RwCore_004c5a00.cpp
+004c5a60	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c5a60.c	RwCore_004c5a60@RwCore/RwCore_004c5a60.cpp
+004c5ae0	bound	C4	match	render		re/match/s19/004c5ae0.c	RwCore_004c5ae0@RwCore/RwCore_004c5ae0.cpp
+004c5b50	bound	C4	match	render		re/match/s19/004c5b50.c	RwCore_004c5b50@RwCore/RwCore_004c5b50.cpp
+004c5bc0	bound	C4	match	render		re/match/s19/004c5bc0.c	RwCore_004c5bc0@RwCore/RwCore_004c5bc0.cpp
+004c5c00	bound	C4	match	frontend		re/match/s19/004c5c00.c	RwCore_004c5c00@RwCore/RwCore_004c5c00.cpp
+004c5c80	bound	C4	match	render		re/match/s19/004c5c80.c	RwCore_004c5c80@RwCore/RwCore_004c5c80.cpp
+004c5ca0	bound	C4	match	render		re/match/s19/004c5ca0.c	RwCore_004c5ca0@RwCore/RwCore_004c5ca0.cpp
+004c5cb0	bound	C4	match	render		re/match/s19/004c5cb0.c	RwCore_004c5cb0@RwCore/RwCore_004c5cb0.cpp
+004c6140	bound	C4	match	render		re/match/s19/004c6140.c	RwCore_004c6140@RwCore/RwCore_004c6140.cpp
+004c6750	bound	C4	match	render		re/match/s19/004c6750.c	RwCore_004c6750@RwCore/RwCore_004c6750.cpp
+004c7600	bound	C4	match	render		re/match/s19/004c7600.c	RwCore_004c7600@RwCore/RwCore_004c7600.cpp
+004c76f0	bound	C4	match	render		re/match/s19/004c76f0.c	RwCore_004c76f0@RwCore/RwCore_004c76f0.cpp
+004c7730	bound	C4	match	render		re/match/s19/004c7730.c	RwCore_004c7730@RwCore/RwCore_004c7730.cpp
+004c77c0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004c77c0.c	RwCore_004c77c0@RwCore/RwCore_004c77c0.cpp
+004c7860	bound	C4	match	render		re/match/s20/004c7860.c	RwCore_004c7860@RwCore/RwCore_004c7860.cpp
+004c9290	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/rwtb/004c9290.c	
+004ca160	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/rwtb/004ca160.c	
+004cab30	no_source	C1		third-party-library[renderware]	provisional		
+004cac10	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwtb/004cac10.c	PortTop_Bound_004cac10@Match/PortTop_004cac10.c
+004cb070	bound	C4	match	render		re/match/s20/004cb070.c	RwCore_004cb070@RwCore/RwCore_004cb070.cpp
+004cb0b0	bound	C4	match	render		re/match/s20/004cb0b0.c	RwCore_004cb0b0@RwCore/RwCore_004cb0b0.cpp
+004cb0f0	bound	C4	match	render		re/match/s20/004cb0f0.c	RwCore_004cb0f0@RwCore/RwCore_004cb0f0.cpp
+004cb130	bound	C4	match	render		re/match/s20/004cb130.c	RwCore_004cb130@RwCore/RwCore_004cb130.cpp
+004cb190	bound	C4	match	render		re/match/s20/004cb190.c	RwCore_004cb190@RwCore/RwCore_004cb190.cpp
+004cb330	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004cb330.c	RwCore_004cb330@RwCore/RwCore_004cb330.cpp
+004cb4c0	bound	C4	match	render		re/match/s20/004cb4c0.c	RwCore_004cb4c0@RwCore/RwCore_004cb4c0.cpp
+004cb600	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004cb600.c	RwCore_004cb600@RwCore/RwCore_004cb600.cpp
+004cb740	bound	C4	match	render		re/match/s20/004cb740.c	RwCore_004cb740@RwCore/RwCore_004cb740.cpp
+004cb840	bound	C4	match	render		re/match/s20/004cb840.c	RwCore_004cb840@RwCore/RwCore_004cb840.cpp
+004cb8a0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004cb8a0.c	RwCore_004cb8a0@RwCore/RwCore_004cb8a0.cpp
+004cbb70	bound	C4	match	render		re/match/s20/004cbb70.c	RwCore_004cbb70@RwCore/RwCore_004cbb70.cpp
+004cbbd0	bound	C4	match	render		re/match/s20/004cbbd0.c	RwCore_004cbbd0@RwCore/RwCore_004cbbd0.cpp
+004cbd30	bound	C4	match	render		re/match/s20/004cbd30.c	RwStreamRead@Render/RwStreamCore.cpp;RwCore_004cbd30@RwCore/RwCore_004cbd30.cpp
+004cc160	bound	C4	match	frontend		re/match/s20/004cc160.c	RwCore_004cc160@RwCore/RwCore_004cc160.cpp
+004cc230	bound	C2		frontend	provisional	re/match/s20/004cc230.c	RwCore_004cc230@RwCore/RwCore_004cc230.cpp
+004cc400	bound	C4	match	render		re/match/s20/004cc400.c	RwCore_004cc400@RwCore/RwCore_004cc400.cpp
+004cc4f0	bound	C4	match	render		re/match/s20/004cc4f0.c	RwCore_004cc4f0@RwCore/RwCore_004cc4f0.cpp
+004cc5e0	bound	C2		render	provisional	re/match/s20/004cc5e0.c	RwCore_004cc5e0@RwCore/RwCore_004cc5e0.cpp
+004cc790	bound	C4	match	render		re/match/s20/004cc790.c	RwCore_004cc790@RwCore/RwCore_004cc790.cpp
+004cca80	no_source	C1		third-party-library[renderware]	provisional		
+004ccba0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004ccba0.c	RwCore_004ccba0@RwCore/RwCore_004ccba0.cpp
+004ccc50	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004ccc50.c	RwCore_004ccc50@RwCore/RwCore_004ccc50.cpp
+004ccde0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004ccde0.c	RwCore_004ccde0@RwCore/RwCore_004ccde0.cpp
+004ccef0	no_source	C1		third-party-library[renderware]	provisional		
+004ccf00	no_source	C1		third-party-library[renderware]	provisional		
+004cd070	bound	C4	match	render		re/match/s20/004cd070.c	RwCore_004cd070@RwCore/RwCore_004cd070.cpp
+004cd140	bound	C4	match	render		re/match/s20/004cd140.c	RwCore_004cd140@RwCore/RwCore_004cd140.cpp
+004cd170	bound	C4	match	render		re/match/s20/004cd170.c	RwCore_004cd170@RwCore/RwCore_004cd170.cpp
+004cdca0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004cdca0.c	RwCore_004cdca0@RwCore/RwCore_004cdca0.cpp
+004cdd00	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004cdd00.c	RwCore_004cdd00@RwCore/RwCore_004cdd00.cpp
+004cdd60	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004cdd60.c	RwCore_004cdd60@RwCore/RwCore_004cdd60.cpp
+004ce390	bound	C4	match	render		re/match/s20/004ce390.c	RwCore_004ce390@RwCore/RwCore_004ce390.cpp
+004ce480	bound	C4	match	render		re/match/s20/004ce480.c	RwCore_004ce480@RwCore/RwCore_004ce480.cpp
+004ce5d0	c4_unbound	C4	match	third-party-library[renderware]	provisional	re/match/rwl01/004ce5d0.c;re/match/rwtb/004ce5d0.c	
+004ce690	bound	C4	match	render		re/match/s20/004ce690.c	RwCore_004ce690@RwCore/RwCore_004ce690.cpp
+004ce6c0	bound	C4	match	render		re/match/s20/004ce6c0.c	RwCore_004ce6c0@RwCore/RwCore_004ce6c0.cpp
+004ce6f0	c4_unbound	C4	match	third-party-library[renderware]	provisional	re/match/rwtb/004ce6f0.c	
+004ce970	bound	C4	match	render		re/match/s20/004ce970.c	RwCore_004ce970@RwCore/RwCore_004ce970.cpp
+004cee90	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004cee90.c	RwCore_004cee90@RwCore/RwCore_004cee90.cpp
+004cefd0	bound	C4	match	render		re/match/s20/004cefd0.c	RwCore_004cefd0@RwCore/RwCore_004cefd0.cpp
+004cf2b0	src_not_c4	C2		third-party-library[renderware]		re/match/rwl01/004cf2b0.c	
+004cf5a0	bound	C2		third-party-library[renderware]	provisional	re/match/rwl01/004cf5a0.c	RwCore_004cf5a0@RwCore/RwCore_004cf5a0.cpp
+004cfdd0	no_source	C1		third-party-library[renderware]	provisional		
+004cff20	bound	C2		render	provisional	re/match/s20/004cff20.c	RwCore_004cff20@RwCore/RwCore_004cff20.cpp
+004d0290	bound	C4	match	render		re/match/s20/004d0290.c	RwCore_004d0290@RwCore/RwCore_004d0290.cpp
+004d1640	bound	C4	match	render		re/match/s20/004d1640.c	RwCore_004d1640@RwCore/RwCore_004d1640.cpp
+004d1d20	bound	C4	match	render		re/match/s20/004d1d20.c	RwCore_004d1d20@RwCore/RwCore_004d1d20.cpp
+004d2340	bound	C2		render	provisional	re/match/s20/004d2340.c	RwCore_004d2340@RwCore/RwCore_004d2340.cpp
+004d2980	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004d2980.c	RwCore_004d2980@RwCore/RwCore_004d2980.cpp
+004d3450	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwtb/004d3450.c	PortTop_Bound_004d3450@Match/PortTop_004d3450.c
+004d34d0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/004d34d0.c	PortTop_Bound_004d34d0@Match/PortTop_004d34d0.c
+004d38b0	bound	C4	match	render		re/match/s20/004d38b0.c	RwCore_004d38b0@RwCore/RwCore_004d38b0.cpp
+004d40d0	bound	C4	match	render		re/match/s20/004d40d0.c	RwCore_004d40d0@RwCore/RwCore_004d40d0.cpp
+004d5310	bound	C4	match	render		re/match/s21/004d5310.c	RwCore_004d5310@RwCore/RwCore_004d5310.cpp
+004d5340	bound	C4	match	render		re/match/s21/004d5340.c	RwCore_004d5340@RwCore/RwCore_004d5340.cpp
+004d53b0	bound	C4	match	render		re/match/s21/004d53b0.c	D3d9State_Flush@Render/D3d9StateCache.cpp;RwCore_004d53b0@RwCore/RwCore_004d53b0.cpp
+004d5480	bound	C4	match	render		re/match/s21/004d5480.c	RwCore_004d5480@RwCore/RwCore_004d5480.cpp
+004d54d0	bound	C4	match	render		re/match/s21/004d54d0.c	RwCore_004d54d0@RwCore/RwCore_004d54d0.cpp
+004d54f0	bound	C4	match	render		re/match/s21/004d54f0.c	RwCore_004d54f0@RwCore/RwCore_004d54f0.cpp
+004d55b0	bound	C4	match	render		re/match/s21/004d55b0.c	RwCore_004d55b0@RwCore/RwCore_004d55b0.cpp
+004d6910	bound	C4	match	render		re/match/s21/004d6910.c	D3d9State_Get@Render/D3d9StateCache.cpp;RwCore_004d6910@RwCore/RwCore_004d6910.cpp
+004d6b90	bound	C4	match	render		re/match/s21/004d6b90.c	D3d9State_SetStage0Filter@Render/D3d9StateCache.cpp;RwCore_004d6b90@RwCore/RwCore_004d6b90.cpp
+004d6c40	bound	C4	match	render		re/match/s21/004d6c40.c	RwCore_004d6c40@RwCore/RwCore_004d6c40.cpp
+004d6c90	bound	C4	match	render		re/match/s21/004d6c90.c	RwCore_004d6c90@RwCore/RwCore_004d6c90.cpp
+004d6ce0	bound	C4	match	render		re/match/s21/004d6ce0.c	RwCore_004d6ce0@RwCore/RwCore_004d6ce0.cpp
+004d6e60	bound	C4	match	render		re/match/s21/004d6e60.c	RwCore_004d6e60@RwCore/RwCore_004d6e60.cpp
+004d6e70	bound	C4	match	render		re/match/s21/004d6e70.c	RwCore_004d6e70@RwCore/RwCore_004d6e70.cpp
+004d7100	bound	C4	match	render		re/match/s21/004d7100.c	RwCore_004d7100@RwCore/RwCore_004d7100.cpp
+004d71f0	bound	C4	match	render		re/match/s21/004d71f0.c	RenderState_GetTexturingOverride@Render/RenderStateSettersA.cpp;RwCore_004d71f0@RwCore/RwCore_004d71f0.cpp
+004d7480	bound	C4	match	render		re/match/s21/004d7480.c	RwCore_004d7480@RwCore/RwCore_004d7480.cpp
+004d7ac0	bound	C4	match	render		re/match/s21/004d7ac0.c	D3d9State_FogBlendToggle@Render/D3d9StateCache.cpp;RwCore_004d7ac0@RwCore/RwCore_004d7ac0.cpp
+004d7c10	bound	C4	match	render		re/match/s21/004d7c10.c	RwCore_004d7c10@RwCore/RwCore_004d7c10.cpp
+004d7db0	bound	C4	match	render		re/match/s21/004d7db0.c	RwPluginExtensionSlotGet@Render/BatchAB_s6.cpp;RwCore_004d7db0@RwCore/RwCore_004d7db0.cpp
+004d7ff0	bound	C4	match	render		re/match/s21/004d7ff0.c	Orig_004d7ff0@Match/PortTop_004d7ff0.cpp
+004d8000	bound	C4	match	frontend		re/match/s21/004d8000.c	RwCore_004d8000@RwCore/RwCore_004d8000.cpp
+004d8060	bound	C4	match	render		re/match/s21/004d8060.c	RwCore_004d8060@RwCore/RwCore_004d8060.cpp
+004d8090	c4_unbound	C4	match	render	provisional	re/match/s21/004d8090.c	
+004d80d0	bound	C4	match	render		re/match/s21/004d80d0.c	RwCore_004d80d0@RwCore/RwCore_004d80d0.cpp
+004d8280	bound	C4	match	render		re/match/s21/004d8280.c	RwCore_004d8280@RwCore/RwCore_004d8280.cpp
+004d8300	bound	C2		render	provisional	re/match/s21/004d8300.c	RwCore_004d8300@RwCore/RwCore_004d8300.cpp
+004d8350	bound	C4	match	render		re/match/s21/004d8350.c	RwCore_004d8350@RwCore/RwCore_004d8350.cpp
+004d83d0	bound	C4	match	render		re/match/s21/004d83d0.c	RwCore_004d83d0@RwCore/RwCore_004d83d0.cpp
+004d8480	bound	C4	match	render		re/match/s21/004d8480.c	RwCore_004d8480@RwCore/RwCore_004d8480.cpp
+004d84e0	bound	C4	match	render		re/match/s21/004d84e0.c	RwCore_004d84e0@RwCore/RwCore_004d84e0.cpp
+004d8560	hand	C4	match	util		re/match/s21/004d8560.c	UtilReturnOne4d8560@Util/UtilLeaves_ab6.cpp
+004d8750	hand	C4	match	render		re/match/s21/004d8750.c	RwStrrchr@Render/RwStrSearch.cpp
+004d8810	bound	C2		third-party-library[renderware]	provisional	re/match/rwl01/004d8810.c	RwCore_004d8810@RwCore/RwCore_004d8810.cpp
+004d8c40	bound	C3		frontend	provisional	re/match/s21/004d8c40.c	RwCore_004d8c40@RwCore/RwCore_004d8c40.cpp
+004db770	bound	C4	match	render		re/match/s21/004db770.c	RwCore_004db770@RwCore/RwCore_004db770.cpp
+004dba60	bound	C4	match	render		re/match/s21/004dba60.c	RwCore_004dba60@RwCore/RwCore_004dba60.cpp
+004dc370	bound	C2		third-party-library[renderware]	provisional	re/match/rwl01/004dc370.c	RwCore_004dc370@RwCore/RwCore_004dc370.cpp
+004dc410	bound	C2		third-party-library[renderware]	provisional	re/match/rwl01/004dc410.c	RwCore_004dc410@RwCore/RwCore_004dc410.cpp
+004dc4a0	bound	C4	frida-replay	third-party-library[renderware]	provisional	re/match/rwl01/004dc4a0.c	RwCore_004dc4a0@RwCore/RwCore_004dc4a0.cpp
+004dc5b0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004dc5b0.c	RwCore_004dc5b0@RwCore/RwCore_004dc5b0.cpp
+004dc8a0	bound	C4	frida-replay	third-party-library[renderware]	provisional	re/match/rwl01/004dc8a0.c	RwCore_004dc8a0@RwCore/RwCore_004dc8a0.cpp
+004dcbb0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004dcbb0.c	RwCore_004dcbb0@RwCore/RwCore_004dcbb0.cpp
+004dcd30	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004dcd30.c	RwCore_004dcd30@RwCore/RwCore_004dcd30.cpp
+004ddcb0	bound	C2		third-party-library[renderware]	provisional	re/match/rwl01/004ddcb0.c	RwCore_004ddcb0@RwCore/RwCore_004ddcb0.cpp
+004dee40	bound	C4	frida-replay	third-party-library[renderware]	provisional	re/match/rwl01/004dee40.c	RwCore_004dee40@RwCore/RwCore_004dee40.cpp
+004df030	no_source	C1		third-party-library[renderware]	provisional		
+004df120	bound	C2		third-party-library[renderware]	provisional	re/match/rwl01/004df120.c	RwCore_004df120@RwCore/RwCore_004df120.cpp
+004df750	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004df750.c	RwCore_004df750@RwCore/RwCore_004df750.cpp
+004df8a0	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004df8a0.c	RwCore_004df8a0@RwCore/RwCore_004df8a0.cpp
+004df910	bound	C4	match	render		re/match/s21/004df910.c	PixEncode4444@Render/BatchAB_s3.cpp;RwCore_004df910@RwCore/RwCore_004df910.cpp
+004e1a90	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004e1a90.c	RwCore_004e1a90@RwCore/RwCore_004e1a90.cpp
+004e1b60	bound	C4	match	third-party-library[renderware]		re/match/rwl01/004e1b60.c	RwCore_004e1b60@RwCore/RwCore_004e1b60.cpp
+004e1df0	bound	C4	match	render		re/match/s21/004e1df0.c	RwCore_004e1df0@RwCore/RwCore_004e1df0.cpp
+004e3bd0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/004e3bd0.c	PortTop_Bound_004e3bd0@Match/PortTop_004e3bd0.c
+004e3dc0	no_source	C1		third-party-library[renderware]	provisional		
+004e3e40	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/004e3e40.c	
+004e3e70	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/004e3e70.c	PortTop_Bound_004e3e70@Match/PortTop_004e3e70.c
+004e3ea0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/004e3ea0.c	PortTop_Bound_004e3ea0@Match/PortTop_004e3ea0.c
+004e41b0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e41b0.c	RwCore_004e41b0@RwCore/RwCore_004e41b0.cpp
+004e42d0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e42d0.c	RwCore_004e42d0@RwCore/RwCore_004e42d0.cpp
+004e4320	bound	C4	match	render		re/match/s21/004e4320.c	RwPluginLinkSet@Render/RwPluginLinkSet.cpp;PortTop_Bound_004e4320@Match/PortTop_004e4320.cpp
+004e4380	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e4380.c	PortTop_Bound_004e4380@Match/PortTop_004e4380.cpp
+004e4440	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e4440.c	RwCore_004e4440@RwCore/RwCore_004e4440.cpp
+004e4450	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e4450.c	RwCore_004e4450@RwCore/RwCore_004e4450.cpp
+004e44e0	c4_unbound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/004e44e0.c	
+004e47b0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e47b0.c	PortTop_Bound_004e47b0@Match/PortTop_004e47b0.cpp
+004e4800	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e4800.c	RwCore_004e4800@RwCore/RwCore_004e4800.cpp
+004e4810	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl02/004e4810.c	
+004e4c30	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl02/004e4c30.c	
+004e4dd0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e4dd0.c	RwCore_004e4dd0@RwCore/RwCore_004e4dd0.cpp
+004e5190	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5190.c	RwCore_004e5190@RwCore/RwCore_004e5190.cpp
+004e51e0	src_not_c4	C2		third-party-library[renderware]		re/match/rwl02/004e51e0.c	
+004e5280	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5280.c	
+004e5300	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e5300.c	RwCore_004e5300@RwCore/RwCore_004e5300.cpp
+004e55d0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e55d0.c	RwCore_004e55d0@RwCore/RwCore_004e55d0.cpp
+004e5660	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5660.c	PortTop_Bound_004e5660@Match/PortTop_004e5660.cpp
+004e5680	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5680.c	PortTop_Bound_004e5680@Match/PortTop_004e5680.cpp
+004e5820	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5820.c	RwCore_004e5820@RwCore/RwCore_004e5820.cpp
+004e5840	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5840.c	PortTop_Bound_004e5840@Match/PortTop_004e5840.cpp
+004e5c70	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5c70.c	RwCore_004e5c70@RwCore/RwCore_004e5c70.cpp
+004e5f90	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5f90.c	RwCore_004e5f90@RwCore/RwCore_004e5f90.cpp
+004e5fc0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e5fc0.c	RwCore_004e5fc0@RwCore/RwCore_004e5fc0.cpp
+004e6100	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e6100.c	RwCore_004e6100@RwCore/RwCore_004e6100.cpp
+004e6630	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/004e6630.c	
+004e6650	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6650.c	PortTop_Bound_004e6650@Match/PortTop_004e6650.cpp
+004e6680	bound	C4	match	render		re/match/s21/004e6680.c	PortTop_Bound_004e6680@Match/PortTop_004e6680.cpp
+004e66d0	bound	C4	match	render		re/match/s21/004e66d0.c	RwCore_004e66d0@RwCore/RwCore_004e66d0.cpp
+004e6710	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6710.c	RwCore_004e6710@RwCore/RwCore_004e6710.cpp
+004e6760	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6760.c	
+004e67b0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e67b0.c	RwCore_004e67b0@RwCore/RwCore_004e67b0.cpp
+004e6880	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6880.c	RwCore_004e6880@RwCore/RwCore_004e6880.cpp
+004e68a0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e68a0.c	RwCore_004e68a0@RwCore/RwCore_004e68a0.cpp
+004e6920	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6920.c	RwCore_004e6920@RwCore/RwCore_004e6920.cpp
+004e69a0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e69a0.c	RwCore_004e69a0@RwCore/RwCore_004e69a0.cpp
+004e6ab0	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e6ab0.c	RwCore_004e6ab0@RwCore/RwCore_004e6ab0.cpp
+004e6d80	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6d80.c	RwCore_004e6d80@RwCore/RwCore_004e6d80.cpp
+004e6e00	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6e00.c	
+004e6f80	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6f80.c	RwCore_004e6f80@RwCore/RwCore_004e6f80.cpp
+004e6fb0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e6fb0.c	PortTop_Bound_004e6fb0@Match/PortTop_004e6fb0.cpp
+004e7060	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e7060.c	RwCore_004e7060@RwCore/RwCore_004e7060.cpp
+004e7420	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e7420.c	RwCore_004e7420@RwCore/RwCore_004e7420.cpp
+004e7e10	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e7e10.c	RwCore_004e7e10@RwCore/RwCore_004e7e10.cpp
+004e7e30	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e7e30.c	Orig_004e7e30@Match/PortTop_004e7e30.cpp;RwCore_004e7e30@RwCore/RwCore_004e7e30.cpp
+004e7fa0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e7fa0.c	RwCore_004e7fa0@RwCore/RwCore_004e7fa0.cpp
+004e8030	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e8030.c	RwCore_004e8030@RwCore/RwCore_004e8030.cpp
+004e8090	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e8090.c	Orig_004e8090@Match/PortTop_004e8090.cpp;RwCore_004e8090@RwCore/RwCore_004e8090.cpp
+004e8120	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e8120.c	RwCore_004e8120@RwCore/RwCore_004e8120.cpp
+004e8750	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e8750.c	RwCore_004e8750@RwCore/RwCore_004e8750.cpp
+004e8940	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e8940.c	RwCore_004e8940@RwCore/RwCore_004e8940.cpp
+004e89a0	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwl02/004e89a0.c	PortTop_Bound_004e89a0@Match/PortTop_004e89a0.c
+004e8a10	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e8a10.c	RwCore_004e8a10@RwCore/RwCore_004e8a10.cpp
+004e8c70	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e8c70.c	RwCore_004e8c70@RwCore/RwCore_004e8c70.cpp
+004e8e90	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e8e90.c	RwCore_004e8e90@RwCore/RwCore_004e8e90.cpp
+004e8ea0	bound	C4	match	third-party-library[renderware]		re/match/rwl02/004e8ea0.c	RwCore_004e8ea0@RwCore/RwCore_004e8ea0.cpp
+004e9330	bound	C2		third-party-library[renderware]	provisional	re/match/rwl02/004e9330.c	RwCore_004e9330@RwCore/RwCore_004e9330.cpp
+004e99b0	src_not_c4	C2		third-party-library[renderware]		re/match/rwl02/004e99b0.c	
+004e9e40	src_not_c4	C2		third-party-library[renderware]		re/match/rwl02/004e9e40.c	
+004ea220	src_not_c4	C2		third-party-library[renderware]		re/match/rwl02/004ea220.c	
+004ea9a0	src_not_c4	C2		third-party-library[renderware]	provisional	re/match/rwl02/004ea9a0.c;re/match/rwtb/004ea9a0.c	
+004eb320	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/004eb320.c	PortTop_Bound_004eb320@Match/PortTop_004eb320.c
+004ec130	bound	C4	match	render		re/match/s21/004ec130.c	RwCore_004ec130@RwCore/RwCore_004ec130.cpp
+004f0900	bound	C4	match	render		re/match/s22/004f0900.c	PortTop_Bound_004f0900@Match/PortTop_004f0900.cpp
+004f0ae0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/004f0ae0.c	RwCore_004f0ae0@RwCore/RwCore_004f0ae0.cpp
+004f0bd0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/004f0bd0.c	RwCore_004f0bd0@RwCore/RwCore_004f0bd0.cpp
+004f0c10	bound	C4	match	third-party-library[renderware]		re/match/rwl03/004f0c10.c	RwCore_004f0c10@RwCore/RwCore_004f0c10.cpp
+004f0f10	bound	C2		third-party-library[renderware]	provisional	re/match/rwl03/004f0f10.c	RwCore_004f0f10@RwCore/RwCore_004f0f10.cpp
+004f3b00	bound	C4	match	third-party-library[renderware]		re/match/rwl03/004f3b00.c	RwCore_004f3b00@RwCore/RwCore_004f3b00.cpp
+004f3b60	bound	C4	match	third-party-library[renderware]		re/match/rwl03/004f3b60.c	RwCore_004f3b60@RwCore/RwCore_004f3b60.cpp
+004f3bc0	bound	C4	match	render		re/match/s22/004f3bc0.c	RwCore_004f3bc0@RwCore/RwCore_004f3bc0.cpp
+004f3bd0	bound	C4	match	render		re/match/s22/004f3bd0.c	RwCore_004f3bd0@RwCore/RwCore_004f3bd0.cpp
+004f3be0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/004f3be0.c	RwCore_004f3be0@RwCore/RwCore_004f3be0.cpp
+004f3cb0	bound	C4	match	render		re/match/s22/004f3cb0.c	PtrArrayFindLastIndex@Render/StateBatchGetters.cpp;RwCore_004f3cb0@RwCore/RwCore_004f3cb0.cpp
+004f3e90	src_not_c4	C2		third-party-library[renderware]	provisional	re/match/rwl03/004f3e90.c	
+004f57e0	bound	C2		render	provisional	re/match/s22/004f57e0.c	RwCore_004f57e0@RwCore/RwCore_004f57e0.cpp
+004f71f0	bound	C2		render	provisional	re/match/s22/004f71f0.c	RwCore_004f71f0@RwCore/RwCore_004f71f0.cpp
+004f77f0	bound	C4	match	render		re/match/s22/004f77f0.c	RwCore_004f77f0@RwCore/RwCore_004f77f0.cpp
+004f8660	bound	C4	match	render		re/match/s22/004f8660.c	PluginDataDwordA@Render/StateBatchGetters.cpp;RwCore_004f8660@RwCore/RwCore_004f8660.cpp
+004f8690	bound	C4	match	render		re/match/s22/004f8690.c	PluginDataDwordB@Render/StateBatchGetters.cpp;RwCore_004f8690@RwCore/RwCore_004f8690.cpp
+00514330	no_source	C2		third-party-library[renderware]			
+00515680	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00515fd0	lib	C2		third-party-library[libpng-1.0.12]			
+005163a0	lib	C2		third-party-library[libpng-1.0.12]			
+00516870	lib	C2		third-party-library[libpng-1.0.12]			
+00516c40	bound	C4	match	util		re/match/s23/00516c40.c	PortTop_Bound_00516c40@Match/PortTop_00516c40.cpp
+00516cc0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00516d20	bound	C4	match	util		re/match/s23/00516d20.c	PortTop_Bound_00516d20@Match/PortTop_00516d20.cpp
+00516d30	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00516d50	bound	C4	match	util		re/match/s23/00516d50.c	PortTop_Bound_00516d50@Match/PortTop_00516d50.cpp
+00516da0	bound	C4	match	util		re/match/s23/00516da0.c	PortTop_Bound_00516da0@Match/PortTop_00516da0.cpp
+00516de0	bound	C4	match	util		re/match/s23/00516de0.c	PortTop_Bound_00516de0@Match/PortTop_00516de0.cpp
+005171a0	bound	C4	match	util		re/match/s23/005171a0.c	PortTop_Bound_005171a0@Match/PortTop_005171a0.cpp
+00517200	bound	C4	match	util		re/match/s23/00517200.c	PortTop_Bound_00517200@Match/PortTop_00517200.cpp
+005173d0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+005173f0	bound	C4	match	util		re/match/s23/005173f0.c	PortTop_Bound_005173f0@Match/PortTop_005173f0.cpp
+005175d0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00517940	bound	C4	match	util		re/match/s23/00517940.c	PortTop_Bound_00517940@Match/PortTop_00517940.cpp
+00517da0	bound	C4	match	util		re/match/s23/00517da0.c	PortTop_Bound_00517da0@Match/PortTop_00517da0.cpp
+00517e00	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00518080	bound	C4	match	util		re/match/s23/00518080.c	PortTop_Bound_00518080@Match/PortTop_00518080.cpp
+00518140	bound	C4	match	util		re/match/s23/00518140.c	PortTop_Bound_00518140@Match/PortTop_00518140.cpp
+005183a0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+005183c0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+005184b0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+005184f0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00518570	bound	C4	match	util		re/match/s23/00518570.c	PortTop_Bound_00518570@Match/PortTop_00518570.cpp
+005185a0	src_not_c4	C2		util		re/match/s23/005185a0.c	
+00519270	bound	C4	match	util		re/match/s23/00519270.c	PortTop_Bound_00519270@Match/PortTop_00519270.cpp
+0051c9f0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+0051ca10	bound	C4	match	util		re/match/s23/0051ca10.c	PortTop_Bound_0051ca10@Match/PortTop_0051ca10.cpp
+005207c0	lib	C2		third-party-library[libpng]			
+00520870	lib	C2		third-party-library[libpng]			
+005208c0	lib	C2		third-party-library[libpng]			
+00520930	lib	C2		third-party-library[libpng]			
+00520960	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00520990	lib	C4	libid	third-party-library[libpng-1.0.12]			
+005209d0	bound	C4	match	util		re/match/s23/005209d0.c	PortTop_Bound_005209d0@Match/PortTop_005209d0.cpp
+00522970	bound	C4	match	util		re/match/s23/00522970.c	PortTop_Bound_00522970@Match/PortTop_00522970.cpp
+00522ab0	lib	C4	libid	third-party-library[zlib-1.1.3]			
+00522b00	lib	C4	libid	third-party-library[zlib-1.1.3]			
+00522b50	bound	C4	match	util		re/match/s23/00522b50.c	PortTop_Bound_00522b50@Match/PortTop_00522b50.cpp
+00522cc0	lib	C4	libid	third-party-library[zlib-1.1.3]			
+00522ce0	src_not_c4	C2		util		re/match/s23/00522ce0.c	
+00523110	lib	C3		third-party-library[libpng-1.0.12]			
+00523140	lib	C4	libid	third-party-library[libpng-1.0.12]			
+00523170	bound	C4	match	util		re/match/s23/00523170.c	PortTop_Bound_00523170@Match/PortTop_00523170.cpp
+005232c0	bound	C4	match	util		re/match/s23/005232c0.c	PortTop_Bound_005232c0@Match/PortTop_005232c0.cpp
+00523640	bound	C4	match	util		re/match/s23/00523640.c	PortTop_Bound_00523640@Match/PortTop_00523640.cpp
+005238c0	bound	C4	match	util		re/match/s23/005238c0.c	PortTop_Bound_005238c0@Match/PortTop_005238c0.cpp
+00523cd0	bound	C4	match	util		re/match/s23/00523cd0.c	PortTop_Bound_00523cd0@Match/PortTop_00523cd0.cpp
+00525bd0	src_not_c4	C2		util		re/match/s23/00525bd0.c	
+00527ee0	bound	C4	match	util		re/match/s23/00527ee0.c	PortTop_Bound_00527ee0@Match/PortTop_00527ee0.cpp
+00528810	bound	C4	match	util		re/match/s23/00528810.c	PortTop_Bound_00528810@Match/PortTop_00528810.cpp
+00528ba0	lib	C4	libid	third-party-library[libpng-1.0.12]			
+0052a890	lib	C4	libid	third-party-library[zlib-1.1.3]			
+0052a9c0	lib	C4	libid	third-party-library[zlib-1.1.3]			
+0052aa40	src_not_c4	C2		util		re/match/s23/0052aa40.c	
+0052ab00	src_not_c4	C2		util		re/match/s23/0052ab00.c	
+0052b750	bound	C4	match	util		re/match/s23/0052b750.c	PortTop_Bound_0052b750@Match/PortTop_0052b750.cpp
+0052b7e0	lib	C4	libid	third-party-library[zlib-1.1.3]			
+0052b820	bound	C4	match	util		re/match/s23/0052b820.c	PortTop_Bound_0052b820@Match/PortTop_0052b820.cpp
+0052bf20	lib	C4	libid	third-party-library[zlib-1.1.3]			
+0052bf40	bound	C4	match	util		re/match/s23/0052bf40.c	PortTop_Bound_0052bf40@Match/PortTop_0052bf40.cpp
+0052bff0	bound	C4	match	util		re/match/s23/0052bff0.c	PortTop_Bound_0052bff0@Match/PortTop_0052bff0.cpp
+0052c4a0	bound	C4	match	util		re/match/s23/0052c4a0.c	PortTop_Bound_0052c4a0@Match/PortTop_0052c4a0.cpp
+0052c660	lib	C4	libid	third-party-library[zlib-1.1.3]			
+0052c7a0	bound	C4	match	util		re/match/s23/0052c7a0.c	PortTop_Bound_0052c7a0@Match/PortTop_0052c7a0.cpp
+0052daf0	bound	C2		third-party-library[renderware]	provisional	re/match/rwl03/0052daf0.c	RwCore_0052daf0@RwCore/RwCore_0052daf0.cpp
+0052ddc0	bound	C4	match	util		re/match/s23/0052ddc0.c	RwCore_0052ddc0@RwCore/RwCore_0052ddc0.cpp
+0052ddf0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0052ddf0.c	RwCore_0052ddf0@RwCore/RwCore_0052ddf0.cpp
+0052de60	bound	C4	match	util		re/match/s23/0052de60.c	PortTop_Bound_0052de60@Match/PortTop_0052de60.cpp
+0052e4e0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0052e4e0.c	PortTop_Bound_0052e4e0@Match/PortTop_0052e4e0.c
+0052e500	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0052e500.c	PortTop_Bound_0052e500@Match/PortTop_0052e500.c
+0052e560	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/0052e560.c	
+0052e580	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/0052e580.c	
+0052e5a0	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/0052e5a0.c	
+0052e5c0	src_not_c4	C1		third-party-library[renderware]	admitted	re/match/g2seq/0052e5c0.c	
+005333a0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/005333a0.c	RwCore_005333a0@RwCore/RwCore_005333a0.cpp
+00533820	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/00533820.c	
+00533840	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/00533840.c	PortTop_Bound_00533840@Match/PortTop_00533840.c
+00533900	src_not_c4	C1		third-party-library[renderware]	admitted	re/match/g2seq/00533900.c	
+00534ad0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/00534ad0.c	PortTop_Bound_00534ad0@Match/PortTop_00534ad0.c
+00534af0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/00534af0.c	PortTop_Bound_00534af0@Match/PortTop_00534af0.c
+00534b60	bound	C4	match	third-party-library[renderware]		re/match/rwl03/00534b60.c	RwCore_00534b60@RwCore/RwCore_00534b60.cpp
+00534d00	src_not_c4	C2		third-party-library[renderware]	provisional	re/match/rwl03/00534d00.c	
+00535330	src_not_c4	C2		third-party-library[renderware]	provisional	re/match/rwl03/00535330.c	
+00535700	src_not_c4	C2		third-party-library[renderware]		re/match/rwl03/00535700.c	
+00536780	bound	C1		third-party-library[renderware]	provisional	re/match/rwl03/00536780.c	RwCore_00536780@RwCore/RwCore_00536780.cpp
+00538310	bound	C4	match	third-party-library[renderware]		re/match/rwl03/00538310.c	RwCore_00538310@RwCore/RwCore_00538310.cpp
+005386b0	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwta/005386b0.c	PortTop_Bound_005386b0@Match/PortTop_005386b0.c
+00538800	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/00538800.c	
+00538a80	bound	C4	match	third-party-library[renderware]		re/match/rwl03/00538a80.c	PortTop_Bound_00538a80@Match/PortTop_00538a80.cpp
+00538bd0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/00538bd0.c	RwCore_00538bd0@RwCore/RwCore_00538bd0.cpp
+00538c30	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwtb/00538c30.c	PortTop_Bound_00538c30@Match/PortTop_00538c30.c
+00538c80	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl03/00538c80.c	
+00538d60	src_not_c4	C2		third-party-library[renderware]		re/match/rwl03/00538d60.c	
+0053d040	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053d040.c	PortTop_Bound_0053d040@Match/PortTop_0053d040.cpp
+0053d090	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053d090.c	PortTop_Bound_0053d090@Match/PortTop_0053d090.cpp
+0053d200	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053d200.c	RwCore_0053d200@RwCore/RwCore_0053d200.cpp
+0053d2b0	no_source	C1		third-party-library[renderware]	provisional		
+0053d3e0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0053d3e0.c	PortTop_Bound_0053d3e0@Match/PortTop_0053d3e0.c
+0053d400	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053d400.c	PortTop_Bound_0053d400@Match/PortTop_0053d400.cpp
+0053d460	src_not_c4	C2		third-party-library[renderware]		re/match/rwl03/0053d460.c	
+0053d5a0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053d5a0.c	RwCore_0053d5a0@RwCore/RwCore_0053d5a0.cpp
+0053d820	bound	C4	frida-replay	third-party-library[renderware]	provisional	re/match/rwl03/0053d820.c	RwCore_0053d820@RwCore/RwCore_0053d820.cpp
+0053dba0	src_not_c4	C2		third-party-library[renderware]		re/match/rwl03/0053dba0.c	
+0053de50	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053de50.c	PortTop_Bound_0053de50@Match/PortTop_0053de50.cpp
+0053dea0	src_not_c4	C2		third-party-library[renderware]		re/match/rwl03/0053dea0.c	
+0053e430	src_not_c4	C2		third-party-library[renderware]		re/match/rwl03/0053e430.c	
+0053e5d0	c4_unbound	C4	frida-replay	third-party-library[renderware]		re/match/rwl03/0053e5d0.c	
+0053e690	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053e690.c	PortTop_Bound_0053e690@Match/PortTop_0053e690.cpp
+0053e6d0	no_source	C1		third-party-library[renderware]			
+0053e6f0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053e6f0.c	PortTop_Bound_0053e6f0@Match/PortTop_0053e6f0.cpp
+0053e730	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053e730.c	PortTop_Bound_0053e730@Match/PortTop_0053e730.cpp
+0053e760	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053e760.c	PortTop_Bound_0053e760@Match/PortTop_0053e760.cpp
+0053e790	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053e790.c	PortTop_Bound_0053e790@Match/PortTop_0053e790.cpp
+0053e7f0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053e7f0.c	PortTop_Bound_0053e7f0@Match/PortTop_0053e7f0.cpp
+0053ec40	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0053ec40.c	PortTop_Bound_0053ec40@Match/PortTop_0053ec40.c
+0053ec60	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0053ec60.c	PortTop_Bound_0053ec60@Match/PortTop_0053ec60.c
+0053f150	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053f150.c	RwCore_0053f150@RwCore/RwCore_0053f150.cpp
+0053f3c0	no_source	C1		third-party-library[renderware]	provisional		
+0053f9b0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0053f9b0.c	PortTop_Bound_0053f9b0@Match/PortTop_0053f9b0.c
+0053f9d0	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/0053f9d0.c	
+0053fa20	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053fa20.c	RwCore_0053fa20@RwCore/RwCore_0053fa20.cpp
+0053fa90	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0053fa90.c	PortTop_Bound_0053fa90@Match/PortTop_0053fa90.c
+0053fb00	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053fb00.c	RwCore_0053fb00@RwCore/RwCore_0053fb00.cpp
+0053fb70	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053fb70.c	RwCore_0053fb70@RwCore/RwCore_0053fb70.cpp
+0053fba0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053fba0.c	PortTop_Bound_0053fba0@Match/PortTop_0053fba0.cpp
+0053fbb0	bound	C2		third-party-library[renderware]	provisional	re/match/rwl03/0053fbb0.c	RwCore_0053fbb0@RwCore/RwCore_0053fbb0.cpp
+0053fd30	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053fd30.c	RwCore_0053fd30@RwCore/RwCore_0053fd30.cpp
+0053fea0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/0053fea0.c	PortTop_Bound_0053fea0@Match/PortTop_0053fea0.cpp
+005401d0	bound	C4	match	third-party-library[renderware]		re/match/rwl03/005401d0.c	PortTop_Bound_005401d0@Match/PortTop_005401d0.cpp
+00540260	bound	C4	match	third-party-library[renderware]		re/match/rwl03/00540260.c	RwCore_00540260@RwCore/RwCore_00540260.cpp
+00540340	bound	C4	match	third-party-library[renderware]		re/match/rwl03/00540340.c	RwCore_00540340@RwCore/RwCore_00540340.cpp
+005405c0	src_not_c4	C2		third-party-library[renderware]	provisional	re/match/rwl03/005405c0.c	
+00543500	c4_unbound	C4	match	third-party-library[renderware]	provisional	re/match/rwtb/00543500.c	
+00543950	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543950.c	RwCore_00543950@RwCore/RwCore_00543950.cpp
+005439d0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/005439d0.c	RwCore_005439d0@RwCore/RwCore_005439d0.cpp
+00543b10	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543b10.c	RwCore_00543b10@RwCore/RwCore_00543b10.cpp
+00543b20	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543b20.c	RwCore_00543b20@RwCore/RwCore_00543b20.cpp
+00543b90	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543b90.c	PortTop_Bound_00543b90@Match/PortTop_00543b90.cpp
+00543bb0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543bb0.c	PortTop_Bound_00543bb0@Match/PortTop_00543bb0.cpp
+00543d40	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543d40.c	RwCore_00543d40@RwCore/RwCore_00543d40.cpp
+00543d70	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543d70.c	RwCore_00543d70@RwCore/RwCore_00543d70.cpp
+00543da0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543da0.c	PortTop_Bound_00543da0@Match/PortTop_00543da0.cpp
+00543dc0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543dc0.c	PortTop_Bound_00543dc0@Match/PortTop_00543dc0.cpp
+00543df0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543df0.c	RwCore_00543df0@RwCore/RwCore_00543df0.cpp
+00543e00	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl04/00543e00.c	
+00543e10	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543e10.c	PortTop_Bound_00543e10@Match/PortTop_00543e10.cpp
+00543e30	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00543e30.c	PortTop_Bound_00543e30@Match/PortTop_00543e30.cpp
+005440e0	c4_unbound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/005440e0.c	
+00544100	src_not_c4	C1		third-party-library[renderware]	admitted	re/match/g2seq/00544100.c	
+005441f0	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/rwtb/005441f0.c	
+005444a0	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwtb/005444a0.c	PortTop_Bound_005444a0@Match/PortTop_005444a0.c
+005449f0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/005449f0.c	PortTop_Bound_005449f0@Match/PortTop_005449f0.cpp
+00544a70	src_not_c4	C2		third-party-library[renderware]		re/match/rwl04/00544a70.c	
+00544ad0	src_not_c4	C2		third-party-library[renderware]		re/match/rwl04/00544ad0.c	
+00544de0	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/00544de0.c	
+00544e00	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwtb/00544e00.c	PortTop_Bound_00544e00@Match/PortTop_00544e00.c
+00544f10	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/00544f10.c	PortTop_Bound_00544f10@Match/PortTop_00544f10.c
+005451f0	no_source	C1		third-party-library[renderware]	provisional		
+00546b10	hand	C4	match	vehicle		re/match/s24/00546b10.c	FUN_00546b10@Collision/RwpSolverMath2Quat.cpp
+005492b0	no_source	C1		third-party-library[renderware]	provisional		
+005492d0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/005492d0.c	PortTop_Bound_005492d0@Match/PortTop_005492d0.c
+00549310	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/00549310.c	PortTop_Bound_00549310@Match/PortTop_00549310.c
+00549350	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/00549350.c	
+00549fe0	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/00549fe0.c	
+0054a000	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0054a000.c	PortTop_Bound_0054a000@Match/PortTop_0054a000.c
+0054a0f0	bound	C4	match	third-party-library[renderware]	provisional	re/match/g2sh/0054a0f0.c	PortTop_Bound_0054a0f0@Match/PortTop_0054a0f0.c
+0054f8d0	src_not_c4	C2		third-party-library[renderware]	provisional	re/match/rwl04/0054f8d0.c;re/match/rwtb/0054f8d0.c	
+00550130	src_not_c4	C2		third-party-library[renderware]	provisional	re/match/rwl04/00550130.c	
+00550580	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00550580.c	RwCore_00550580@RwCore/RwCore_00550580.cpp
+00550740	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00550740.c	PortTop_Bound_00550740@Match/PortTop_00550740.cpp
+00550790	bound	C4	match	util		re/match/s24/00550790.c	PortTop_Bound_00550790@Match/PortTop_00550790.cpp
+005507a0	c4_unbound	C4	match	third-party-library[renderware]		re/match/rwl04/005507a0.c	
+005507b0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/005507b0.c	RwCore_005507b0@RwCore/RwCore_005507b0.cpp
+00550910	bound	C4	match	save		re/match/s24/00550910.c	RwCore_00550910@RwCore/RwCore_00550910.cpp
+00550950	bound	C4	match	audio		re/match/s24/00550950.c	RwCore_00550950@RwCore/RwCore_00550950.cpp
+005509b0	bound	C4	match	audio		re/match/s24/005509b0.c	RwCore_005509b0@RwCore/RwCore_005509b0.cpp
+00550af0	bound	C4	match	audio		re/match/s24/00550af0.c	RwCore_00550af0@RwCore/RwCore_00550af0.cpp
+00550b00	bound	C4	match	save		re/match/s24/00550b00.c	VfsFileExists@Save/GameSaveVFS.cpp;RwCore_00550b00@RwCore/RwCore_00550b00.cpp
+00550bc0	bound	C4	match	save		re/match/s24/00550bc0.c	VfsStreamGetType@Save/VfsStream.cpp;VfsStreamGetType@Save/VfsStream.cpp
+00550be0	bound	C4	match	util		re/match/s24/00550be0.c	PortTop_Bound_00550be0@Match/PortTop_00550be0.cpp
+00550c30	bound	C4	match	util		re/match/s24/00550c30.c	PortTop_Bound_00550c30@Match/PortTop_00550c30.cpp
+00550d80	bound	C4	match	util		re/match/s24/00550d80.c	PortTop_Bound_00550d80@Match/PortTop_00550d80.cpp
+00551410	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00551410.c	PortTop_Bound_00551410@Match/PortTop_00551410.cpp
+00551460	bound	C2		third-party-library[renderware]	provisional	re/match/rwl04/00551460.c	PortTop_Bound_00551460@Match/PortTop_00551460.cpp
+005514e0	bound	C4	match	util		re/match/s24/005514e0.c	PortTop_Bound_005514e0@Match/PortTop_005514e0.cpp
+005516c0	src_not_c4	C1		third-party-library[renderware]	admitted	re/match/g2seq/005516c0.c	
+005516e0	src_not_c4	C1		third-party-library[renderware]	provisional	re/match/g2seq/005516e0.c	
+005518f0	bound	C4	match	third-party-library[renderware]		re/match/rwtb/005518f0.c	PortTop_Bound_005518f0@Match/PortTop_005518f0.c
+00551a50	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00551a50.c	Orig_00551a50@Match/PortTop_00551a50.cpp
+00551c40	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00551c40.c	RwCore_00551c40@RwCore/RwCore_00551c40.cpp
+00551cf0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00551cf0.c	RwCore_00551cf0@RwCore/RwCore_00551cf0.cpp
+00551fd0	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00551fd0.c	RwCore_00551fd0@RwCore/RwCore_00551fd0.cpp
+00552020	bound	C4	match	third-party-library[renderware]		re/match/rwl04/00552020.c	PortTop_Bound_00552020@Match/PortTop_00552020.cpp
+00552750	bound	C4	match	hud		re/match/s24/00552750.c	Orig_00552750@Match/PortTop_00552750.cpp
+00552b50	bound	C4	match	third-party-library[renderware]		re/match/rt2d/00552b50.c	Orig_00552b50@Match/PortTop_00552b50.cpp;RwCore_00552b50@RwCore/RwCore_00552b50.cpp
+00552d10	bound	C4	match	hud		re/match/s24/00552d10.c	RwCore_00552d10@RwCore/RwCore_00552d10.cpp
+00552d70	bound	C4	match	render		re/match/s24/00552d70.c	RwCore_00552d70@RwCore/RwCore_00552d70.cpp
+00552da0	bound	C4	match	hud		re/match/s24/00552da0.c	RwCore_00552da0@RwCore/RwCore_00552da0.cpp
+00552df0	bound	C4	match	hud		re/match/s24/00552df0.c	RwCore_00552df0@RwCore/RwCore_00552df0.cpp
+00552e40	bound	C4	match	hud		re/match/s24/00552e40.c	RwCore_00552e40@RwCore/RwCore_00552e40.cpp
+00554940	bound	C2		hud	provisional	re/match/s24/00554940.c	RwCore_00554940@RwCore/RwCore_00554940.cpp
+005554d0	bound	C4	match	hud		re/match/s24/005554d0.c	RwCore_005554d0@RwCore/RwCore_005554d0.cpp
+00556ca0	bound	C4	frida-replay	hud	provisional	re/match/s24/00556ca0.c	RwCore_00556ca0@RwCore/RwCore_00556ca0.cpp
+00556e90	bound	C2		render	provisional	re/match/s24/00556e90.c	RwCore_00556e90@RwCore/RwCore_00556e90.cpp
+00557cb0	no_source	C1		third-party-library[renderware]	provisional		
+00557d90	bound	C4	match	third-party-library[renderware]	provisional	re/match/rwta/00557d90.c	PortTop_Bound_00557d90@Match/PortTop_00557d90.c
+00558ca0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00558ca0.c	PortTop_Bound_00558ca0@Match/PortTop_00558ca0.cpp
+00558cb0	c4_unbound	C4	frida-replay	third-party-library[RenderWare-Physics-3.7]	provisional	re/match/rwl05/00558cb0.c	
+00558df0	src_not_c4	C2		third-party-library[renderware]		re/match/rwl05/00558df0.c	
+00559560	c4_unbound	C4	frida-replay	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00559560.c	
+005595d0	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/005595d0.c	
+00559b50	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00559b50.c	PortTop_Bound_00559b50@Match/PortTop_00559b50.cpp
+00559c40	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00559c40.c	
+00559ee0	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00559ee0.c	
+0055ab30	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_0055ab30@Collision/RwpSolverGlue5.cpp
+0055ac00	hand	C4		third-party-library[RenderWare-Physics-3.7]			RwpShapeActiveBitSet@Collision/RwpIntegrator.cpp
+0055ad20	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055ad20.c	PortTop_Bound_0055ad20@Match/PortTop_0055ad20.cpp
+0055af40	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055af40.c	PortTop_Bound_0055af40@Match/PortTop_0055af40.cpp
+0055b860	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055b860.c	PortTop_Bound_0055b860@Match/PortTop_0055b860.cpp
+0055b940	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055b940.c	
+0055bab0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055bab0.c	PortTop_Bound_0055bab0@Match/PortTop_0055bab0.cpp
+0055bac0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055bac0.c	PortTop_Bound_0055bac0@Match/PortTop_0055bac0.cpp
+0055bbf0	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055bbf0.c	
+0055bd80	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055bd80.c	FUN_0055bd80@Collision/RwpSolverGlue5.cpp;PortTop_Bound_0055bd80@Match/PortTop_0055bd80.cpp
+0055c380	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055c380.c	PortTop_Bound_0055c380@Match/PortTop_0055c380.cpp
+0055c490	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055c490.c	PortTop_Bound_0055c490@Match/PortTop_0055c490.cpp
+0055c4a0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055c4a0.c	PortTop_Bound_0055c4a0@Match/PortTop_0055c4a0.cpp
+0055c4f0	bound	C4	match	vehicle		re/match/s24/0055c4f0.c	PortTop_Bound_0055c4f0@Match/PortTop_0055c4f0.cpp
+0055c540	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055c540.c	PortTop_Bound_0055c540@Match/PortTop_0055c540.cpp
+0055c810	bound	C4	match	vehicle		re/match/s24/0055c810.c	PortTop_Bound_0055c810@Match/PortTop_0055c810.cpp
+0055dc70	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055dc70.c	PortTop_Bound_0055dc70@Match/PortTop_0055dc70.cpp
+0055dca0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055dca0.c	PortTop_Bound_0055dca0@Match/PortTop_0055dca0.cpp
+0055ddd0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055ddd0.c	PortTop_Bound_0055ddd0@Match/PortTop_0055ddd0.cpp
+0055deb0	bound	C4		third-party-library[RenderWare-Physics-3.7]		re/match/rwfc/0055deb0.c	RwpWorldSolverHandle_RegAbi@Collision/RwpIntegrator.cpp;RwCore_0055deb0@RwCore/RwCore_0055deb0.cpp
+0055dec0	hand	C4	match	util		re/match/s24/0055dec0.c	UtilDeref55dec0@Util/UtilLeaves_ab6.cpp
+0055ded0	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055ded0.c	
+0055dff0	hand	C4		third-party-library[RenderWare-Physics-3.7]			RwpBodyRefreshGate@Collision/RwpIntegrator.cpp
+0055f450	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055f450.c	PortTop_Bound_0055f450@Match/PortTop_0055f450.cpp
+0055f480	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055f480.c	
+0055f520	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055f520.c	
+0055f670	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055f670.c	
+0055f800	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055f800.c	
+0055fe10	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055fe10.c	PortTop_Bound_0055fe10@Match/PortTop_0055fe10.cpp
+0055fe30	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055fe30.c	PortTop_Bound_0055fe30@Match/PortTop_0055fe30.cpp
+0055fe40	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/0055fe40.c	PortTop_Bound_0055fe40@Match/PortTop_0055fe40.cpp
+00561f40	no_source	C1		third-party-library[RenderWare-Physics-3.7]	provisional		
+00562520	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00562520.c	PortTop_Bound_00562520@Match/PortTop_00562520.cpp
+00562580	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00562580.c	PortTop_Bound_00562580@Match/PortTop_00562580.cpp
+005625e0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/005625e0.c	PortTop_Bound_005625e0@Match/PortTop_005625e0.cpp
+00562600	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00562600.c	PortTop_Bound_00562600@Match/PortTop_00562600.cpp
+00562fd0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00562fd0.c	PortTop_Bound_00562fd0@Match/PortTop_00562fd0.cpp
+00563de0	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00563de0.c	
+00563df0	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00563df0.c	
+00563e70	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_00563e70@Collision/RwpSolverLeaves1.cpp
+00563f60	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_00563f60@Collision/RwpSolverLeaves1.cpp
+00564100	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00564100.c	
+00564130	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00564130.c	PortTop_Bound_00564130@Match/PortTop_00564130.cpp
+005641b0	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_005641b0@Collision/RwpSolverLeaves1.cpp
+00564310	hand	C4	frida-replay	third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/00564310.c	FUN_00564310@Collision/RwpSolverLeaves1.cpp
+005645b0	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl05/005645b0.c	
+005646c0	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_005646c0@Collision/RwpSolverCore4.cpp
+00564c80	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_00564c80@Collision/RwpSolverCore4.cpp
+00565120	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_00565120@Collision/RwpSolverLeaves1.cpp
+005651b0	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_005651b0@Collision/RwpSolverLeaves1.cpp
+00565260	hand	C4		third-party-library[RenderWare-Physics-3.7]			FUN_00565260@Collision/RwpSolverCore4.cpp
+00565590	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00565590.c	PortTop_Bound_00565590@Match/PortTop_00565590.cpp
+005672c0	c4_unbound	C4	frida-replay	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/005672c0.c	
+00567350	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00567350.c	
+00567630	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00567630.c	
+005676f0	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/005676f0.c	
+00567c40	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00567c40.c	
+005687a0	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/005687a0.c	
+005687d0	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/005687d0.c	
+00568860	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00568860.c	
+00568c40	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00568c40.c	
+00568c80	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00568c80.c	
+00568cf0	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00568cf0.c	
+00568d20	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00568d20.c	
+00574920	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00574920.c	
+005749b0	c4_unbound	C4	frida-replay	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/005749b0.c	
+00574a20	src_not_c4	C3		third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00574a20.c	
+00574ac0	c4_unbound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/00574ac0.c	
+0057c1b0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/0057c1b0.c	PortTop_Bound_0057c1b0@Match/PortTop_0057c1b0.cpp
+0057c210	hand	C4		third-party-library[RenderWare-Physics-3.7]			RwpBodyTableLookup@Collision/RwpIntegrator.cpp
+0057c220	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/0057c220.c	PortTop_Bound_0057c220@Match/PortTop_0057c220.cpp
+0057c2e0	bound	C4	match	third-party-library[RenderWare-Physics-3.7]	provisional	re/match/g2sh/0057c2e0.c	PortTop_Bound_0057c2e0@Match/PortTop_0057c2e0.c
+0057c300	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/0057c300.c	PortTop_Bound_0057c300@Match/PortTop_0057c300.cpp
+0057c420	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/0057c420.c	FUN_0057c420@Collision/RwpVtableKV2.cpp;PortTop_Bound_0057c420@Match/PortTop_0057c420.cpp
+0057c4b0	lib	C2		third-party-library[qhull-2002.1]			
+0057c500	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/0057c500.c	PortTop_Bound_0057c500@Match/PortTop_0057c500.cpp
+0057c550	bound	C4	match	third-party-library[RenderWare-Physics-3.7]		re/match/rwl06/0057c550.c	PortTop_Bound_0057c550@Match/PortTop_0057c550.cpp
+005a60b0	bound	C4	match	audio		re/match/s25/005a60b0.c	PortTop_Bound_005a60b0@Match/PortTop_005a60b0.cpp
+005a60e0	bound	C4	match	audio		re/match/s25/005a60e0.c	PortTop_Bound_005a60e0@Match/PortTop_005a60e0.cpp
+005a6670	bound	C4	match	audio		re/match/s25/005a6670.c	PortTop_Bound_005a6670@Match/PortTop_005a6670.cpp
+005a66d0	bound	C4	match	audio		re/match/s25/005a66d0.c	PortTop_Bound_005a66d0@Match/PortTop_005a66d0.cpp
+005a6710	bound	C4	match	audio		re/match/s25/005a6710.c	PortTop_Bound_005a6710@Match/PortTop_005a6710.cpp
+005a6d60	bound	C4	frida-replay	audio	provisional	re/match/s25/005a6d60.c	PortTop_Bound_005a6d60@Match/PortTop_005a6d60.cpp
+005a6d90	bound	C4	match	audio		re/match/s25/005a6d90.c	PortTop_Bound_005a6d90@Match/PortTop_005a6d90.cpp
+005a6dc0	bound	C4	match	audio		re/match/s25/005a6dc0.c	PortTop_Bound_005a6dc0@Match/PortTop_005a6dc0.cpp
+005a6df0	bound	C4	match	audio		re/match/s25/005a6df0.c	PortTop_Bound_005a6df0@Match/PortTop_005a6df0.cpp
+005a6e10	bound	C4	match	audio		re/match/s25/005a6e10.c	PortTop_Bound_005a6e10@Match/PortTop_005a6e10.cpp
+005a6ea0	bound	C4	frida-replay	audio	provisional	re/match/s25/005a6ea0.c	PortTop_Bound_005a6ea0@Match/PortTop_005a6ea0.cpp
+005a6f30	bound	C2		audio	provisional	re/match/s25/005a6f30.c	PortTop_Bound_005a6f30@Match/PortTop_005a6f30.cpp
+005a7520	bound	C4	match	audio		re/match/s25/005a7520.c	PortTop_Bound_005a7520@Match/PortTop_005a7520.cpp
+005a7560	bound	C4	match	audio		re/match/s25/005a7560.c	PortTop_Bound_005a7560@Match/PortTop_005a7560.cpp
+005a75b0	src_not_c4	C2		audio	provisional	re/match/s25/005a75b0.c	
+005a7a40	bound	C4	match	audio		re/match/s25/005a7a40.c	PortTop_Bound_005a7a40@Match/PortTop_005a7a40.cpp
+005a7aa0	bound	C4	match	audio		re/match/s25/005a7aa0.c	PortTop_Bound_005a7aa0@Match/PortTop_005a7aa0.cpp
+005a7af0	bound	C4	match	audio		re/match/s25/005a7af0.c	PortTop_Bound_005a7af0@Match/PortTop_005a7af0.cpp
+005a7b00	bound	C4	match	audio		re/match/s25/005a7b00.c	PortTop_Bound_005a7b00@Match/PortTop_005a7b00.cpp
+005a7b40	bound	C4	match	third-party-library[msvc-crt]		re/match/s25/005a7b40.c	PortTop_Bound_005a7b40@Match/PortTop_005a7b40.cpp
+005a7b50	bound	C4	match	audio		re/match/s25/005a7b50.c	PortTop_Bound_005a7b50@Match/PortTop_005a7b50.cpp
+005a7b60	bound	C4	frida-replay	audio		re/match/s25/005a7b60.c	PortTop_Bound_005a7b60@Match/PortTop_005a7b60.cpp
+005a7e70	bound	C4	match	audio		re/match/s25/005a7e70.c	PortTop_Bound_005a7e70@Match/PortTop_005a7e70.cpp
+005a7ee0	bound	C4	match	audio		re/match/s25/005a7ee0.c	PortTop_Bound_005a7ee0@Match/PortTop_005a7ee0.cpp
+005aa0c0	bound	C3		audio	provisional	re/match/s25/005aa0c0.c	AudioTreeWalkPredicateSearch@Audio/RwsStream.cpp;PortTop_Bound_005aa0c0@Match/PortTop_005aa0c0.cpp
+005aab00	bound	C4	frida-replay	audio	admitted	re/match/s25/005aab00.c	PortTop_Bound_005aab00@Match/PortTop_005aab00.cpp
+005aab70	bound	C4	frida-replay	audio	provisional	re/match/s25/005aab70.c	PortTop_Bound_005aab70@Match/PortTop_005aab70.cpp
+005aad40	bound	C4	match	audio		re/match/s25/005aad40.c	PortTop_Bound_005aad40@Match/PortTop_005aad40.cpp
+005ab040	bound	C4	match	util		re/match/s25/005ab040.c	PortTop_Bound_005ab040@Match/PortTop_005ab040.cpp
+005ab070	bound	C4	match	audio		re/match/s25/005ab070.c	PortTop_Bound_005ab070@Match/PortTop_005ab070.cpp
+005ab380	bound	C3		audio	provisional	re/match/s25/005ab380.c	AudioRwsChunkHeaderRead@Audio/RwsStream.cpp;PortTop_Bound_005ab380@Match/PortTop_005ab380.cpp
+005ab410	bound	C3		audio	admitted	re/match/s25/005ab410.c	AudioRwsChunkTypeSeek@Audio/RwsStream.cpp;PortTop_Bound_005ab410@Match/PortTop_005ab410.cpp
+005aba20	bound	C2		audio	provisional	re/match/s25/005aba20.c	PortTop_Bound_005aba20@Match/PortTop_005aba20.cpp
+005abd30	bound	C2		audio	provisional	re/match/s25/005abd30.c	PortTop_Bound_005abd30@Match/PortTop_005abd30.cpp
+005abf80	hand	C4	match	audio		re/match/s25/005abf80.c	AudioWaveVtableSlot1cDispatch@Audio/RwsStream.cpp
+005abfa0	bound	C4	frida-replay	audio	provisional	re/match/s25/005abfa0.c	PortTop_Bound_005abfa0@Match/PortTop_005abfa0.cpp
+005ac210	bound	C2		audio	provisional	re/match/s25/005ac210.c	PortTop_Bound_005ac210@Match/PortTop_005ac210.cpp
+005ac5f0	bound	C4	match	audio		re/match/s25/005ac5f0.c	AudioFmtDescEqual@Audio/RwsFmt.cpp;PortTop_Bound_005ac5f0@Match/PortTop_005ac5f0.cpp
+005ac770	bound	C4	match	audio		re/match/tlr/005ac770.c	PortTop_Bound_005ac770@Match/PortTop_005ac770.cpp
+005ac7b0	bound	C4	match	audio		re/match/s25/005ac7b0.c	AudioSubStructDualInit@Audio/AudioRws.cpp;PortTop_Bound_005ac7b0@Match/PortTop_005ac7b0.cpp
+005ac9e0	bound	C4	match	audio		re/match/s26/005ac9e0.c	AudioFmtEntryMatch@Audio/RwsFmt.cpp;PortTop_Bound_005ac9e0@Match/PortTop_005ac9e0.cpp
+005aca80	hand	C4	match	audio		re/match/s26/005aca80.c	AudioFmtSizeCalc@Audio/AudioRwsLeaves.cpp
+005acaa0	bound	C2		audio	provisional	re/match/s26/005acaa0.c	PortTop_Bound_005acaa0@Match/PortTop_005acaa0.cpp
+005acd10	bound	C4	frida-replay	audio		re/match/s26/005acd10.c	AudioFmtTableSearch@Audio/AudioRws.cpp;PortTop_Bound_005acd10@Match/PortTop_005acd10.cpp
+005acd60	bound	C4	match	audio		re/match/s26/005acd60.c	AudioFmtGlobalScan@Audio/AudioRws.cpp;PortTop_Bound_005acd60@Match/PortTop_005acd60.cpp
+005addd0	bound	C4	match	audio		re/match/s26/005addd0.c	AudioListInsertHead@Audio/AudioPool.cpp;PortTop_Bound_005addd0@Match/PortTop_005addd0.cpp
+005ade10	bound	C4	match	audio		re/match/s26/005ade10.c	AudioListRemoveByValue@Audio/AudioPool.cpp;PortTop_Bound_005ade10@Match/PortTop_005ade10.cpp
+005ade60	hand	C4	match	audio		re/match/s26/005ade60.c	AudioListIndexOfKey@Audio/AudioLeaves_ab1.cpp
+005aded0	hand	C4	match	audio		re/match/s26/005aded0.c	AudioListNodeCount@Audio/AudioLeaves_ab1.cpp
+005adf30	hand	C4	match	audio		re/match/s26/005adf30.c	AudioFmtKeyCompare@Audio/AudioFmtKey.cpp
+005adf60	bound	C4	match	audio		re/match/s26/005adf60.c	PortTop_Bound_005adf60@Match/PortTop_005adf60.cpp
+005adfe0	bound	C4	match	audio		re/match/s26/005adfe0.c	AudioSubStructLinkBuffer@Audio/AudioRws.cpp;PortTop_Bound_005adfe0@Match/PortTop_005adfe0.cpp
+005ae010	bound	C4	match	audio		re/match/s26/005ae010.c	AudioSubStructLinkDevice@Audio/AudioRws.cpp;PortTop_Bound_005ae010@Match/PortTop_005ae010.cpp
+005ae050	bound	C4	match	audio		re/match/s26/005ae050.c	AudioSubStructBFree@Audio/AudioRws.cpp;PortTop_Bound_005ae050@Match/PortTop_005ae050.cpp
+005ae080	bound	C4	match	audio		re/match/s26/005ae080.c	AudioSubStructAFree@Audio/AudioRws.cpp;PortTop_Bound_005ae080@Match/PortTop_005ae080.cpp
+005ae0b0	hand	C4	match	audio		re/match/s26/005ae0b0.c	AudioSubStructZeroInit@Audio/AudioRwsLeaves.cpp
+005ae0c0	bound	C4	match	audio		re/match/s26/005ae0c0.c	AudioWaveFmtCopy@Audio/AudioRwsLeaves.cpp;PortTop_Bound_005ae0c0@Match/PortTop_005ae0c0.cpp
+005ae800	bound	C3		audio	provisional	re/match/s26/005ae800.c	AudioPoolBlockAlloc@Audio/AudioPool.cpp;PortTop_Bound_005ae800@Match/PortTop_005ae800.cpp
+005ae920	bound	C3		audio	admitted	re/match/s26/005ae920.c	AudioPoolFree@Audio/AudioPool.cpp;PortTop_Bound_005ae920@Match/PortTop_005ae920.cpp
+005aea00	bound	C4	match	audio		re/match/s26/005aea00.c	PortTop_Bound_005aea00@Match/PortTop_005aea00.cpp
+005aea50	bound	C4	match	audio		re/match/s26/005aea50.c	PortTop_Bound_005aea50@Match/PortTop_005aea50.cpp
+005b3a00	bound	C2		audio	provisional	re/match/s27/005b3a00.c	PortTop_Bound_005b3a00@Match/PortTop_005b3a00.cpp
+005b3b60	bound	C4	match	audio		re/match/s27/005b3b60.c	PortTop_Bound_005b3b60@Match/PortTop_005b3b60.cpp
+005b8c40	src_not_c4	C2		audio		re/match/s27/005b8c40.c	
+005b92e0	src_not_c4	C2		audio		re/match/s27/005b92e0.c	
+005b9320	bound	C4	match	audio		re/match/s27/005b9320.c	PortTop_Bound_005b9320@Match/PortTop_005b9320.cpp
+005b93a0	bound	C4	match	audio		re/match/s27/005b93a0.c	PortTop_Bound_005b93a0@Match/PortTop_005b93a0.cpp
+005b9410	hand	C4	match	audio		re/match/s27/005b9410.c	AudioSourceLoopSet@Audio/AudioLeaves_ab3.cpp
+005b9460	bound	C4	match	audio		re/match/s27/005b9460.c	PortTop_Bound_005b9460@Match/PortTop_005b9460.cpp
+005ba7f0	src_not_c4	C2		audio		re/match/s27/005ba7f0.c	
+005baf00	bound	C3		audio	provisional	re/match/s27/005baf00.c	MusicGroupVolumeSet@Audio/AudioMusic.cpp;PortTop_Bound_005baf00@Match/PortTop_005baf00.cpp
+005bba60	bound	C4	frida-replay	audio	provisional	re/match/s27/005bba60.c	PortTop_Bound_005bba60@Match/PortTop_005bba60.cpp
+005c192c	lib	C2		third-party-library[msvc-crt-tail]			
+005c1dac	lib	C4	libid	third-party-library[msvc-crt-tail]			
+005c1f1c	lib	C4	libid	third-party-library[msvc-crt-tail]			
+005c1f97	src_not_c4	C2		boot		re/match/s28/005c1f97.c	
+005c229b	lib	C4	libid	third-party-library[msvc-crt-tail]			
+005c2470	lib	C4	libid	third-party-library[msvc-crt-tail]			
+005c24e0	lib	C4	libid	third-party-library[msvc-crt-tail]			
+005c31d0	bound	C4	match	boot		re/match/s28/005c31d0.c	PortTop_Bound_005c31d0@Match/PortTop_005c31d0.cpp
+005c47b0	bound	C4	match	boot		re/match/s28/005c47b0.c	RwCore_005c47b0@RwCore/RwCore_005c47b0.cpp
+005c47e0	bound	C2		boot	provisional	re/match/s28/005c47e0.c	RwCore_005c47e0@RwCore/RwCore_005c47e0.cpp
+005c4ad0	bound	C4	match	boot		re/match/s28/005c4ad0.c	RwCore_005c4ad0@RwCore/RwCore_005c4ad0.cpp
+005c4bb0	bound	C4	match	boot		re/match/s28/005c4bb0.c	RwCore_005c4bb0@RwCore/RwCore_005c4bb0.cpp
+005c4d30	bound	C4	match	boot		re/match/s28/005c4d30.c	Orig_005c4d30@Match/PortTop_005c4d30.cpp
+005c4e10	c4_unbound	C4	match	boot		re/match/s28/005c4e10.c	
+005c6b40	bound	C4	match	boot		re/match/s28/005c6b40.c	PortTop_Bound_005c6b40@Match/PortTop_005c6b40.cpp
+005c6b60	src_not_c4	C3		boot		re/match/s28/005c6b60.c	
+005c7330	src_not_c4	C2		audio		re/match/s28/005c7330.c	
+005c7500	bound	C4	match	audio		re/match/s28/005c7500.c	AudioMixerRateCompute@Audio/AudioLeaves_ab4.cpp;PortTop_Bound_005c7500@Match/PortTop_005c7500.cpp
+005c7570	bound	C4	match	audio		re/match/s28/005c7570.c	PortTop_Bound_005c7570@Match/PortTop_005c7570.cpp
+005c75b0	hand	C4	match	audio		re/match/s28/005c75b0.c	AudioVoiceField8cGet@Audio/AudioLeaves_ab4.cpp
+005c75c0	bound	C4	match	audio		re/match/s28/005c75c0.c	PortTop_Bound_005c75c0@Match/PortTop_005c75c0.cpp
+005c7fe0	bound	C4	match	audio		re/match/s28/005c7fe0.c	PortTop_Bound_005c7fe0@Match/PortTop_005c7fe0.cpp
+005c91f0	bound	C4	match	audio		re/match/s28/005c91f0.c	PortTop_Bound_005c91f0@Match/PortTop_005c91f0.cpp
+005c9d00	bound	C4	match	util		re/match/gffu/005c9d00.c;re/match/s28/005c9d00.c	GetRaceEndTrigger@Match/PortBatch_GAMEPLAY_005c9d00.cpp
+005cb2a0	src_not_c4	C3		render	provisional	re/match/s28/005cb2a0.c	
+005cb432	lib	C2		third-party-library[msvc-crt-tail]	provisional		
+004b6630	no_row						
+004b6c00	no_row						
+004b6f60	no_row						
+004b6cd0	no_row						
+004b6f90	no_row						
+004b6ed0	no_row						
+004b6ba0	no_row						

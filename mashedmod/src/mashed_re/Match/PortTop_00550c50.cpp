@@ -8,7 +8,7 @@
 #define FUN_00550c50 PortTop_Bound_00550c50
 #define FUN_00550740 PortTop_Bound_00550740
 #define FUN_00551410 PortTop_Bound_00551410
-#define FUN_00551460 PortTop_AStop_00551460   // named stop
+#define FUN_00551460 PortTop_Bound_00551460   // exe body (Match/PortTop_00551460.cpp)
 extern "C" {
 #include "../../../../re/match/s24/00550c50.c"
 }

@@ -771,7 +771,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x005512d0	FUN_005512d0	matched	PortTop_Bound_005512d0	PORT-TOP-AUDIOTICK-STOPS: re/match/s24/005512d0.c (c4=match), Match/PortTop_005512d0.cpp	3	
 0x00551330	FUN_00551330	matched	PortTop_Bound_00551330	PORT-TOP-AUDIOTICK-STOPS: re/match/rwl04/00551330.c (c4=match), Match/PortTop_00551330.cpp	3	
 0x00551410	FUN_00551410	matched	PortTop_Bound_00551410	PORT-TOP-AUDIOTICK-STOPS: re/match/rwl04/00551410.c (c4=match), Match/PortTop_00551410.cpp	3	
-0x00551460	FUN_00551460	missing	PortTop_AStop_00551460	PORT-TOP-AUDIOTICK-STOPS: named stop (log + exit code = rva, Match/PortTop_AudioStops.cpp). No matched or admitted body	3	
+0x00551460	FUN_00551460	matched	PortTop_Bound_00551460	PORT-TOP-AUDIOTICK-STOPS: existing exe body Match/PortTop_00551460.cpp	3	
 0x005514e0	FUN_005514e0	matched	PortTop_Bound_005514e0	PORT-TOP-AUDIOTICK-STOPS: re/match/s24/005514e0.c (c4=match), Match/PortTop_005514e0.cpp	3	
 0x00551510	FUN_00551510	matched	RwCore_00551510	PORT-TOP-AUDIOTICK-STOPS: existing exe body RwCore/RwCore_00551510.cpp	3	
 0x00551550	FUN_00551550	matched	PortTop_Bound_00551550	PORT-TOP-AUDIOTICK-STOPS: re/match/rwl04/00551550.c (c4=match), Match/PortTop_00551550.cpp	3	
