@@ -76,3 +76,16 @@ prov_bind	005c9310
 # RO-AUDIOINIT-45D460-REACH-4: next stop after 0x005b92d0 (called from 0x005ae3a0); source 35.5%, equiv NOT-PROVEN, checked against the listing, PROVISIONAL.tsv class P3
 prov_bind	005ae4c0
 alias	00551460	PortTop_Bound_00551460	Match/PortTop_00551460.cpp
+# RO-AUDIOINIT-45D460-REACH-5: the RO-AUDIOINIT-DEPTH window (0x005b8910 enter to the 0x00604604 store): 0x005b8910 (stop of
+# REACH-4), its callee 0x005b8c40, the stored code pointers 0x005c6f50 (0x005c6cc0) and 0x005a65d0 (0x005a6340), RwGlobals+0x108
+# 0x004ccef0 (0x005aea60). Sources checked against the listings, equiv NOT-PROVEN, PROVISIONAL.tsv class P3
+prov_bind	005b8910
+prov_bind	005b8c40
+prov_bind	005c6f50
+prov_bind	005a65d0
+prov_bind	004ccef0
+# RO-AUDIOINIT-45D460-REACH-5: CRT pow (0x004a2d30, C4 libid) called by 0x005b8c40 at 0x005b91c2: the exe CRT pow body
+alias	004a2d30	RwCoreCrt_pow	RwCore/RwCore_Crt.cpp
+# RO-AUDIOINIT-45D460-REACH-5: bind the replay-verified source re/match/s26/005aeb90.c (c4=frida-replay) for 0x005b8910 / 0x005b8c40
+# instead of reusing the hand body AudioLinearToLog (Audio/AudioLinearToLog.cpp), as BIND-AUDIO-ONE-GENERATOR did for 0x005b10a0
+force	005aeb90

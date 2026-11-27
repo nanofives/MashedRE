@@ -3080,7 +3080,13 @@
 "Match/PortTop_CrtHeap.cpp"
 ],
 "004ccef0": [
-"stop"
+"bind",
+"re/match/s20/004ccef0.c",
+"provisional",
+[
+"004a45fb"
+],
+[]
 ],
 "005aead0": [
 "stop"
@@ -3370,7 +3376,16 @@
 []
 ],
 "005b8910": [
-"stop"
+"bind",
+"re/match/s27/005b8910.c",
+"provisional",
+[
+"005aeb90",
+"005b8c40",
+"005b9460",
+"005c6bb0"
+],
+[]
 ],
 "005b8be0": [
 "bind",
@@ -3383,7 +3398,17 @@
 []
 ],
 "005b8c40": [
-"stop"
+"bind",
+"re/match/s27/005b8c40.c",
+"provisional",
+[
+"004a2d30",
+"005a9280",
+"005aeb90",
+"005bc020",
+"005c75b0"
+],
+[]
 ],
 "005b92d0": [
 "bind",
@@ -3434,7 +3459,14 @@
 "stop"
 ],
 "005c6f50": [
-"stop"
+"bind",
+"re/match/s28/005c6f50.c",
+"provisional",
+[
+"005ab040",
+"005c6b40"
+],
+[]
 ],
 "005c7070": [
 "bind",
@@ -4137,7 +4169,13 @@
 []
 ],
 "005a65d0": [
-"stop"
+"bind",
+"re/match/s25/005a65d0.c",
+"provisional",
+[
+"005a7420"
+],
+[]
 ],
 "005a6640": [
 "stop"
@@ -4153,7 +4191,11 @@
 []
 ],
 "005a66c0": [
-"stop"
+"bind",
+"re/match/s25/005a66c0.c",
+"match",
+[],
+[]
 ],
 "004a45fb": [
 "reuse",
@@ -4325,6 +4367,13 @@
 "PortTop_Imp_005c1920",
 "Match/PortTop_Imp_005c1920.cpp"
 ],
+"005aeb90": [
+"bind",
+"re/match/s26/005aeb90.c",
+"replay",
+[],
+[]
+],
 "005b9460": [
 "bind",
 "re/match/s27/005b9460.c",
@@ -4337,6 +4386,35 @@
 "005c75c0"
 ],
 []
+],
+"005c6bb0": [
+"bind",
+"re/match/s28/005c6bb0.c",
+"match",
+[
+"005aa560"
+],
+[]
+],
+"004a2d30": [
+"reuse",
+"RwCoreCrt_pow",
+"RwCore/RwCore_Crt.cpp"
+],
+"005a9280": [
+"stop"
+],
+"005bc020": [
+"bind",
+"re/match/s27/005bc020.c",
+"match",
+[],
+[]
+],
+"005c75b0": [
+"reuse",
+"AudioVoiceField8cGet",
+"Audio/AudioLeaves_ab4.cpp"
 ],
 "005aaaa0": [
 "bind",
@@ -4372,6 +4450,11 @@
 "005aaa00"
 ],
 []
+],
+"005c6b40": [
+"reuse",
+"PortTop_Bound_005c6b40",
+"Match/PortTop_005c6b40.cpp"
 ],
 "005c75c0": [
 "bind",
@@ -4759,6 +4842,13 @@
 ],
 []
 ],
+"005a7420": [
+"bind",
+"re/match/s25/005a7420.c",
+"match",
+[],
+[]
+],
 "005aeca0": [
 "bind",
 "re/match/s26/005aeca0.c",
@@ -5090,13 +5180,6 @@
 "005be190",
 "005bf690"
 ],
-[]
-],
-"005bc020": [
-"bind",
-"re/match/s27/005bc020.c",
-"match",
-[],
 []
 ],
 "005c9770": [
