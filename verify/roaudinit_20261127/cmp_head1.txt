@@ -1,0 +1,17 @@
+identical                                        head 2360   now 2363   <-- changed
+different                                        head 78     now 79     <-- changed
+not_in_map                                       head 88     now 88     
+functions                                        head 2526   now 2530   <-- changed
+units                                            head 2694   now 2703   <-- changed
+units_linked                                     head 2405   now 2409   <-- changed
+refusals                                         head 2      now 2      
+skips                                            head 1      now 1      
+dual_body_rvas                                   head 33     now 33     
+provisional_units_skipped                        head 255    now 260    <-- changed
+provisional_functions_vs2022_in_linked_units     head 7      now 7      
+different_rvas new: ['0x005aeb90'] gone: []
+not_in_map_rvas new: [] gone: []
+dual_body_rvas new: [] gone: []
+refusals head {"fail:externalized-static-register-convention": 13, "fail:wrapper-redefines-globals": 21} now {"fail:externalized-static-register-convention": 13, "fail:wrapper-redefines-globals": 21}
+skips head {"skip:provisional": 255} now {"skip:provisional": 260}
+provisional_functions_vs2022_in_linked_units head ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00'] now ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00']

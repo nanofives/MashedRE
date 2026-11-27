@@ -31,6 +31,8 @@ CP_SLOTS = os.path.join(ROOT, 'verify', 'portorigtop_20261109', 'CODEPTR_SLOTS.t
 CP_INC = os.path.join(ROOT, 'mashedmod', 'src', 'mashed_re', 'Compat', 'PortTopCodePtr.inc')
 OUT_INC = os.path.join(ROOT, 'mashedmod', 'src', 'mashed_re', 'Compat', 'PortTopCodePtrImage.inc')
 BIND = os.path.join(ROOT, 'verify', 'porttop_20261108', 'BINDINGS.tsv')
+EXTRA = os.path.join(HERE, 'CODEPTR_EXTRA.tsv')
+FUNCS = os.path.join(ROOT, 're', 'console', 'pc_funcs.csv')
 EXE = os.environ.get('MASHED_UNPATCHED', r'C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe.unpatched')
 # Exe symbols usable as a code-pointer target: a body the exe compiles for that RVA (the kinds PortTopCodePtr.inc binds).
 BIND_KINDS = {'matched', 'bound', 'port', 'rw', 'crt', 'near-match', 'shim'}
@@ -63,6 +65,14 @@ def main():
     for r in csv.DictReader(open(BIND, encoding='utf-8'), delimiter='\t'):
         if r['kind'] in BIND_KINDS and r['exe_symbol'] and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', r['exe_symbol']):
             bind[int(r['rva'], 16)] = r['exe_symbol']
+            # RO-AUDIOINIT-45D460-REACH-6: CP_IMG_EXTERN declares every target `extern "C" void sym(void)` (cdecl name),
+            # so a target whose re/match source defines it __stdcall (decorated sym@N) cannot link: it stays trap.
+            # (0x005be160 / 0x005bf670 gave LNK2019 when bound.)
+            m = re.search(r'(re/match/[^\s;,()]+?\.c)', r['note'])
+            if m and os.path.exists(os.path.join(ROOT, m.group(1))):
+                src = open(os.path.join(ROOT, m.group(1)), encoding='utf-8', errors='replace').read()
+                if re.search(r'__stdcall\s+FUN_%s\s*\(' % r['rva'][2:].lower(), src, re.I):
+                    del bind[int(r['rva'], 16)]
 
     rows, refused = [], []
     for r in raw:
@@ -93,6 +103,21 @@ def main():
         if s not in have and file_dword(s) == t:
             rows.append((s, t, 'undefined1 (no Ghidra ref)', '-', '-', 'yes', bind.get(t, ''), 'cp-slots',
                          'codeptr-slots'))
+    # RO-AUDIOINIT-45D460-REACH-6: slots Ghidra holds no reference from and CODEPTR_SLOTS does not list, kept on their own
+    # evidence (CODEPTR_EXTRA.tsv: slot, target, evidence). Each must be 4-aligned, its file dword must equal the target and
+    # the target must be a function entry of re/console/pc_funcs.csv; otherwise the tool refuses (exit).
+    have = {r[0] for r in rows}
+    if os.path.exists(EXTRA):
+        entries = {int(r['entry'], 16): r['name'] for r in csv.DictReader(open(FUNCS, encoding='utf-8'))}
+        for r in csv.DictReader((l for l in open(EXTRA, encoding='utf-8') if not l.startswith('#')), delimiter='\t'):
+            s, t = int(r['slot'], 16), int(r['target'], 16)
+            if s & 3 or file_dword(s) != t or t not in entries:
+                raise SystemExit('CODEPTR_EXTRA.tsv slot 0x%08x -> 0x%08x refused: aligned %s, file dword %s, pc_funcs entry %s'
+                                 % (s, t, not s & 3, file_dword(s) == t, t in entries))
+            if s in have:
+                continue
+            rows.append((s, t, 'undefined (no Ghidra ref)', '-', entries[t], 'no', bind.get(t, ''),
+                         'excluded' if s in EXCLUDE else ('bound' if bind.get(t) else 'trap'), 'extra'))
     rows.sort()
     seen = {}
     for row in rows:

@@ -1,0 +1,81 @@
+{
+ "label": "rocount1",
+ "exe": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-AUDIOINIT-45D460-REACH-5/mashedmod/build/ddkobj/mashed_re_ddk.exe",
+ "env": {
+  "MASHED_DETERMINISTIC": "1",
+  "MASHED_DET_FRAMES": "600",
+  "MASHED_ORIG_TOP": "1",
+  "MASHED_ORIG_TOP_RWMOD": "1",
+  "MASHED_OT_AUDIOINIT": "1",
+  "MASHED_OT_AUDIOTHREAD_STANDIN": "1",
+  "MASHED_OT_CODEPTR": "1",
+  "MASHED_PORTSTATE_IMAGE": "1",
+  "MASHED_REPLAY": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-AUDIOINIT-45D460-REACH-5/verify/replayoracle_20261113/replay_trace.json",
+  "MASHED_REPLAY_TRACE": "D:/MashedWT/RO-AUDIOINIT-45D460-REACH-5_data/ro_catch",
+  "MASHED_REPLAY_TRACE_CKPT": "1,150,299,301,450,600",
+  "MASHED_WIN_POS": "primary-bl",
+  "MASHED_ROOT": "D:/MashedWT/RO-AUDIOINIT-45D460-REACH-5_root"
+ },
+ "events": [
+  {
+   "type": "access-violation",
+   "addr": "0x5c78c0",
+   "mod": "mashed_re_ddk.exe",
+   "base": "0x10000",
+   "mem": {
+    "op": "execute",
+    "addr": "0x5c78c0"
+   },
+   "eax": "0x5c78c0",
+   "ebx": "0x7dca34",
+   "ecx": "0xa1e26e4",
+   "edx": "0x7dca20",
+   "esi": "0xa1e2688",
+   "edi": "0x1c",
+   "ebp": "0x7dcd74",
+   "esp": "0x153fda8",
+   "stack": [
+    "270341",
+    "a08bc60",
+    "5",
+    "153fde0",
+    "1c",
+    "214140f",
+    "a1e2688",
+    "5",
+    "1",
+    "153fde0",
+    "1c",
+    "68fd3c",
+    "153fe50",
+    "ff",
+    "1c",
+    "a1e2714",
+    "2",
+    "0",
+    "0",
+    "52370",
+    "153fe0c",
+    "a1e2af0",
+    "214180f",
+    "a08bc60"
+   ],
+   "counts": {
+    "PortTop_Bound_005b8680": 1,
+    "PortTop_Bound_005a66c0": 0,
+    "PortTop_Bound_005a7420": 0,
+    "PortTop_Bound_005aeb90": 28,
+    "PortTop_Bound_005c6bb0": 28,
+    "PortTop_Bound_005a6d60": 1,
+    "PortTop_Bound_005aa560": 60,
+    "PortTop_Bound_005a71f0": 1,
+    "PortTop_Bound_004ccef0": 899,
+    "PortTop_Bound_005a65d0": 0,
+    "PortTop_Bound_005b8910": 28,
+    "PortTop_Bound_005b8c40": 28,
+    "PortTop_Bound_005c6f50": 28
+   }
+  }
+ ],
+ "secs": 3.0
+}

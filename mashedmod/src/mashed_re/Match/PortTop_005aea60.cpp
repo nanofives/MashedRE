@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_005aea60 PortTop_Bound_005aea60
 #define FUN_004a460d MashedCrt_free_004a460d   // exe body (Match/PortTop_CrtHeap.cpp)
-#define FUN_004ccef0 PortTop_AStop_004ccef0   // named stop
+#define FUN_004ccef0 RwCoreHand_004ccef0   // exe body (RwCore/RwCore_Hand.cpp)
 #define FUN_005aead0 PortTop_AStop_005aead0   // named stop
 #define FUN_005aeaf0 PortTop_Bound_005aeaf0
 extern "C" {

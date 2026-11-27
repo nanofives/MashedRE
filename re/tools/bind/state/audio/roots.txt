@@ -83,3 +83,5 @@
 005bce20
 005bb850
 005c9230
+# RO-AUDIOINIT-45D460-REACH-6: 0x005c78c0, reached only through the .data slots 0x006350cc / 0x00636024 (no source names it)
+005c78c0

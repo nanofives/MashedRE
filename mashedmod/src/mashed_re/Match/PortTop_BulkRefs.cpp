@@ -128,7 +128,6 @@
 #pragma comment(linker, "/include:_PortTop_Keep_0057c2e0")
 #pragma comment(linker, "/include:_PortTop_Keep_005b93a0")
 #pragma comment(linker, "/include:_PortTop_Keep_005c31d0")
-#pragma comment(linker, "/include:_PortTop_Keep_005c6b40")
 #pragma comment(linker, "/include:_PortTop_Keep_005c7500")
 #pragma comment(linker, "/include:_PortTop_Keep_005c7570")
 #endif // MASHED_STANDALONE

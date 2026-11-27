@@ -1,0 +1,21 @@
+== base state (undo_hand.py): git diff HEAD --stat
+ mashedmod/exe_sources.rsp            | 1 +
+ verify/porttop_20261108/BINDINGS.tsv | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+== sync --profile audio
+STALE Match/PortTop_004ccef0.cpp
+rsp - 1
+allowlist - 0
+rsp + 0
+allowlist + 0
+== bindings --profile audio --step RO-AUDIOINIT-45D460-REACH-6 --rva 004ccef0
+updated 1 added 0 
+== git diff fdee19028 -- rsp BINDINGS.tsv | grep -c 004ccef0
+0
+== git diff HEAD --stat (tracked)
+== raw hashes vs HEAD blobs
+mashedmod/exe_sources.rsp 18a32551ec05522cbcd25f1269e4f7dae0ca2f4f 93b05b22fc03bd6b2ab3bd67c4c4a4e8bfa16636 fdee:93b05b22fc03bd6b2ab3bd67c4c4a4e8bfa16636
+verify/porttop_20261108/BINDINGS.tsv afe04a485c48278e56de15ad16e8b6912f63a3aa 7003f1fe03ff4576625cead7a6ff71e912e312fe fdee:7003f1fe03ff4576625cead7a6ff71e912e312fe
+re/tools/dual_copy_allowlist.txt 91d73ec2dce50a78f5673af1aad727f72f954ab5 d91d60301fa413377605639ee84fedef797b7ac8 fdee:d91d60301fa413377605639ee84fedef797b7ac8
+mashedmod/exe_sources.rsp filtered=93b05b22fc03bd6b2ab3bd67c4c4a4e8bfa16636 HEAD=93b05b22fc03bd6b2ab3bd67c4c4a4e8bfa16636
+verify/porttop_20261108/BINDINGS.tsv filtered=7003f1fe03ff4576625cead7a6ff71e912e312fe HEAD=7003f1fe03ff4576625cead7a6ff71e912e312fe

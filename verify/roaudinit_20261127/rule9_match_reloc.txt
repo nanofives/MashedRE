@@ -1,0 +1,9 @@
+re/match/s25/005a66c0.c |    bytes: 15 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked) | 0x005a66c0	OK	checked=0	unchecked=0
+re/match/s25/005a7420.c |    bytes: 64 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked) | 0x005a7420	OK	checked=4	unchecked=0
+re/match/s28/005c6bb0.c |    bytes: 36 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked) | 0x005c6bb0	OK	checked=2	unchecked=0
+re/match/s26/005aeb90.c |    bytes: 54 B whole symbol, 35 differing unmasked bytes (first at +0xa) | 0x005aeb90	BAD	checked=2	unchecked=1
+re/match/s27/005b8910.c |    bytes: 656 B whole symbol, 482 differing unmasked bytes (first at +0x3) | 0x005b8910	BAD	checked=5	unchecked=0
+re/match/s27/005b8c40.c |    bytes: 1514 B whole symbol, 1340 differing unmasked bytes (first at +0x2) | 0x005b8c40	BAD	checked=20	unchecked=3
+re/match/s28/005c6f50.c |    bytes: 278 B whole symbol, 57 differing unmasked bytes (first at +0x10) | 0x005c6f50	OK	checked=3	unchecked=2
+re/match/s25/005a65d0.c |    bytes: 112 B whole symbol, 49 differing unmasked bytes (first at +0x22) | 0x005a65d0	OK	checked=1	unchecked=0
+re/match/s20/004ccef0.c |    bytes: 5 B whole symbol, 1 differing unmasked bytes (first at +0x0) | 0x004ccef0	BAD	checked=1	unchecked=0
