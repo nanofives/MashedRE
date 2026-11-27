@@ -1,0 +1,2 @@
+stats 0x004b4eb0 steps=81 terms=110
+0x004b4eb0	NOT-PROVEN	branch-condition: region ours +0x7e / orig 0x004b4f2f: P1('eq',0x0,ld32(M00(),(arg32(8)+0x4))) | P1('eq',0x0,argc32(call0(0x4e55d0,(arg32(4), edi_in, esi_in, ebp_in, ebx_in, ld32(M00(),arg32(8)), ld32(M00(),(arg32(8)+0x4)), ld32(M00(),(arg32(8)+0xc))),(),M00(),X00()),6,ld32(M00(),(arg32(8)+0x4))))

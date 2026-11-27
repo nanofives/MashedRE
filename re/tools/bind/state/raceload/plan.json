@@ -1728,6 +1728,15 @@
 [],
 []
 ],
+"004b4eb0": [
+"bind",
+"re/match/tlr/004b4eb0.c",
+"provisional",
+[
+"004e55d0"
+],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -2658,6 +2667,11 @@
 "RwCore_004c57a0",
 "RwCore/RwCore_004c57a0.cpp"
 ],
+"004e55d0": [
+"reuse",
+"RwCore_004e55d0",
+"RwCore/RwCore_004e55d0.cpp"
+],
 "0047cdc0": [
 "bind",
 "re/match/s13/0047cdc0.c",
@@ -2794,8 +2808,9 @@
 []
 ],
 "004785e0": [
-"stop",
-"register-arg: p in EAX, out in ECX, norm on the stack (re/match/s12/004785e0.c header); the source defines it static with a stand-in caller, so no exe symbol exists to bind"
+"reuse",
+"PortTop_RL_004785e0",
+"Match/PortTop_RL_004785e0.cpp"
 ],
 "004b46b0": [
 "reuse",
@@ -3444,9 +3459,6 @@
 "00545340"
 ],
 []
-],
-"004b4eb0": [
-"stop"
 ],
 "004b3c60": [
 "bind",
