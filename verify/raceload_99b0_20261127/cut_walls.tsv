@@ -67,7 +67,7 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x00474fb0	bound	10	28	C4	match	FUN_00474fb0	render	raceframe:reuse:PortTop_Bound_00474fb0;raceload:bind:match		re/match/s12/00474fb0.c
 0x00474fd0	bound	10	50	C4	match	FUN_00474fd0	render	raceload:bind:match		re/match/s12/00474fd0.c
 0x00478110	bound	4	156	C4	match	FUN_00478110	render	raceload:bind:match		re/match/s12/00478110.c
-0x004783f0	bound	1	482	C4	frida-replay	FUN_004783f0	ai	raceload:bind:replay		re/match/s12/004783f0.c
+0x004783f0	bound	1	482	C4	frida-replay	FUN_004783f0	ai	raceload:reuse:PortTop_RL_004783f0		re/match/s12/004783f0.c
 0x004785e0	bound	30	121	C4	frida-replay	FUN_004785e0	util	raceload:reuse:PortTop_RL_004785e0		re/match/s12/004785e0.c
 0x00478660	bound	1	1606	C4	frida-replay	FUN_00478660	ai	raceload:bind:replay		re/match/s12/00478660.c
 0x00478cb0	bound	1	16	C4	match	FUN_00478cb0	physics	raceload:bind:match		re/match/s12/00478cb0.c
@@ -125,7 +125,7 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x00489dc0	source_not_c4	1	657	C2		FUN_00489dc0	particle			re/match/s14/00489dc0.c
 0x00491780	bound	1	23	C4	match	FUN_00491780	render	raceload:bind:match		re/match/s15/00491780.c
 0x004924c0	bound	1	30	C4	match	Set6147b4Triple	render	raceload:bind:match		re/match/s15/004924c0.c
-0x004a3384	bound	30	9	C2		CRT::acos	util	raceframe:reuse:MashedCrt_acos_004a3384;raceload:reuse:MashedCrt_acos_004a3384		
+0x004a3384	bound	30	9	C2		CRT::acos	util	raceframe:reuse:MashedCrt_acos_004a3384		
 0x004a3a90	no_source	2	57	C2		FUN_004a3a90	third-party-library[msvc-crt-main]			
 0x004a5aaf	c4_unbound	19	29	C4	libid	FUN_004a5aaf	third-party-library[msvc-crt-main]		bulk	
 0x004a5bee	c4_unbound	11	156	C4	libid	FUN_004a5bee	third-party-library[msvc-crt-main]		bulk	

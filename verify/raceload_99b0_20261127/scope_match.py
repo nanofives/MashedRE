@@ -21,7 +21,7 @@ ROWS = [
     ('match', '004790e0', 're/match/s12/004790e0.c'),
     ('match', '005518f0', 're/match/rwtb/005518f0.c'),
     ('replay', '00558cb0', 're/match/rwl05/00558cb0.c'),
-    ('replay', '004783f0', 're/match/s12/004783f0.c'),
+    ('replay', '004783f0', 're/match/pilot/a4_004783f0.c'),   # fix round: the replay-verified source (PROMOTIONS.tsv line 41)
     ('replay', '004b53b0', 're/match/s18/004b53b0.c'),
     ('replay', '00559560', 're/match/rwl05/00559560.c'),
     ('replay', '004785e0', 're/match/s12/004785e0.c'),

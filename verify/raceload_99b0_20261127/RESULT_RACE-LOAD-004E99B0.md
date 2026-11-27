@@ -9,6 +9,46 @@ No new knob, no default change: every body added here runs only under MASHED_ORI
 ROLOADRWC knobs MASHED_RWC_CORE / MASHED_RWC_FRAME). `git diff orch/integration HEAD -- re/tools/bind/porttop_bind.py`
 is empty (RULE 1). G-CTRL / B / 12x4: not run (row kind).
 
+## 0a. Fix round (run 57, L0 merge-bar finding), on 02cc8ed95, head still d20fd3984
+
+Finding: the replay verified 0x004783f0 from re/match/pilot/a4_004783f0.c (verify/provinsitu_ref1_20261121/PROMOTIONS.tsv
+line 41, IDENTICAL-FOR-600, run b1_023950_016_4), but the binder bound re/match/s12/004783f0.c, a different unit (its replay
+rule takes the one `re/match/*/<rva>.c` file, porttop_bind.py:395-398). Fix, data only (RULE 1, `git diff orch/integration
+HEAD -- re/tools/bind/porttop_bind.py` empty):
+
+- `alias 004783f0 PortTop_RL_004783f0 Match/PortTop_RL_004783f0.cpp` in re/tools/bind/state/raceload/rules.tsv, plus the new
+  TU Match/PortTop_RL_004783f0.cpp (same pattern as PortTop_RL_004785e0.cpp / PortTop_RL_004790e0.cpp): it `#include`s the
+  pilot source with the same callee bodies the generated wrapper named (PortTop_Bound_00409300, PortTop_Bound_00409330,
+  MashedCrt_acos_004a3384, RwCore_004c39b0, RwCore_004c3b30); its exe_sources.rsp line added next to PortTop_RL_004785e0.
+- Regenerated with the tool: `write --profile raceload` (removed Match/PortTop_004783f0.cpp and its rsp / newfiles lines,
+  PortTop_00478660.cpp now names PortTop_RL_004783f0, plan.json), `externs` (0), `sync` (rsp / allowlist +0 -0), `prune` (0).
+  Plan: bind 298 reuse 162 stop 31 (was 299 / 162 / 31: 0x004783f0 moved bind -> reuse, and 0x004a3384, reached in the
+  raceload plan only through 0x004783f0's callee list, left the raceload plan; it stays bound by raceframe and is still
+  linked through the new TU).
+- `bindings --profile raceload` NOT run: it rewrote audio / bulk rows and failed the selftest (section 4); that drift is
+  BIND-BINDINGS-OTHER-DRIFT. BINDINGS.tsv stays byte-identical to d20fd3984.
+- Source identity, measured: sha256 of each replay-C4 source the exe includes, at the replay commit 02b3013bb against HEAD:
+  pilot/a4_004783f0.c 631603d6..., rwl05/00558cb0.c 74e019bc..., s18/004b53b0.c 16d6c173..., rwl05/00559560.c edf91398...,
+  s12/004785e0.c f216565a..., equal in all 5; each is the source PROMOTIONS.tsv names (lines 41, 42, 27, 43, 26). The
+  [UNCERTAIN] source-identity line is removed from this RESULT and from re/orchestrator/UNCERTAIN_REGISTER.md. The acos
+  edge-path [UNCERTAIN] and its register line stay.
+
+| check (fix round) | result |
+|---|---|
+| mashed_lock.py status before build, check, selftest, arm | free each time |
+| test-slot --status / C: free before the builds | printed; C: 70 GB free |
+| binder selftest | **PASS**, 0 FAIL, every profile (raceload, audio, bulk, raceframe, renderframe, gates; BINDINGS.tsv audio / bulk IDENTICAL) |
+| VS2022 build | Build OK (build_vs_G.log) |
+| object build + ddkobj check | Build OK; IDENTICAL 2467/2576, DIFFERENT 83, not-in-map 26, refusals 17, dual body 33, fn-addr refs bad 0: same totals as the previous run. BYTECHECK.tsv row by row (rva, symbol, diff bytes, result, src) against the previous run's: 1 row changed, 0x004783f0 `_PortTop_Bound_004783f0` s12/004783f0.c -> `_PortTop_RL_004783f0` **re/match/pilot/a4_004783f0.c**, DIFFERENT 209 B, classified **replay-C4 body** (its source is now the replay-verified file). Against the head (2455/2562, 79): the same 4 newly DIFFERENT, all replay-C4 bodies from their replay-verified files: 0x004783f0, 0x004785e0, 0x004b53b0, 0x00559560 |
+| match.py --bytes + relocheck, 26 sources (scope_match.tsv) | match (byte-identical, relocheck OK) 11; replay-C4 5: 0x00558cb0 78.4%, **0x004783f0 90.8% (pilot source, 209 differing bytes, relocheck BAD, expected below 100%)**, 0x004b53b0 45.4%, 0x00559560 68.3%, 0x004785e0 97.8%; provisional 9 as in section 2; edited caller 0x00479330 97.2% |
+| rva-lint | 670 findings, allowlisted 670, NEW 0; ORIGTOP-ONLY 655, D4 4 (unchanged) |
+| arm RO_ROLOADRWC-rlG (object build, exe 3228e86c, same knob set as rlF) | exit 5608912 = **0x005595D0, caller 0x00559b50**, call 1, after the `Searching piz for LAPDATA.LUA` line (same stop as rlF); race.n 0, reached false; warp n 2402 tick 300; selftest 22196 checks 0 fails; meta.json equal to rlF's except label, pid, boot.main |
+| CUT wall re-cut (cut_join.py on census/c1/prov_anchor.json 4043240e...) | **86** functions / 25,890 B (unchanged); cut_walls.tsv lines changed: 0x004783f0 disposition `raceload:reuse:PortTop_RL_004783f0` (the join's last column is its own glob lookup and still prints s12/004783f0.c), 0x004a3384 now raceframe only |
+| PROVISIONAL.tsv duplicate keys on HEAD | none (`uniq -d` prints nothing); file not touched in the fix round |
+| frida-<hash> folders in %LOCALAPPDATA%\Temp | 0 before, 0 after (no Frida harness ran in the fix round) |
+| 0x00420420 execution count | not re-measured in the fix round (the stop did not move; previous run: 0) |
+| G-CTRL / B / 12x4 | not run (row kind) |
+
 ## 0. Verdict
 
 | item | result |
@@ -111,8 +151,8 @@ rows (316) are left for after it.
 VS2022 268 units + 7 fns  dual body 33  fn-addr refs ok 66 bad 0`. Head (L0, d20fd3984): IDENTICAL 2455/2562, DIFFERENT 79.
 DIFFERENT list against the head's: 0 gone, 4 new, each classified **replay-C4 body** (hooks.csv c4=frida-replay; the
 binder classifies each bind as `replay`): 0x004783f0 (209 B differing), 0x004785e0 (7 B, ___ddkreg_ unit), 0x004b53b0
-(412 B), 0x00559560 (103 B). [UNCERTAIN] that each bound file is the replay-verified one: hooks.csv does not name the
-source file (register line). New units IDENTICAL: 0x004e5280, 0x005c4d20, 0x005c4e10, 0x0041a5b0, 0x0041a5d0, 0x00409300,
+(412 B), 0x00559560 (103 B). Each bound file is the replay-verified one (fix round, section 0a: sha256 at the replay
+commit 02b3013bb equal to HEAD, source named in PROMOTIONS.tsv; 0x004783f0 rebound from re/match/pilot/a4_004783f0.c). New units IDENTICAL: 0x004e5280, 0x005c4d20, 0x005c4e10, 0x0041a5b0, 0x0041a5d0, 0x00409300,
 0x00409330, 0x00563de0, 0x0057c4b0, 0x004790e0 (___ddkreg_). Provisional units (skip:provisional, VS2022 body): the 9 above
 plus 0x00558cb0 (listed by RWC-PLUGIN-ATTACH). BYTECHECK.tsv committed here.
 
@@ -147,7 +187,7 @@ plus 0x00558cb0 (listed by RWC-PLUGIN-ATTACH). BYTECHECK.tsv committed here.
 - BINDINGS.tsv for raceload (section 4): left to after BIND-BINDINGS-BULK-DRIFT.
 - gen_rwcore_tus.py is not in sync with the tree on the head (a full regenerate would rewrite PORT-TOP-RENDERFRAME's hand
   lines in RwCore_00492e90.cpp and 1,748 rsp lines): only the 3 lines this row's EXE_BODY entry changes were kept.
-- [UNCERTAIN] lines added to re/orchestrator/UNCERTAIN_REGISTER.md: acos edge path; replay-C4 source identity.
+- [UNCERTAIN] line in re/orchestrator/UNCERTAIN_REGISTER.md: acos edge path (the replay-C4 source-identity line was removed in the fix round, section 0a).
 - The raw g2s defect class seen 8 times here (struct chunks read through separate locals, floats stored through dwords):
   every raw g2s source on the race-load path deserves the same check before it is bound.
 
@@ -167,7 +207,11 @@ plus 0x00558cb0 (listed by RWC-PLUGIN-ATTACH). BYTECHECK.tsv committed here.
 | frida_before.txt / frida_after.txt | e3b0c442... (empty) / 58094cdf... |
 | worktree mashedmod/build/ddkobj/mashed_re_ddk.exe | 16dff3a9391ab9ff74c7b32c78849b415676ef61a8b82cbc31a99e84e6a23c7b |
 | worktree mashedmod/build/mashed_re.exe | bdda787e2d0fa4953cf3d4ac1ab4a2f3a1de9da6b92b18a51d230247d0904b2c |
-| BYTECHECK.tsv (committed here) | a2067b2082d03a6a238a4bf7ea2d6bc3ea7eb8ab7b1bb177d755a9f8b951cbd0 |
+| BYTECHECK.tsv (committed here, fix round) | 7a8895562539bb18041683fc954fc60fb18c7e4444ba21e54ff01b0ed3f5f82d |
+| fix round: build_vs_G.log / build_ddk_G.log | 3943d1544f431061e1bef6d9c08f4437455a81893c698f0cd20f65a6a2515007 / 2d8f22a401e17615529627dd2633d928ac3e67b40537875420238619559e64bf |
+| fix round: RO_ROLOADRWC-rlG.log / meta.json / ticks.bin | baf53a44d88ac7bc06f26bdf2ab00a970469f438778649d84d9f87f1d7bcbceb / 1a8cc01ce0ace49b5a6c9c4b2e590adc318b765fab3e8a41dd7b46e02e5aa5b6 / 9910ba0027e0b34ae00c5abb0e75edfd1a72d59c1b8a830492c765a7c4860891 |
+| fix round: mashed_re_ddk.exe / mashed_re.exe | 3228e86c9388630d4e3496c509342900e76fec701d5450d12e16cdb54784a2ab / 17fa56c3c8890665a1a94f748bee7d733080e5f3b04e5e609fc7ec74f4b41feb |
+| fix round: cut_walls_fix.tsv (= committed cut_walls.tsv) | d86a5a496539518fe5d4c2dfeb17f9a92de9ec981e62f3b64244219ad3511b9e |
 | census prov_anchor.json (RACE-PIZ-DEVICE, read) | 4043240e0ec2b0b1b848a1e4d41ec86cd95128796b601d1f1ff0c6fb2d8f8fbb |
 
 Committed here: this RESULT, PREREG, scope_match.py / .tsv, equiv_*.txt (10), cut_walls.tsv, cut_summary.txt,

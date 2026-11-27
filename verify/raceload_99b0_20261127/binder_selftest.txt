@@ -1,5 +1,5 @@
 [selftest] lib kind: 1 lib roots, 10 profile x rva lib bindings resolve, 0 fail (unit test: re/tools/bind/test_porttop_bind_lib.py)
-[selftest] raceload roots 162: plan IDENTICAL (bind 299 reuse 162 stop 31), wrappers+stops IDENTICAL (300 checked)
+[selftest] raceload roots 162: plan IDENTICAL (bind 298 reuse 162 stop 31), wrappers+stops IDENTICAL (299 checked)
 [selftest] raceload refs: 126 caller-less bound bodies, Match/PortTop_BulkRefs.cpp IDENTICAL, 0x0040cea0 (own) drops out with a bound caller 0x00405780; 0x004074a0 (foreign) drops out with a bound caller 0x00405780 (own 34, foreign 92)
 [selftest] C emit: 56 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
 [selftest] C emit fixture: as C compiles, as C++ fails (expected)

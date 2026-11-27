@@ -36,6 +36,9 @@ prov_bind	00462950
 # RACE-LOAD-004E99B0 (run 57): 0x004790e0 binds the stack-argument entry over its C4 source (was a stop_reason: register-arg, world in EAX);
 # 0x00479330 passes the world under MATCH_PORT (re/match/s12/00479330.c)
 alias	004790e0	PortTop_RL_004790e0	Match/PortTop_RL_004790e0.cpp
+# RACE-LOAD-004E99B0 fix round (run 57): 0x004783f0 binds the replay-verified source re/match/pilot/a4_004783f0.c
+# (verify/provinsitu_ref1_20261121/PROMOTIONS.tsv line 41), not the default re/match/s12/004783f0.c (a different unit)
+alias	004783f0	PortTop_RL_004783f0	Match/PortTop_RL_004783f0.cpp
 # PORT-OT-RACE-BIND-PROV4: a source that defines its function under a name other than FUN_<rva>
 # re/match/rwl02/004e5c30.c line 34
 name_def	004e5c30	RpWorldForAllAtomics

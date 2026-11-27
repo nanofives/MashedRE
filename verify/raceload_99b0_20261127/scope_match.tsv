@@ -11,7 +11,7 @@ match	0x0057c4b0	re/match/rwl06/0057c4b0.c	100.0%	71 B whole symbol, 0 differing
 match	0x004790e0	re/match/s12/004790e0.c	100.0%	17 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
 match	0x005518f0	re/match/rwtb/005518f0.c	100.0%	339 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)	OK
 replay	0x00558cb0	re/match/rwl05/00558cb0.c	78.4%	106 B whole symbol, 92 differing unmasked bytes (first at +0x0)	BAD
-replay	0x004783f0	re/match/s12/004783f0.c	90.8%	491 B whole symbol, 209 differing unmasked bytes (first at +0x80)	BAD
+replay	0x004783f0	re/match/pilot/a4_004783f0.c	90.8%	491 B whole symbol, 209 differing unmasked bytes (first at +0x80)	BAD
 replay	0x004b53b0	re/match/s18/004b53b0.c	45.4%	669 B whole symbol, 409 differing unmasked bytes (first at +0x28)	BAD
 replay	0x00559560	re/match/rwl05/00559560.c	68.3%	106 B whole symbol, 102 differing unmasked bytes (first at +0x0)	BAD
 replay	0x004785e0	re/match/s12/004785e0.c	97.8%	121 B whole symbol, 7 differing unmasked bytes (first at +0x2d)	OK
