@@ -14,6 +14,8 @@ as "[N/M] name PASS|FAIL":
   wrapper   a caller's wrapper #defines FUN_<rva> <symbol> with the exe-body note
   bindings  cmd_bindings writes kind `library` for a lib rva (in memory, BINDINGS.tsv restored)
   link      the wrapper + the fixture library compile and link with the exe's VS2022 flags and the program prints 14
+  voidproto BIND-LIB-VOIDPROTO: a (void)-declared lib callee called with arguments keeps them (paste form), the two
+            unsupported shapes are refused, and the C unit compiles, links and prints 20
 """
 import contextlib, io, os, shutil, subprocess, sys, tempfile, argparse, json
 
@@ -180,6 +182,54 @@ def link():
         out = subprocess.run([exe], capture_output=True).stdout.decode().strip()
         print('   link: t.exe printed %r, expected 14 = fix_add(3, 2) + fix_mul(3, 3)' % out)
         return out == '14'
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
+VOIDSRC = ('int FUN_00400300(void);\n'
+           'int FUN_00400400(int a)\n{\n  return FUN_00400300(7) + FUN_00400300(a);\n}\n')
+
+
+@case
+def voidproto():
+    """BIND-LIB-VOIDPROTO: a lib callee the source declares (void) and calls with an argument keeps the argument
+    (token-paste form, no drop); a prototype with parameters and a call whose first argument is not a pp-token
+    prefix are refused; the C unit compiles and the library reads the kept arguments (7*2 + 3*2 = 20)."""
+    ex = pb.call_excess(VOIDSRC, '00400300')
+    if ex != (0, 1):
+        print('   voidproto: call_excess %r, expected (0, 1)' % (ex,)); return False
+    L = pb.lib_keep_args(VOIDSRC, '00400300', 'fix_open', '   // exe body (lib:libfix:src/x.c:1)', ex)
+    want = ['#define PT_LIBARG_00400300_void', '#define PT_LIBARG_00400300_7 7', '#define PT_LIBARG_00400300_a a',
+            '#define FUN_00400300(...) fix_open(PT_LIBARG_00400300_##__VA_ARGS__)']
+    if [l.split('   //')[0] for l in L] != want:
+        print('   voidproto: lines %r' % L); return False
+    for bad_src, bad_ex in (('int FUN_00400300(int p);\nint f(void) { return FUN_00400300(1, 2); }\n', (1, 2)),
+                            ('int FUN_00400300(void);\nint f(int *p) { return FUN_00400300(*p); }\n', (0, 1))):
+        try:
+            pb.lib_keep_args(bad_src, '00400300', 'fix_open', '', bad_ex)
+            print('   voidproto: not refused: %r' % bad_src); return False
+        except SystemExit:
+            pass
+    if not os.path.exists(pb.VCVARS):
+        print('   voidproto compile: SKIPPED (no %s)' % pb.VCVARS)
+        return True
+    d = tempfile.mkdtemp(prefix='libkind_')
+    try:
+        open(os.path.join(d, 'src.h'), 'w').write(VOIDSRC)
+        open(os.path.join(d, 'w.c'), 'w').write('\n'.join(L + ['#include "src.h"', '']))
+        open(os.path.join(d, 'lib.c'), 'w').write('int fix_open(int n) { return n * 2; }\n')
+        open(os.path.join(d, 'main.c'), 'w').write('#include <stdio.h>\nint FUN_00400400(int a);\n'
+                                                   'int main(void) { printf("%d\\n", FUN_00400400(3)); return 0; }\n')
+        bat = os.path.join(d, 'b.bat')
+        open(bat, 'w').write('@echo off\r\n%scd /d "%s"\r\ncl /nologo /W3 /O2 w.c lib.c main.c /Fe:t.exe\r\n' % (
+            '' if os.environ.get('VCINSTALLDIR') else 'call "%s" >nul\r\n' % pb.VCVARS, d))
+        r = subprocess.run(['cmd', '/c', bat], capture_output=True)
+        exe = os.path.join(d, 't.exe')
+        if not os.path.exists(exe):
+            print(r.stdout.decode('mbcs', errors='replace')[-1500:]); return False
+        out = subprocess.run([exe], capture_output=True).stdout.decode().strip()
+        print('   voidproto: t.exe printed %r, expected 20 = fix_open(7) + fix_open(3)' % out)
+        return out == '20'
     finally:
         shutil.rmtree(d, ignore_errors=True)
 

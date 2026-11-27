@@ -1,0 +1,22 @@
+[selftest] lib kind: 1 lib roots, 10 profile x rva lib bindings resolve, 0 fail (unit test: re/tools/bind/test_porttop_bind_lib.py)
+[selftest] raceload roots 126: plan IDENTICAL (bind 263 reuse 131 stop 45), wrappers+stops IDENTICAL (264 checked)
+[selftest] raceload refs: 127 caller-less bound bodies, Match/PortTop_BulkRefs.cpp IDENTICAL, 0x0040cea0 (own) drops out with a bound caller 0x00405780; 0x004074a0 (foreign) drops out with a bound caller 0x00405780 (own 35, foreign 92)
+[selftest] C emit: 54 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit of the 4 held rvas (c_hold.txt, not bound): 4 compile, 0 fail
+[selftest] audio roots 83: plan IDENTICAL (bind 450 reuse 83 stop 78), wrappers+stops IDENTICAL (451 checked)
+[selftest] bulk roots 363: plan IDENTICAL (bind 97 reuse 211 stop 191), wrappers+stops IDENTICAL (98 checked)
+[selftest] bulk listing vs verify/bindbulk_20261121/tools/last_plan.txt: 71 lines moved, all named in state/bulk/moved.tsv
+[selftest] C emit: 0 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] raceframe roots 1: plan IDENTICAL (bind 269 reuse 156 stop 127), wrappers+stops IDENTICAL (270 checked)
+[selftest] C emit: 0 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] renderframe roots 2: plan IDENTICAL (bind 100 reuse 116 stop 45), wrappers+stops IDENTICAL (101 checked)
+[selftest] C emit: 0 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] gates roots 3: plan IDENTICAL (bind 3 reuse 33 stop 11), wrappers+stops IDENTICAL (4 checked)
+[selftest] C emit: 1 cpp-unclean rvas bound as .c units, 0 wrapper-shape failures
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] BINDINGS.tsv from the audio plan: IDENTICAL (updated 0 added 0)
+[selftest] PASS

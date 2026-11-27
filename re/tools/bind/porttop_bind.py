@@ -755,6 +755,12 @@ class Binder:
                 L.append('#define FUN_%s %s   // knob stand-in, default off = the named stop (%s)' % (c, P['knob'][c][0], P['knob'][c][1]))
                 continue
             ex = call_excess(rd(src), c) if is_c else None
+            if ex and pc[0] == 'reuse' and pc[2].startswith('lib:'):
+                # BIND-LIB-VOIDPROTO (run 56): a vendored library body READS the arguments its own declaration takes, so the
+                # caller-side count is kept, never dropped. The count is the source call's: the source is the byte-matched
+                # caller (0x0047b860 push 0 / 0x0047b862 call 0x4b7330 -> lua_open(int stacksize), lstate.c:66).
+                L += lib_keep_args(rd(src), c, self.sym(c), note, ex)
+                continue
             if ex:
                 # C rejects a call with more arguments than the source's own prototype (C2197, VS2022); the DDK object
                 # pushes them (caller cleans, cdecl) and the callee does not read them. The function-like form drops the
@@ -1102,6 +1108,49 @@ def call_excess(text, c):
         if k is not None:
             mx = max(mx, k)
     return (proto, mx) if mx > proto else None
+
+
+def call_first_tokens(text, c):
+    """the first token of each call's argument list of FUN_<c> in the source (prototype lines skipped), in order of
+    first appearance; None when a call's first argument does not start with an identifier or a number."""
+    name = 'FUN_' + c
+    out = []
+    for m in re.finditer(r'\b%s\s*\(' % name, text, re.I):
+        ls = text.rfind('\n', 0, m.start()) + 1
+        le = text.find('\n', m.start())
+        l = text[ls:le if le >= 0 else len(text)]
+        if PROTO_PAT.match(l) and (l.split() or [''])[0] not in ('return', 'else', 'do', 'case', 'goto'):
+            continue
+        t = re.match(r'\s*([A-Za-z_]\w*|[0-9]\w*)(?![\w.])|\s*', text[m.end():])
+        if not t.group(1):
+            if re.match(r'\s*\)', text[m.end():]):
+                continue   # an empty call passes nothing: no paste needed
+            return None
+        if t.group(1) not in out:
+            out.append(t.group(1))
+    return out
+
+
+def lib_keep_args(text, c, sym, note, ex):
+    """BIND-LIB-VOIDPROTO: wrapper lines that bind FUN_<c> to the library symbol with every caller-side argument kept.
+    The source declares FUN_<c>(void) and calls it with arguments (C2197 against its own prototype, VS2022 C). One
+    function-like macro serves both: its argument list is pasted onto PT_LIBARG_<c>_, so the declaration's `void` maps
+    to nothing (`sym()`, a non-prototype declaration) and each call's first token maps to itself (`sym(0)`). Refuses a
+    prototype with parameters (the paste cannot drop them) and a call whose first argument is not one pp-token prefix."""
+    n, mx = ex
+    if n != 0:
+        sys.exit('lib callee 0x%s (%s): the source prototype declares %d argument(s) and a call passes %d; the lib kind '
+                 'keeps arguments only for a (void) prototype, add a rule' % (c, sym, n, mx))
+    toks = call_first_tokens(text, c)
+    if toks is None:
+        sys.exit('lib callee 0x%s (%s): a call\'s first argument is not an identifier or a number, the argument paste '
+                 'cannot map it; add a rule' % (c, sym))
+    p = 'PT_LIBARG_%s_' % c
+    L = ['#define %svoid   // the source declaration `FUN_%s(void)` becomes the non-prototype `%s()`' % (p, c, sym)]
+    L += ['#define %s%s %s   // a source call `FUN_%s(%s...)` keeps its argument(s)' % (p, t, t, c, t) for t in toks]
+    L.append('#define FUN_%s(...) %s(%s##__VA_ARGS__)   // %sthe source passes %d argument(s), its prototype declares 0; '
+             'a library body reads them, so they are kept' % (c, sym, p, (note.strip()[3:] + '; ') if note else '', mx))
+    return L
 
 
 PROTO_PAT = re.compile(r'^\s*(?:extern\s+)?[A-Za-z_][\w\s\*]*?\bFUN_[0-9a-fA-F]{8}\s*\([^;{}]*\)\s*;\s*(?://.*)?$')
