@@ -38,10 +38,14 @@ int PortTop_BulkStop_0041a8d0(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_0041f330(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0041f330u, "", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0041f330u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00420420: declared void by 0x0040d110 0x0041fe10; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s05/00420420.c
-int PortTop_BulkStop_00420420(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x00420420u, "0x0040d110 0x0041fe10", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00420420u, 0u, _ReturnAddress()); return 0; }
+// stop rva 0041fe10: declared (none found) by ; file-local copy of this rva in the source of 0x00420420 (one body per RVA)
+int PortTop_BulkStop_0041fe10(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
+    if (n == 1 || ex) BulkStopLog(0x0041fe10u, "", n, _ReturnAddress(), ex);
+    if (ex) PortTop_AudioCalleeStop(0x0041fe10u, 0u, _ReturnAddress()); return 0; }
+// stop rva 00420290: declared void by 0x00420420; no matched or admitted source
+int PortTop_BulkStop_00420290(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
+    if (n == 1 || ex) BulkStopLog(0x00420290u, "0x00420420", n, _ReturnAddress(), ex);
+    if (ex) PortTop_AudioCalleeStop(0x00420290u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004222f0: declared int by 0x004223b0; no matched or admitted source
 int PortTop_BulkStop_004222f0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x004222f0u, "0x004223b0", n, _ReturnAddress(), ex);
@@ -730,6 +734,14 @@ int PortTop_BulkStop_00535700(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_0053d460(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x0053d460u, "0x0053d400", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0053d460u, 0u, _ReturnAddress()); return 0; }
+// stop rva 00544a70: declared void by 0x00420420; no matched or admitted source
+int PortTop_BulkStop_00544a70(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
+    if (n == 1 || ex) BulkStopLog(0x00544a70u, "0x00420420", n, _ReturnAddress(), ex);
+    if (ex) PortTop_AudioCalleeStop(0x00544a70u, 0u, _ReturnAddress()); return 0; }
+// stop rva 00544ad0: declared void by 0x00420420; no matched or admitted source
+int PortTop_BulkStop_00544ad0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
+    if (n == 1 || ex) BulkStopLog(0x00544ad0u, "0x00420420", n, _ReturnAddress(), ex);
+    if (ex) PortTop_AudioCalleeStop(0x00544ad0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0055b940: declared float by 0x004218b0; no matched or admitted source
 int PortTop_BulkStop_0055b940(void) { BulkStopLog(0x0055b940u, "0x004218b0", 1u, _ReturnAddress(), 1); PortTop_AudioCalleeStop(0x0055b940u, 0u, _ReturnAddress()); return 0; }
 // stop rva 0055dff0: declared void by 0x00421a90; no matched or admitted source
