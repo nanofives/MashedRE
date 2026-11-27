@@ -1362,6 +1362,161 @@
 [],
 []
 ],
+"004b6640": [
+"bind",
+"re/match/s18/004b6640.c",
+"provisional",
+[
+"0045b350",
+"004b6630",
+"004b6ba0",
+"004b6c00",
+"004b6cd0",
+"004b6ed0",
+"004b6f60",
+"004b6f90",
+"00550430",
+"005504d0",
+"00551330"
+],
+[]
+],
+"004b6630": [
+"bind",
+"re/match/s18/004b6630.c",
+"match",
+[],
+[]
+],
+"004b6c00": [
+"bind",
+"re/match/s18/004b6c00.c",
+"provisional",
+[
+"004a34b0",
+"004b6b10"
+],
+[
+"004b6b00"
+]
+],
+"004b6f60": [
+"bind",
+"re/match/s18/004b6f60.c",
+"match",
+[],
+[
+"004b6b00"
+]
+],
+"004b6cd0": [
+"bind",
+"re/match/s18/004b6cd0.c",
+"provisional",
+[
+"004b67e0"
+],
+[
+"004b6b00",
+"004b6b20",
+"004b6b90"
+]
+],
+"004b6f90": [
+"bind",
+"re/match/s18/004b6f90.c",
+"match",
+[],
+[]
+],
+"004b6ed0": [
+"bind",
+"re/match/s18/004b6ed0.c",
+"match",
+[],
+[
+"004b6b00"
+]
+],
+"004b6ba0": [
+"bind",
+"re/match/s18/004b6ba0.c",
+"match",
+[
+"004b6b10"
+],
+[]
+],
+"004b6570": [
+"bind",
+"re/match/s18/004b6570.c",
+"match",
+[
+"004b6940"
+],
+[]
+],
+"004b6940": [
+"bind",
+"re/match/s18/004b6940.c",
+"match",
+[
+"004a34b0",
+"004a4541",
+"004b302f",
+"004b65e0",
+"004b67e0",
+"00550790",
+"005507a0"
+],
+[
+"004b6710"
+]
+],
+"004b67a0": [
+"bind",
+"re/match/s18/004b67a0.c",
+"match",
+[
+"004b65e0",
+"004b6770",
+"00550790"
+],
+[]
+],
+"004b6770": [
+"bind",
+"re/match/s18/004b6770.c",
+"match",
+[
+"004a4368"
+],
+[]
+],
+"004b65e0": [
+"bind",
+"re/match/s18/004b65e0.c",
+"match",
+[],
+[]
+],
+"004b67e0": [
+"bind",
+"re/match/s18/004b67e0.c",
+"match",
+[
+"004a49cf",
+"005c1d63"
+],
+[]
+],
+"005507a0": [
+"bind",
+"re/match/rwl04/005507a0.c",
+"match",
+[],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -2139,6 +2294,54 @@
 "reuse",
 "PortTop_Bound_00551190",
 "Match/PortTop_00551190.cpp"
+],
+"0045b350": [
+"reuse",
+"RwInitNullStub",
+"Match/MatchS09_0045b350.cpp"
+],
+"005504d0": [
+"reuse",
+"PortTop_Bound_005504d0",
+"Match/PortTop_005504d0.cpp"
+],
+"00551330": [
+"reuse",
+"PortTop_Bound_00551330",
+"Match/PortTop_00551330.cpp"
+],
+"004a34b0": [
+"reuse",
+"PortTop_PizCrt_strncpy_004a34b0",
+"Match/PortTop_00402750_Pieces.cpp"
+],
+"004b6b10": [
+"reuse",
+"PortTop_PizCrt_stricmp_004b6b10",
+"Match/PortTop_00402750_Pieces.cpp"
+],
+"004a4541": [
+"reuse",
+"MashedCrt_fopen_004a4541",
+"Match/PortTop_CrtStdio.cpp"
+],
+"004b302f": [
+"reuse",
+"PortTop_PizCrt_stricmp_004b302f",
+"Match/PortTop_00402750_Pieces.cpp"
+],
+"004a4368": [
+"reuse",
+"MashedCrt_fclose_004a4368",
+"Match/PortTop_CrtStdio.cpp"
+],
+"004a49cf": [
+"reuse",
+"MashedCrt_fread_004a49cf",
+"Match/PortTop_CrtStdio.cpp"
+],
+"005c1d63": [
+"stop"
 ],
 "0047cdc0": [
 "bind",

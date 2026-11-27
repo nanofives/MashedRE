@@ -240,3 +240,11 @@ extra_pre	0047b250	#define DAT_00613300 (*(undefined4 *)0x00613300u)   // MGLOBA
 extra_pre	0047b250	#define DAT_006bf1bc (*(undefined1 *)0x006bf1bcu)   // MGLOBAL re/match/s13/0047b250.c:30
 # RACE-VFS-COURSELUA (run 56): 0x00551460 RtFS path join, NOT-PROVEN (equiv.py), listed in re/match/PROVISIONAL.tsv
 prov_bind	00551460
+# RACE-PIZ-DEVICE (run 56): piz: device bodies with no byte match (re/match/PROVISIONAL.tsv), knob path only
+prov_bind	004b6640
+prov_bind	004b6c00
+prov_bind	004b6cd0
+# RACE-PIZ-DEVICE: CRT callees of 0x004b6940 / 0x004b6c00 / 0x004b6ba0 as raceload-only aliases (hand bodies, Match/PortTop_00402750_Pieces.cpp)
+alias	004a34b0	PortTop_PizCrt_strncpy_004a34b0	Match/PortTop_00402750_Pieces.cpp
+alias	004b6b10	PortTop_PizCrt_stricmp_004b6b10	Match/PortTop_00402750_Pieces.cpp
+alias	004b302f	PortTop_PizCrt_stricmp_004b302f	Match/PortTop_00402750_Pieces.cpp

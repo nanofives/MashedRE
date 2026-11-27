@@ -338,10 +338,6 @@ int PortTop_BulkStop_004b04f8(void) { static unsigned n = 0; ++n; ++g_bulkStopHi
 int PortTop_BulkStop_004b0609(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x004b0609u, "0x005c31d0", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x004b0609u, 0u, _ReturnAddress()); return 0; }
-// stop rva 004b67a0: declared void by 0x004b6590; outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s18/004b67a0.c
-int PortTop_BulkStop_004b67a0(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
-    if (n == 1 || ex) BulkStopLog(0x004b67a0u, "0x004b6590", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x004b67a0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004b7210: declared (none found) by ; no matched or admitted source
 int PortTop_BulkStop_004b7210(void) { static unsigned n = 0; ++n; ++g_bulkStopHits; const int ex = !BulkStopCount();
     if (n == 1 || ex) BulkStopLog(0x004b7210u, "", n, _ReturnAddress(), ex);

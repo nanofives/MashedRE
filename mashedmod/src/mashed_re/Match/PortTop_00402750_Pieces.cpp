@@ -85,6 +85,11 @@ void PortTop_HandInit_Rasters(void);
 void PortTop_HandInit_FrontendAssets(void);
 int  MashedRw_InstallRwGlobals(void);   // LibRw/RwApiBind.cpp
 void Orig_00428390(int state);          // Match/PortTop_00428390.cpp (PORT-OT-FRONTEND)
+// RACE-PIZ-DEVICE (run 56): the original piz: file system beside the exe piz reader, on the RW core frame route only
+bool RwCore_FrameRoute(void);           // RwCore/RwCore_Knob.cpp (MASHED_RWC_CORE + MASHED_RWC_FRAME, both default OFF)
+void PortTop_Bound_004b6640(int flag);  // Match/PortTop_004b6640.cpp, re/match/s18/004b6640.c (provisional)
+unsigned char PortTop_Bound_004b6570(unsigned int name);   // Match/PortTop_004b6570.cpp, re/match/s18/004b6570.c (C4)
+void PortTop_Bound_004b67a0(void);      // Match/PortTop_004b67a0.cpp, re/match/s18/004b67a0.c (C4), target of the thunk 0x004b6590
 
 // 1 once a piece failed (only piece 2 can: no System32 dsound.dll). Later pieces then do nothing, and the 0x00402750
 // wrapper returns 0, as HandTop_InitRest returns false.
@@ -137,6 +142,13 @@ void PortTop_Piece_00428390(int state) {
 void PortTop_PizFs_Init_004b6540(int flag) {
     s_pizMode = flag;
     Log04E("[PIZ_FS] 0x004b6540 file system setup, mode flag %d (exe piz reader, Piz/PizReader.h)", flag);
+    // RACE-PIZ-DEVICE: on the RW core frame route the original's piz: file system install runs too (0x004b6540 is a
+    // jmp to 0x004b6640): RwMalloc 0x58 record, 8 method slots (exe bodies), RtFS init 0x00551330 and register 0x00550430.
+    if (RwCore_FrameRoute()) {
+        PortTop_Bound_004b6640(flag);
+        Log04E("[PIZ_FS] 0x004b6640 piz: file system (provisional body) installed: [0x007d3e54] %08X, [0x007dc75c] %d file "
+               "systems", *reinterpret_cast<volatile unsigned*>(0x007d3e54u), *reinterpret_cast<volatile int*>(0x007dc75cu));
+    }
 }
 // rva 0x004b6560 (thunk to 0x004b6610): stores the callback 0x00402750 passes (0x00429290) and its argument. The exe
 // reader loads synchronously and has no point to call it, so it is recorded only.
@@ -159,9 +171,26 @@ void PortTop_PizFs_Mount_00495280(const char* name) {
     const bool ok = m.arc->Load(m.path);
     Log04E("[PIZ_FS] 0x00495280 mount %s -> %s: %s, %u entries (depth %d)", name, m.path,
            ok ? "OK" : m.arc->last_error(), ok ? m.arc->count() : 0u, s_mountTop);
+    // RACE-PIZ-DEVICE: on the RW core frame route the original mount chain runs after the exe reader (which has read the
+    // whole file and closed it): 0x004b6570 -> 0x004b6940 opens the archive (CreateFileA, share 0), fills the entry table
+    // 0x0090dac0 / count 0x008ad9a8 and makes the piz: device the default (0x00550790). Its argument is the exe path
+    // ("original/..."), not the 0x00402b70 form the original passes, so the name copies at 0x008ab7e0 / 0x008ad8a0 differ.
+    if (RwCore_FrameRoute()) {
+        const unsigned char r = PortTop_Bound_004b6570(static_cast<unsigned int>(reinterpret_cast<std::uintptr_t>(m.path)));
+        Log04E("[PIZ_FS] 0x004b6570(%s) original mount chain returned %d: [0x008ad9a8] %u entries, default [0x007dc76c] "
+               "%08X, [0x007d3e54] %08X", m.path, r, *reinterpret_cast<volatile unsigned*>(0x008ad9a8u),
+               *reinterpret_cast<volatile unsigned*>(0x007dc76cu), *reinterpret_cast<volatile unsigned*>(0x007d3e54u));
+    }
 }
 // rva 0x004952f0 piz unmount wrapper: closes the newest mount
 void PortTop_PizFs_Unmount_004952f0(void) {
+    // RACE-PIZ-DEVICE: on the RW core frame route the original unmount chain runs first, as 0x004952f0 always calls it
+    // (thunk 0x004b6590 -> 0x004b67a0: close 0x004b6770, default device back to [0x007d3e58], clear 0x004b65e0)
+    if (RwCore_FrameRoute()) {
+        PortTop_Bound_004b67a0();
+        Log04E("[PIZ_FS] 0x004b67a0 original unmount chain: default [0x007dc76c] %08X",
+               *reinterpret_cast<volatile unsigned*>(0x007dc76cu));
+    }
     if (s_mountTop <= 0) {
         Log04E("[PIZ_FS] 0x004952f0 unmount: nothing mounted");
         return;
@@ -204,6 +233,14 @@ int PortTop_PizFs_EntryLength_004b68f0(const char* name) {
     Log04E("[PIZ_FS] 0x004b68f0(\"%s\") binding: %s, length %u", name ? name : "(null)", b ? "found" : "not mounted", b ? n : 0u);
     return b ? static_cast<int>(n) : 0;
 }
+
+// ---- RACE-PIZ-DEVICE: CRT callees of the piz: device sources, raceload-profile aliases (re/tools/bind/state/raceload/rules.tsv) ----
+// CRT: __stricmp (rva 0x004b302f) is C4 libid identical libcmt.lib stricmp.obj (hooks.csv). 0x004b6b10 is `jmp 0x004b302f` (e9 1a c5 ff ff).
+// The exe's _stricmp in the C locale. _strncpy (rva 0x004a34b0, C2): libmatch DIFFERS from libcmt.lib strncpy.obj at +0x7 (branch
+// displacement after an earlier size difference, verify/racepiz_20261127/), identity not proven: [UNCERTAIN] (re/orchestrator/UNCERTAIN_REGISTER.md).
+int PortTop_PizCrt_stricmp_004b302f(const char* a, const char* b) { return _stricmp(a, b); }
+int PortTop_PizCrt_stricmp_004b6b10(const char* a, const char* b) { return _stricmp(a, b); }
+char* PortTop_PizCrt_strncpy_004a34b0(char* d, const char* s, unsigned int n) { return std::strncpy(d, s, n); }
 
 // ---- 0x004caea0: stand-in device ----
 namespace {

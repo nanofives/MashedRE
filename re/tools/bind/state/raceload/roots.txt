@@ -142,3 +142,22 @@
 00550790
 # RACE-VFS-COURSELUA: the RtFS exists method 0x005512d0 calls 0x00551460 (provisional, the stop the arm reached next)
 00551460
+# RACE-PIZ-DEVICE (run 56): the piz: file system on the RW core route (verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md):
+# install 0x004b6640 (provisional) and its 7 methods (5 match, 0x004b6c00 / 0x004b6cd0 provisional), the original mount chain
+# 0x004b6570 -> 0x004b6940 and the unmount 0x004b67a0 (the thunk 0x004b6590 has a bulk-profile wrapper) (0x004b6770 close, 0x004b65e0 clear), the read 0x004b67e0,
+# the default-device get 0x005507a0. Run beside the exe piz reader by PortTop_PizFs_* (Match/PortTop_00402750_Pieces.cpp) under RwCore_FrameRoute().
+004b6640
+004b6630
+004b6c00
+004b6f60
+004b6cd0
+004b6f90
+004b6ed0
+004b6ba0
+004b6570
+004b6940
+004b67a0
+004b6770
+004b65e0
+004b67e0
+005507a0
