@@ -1,0 +1,11 @@
+C:\Users\maria\Desktop\Proyectos\Mashed\scripts\diag.py:439: SyntaxWarning: invalid escape sequence '\M'
+  """Row close (HB-MASHEDWT-ROOT-CLEANUP): delete D:\MashedWT\<step>_root*\original of the removed
+wt-remove: D:\MashedWT\RO-AUDIOINIT-DEPTH_wt: removed
+wt-remove: root D:\MashedWT\RO-AUDIOINIT-DEPTH_root: refused 0.000 GB: root written 0.0 d ago (< 7.0)
+rc=0
+D free GB 559.93
+C:\Users\maria\Desktop\Proyectos\Mashed\scripts\diag.py:439: SyntaxWarning: invalid escape sequence '\M'
+  """Row close (HB-MASHEDWT-ROOT-CLEANUP): delete D:\MashedWT\<step>_root*\original of the removed
+wt-remove: D:\MashedWT\HB-MASHEDWT-ROOT-CLEANUP_wt: removed
+rc=0
+D free GB 567.14
