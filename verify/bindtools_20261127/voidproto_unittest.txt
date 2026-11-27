@@ -1,0 +1,14 @@
+[1/11] rules PASS
+[2/11] resolve PASS
+[3/11] static PASS
+[4/11] dup PASS
+[5/11] missing PASS
+[6/11] plan PASS
+[7/11] wrapper PASS
+[8/11] bindings PASS
+[9/11] moved PASS
+   link: t.exe printed '14', expected 14 = fix_add(3, 2) + fix_mul(3, 3)
+[10/11] link PASS
+   voidproto: t.exe printed '20', expected 20 = fix_open(7) + fix_open(3)
+[11/11] voidproto PASS
+lib kind unit test: PASS
