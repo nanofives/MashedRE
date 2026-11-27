@@ -1,4 +1,4 @@
-# RESULT RO-AUDIOINIT-45D460-REACH-6 (run 57, G2): met. 0x00604604 at record 0 (tick 1) is IDENTICAL to ref1: 0x00000004 (signed 4) on both sides
+# RESULT RO-AUDIOINIT-45D460-REACH-6 (run 57, G2): met, re-measured on orch/integration d20fd3984. 0x00604604 at record 0 (tick 1) is IDENTICAL to ref1: 0x00000004 (signed 4) on both sides (object-build RO arm, section "Recheck (run 57, L0, on d20fd3984)")
 
 Branch `orch/RO-AUDIOINIT-45D460-REACH-6`, rebased from REACH-5's `dadf8ee25` onto orch/integration `c880ab12e`. Worktree
 `.worktrees/RO-AUDIOINIT-45D460-REACH-5` (carried). Worker on claude3, Opus 5.5 medium (moved from claude2 at the start).
@@ -242,3 +242,149 @@ non-empty lines.
   G2 compare. All of it is to be run once BIND-SYNC-REMOVE-STALE gives the tool a way to remove the stale rsp line and
   to write the 0x004ccef0 row as `near-match`.
 - The 4 newly bound RW core image slots (above) need the VS2022 link to confirm the symbols resolve.
+
+(Both items are done in the next section.)
+
+## Recheck (run 57, L0, on d20fd3984)
+
+**G2 met, re-measured on this tree: `[0x00604604]` at record 0 (tick 1) = 0x00000004 (signed 4) on ref1 and on the
+object-build RO arm.** The 2b block from the section above is cleared: the binder now writes both former hand edits.
+Worker on claude3, Opus 5.5 medium. Small outputs are in `verify/roaudinit_20261127/recheck57/`. Raw outputs are in
+`D:/MashedWT/RO-AUDIOINIT-45D460-REACH-6_data/recheck57/`, with full hashes in `sha256.txt` there.
+
+### 1. Rebase and generated files
+
+- `mashed_lock.py status` showed PRIORITY-LINGER (train 20261127_180503), not PRIORITY-HOLD or SOLO.
+  `git -c merge.autoStash=false rebase d20fd3984` ran 8 commits with no conflicts.
+- (a) **The two former hand edits are now the tool's own output** (`recheck57/reproduce_hand_edits.txt`):
+  - `recheck57/undo_hand.py` puts both back to their state before the hand edit:
+    - It adds `"Match\PortTop_004ccef0.cpp"` back to the rsp, before `"Match\PortTop_005a65d0.cpp"`, where 97f4246cf had it.
+    - It restores the 0x004ccef0 row from 100ba0cc5 / 6b7da6d8e: `missing PortTop_AStop_004ccef0`.
+  - Then `sync --profile audio` prints `STALE Match/PortTop_004ccef0.cpp`, `rsp - 1`.
+  - Then `bindings --profile audio --step RO-AUDIOINIT-45D460-REACH-6 --rva 004ccef0` prints `updated 1 added 0`.
+  - After that, `git diff fdee19028 -- mashedmod/exe_sources.rsp verify/porttop_20261108/BINDINGS.tsv | grep -c 004ccef0`
+    = **0**, and `git diff HEAD` is empty.
+  - The filtered `git hash-object` of the rsp = 93b05b22f and of BINDINGS.tsv = 7003f1fe0. These equal both HEAD's and
+    fdee19028's blobs.
+  - One false start: from the 287c10369 tool's `matched RwCoreHand_004ccef0` row, `bindings --rva` prints `updated 0`.
+    The tool rewrites only `missing` rows and rows whose TU is gone, and that row is neither. It was never committed:
+    fdee19028 and this branch carry the near-match row. The pre-edit row on the branch is the `missing` row above.
+- (b) Dry counts (`recheck57/dry_counts.txt`, head `recheck57/dry_counts_head.txt` from the orch-integration worktree at
+  d20fd3984). Every profile prints `sync --dry` `rsp - 0 allowlist - 0 rsp + 0 allowlist + 0`.
+
+  | profile | bindings --dry, this tree | bindings --dry, head |
+  |---|---|---|
+  | audio | 0 / 0 | 0 / 0 |
+  | bulk | 0 / 0 | 0 / 0 |
+  | gates | 2 / 9 | 2 / 9 |
+  | raceframe | 4 / 14 | 4 / 14 |
+  | raceload | 14 / 282 | 14 / 282 |
+  | renderframe | 0 / 0 | 0 / 0 |
+
+- `codeptr_image.py --write` on the rebased tree wrote 117 CP_IMG_FIX and 52 extern syms. The only difference from the
+  committed CODEPTR_IMAGE.tsv / PortTopCodePtrImage.inc is line endings (`git diff --stat` empty), so nothing changed.
+- (c) `git show HEAD:re/match/PROVISIONAL.tsv | cut -f1 | sort | uniq -d` prints nothing.
+- (d) `verify/roaudinit_20261127/equiv_005c78c0_rebase.txt:1` = `0x005c78c0	EQUIV	[ORDER]`. The last commit touching
+  re/tools/match/equiv.py is 1ed7ceb1a, and `git merge-base --is-ancestor 1ed7ceb1a orch/integration` = 0 (yes).
+
+### 2. Builds, link check, ddkobj
+
+- Before the builds: lock free, test-slot 8/8 free, 17.1 GB committed of the 36.0 GB budget, C: 70 GB free.
+- VS2022 build (`recheck57/build_both57.py r57`): **rc 0**, 100 s. rva-lint: 664 findings, all allowlisted, **NEW=0**.
+- Object build (MASHED_DDKOBJ=1): **rc 0**.
+- **Code-pointer image slots** (`recheck57/slot_symbols.txt`):
+  - The RO arm log has `117 written (117 bound to an exe body, 0 to a stop thunk), 0 refused`.
+  - Each dword below is read from the arm's tick-1 dump, and each equals its symbol's address in
+    `mashedmod/build/ddkobj/mashed_re_ddk.map`. The symbols also link in the VS2022 map.
+
+  | slot | original target | exe symbol | tick-1 dword (object build) | owner |
+  |---|---|---|---|---|
+  | 0x00618230 | 0x004d7480 | RwCore_004d7480 | 0x0002cd70 | this row (recheck): **bound and linked** |
+  | 0x00618240 | 0x004dba60 | RwCore_004dba60 | 0x0002c850 | this row (recheck): **bound and linked** |
+  | 0x00623e0c | 0x00551cf0 | RwCore_00551cf0 | 0x00027730 | this row (recheck): **bound and linked** |
+  | 0x00623e10 | 0x00551fd0 | RwCore_00551fd0 | 0x00027720 | this row (recheck): **bound and linked** |
+  | 0x00635184 | 0x005c80a0 | PortTop_Bound_005c80a0 | 0x00277210 | RO-AUDIOINIT-45D460-REACH-7 |
+  | 0x00635188 | 0x005b7440 | PortTop_Bound_005b7440 | 0x00276ee0 | RO-AUDIOINIT-45D460-REACH-7 |
+  | 0x0063518c | 0x005b6b80 | PortTop_Bound_005b6b80 | 0x00276e70 | RO-AUDIOINIT-45D460-REACH-7 |
+  | 0x00635190 | 0x005bce20 | PortTop_Bound_005bce20 | 0x00277080 | RO-AUDIOINIT-45D460-REACH-7 |
+  | 0x006350cc / 0x00636024 | 0x005c78c0 | PortTop_Bound_005c78c0 | 0x000739a0 | this row |
+
+  In the c880ab12e run, the 4 RW core slots still held the original targets (`recheck57/words57.txt`, first 4 lines).
+- **ddkobj check: IDENTICAL 2458/2567, DIFFERENT 81, not-in-map 28.** BYTECHECK.tsv sha256 1e8fb386385b4e6a, the same
+  as REACH-6's BYTECHECK6.tsv on c880ab12e.
+  - Against the head (run 57 drain 2, d20fd3984: IDENTICAL 2455/2562, DIFFERENT 79, `log/orch/run57_drain2.log:32`,
+    data D:\MashedWT\mtrain_data\20261127_180503; `recheck57/cmp_head57.txt`), the new DIFFERENT units are:
+    - **0x005aeb90**: replay-C4 body (`c4=frida-replay`, re/match/s26/005aeb90.c).
+    - **0x005c78c0**: L-126 admitted body (ADMITTED.tsv, EQUIV [ORDER], 97.1%).
+  - No DIFFERENT unit is gone.
+  - **Listed unit -> 100% neighbour that fell back to its VS2022 body: none new.** The 10 `skip:provisional` lines are
+    identical in this log and in the head's train build.log (`recheck57/skip_diff.txt` empty).
+
+### 3. RULE 9 (`recheck57/rule9_57.txt`)
+
+The check ran `match.py --bytes` and `relocheck.py` on every re/match source included by an exe TU that this branch
+changes against d20fd3984. That is 13 sources.
+
+| class | count | sources |
+|---|---|---|
+| match (byte-identical, relocheck OK) | 6 | 0x005a66c0, 0x005a7420, 0x005c6bb0 (new in this closure); 0x005a6340, 0x005b8680, 0x005c6cc0 (already C4 match; their TUs changed only a `#define` target) |
+| replay-C4 | 1 | 0x005aeb90 (54 B, 35 bytes differ, relocheck BAD) |
+| admitted (L-126, not C4) | 2 | 0x005c78c0 (this row, 7 bytes differ, relocheck BAD on the moved `xor`); 0x005aea60 (head's ADMITTED row, 13 bytes differ, relocheck BAD) |
+| provisional (not C4) | 4 | 0x005a65d0, 0x005b8910, 0x005b8c40, 0x005c6f50 |
+
+Plus the hand body `RwCoreHand_004ccef0` (provisional, no re/match source).
+
+### 4. Selftest, arm, G2
+
+- Binder selftest (`recheck57/bind_selftest.txt`): **PASS 0**, every profile.
+  - audio plan IDENTICAL (bind 459 reuse 87 stop 73).
+  - BINDINGS.tsv from the audio and bulk plans IDENTICAL (0 / 0).
+- RO arm RO_ROAUDINIT-pr1 on the object build: test-slot outside, mashed_lock inside, timeout 7200000. It waited behind
+  RACE-LOAD-004E99B0's hold, then ran **exit 0, 600 ticks, 8 s**. Self-tests:
+
+  | self-test | result |
+  |---|---|
+  | portstate-image | PASS 0/8 |
+  | OT_CODEPTR | PASS 0/377, image 117 written, 0 refused |
+  | [REPLAY] init | 66 checks, 0 failed |
+  | OT_AUDIOINIT | PASS 0/12 |
+  | OT_TIMER | PASS 0/5990 |
+  | [TRACE] | PASS 0/33294 |
+  | [REPLAY] | PASS 0/666 |
+
+- **G2:**
+  - `dword_at.py 0x00604604` (`recheck57/dword_00604604.txt`):
+    - ref1 `ckpt201.data.bin` = 0x00000004.
+    - run `ckpt00.data.bin` = 0x00000004.
+  - detorig_firstdiv with `--exe-map mashedmod/build/ddkobj/mashed_re_ddk.map` (`recheck57/firstdiv57.txt`):
+    - first divergent record 0.
+    - 94 counted blocks, 78 raw words (non-PTR, unmasked).
+    - NEW blocks IDENTICAL-FOR-N 17 of 600, first NEW block 0x00898c00 at record 17.
+    - The block 0x00604400 is not among the blocks that differ.
+- Against the c880ab12e run (94 blocks, 76 raw words):
+  - The block count is unchanged.
+  - Without `--exe-map` the tool counts 103 blocks for both runs. The 9 extra blocks are code-pointer dwords
+    (`recheck57/newblocks57.txt`). REACH-6's first number used the map.
+  - The +2 raw words come from changed dwords (`recheck57/words57.txt`, 71 lines):
+    - The 4 RW core image slots above, which now hold exe addresses.
+    - Heap-pointer dwords, which hold different values in each run.
+  - Which 2 of these firstdiv counts as raw words is not resolved: its json gives only the count. These words are
+    outside this row, and 0x00604604 is equal on both sides.
+
+### 5. Other
+
+- Frida temp folders (`%LOCALAPPDATA%\Temp\frida-*`): 0 before the arm, 0 after it, deleted 0. One folder showed in a
+  count at 18:38 and was gone a minute later. This row's runs start no Frida, so it was not this row's.
+- Not done:
+  - No enqueue and no ledger `set` (L0's task).
+  - The worktree `.worktrees\RO-AUDIOINIT-45D460-REACH-5` stays until the branch merges.
+
+Raw, first 16 hex of sha256 (`D:/MashedWT/RO-AUDIOINIT-45D460-REACH-6_data/recheck57/sha256.txt`):
+
+| file | sha256 |
+|---|---|
+| buildr57_vs.log / buildr57_ddk.log | 59f18637369493b7 / d8a24148fa81133e |
+| BYTECHECK_r57.tsv | 1e8fb386385b4e6a |
+| roarm.out / ro/RO_ROAUDINIT-pr1.log | 919cd3ae33f689c3 / dd1df3e155e4bc22 |
+| ro/RO_ROAUDINIT-pr1/meta.json / ticks.bin / ckpt00.data.bin | 2244b4eb8b0d86e8 / 07fad00d28887743 / 92d28e13cc7198a3 |
+| fd_ref1_pr1.json / fd_ref1_pr1.md | 0c93b8cf58d77e1f / a44f63a91490f575 |

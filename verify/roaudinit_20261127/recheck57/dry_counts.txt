@@ -1,0 +1,45 @@
+== _shared sync --dry
+== _shared bindings --dry
+porttop_bind.py bindings: error: argument --profile: invalid choice: '_shared' (choose from audio, bulk, gates, raceframe, raceload, renderframe)
+== audio sync --dry
+rsp - 0
+allowlist - 0
+rsp + 0
+allowlist + 0
+== audio bindings --dry
+updated 0 added 0 (dry run)
+== bulk sync --dry
+rsp - 0
+allowlist - 0
+rsp + 0
+allowlist + 0
+== bulk bindings --dry
+updated 0 added 0 (dry run)
+== gates sync --dry
+rsp - 0
+allowlist - 0
+rsp + 0
+allowlist + 0
+== gates bindings --dry
+updated 2 added 9 (dry run)
+== raceframe sync --dry
+rsp - 0
+allowlist - 0
+rsp + 0
+allowlist + 0
+== raceframe bindings --dry
+updated 4 added 14 (dry run)
+== raceload sync --dry
+rsp - 0
+allowlist - 0
+rsp + 0
+allowlist + 0
+== raceload bindings --dry
+updated 14 added 282 (dry run)
+== renderframe sync --dry
+rsp - 0
+allowlist - 0
+rsp + 0
+allowlist + 0
+== renderframe bindings --dry
+updated 0 added 0 (dry run)
