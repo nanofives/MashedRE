@@ -1,0 +1,37 @@
+sources with a static DAT_ global: 35
+of them linked as DDK units in C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RACE-PIZ-DEVICE/mashedmod/build/ddkobj/BYTECHECK.tsv : 17
+re/match/pilot/a7_0041c380.c DAT_0063cde4                             not linked
+re/match/s01/004034a0.c      DAT_00636b74                             not linked
+re/match/s01/004036a0.c      DAT_00636b74                             not linked
+re/match/s04/0041c380.c      DAT_0063cde4                             0x0041c380 IDENTICAL;0x0041cb80 IDENTICAL
+re/match/s06/00429290.c      DAT_0067d960                             0x00429240 IDENTICAL;0x00429290 IDENTICAL;0x00429240 IDENTICAL;0x00429290 IDENTICAL
+re/match/s09/004527f0.c      DAT_005f9790,DAT_00684c50,DAT_00684e30   not linked
+re/match/s09/00459400.c      DAT_0068bb5c                             not linked
+re/match/s10/00461650.c      DAT_0068f4c4                             0x00461650 IDENTICAL
+re/match/s10/00462950.c      DAT_0068fc80,DAT_0068fc84                not linked
+re/match/s10/00463590.c      DAT_006904e0                             0x00463590 IDENTICAL
+re/match/s10/004661f0.c      DAT_0069058c                             0x004661f0 IDENTICAL
+re/match/s12/00475a60.c      DAT_0069160c                             0x00475a60 IDENTICAL
+re/match/s12/00475c10.c      DAT_00691614                             0x00475c10 IDENTICAL
+re/match/s12/004769a0.c      DAT_00692528,DAT_0069252c,DAT_00692530   0x004769a0 IDENTICAL
+re/match/s12/004769d0.c      DAT_006924dc,DAT_006924e0                0x004769d0 IDENTICAL
+re/match/s12/00476d00.c      DAT_006924dc                             0x00476d00 IDENTICAL
+re/match/s13/0047ab30.c      DAT_006bf1cc                             0x0047ab30 IDENTICAL
+re/match/s13/0047abd0.c      DAT_006bf1cc                             0x0047abd0 IDENTICAL
+re/match/s13/0047ac80.c      DAT_006bf1cc                             0x0047ac80 IDENTICAL
+re/match/s13/0047ad40.c      DAT_006bf1cc                             0x0047ad40 IDENTICAL
+re/match/s13/0047c0f0.c      DAT_006c2fec                             0x0047c0f0 IDENTICAL
+re/match/s14/00489890.c      DAT_00703110                             0x00489890 IDENTICAL
+re/match/s15/0048e5f0.c      DAT_007668f4                             0x0048e5f0 IDENTICAL
+re/match/s15/00491c00.c      DAT_00771724,DAT_00771728                not linked
+re/match/s15/00491f00.c      DAT_00771724                             not linked
+re/match/s16/00498a00.c      DAT_007731f8                             not linked
+re/match/s16/00498c00.c      DAT_007731f8                             not linked
+re/match/s16/00498d20.c      DAT_007731f8                             not linked
+re/match/s16/00498d60.c      DAT_007731f8                             not linked
+re/match/s16/00498e40.c      DAT_007731f8                             not linked
+re/match/s16/00498ea0.c      DAT_007731f8                             not linked
+re/match/s16/00498f60.c      DAT_007731f8                             not linked
+re/match/s16/00499170.c      DAT_007731f8                             not linked
+re/match/s16/004991f0.c      DAT_007731f8                             not linked
+re/match/s16/00499400.c      DAT_007731f8                             not linked
