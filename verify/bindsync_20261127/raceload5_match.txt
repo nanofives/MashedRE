@@ -1,0 +1,30 @@
+== re/match/s19/004c4dc0.c
+   !                                              | fmul dword ptr [esi + 0x24]
+   !                                              | faddp st(1)
+   ! faddp st(1)                                  | 
+   bytes: 225 B whole symbol, 19 differing unmasked bytes (first at +0x85)
+0x004c4dc0	OK	checked=3	unchecked=0	004c4dc0.c	
+== re/match/rwl01/004db3e0.c
+   ! call dword ptr [edx + 8]                     | call dword ptr [ecx + 8]
+   !                                              | mov eax, esi
+   ! xor eax, eax                                 | 
+   bytes: 368 B whole symbol, 9 differing unmasked bytes (first at +0x148)
+0x004db3e0	BAD	checked=20	unchecked=0	004db3e0.c	+0x164 _DAT_007d70a8: ours 0x007d70a8 vs orig 0x70a81d89
+== re/match/rwl01/004dc8a0.c
+   !                                              | cmp eax, 4
+   !                                              | jb 0x4dc8d0
+   !                                              | mov dword ptr [0x7d70c8], 0
+   bytes: 46 B whole symbol, 17 differing unmasked bytes (first at +0x0)
+0x004dc8a0	BAD	checked=7	unchecked=0	004dc8a0.c	+0x2 _DAT_007d70c8: ours 0x007d70c8 vs orig 0x7d70cca3; +0x9 _DAT_007d70cc: ours 0x007d70cc vs orig 0xa3007d70; +0xf _DAT_007d70d0: ours 0x007d70d0 vs orig 0xd8a3007d; +0x14 _DAT_007d70d4: ours 0x007d70d4 vs orig 0xc8a1007d; +0x1c _DAT_007d70d8: ours 0x007d70d8 vs orig 0xa304f883; +0x22 _DAT_007d70c8: ours 0x007d70c8 vs orig 0x0a72007d; +0x29 _DAT_007d70c8: ours 0x007d70c8 vs orig 0x00007d70
+== re/match/rwl01/004e0920.c
+   ! je 0x233                                     | je 0x4e0b5a
+   ! xor eax, eax                                 | mov eax, esi
+   !                                              | pop esi
+   bytes: 570 B whole symbol, 446 differing unmasked bytes (first at +0x16)
+0x004e0920	BAD	checked=21	unchecked=0	004e0920.c	+0x1b _DAT_007d710c: ours 0x007d710c vs orig 0x7d710c68; +0x24 _DAT_007d7108: ours 0x007d7108 vs orig 0x7d71081d; +0x45 _DAT_007d7110: ours 0x007d7110 vs orig 0xbe0c2454; +0xdd _FUN_004cb8a0: ours 0x004cb8a0 vs orig 0x88872e5d; +0xe6 _DAT_007d7114: ours 0x007d7114 vs orig 0x93e83b24; +0x160 _FUN_004cb8a0: ours 0x004cb8a0 vs orig 0x24aa92bd; +0x1bb _DAT_007d7118: ours 0x007d7118 vs orig 0x681c244c; +0x1c5 _FUN_004cb8a0: ours 0x004cb8a0 vs orig 0x88882f45; +0x1d7 _DAT_007d710c: ours 0x007d710c vs orig 0xc4835b5e; +0x1e7 _DAT_007d710c: ours 0x007d710c vs orig 0x51ff5008; +0x1ec _DAT_007d7118: ours 0x007d7118 vs orig 0x710c1d89; +0x1f6 _FUN_004cba80: ours 0x004cba80 vs orig 0x7511461a; +0x1ff _DAT_007d7118: ours 0x007d7118 vs orig 0xc483fffe; +0x204 _DAT_007d7114: ours 0x007d7114 vs orig 0x71181d89; +0x20e _FUN_004cba80: ours 0x004cba80 vs orig 0x75114632; +0x217 _DAT_007d7114: ours 0x007d7114 vs orig 0xc483fffe; +0x21c _DAT_007d7110: ours 0x007d7110 vs orig 0x71141d89; +0x226 _FUN_004cba80: ours 0x004cba80 vs orig 0x7511464a; +0x22f _DAT_007d7110: ours 0x007d7110 vs orig 0xc483fffe
+== re/match/rwl03/0052daf0.c
+   ! pop ebx                                      | 
+   ! add esp, 0x1c                                | 
+   ! ret                                          | 
+   bytes: 442 B whole symbol, 355 differing unmasked bytes (first at +0x2)
+0x0052daf0	BAD	checked=16	unchecked=0	0052daf0.c	+0x32 _FUN_004cc790: ours 0x004cc790 vs orig 0xc0863884; +0x3f _DAT_007dbcd8: ours 0x007dbcd8 vs orig 0x5751046a; +0x4e _DAT_00912160: ours 0x00912160 vs orig 0x5d5e5f08; +0x69 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x39536c7e; +0x77 _FUN_004d8480: ours 0x004d8480 vs orig 0xc755465f; +0x90 _DAT_00912160: ours 0x00912160 vs orig 0xfaa8fbe8; +0x9f _FUN_004cc790: ours 0x004cc790 vs orig 0x8e15fc57; +0xb3 _FUN_004cc790: ours 0x004cc790 vs orig 0x5eb1e41c; +0xc7 _FUN_004cc790: ours 0x004cc790 vs orig 0x8452d5a6; +0xd4 _DAT_007dbcd8: ours 0x007dbcd8 vs orig 0x20c4835b; +0xe7 _DAT_00912160: ours 0x00912160 vs orig 0xc0850cc4; +0x102 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x855fa079; +0x110 _FUN_004d8480: ours 0x004d8480 vs orig 0x8c15fcc8; +0x129 _DAT_00912160: ours 0x00912160 vs orig 0xd285c033; +0x149 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x0001b72c

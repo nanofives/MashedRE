@@ -2,8 +2,16 @@ Met: from REACH-6's base state the new binder produces both REACH-6 hand edits b
 
 # RESULT BIND-SYNC-REMOVE-STALE (run 57, section BIND)
 
-Branch `orch/BIND-SYNC-REMOVE-STALE` on orch/integration 287c10369. Tool commit `f8190d9e6`. Tool row (RULE 2): no game
-arm, no G-CTRL / B, no build. Worker on claude2, Opus 5.5 medium.
+Branch `orch/BIND-SYNC-REMOVE-STALE` on orch/integration 287c10369. `git log 287c10369..HEAD` lists only this row's
+commits: tool commit `ae2828c60`, then the RESULT commits. Tool row (RULE 2): no game arm, no G-CTRL / B, no build.
+Worker on claude2, Opus 5.5 medium.
+
+**Re-base note (lead check).** The first two commits (f8190d9e6, ec9fd5a38) sat on REACH-6's fdee19028, not on 287c10369.
+The cause: a stray `git checkout fdee19028 --` in this worktree (meant as a read) detached HEAD at REACH-6's tip. They
+were cherry-picked onto the branch at 287c10369 (ae2828c60 + 19a37c5e8). Every tree-dependent check below was re-run on
+287c10369 + the tool: sync and bindings dry counts, old vs new written BINDINGS, unit tests, and the selftest. They gave
+the same numbers. The reach6_compare A/B runs use fdee19028 only as the comparison target, in the scratch checkout, so
+they stand as run.
 
 ## What changed (re/tools/bind/porttop_bind.py)
 
@@ -48,7 +56,7 @@ py -3.12 re/tools/bind/porttop_bind.py bindings --profile audio --step RO-AUDIOI
 | unit tests re/tools/bind/test_porttop_bind_lib.py | **15/15 PASS** (12 old + sync_stale, bindings_tu_gone, bindings_prov_reuse) | unit_test.txt |
 | binder selftest on this tree (lock free; test-slot slot 2/8) | **PASS** (0 fail), every profile: raceload, audio, bulk, raceframe, renderframe, gates plan + wrappers IDENTICAL. BINDINGS.tsv from the audio and bulk plans IDENTICAL 0/0. | bind_selftest.txt |
 | `bindings --profile <p> --dry`, old (287c10369) vs new | unchanged: audio 0/0, bulk 0/0, gates 2/9, raceframe 4/14, raceload 14/282, renderframe 0/0 | bindings_old_vs_new.txt |
-| `sync --profile <p> --dry` on this tree | every profile `rsp - 0`, `allowlist - 0`, `rsp + 0`, `allowlist + 0` (the old tool: `rsp + 0`, `allowlist + 0`) | (run in session, see "What changed" 1) |
+| `sync --profile <p> --dry` on this tree | every profile `rsp - 0`, `allowlist - 0`, `rsp + 0`, `allowlist + 0` (the old tool: `rsp + 0`, `allowlist + 0`) | sync_dry.txt |
 | written BINDINGS.tsv, old vs new, per profile | IDENTICAL for audio, **bulk**, gates, raceframe, renderframe. **raceload DIFFERENT in 5 rows** (counts unchanged), see below. | bindings_old_vs_new.txt |
 | Frida temp folders | no harness run | |
 
@@ -70,7 +78,23 @@ rows as `near-match`, where it wrote `matched` before. The rows: 0x004c4dc0 RwCo
 0x004dc8a0 RwCore_004dc8a0, 0x004e0920 RwCore_004e0920, 0x0052daf0 RwCore_0052daf0.
 - None of the 5 is in the committed BINDINGS.tsv.
 - re/match/PROVISIONAL.tsv lists each one with status `provisional`, best_pct 91.2 / 95.2 / 58.3 / 20.8 / 42.5.
-- So `matched` was the same mislabel as 0x004ccef0's, and this is case 3 applied as specified.
+- The near-match label rests on a run, not only on the list (L0 merge bar). The table below was measured in this
+  worktree (tools\vc7ddk found under .worktrees\, mashed_lock free), using each source's own // TOOLCHAIN and // FLAGS.
+  Output is in `raceload5_scores.txt` and `raceload5_match.txt`.
+
+| rva | source | toolchain / flags | match.py --bytes score | differing bytes | relocheck |
+|---|---|---|---|---|---|
+| 0x004c4dc0 | re/match/s19/004c4dc0.c | ddk, /O2 /GS /Ob1 /G5 | 91.2% (80/80 ins) | 19 of 225 B (first +0x85) | OK (checked 3) |
+| 0x004db3e0 | re/match/rwl01/004db3e0.c | ddk, /O2 /Ob1 /G5 | 95.2% (105/105 ins) | 9 of 368 B (first +0x148) | BAD (checked 20) |
+| 0x004dc8a0 | re/match/rwl01/004dc8a0.c | ddk, /O2 /Ob1 /G5 | 58.3% (12/12 ins) | 17 of 46 B (first +0x0) | BAD (checked 7) |
+| 0x004e0920 | re/match/rwl01/004e0920.c | ddk, /O2 /Ob1 /G5 | 46.3% (141/149 ins) | 446 of 570 B (first +0x16) | BAD (checked 21) |
+| 0x0052daf0 | re/match/rwl03/0052daf0.c | rw9044, /O2 /Ob1 /G5 | 44.0% (160/200 ins) | 355 of 442 B (first +0x2) | BAD (checked 16) |
+
+- None of the 5 is byte-identical, so `near-match` is the right kind for all 5, and `matched` was the same mislabel as
+  0x004ccef0's. There is no 100% + relocheck OK row to report as a finding.
+- For 0x004c4dc0 relocheck is OK, but the 19 differing bytes still keep it below a match.
+- Side note, not acted on: today's scores for 0x004e0920 (46.3%) and 0x0052daf0 (44.0%) differ from PROVISIONAL.tsv's
+  best_pct (20.8 / 42.5). That column is not this row's to change.
 - The committed BINDINGS.tsv does not change. Bulk's written output does not change, so BIND-0048AE00-CALLEES's
   generated output does not change.
 
