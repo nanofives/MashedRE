@@ -158,6 +158,7 @@
 #include <memory>       // 2026-07-14: shared_ptr keeps the worker's result alive
 #include <utility>      // 2026-07-14: std::swap for attempt ordering
 
+#include "Input/JoyFilter.h"   // [PLAYTEST-JOYFILTER] steering-controller predicate (default path only)
 #include "Piz/PizReader.h"
 #include "Rws/RwsChunkWalker.h"
 #include "Txd/TxdDecoder.h"
@@ -1138,7 +1139,32 @@ static bool R7InputOn() {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_NO_R7_INPUT"); return !(e && e[0] && e[0] != '0'); }();
     return s_on;
 }
+// [PLAYTEST-JOYFILTER] Mariano 2026-11-27, playtest item 3: the default path counts only steering controllers
+// (Input/JoyFilter.h). A deliberate departure from the original, not a parity fix (citations inside the body).
+static bool JoyFilterOn() {
+    // Departs ON PURPOSE from the original's callback 0x00495ee0, which counts every attached game controller that
+    // opens (CreateDevice 0x00495f15, increment 0x00495fcb; enumerator 0x00496040, slot fill 0x00498510, colour
+    // select rows 0x004332a0). MASHED_ALL_CONTROLLERS=1 restores the original's rule, MASHED_ORIG_TOP=1 never filters.
+    static const bool s_on = [] {
+        const char* a = std::getenv("MASHED_ALL_CONTROLLERS");
+        const char* t = std::getenv("MASHED_ORIG_TOP");
+        const bool all = a && a[0] && a[0] != '0';
+        const bool top = t && t[0] && t[0] != '0';
+        return !all && !top;
+    }();
+    return s_on;
+}
+static int s_joyfilter_seen = 0;   // devices EnumDevices reported in the last DeriveInputSlots
 static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
+    ++s_joyfilter_seen;
+    const bool keep = !JoyFilterOn() || mashed_re::Input::JoyFilter_TypeIsSteering(inst->dwDevType);
+    if (std::FILE* log = std::fopen(kLogPath, "a")) {
+        std::fprintf(log, "\ngame controller \"%s\" dwDevType 0x%08lx: %s%s\n", inst->tszProductName,
+                     static_cast<unsigned long>(inst->dwDevType), keep ? "kept" : "skipped (not a joystick type)",
+                     JoyFilterOn() ? "" : " [filter off]");
+        std::fclose(log);
+    }
+    if (!keep) return DIENUM_CONTINUE;
     IDirectInputDevice8A* dev = nullptr;
     if (SUCCEEDED(g_dinput->CreateDevice(inst->guidInstance, &dev, nullptr)) && dev) {
         int& j = *static_cast<int*>(ref);
@@ -1173,6 +1199,7 @@ static bool g_top08_slot_store = false;
 // FUN_004967e0's active count.
 static void DeriveInputSlots() {
     int j = 0;
+    s_joyfilter_seen = 0;
     if (g_dinput)
         g_dinput->EnumDevices(DI8DEVCLASS_GAMECTRL, CountGameCtrlCb, &j,
                               DIEDFL_ATTACHEDONLY);
@@ -1188,6 +1215,8 @@ static void DeriveInputSlots() {
             *reinterpret_cast<std::int32_t*>(0x007e96fcu + static_cast<std::uintptr_t>(i) * 0x200u) = g_input_slot_type[i];
     }
     if (std::FILE* log = std::fopen(kLogPath, "a")) {
+        std::fprintf(log, "\ngame controllers enumerated %d, counted %d, joystick filter %s (PLAYTEST-JOYFILTER)\n",
+                     s_joyfilter_seen, j, JoyFilterOn() ? "on" : "off");
         std::fprintf(log, "\ninput slots: game controllers %d, types %d %d %d %d, active %d%s\n",
                      j, g_input_slot_type[0], g_input_slot_type[1],
                      g_input_slot_type[2], g_input_slot_type[3], n,

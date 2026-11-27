@@ -1,0 +1,5 @@
+# joyprobe.cpp (live part, same predicate) run by a child on MARIANO-PC, 2026-11-27 03:44:05 -03:00, exit 0. Verbatim:
+live  "Keychron Link " dwDevType 0x00010318 type 0x18 subtype 0x03 -> skipped
+live  "Keychron Link " dwDevType 0x00010318 type 0x18 subtype 0x03 -> skipped
+live  "Keychron Q6 HE" dwDevType 0x00010318 type 0x18 subtype 0x03 -> skipped
+live devices enumerated: 3
