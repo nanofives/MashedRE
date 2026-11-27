@@ -2,6 +2,7 @@
 # args (EAX=mode, [esp+4]=key, [esp+8]=cmp, ESI=idx ptr)? Logs every call with
 # a returnAddress, while the controller pushes/reloads screens 1/8/19.
 # Usage: py -3.12 re/frida/probe_prompt_calls.py
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time
 from pathlib import Path
 import frida

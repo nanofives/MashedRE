@@ -15,6 +15,7 @@
 # checkpoint. A4 is hot (>1000/s) -> grab the checkpoints quickly, detach at the last one.
 #
 # Usage: py -3.12 re/frida/canonical_c4_determinism_canary.py
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, subprocess, sys, time
 from pathlib import Path
 import frida

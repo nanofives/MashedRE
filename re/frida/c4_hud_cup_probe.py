@@ -12,6 +12,7 @@
 # depth 4 and --event times at depth 5, launches, and logs mode / rule / state / counters.
 # Usage: py -3.12 re/frida/c4_hud_cup_probe.py --root <copy>\original [--cup K] [--event N]
 #        [--secs S] [--pulse 0|1] [--tag T]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time
 from pathlib import Path
 import frida

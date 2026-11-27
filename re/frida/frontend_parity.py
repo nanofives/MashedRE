@@ -30,6 +30,7 @@
 #   default screens: the full 17-screen list; default DIR: a fresh
 #   verify/parity_run_<timestamp>/ -- see the OUT comment below, this harness
 #   used to write into TRACKED evidence and destroyed 17 files doing it.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 from pathlib import Path
 import frida

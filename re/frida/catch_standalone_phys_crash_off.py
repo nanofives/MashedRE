@@ -1,5 +1,6 @@
 # Same as catch_standalone_phys_crash.py but with MASHED_REAL_PHYSICS UNSET
 # (scaffold baseline) — to confirm whether the captured crash is physics-specific.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time
 from pathlib import Path
 import frida

@@ -11,6 +11,7 @@ unfocused -- no ambiguity about who has foreground), then sample the log.
 PROCESS HYGIENE (CLAUDE.md): only the PID we spawned is ever terminated. No
 kill-by-name. WaitForExit before reading an exit code.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import ctypes, os, subprocess, sys, time, pathlib
 from ctypes import wintypes
 

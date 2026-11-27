@@ -46,6 +46,7 @@ any other arg_type.
 
 Exit 0 = GREEN (promotable), 1 = RED / harness error.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import frida, os, sys, time, subprocess
 
 # this file lives at <ROOT>/re/frida/ — go up three levels to the repo root

@@ -4,6 +4,7 @@
 # identify the real caller chain of the NEXT boot crash.
 #
 # Usage: py -3.12 re/frida/probe_badenter.py [--seconds N]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 from pathlib import Path
 import frida

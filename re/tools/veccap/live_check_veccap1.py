@@ -9,6 +9,7 @@
 # find the live heap LUT and match bit-for-bit.
 #
 # Checks: Vec3Magnitude (0x004c3ac0), FastSqrt (0x004c3b30), FastInvSqrt (0x004c3b90).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os
 import shutil
 import struct

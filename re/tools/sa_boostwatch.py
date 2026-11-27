@@ -48,6 +48,7 @@ The ".watch.csv" suffix is deliberate: "<prefix>.csv" would collide with a
 MASHED_AI_STEPDUMP path built from the same prefix, and did once on 2026-10-03.
 The process is spawned and killed BY PID; no blanket kill by name.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import ctypes, json, os, re, subprocess, sys, time
 from ctypes import wintypes
 from pathlib import Path

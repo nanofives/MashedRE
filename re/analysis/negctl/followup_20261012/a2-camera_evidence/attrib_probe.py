@@ -1,4 +1,5 @@
 """a2-camera attribution probe driver: spawn MASHED (own PID only), drive to race, run attrib_probe.js."""
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../../../../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, shutil, subprocess, sys, time
 from pathlib import Path
 

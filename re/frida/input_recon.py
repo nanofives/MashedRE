@@ -11,6 +11,7 @@
 # Spawns MASHED WITHOUT the dev .asi (MASHED_RE_NO_AUTO_HOOK=1) — pure stock input.
 #
 # Usage: py -3.12 re/frida/input_recon.py [--seconds N]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 from pathlib import Path
 import frida

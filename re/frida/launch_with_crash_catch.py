@@ -1,5 +1,6 @@
 # Launch MASHED.exe with our .asi injected AND an exception handler armed.
 # Captures crash EIP/registers if the process dies during boot.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os
 import subprocess
 import sys

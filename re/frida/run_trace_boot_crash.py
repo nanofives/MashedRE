@@ -1,6 +1,7 @@
 # Boot-crash tracer. Spawns MASHED.exe, attaches Frida, instruments the
 # candidate functions around the FONT36.PIZ load. Records the call
 # sequence and reports the function that didn't return (= crash site).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json
 import os
 import subprocess

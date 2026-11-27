@@ -8,6 +8,7 @@ the environmental/D3D9-init wedge from our reimpls.
 
 Usage: py -3.12 re/frida/boot_crash_probe.py
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, json, frida
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

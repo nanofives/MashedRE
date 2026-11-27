@@ -9,6 +9,7 @@ Reuses the proven spawn-with-suspend pattern from re/frida/mass_canonical_observ
 
 from __future__ import annotations
 
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os
 import subprocess
 import sys

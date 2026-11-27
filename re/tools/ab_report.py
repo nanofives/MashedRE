@@ -36,6 +36,7 @@
 #
 # --share additionally copies REPORT.md and the png/ set into the Happy share
 # folder so they can be surfaced to a remote user.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import os
 import shutil

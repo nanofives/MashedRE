@@ -15,6 +15,7 @@
 #   pos[i]      : float @ 0x00881ec8 + i*0xd04 + 0x30/0x34/0x38
 #
 # Usage: py -3.12 re/frida/diff_mostsep_pair.py
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, struct, sys, time
 from pathlib import Path
 import frida

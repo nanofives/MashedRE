@@ -36,6 +36,7 @@
 #                0x0067f0c0): --nav confirm,confirm,confirm. --peek 0x..,.. reads dwords after the nav.
 #
 # Output: { "<label>_f<i>": [ {"v": "<hex>", "r": ["0x..rva", ...]}, ... ] }
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import json
 import os

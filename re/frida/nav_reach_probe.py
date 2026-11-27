@@ -14,6 +14,7 @@
 #
 # Usage: py -3.12 re/frida/nav_reach_probe.py --mode current|hardened
 
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os
 import sys
 import time

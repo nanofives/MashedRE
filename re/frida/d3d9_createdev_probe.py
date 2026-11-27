@@ -6,6 +6,7 @@ IDirect3D9*, read vtable[16] (CreateDevice), Interceptor.attach it, and log the
 HRESULT + key present params + whether *ppDevice came back non-null. Also logs
 GetAdapterCount / GetAdapterDisplayMode for the single-monitor picture.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, frida
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 EXE = os.path.join(ROOT, "original", "MASHED.exe")

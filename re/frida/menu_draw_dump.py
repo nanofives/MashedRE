@@ -8,6 +8,7 @@
 # at the per-frame draw loop 0x0043c5b0. One sampled frame per screen.
 #
 # Usage: py -3.12 re/frida/menu_draw_dump.py
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, struct, sys, time
 from pathlib import Path
 import frida

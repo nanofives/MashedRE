@@ -10,6 +10,7 @@
 #
 # Usage: py -3.12 re/frida/capture_orig_screens.py 1 2 3 4 6 7 8 15 16 18 19 24 29 30 31 32 33
 #        (no args -> the full frontend set below)
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 from pathlib import Path
 import frida

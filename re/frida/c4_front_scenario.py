@@ -25,6 +25,7 @@
 #
 # Usage: py -3.12 re/frida/c4_front_scenario.py --row bc|subinit|bqf|pmr --arm stock|port|ctl
 #        [--asi PATH] [--out DIR] [--tag NAME] [--round 240] [--window 2.0]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time, hashlib
 from pathlib import Path
 import frida

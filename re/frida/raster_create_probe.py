@@ -7,6 +7,7 @@ Logs RwRasterCreate's args (w,h,depth,flags from the stack) and return (raster p
 or 0), and the camera builder's return. Reveals the exact dimensions/flags the
 camera raster is requested with and whether the D3D9 constructor rejects them.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, frida
 ROOT=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 EXE=os.path.join(ROOT,"original","MASHED.exe")

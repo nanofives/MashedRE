@@ -25,6 +25,7 @@ name.  Capture goes through the d3d9 shim's MASHED_ORIG_BBDUMP_REQ protocol --
 capture_window.ps1 returns all-white on this machine (d3d9_shim.cpp:213).
 """
 
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import json
 import sys
