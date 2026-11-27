@@ -12,7 +12,7 @@
 #define FUN_00562520 PortTop_Bound_00562520
 #define FUN_00562580 PortTop_Bound_00562580
 #define FUN_005625e0 PortTop_Bound_005625e0
-#define FUN_0057c4b0 PortTop_RLStop_0057c4b0   // named stop
+#define FUN_0057c4b0 PortTop_Bound_0057c4b0
 extern "C" {
 #include "../../../../re/match/pilot/a5_0047f4c0.c"
 }

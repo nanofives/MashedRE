@@ -185,3 +185,5 @@
 004cf2b0
 004b4550
 004b4eb0
+# RACE-LOAD-004E99B0: stop 0x0057c4b0 (caller 0x0047f4c0), new byte-matched source re/match/rwl06/0057c4b0.c (re/promotions/RACE-LOAD-004E99B0.tsv)
+0057c4b0

@@ -144,10 +144,6 @@ int PortTop_RLStop_00562ac0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; 
 int PortTop_RLStop_0057c210(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x0057c210u, "0x0047d080 0x00480100", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x0057c210u, 0u, _ReturnAddress()); return 0; }
-// stop rva 0057c4b0: declared void by 0x0047f4c0; no matched or admitted source
-int PortTop_RLStop_0057c4b0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x0057c4b0u, "0x0047f4c0", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x0057c4b0u, 0u, _ReturnAddress()); return 0; }
 // stop rva 005c1d63: declared int by 0x004b67e0; no matched or admitted source
 int PortTop_RLStop_005c1d63(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x005c1d63u, "0x004b67e0", n, _ReturnAddress(), ex);
