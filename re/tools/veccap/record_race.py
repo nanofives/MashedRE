@@ -23,6 +23,7 @@
 #            [--max 600] [--window 6] [--settle 12]
 # Writes re/replay/veccap/<rva>_<name>.json (committed evidence, small).
 # Spawns its OWN MASHED and kills ONLY that PID.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import json
 import os

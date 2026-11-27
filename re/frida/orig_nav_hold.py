@@ -50,6 +50,7 @@
 #                 the original wait-for-3 was right for this global.
 #   --peek        plain Memory reads, no Interceptor, same spec as
 #                 scenario_launch.py --peek (rva:type, type in f/d/i/u).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse, os, sys, time
 from pathlib import Path
 import frida

@@ -16,6 +16,7 @@ A speed multiplier m should give 3000*m.
 The probe reads memory only -- no Interceptor on the clock -- so the hot-path rule in
 CLAUDE.md does not apply. It spawns its own MASHED and kills ONLY that pid.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import json
 import os

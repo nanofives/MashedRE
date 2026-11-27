@@ -61,6 +61,7 @@ This is a research read, not a hook diff -- it deliberately does not go through
 Usage:
     py -3.12 re/frida/chal_icon_probe.py [--screen 6] [--settle 3]
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import json
 import os

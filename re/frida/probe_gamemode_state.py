@@ -7,6 +7,7 @@
 #   settings: ea74 game-type, ea78, ea7c diff, ea80 powerups, ea88 length,
 #             ea90, ea94 vehicle, ea98/9c/a0 opponents, eaac
 # Usage: py -3.12 re/frida/probe_gamemode_state.py [scr ...]   (default 18 24)
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 import frida
 from pathlib import Path

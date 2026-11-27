@@ -3,6 +3,7 @@
 # EnterCriticalSection at the boot crash site (0x4a5f49 caller).
 #
 # Usage: py -3.12 re/frida/disasm_at.py 0x4a5f20:0x4a5f4a 0x496430:0x49644c
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, re
 from pathlib import Path
 import frida

@@ -19,6 +19,7 @@
 # All 4 callees treat their stack as stdcall-clean (no `add esp` between
 # them in the original asm), so replacing 25 contiguous bytes with NOPs
 # leaves the stack balanced.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os
 import subprocess
 import sys

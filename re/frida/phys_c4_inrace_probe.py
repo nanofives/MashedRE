@@ -9,6 +9,7 @@
 # (+0x9e0); report which index makes the car accelerate / which lifts a wheel.
 #
 # Spawns its OWN MASHED.exe (Popen) and kills ONLY that PID in finally (process-hygiene).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, shutil, subprocess, sys, time
 from pathlib import Path
 import frida

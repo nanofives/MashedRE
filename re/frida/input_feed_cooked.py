@@ -21,6 +21,7 @@
 #
 # Usage: py -3.12 re/frida/input_feed_cooked.py [--seq down,down,down] [--settle MS]
 #        [--seconds N] [--player P] [--count 0x..,..]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import ctypes
 import os, sys, time
 from ctypes import wintypes

@@ -2,6 +2,7 @@
 # two PizWin32 hooks via raw VirtualProtect + memcpy from Frida. This isolates
 # the PizWin32 hooks from the pre-existing auto-hook boot crash so we can
 # verify them on their own merits.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os
 import subprocess
 import sys

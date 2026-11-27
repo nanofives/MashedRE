@@ -1,0 +1,473 @@
+disposition	file	line	match	text
+FIXED-guard	re/analysis/negctl/followup_20261012/a2-camera_evidence/attrib_probe.py	16	soft	proc = subprocess.Popen([str(rd.MASHED_EXE)], cwd=str(rd.MASHED_EXE.parent), env=env,
+FIXED-guard	re/frida/bisect_save_hooks.py	86	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/boot_crash_probe.py	56	soft	pid = frida.spawn([EXE], cwd=os.path.join(ROOT, 'original'), env=env)
+FIXED-guard	re/frida/boot_death_probe.py	53	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/boot_nullbadfopen.py	62	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/boot_probe_heaphook.py	64	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/boot_skip_badlock.py	68	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/c4_front_scenario.py	300	soft	pid = dev.spawn(str(exe), cwd=str(cwd), env=env)
+FIXED-guard	re/frida/c4_hud_cup_probe.py	56	hard	dev = frida.get_local_device(); pid = dev.spawn(str(root / "MASHED.exe"), cwd=str(root), env=env)
+FIXED-guard	re/frida/c4_hud_feas.py	38	soft	dev=frida.get_local_device(); pid=dev.spawn(str(statenav.EXE),cwd=str(statenav.ORIG),env=env)
+FIXED-guard	re/frida/c4_m_probe.py	95	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env); rec["pid"] = pid; log(f"  spawned pid={pid}")
+FIXED-guard	re/frida/cam_frame_writer_watch.py	200	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FIXED-guard	re/frida/camera_probe.py	865	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/canon_observe_refused.py	69	hard	subprocess.Popen(['cmd.exe', '/c', 'start', '/b', 'MASHED.exe'],
+FIXED-guard	re/frida/canonical_c4_determinism_canary.py	78	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/canonical_observe_viewport_init.py	152	soft	print(f"frida.spawn {MASHED_EXE} (suspended) ...")
+FIXED-guard	re/frida/canonical_observe_viewport_init.py	156	soft	pid = device.spawn(
+FIXED-guard	re/frida/capture_orig_screens.py	62	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/capture_player_dynamics.py	114	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env); pid = proc.pid
+FIXED-guard	re/frida/capture_qhull_hull.py	159	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/capture_relight_parity.py	166	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env); pid = proc.pid
+FIXED-guard	re/frida/catch_standalone_phys_crash.py	102	soft	pid = dev.spawn([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/catch_standalone_phys_crash_off.py	25	soft	pid = dev.spawn([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/chal_icon_probe.py	276	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/coverage_census.py	180	hard	pid = dev.spawn([str(exe)], cwd=str(exe.parent), env=env)
+FIXED-guard	re/frida/d3d9_createdev_probe.py	73	soft	pid=frida.spawn([EXE],cwd=os.path.join(ROOT,'original'),env=env)
+FIXED-guard	re/frida/detorig.py	136	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/detorig.py	220	soft	pid = dev.spawn(str(EXE), cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/detorig.py	223	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/dev_asi.py	206	soft	pid = device.spawn([program] + list(argv or []), envp=envp,
+FIXED-guard	re/frida/diag_smoke.py	6	soft	- Attach-to-running sidesteps the frida.spawn+resume × intro-skip race
+FIXED-guard	re/frida/diag_smoke.py	67	hard	subprocess.Popen(['cmd.exe', '/c', 'start', '/b', 'MASHED.exe'],
+FIXED-guard	re/frida/diff_mostsep_pair.py	83	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/diff_scoring_adder.py	103	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/disasm_at.py	48	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/early_window_leaf_diff.py	3207	soft	pid = device.spawn([EXE], cwd=ORIG_DIR, env=_env)
+FIXED-guard	re/frida/force_screen.py	252	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/frontend_parity.py	167	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/harvest_handling.py	64	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/hot_path_behavioral.py	214	soft	print(f'frida.spawn {MASHED_EXE} (suspended) ...')
+FIXED-guard	re/frida/hot_path_behavioral.py	218	soft	pid = device.spawn(
+FIXED-guard	re/frida/implicit_survival_sweep.py	73	soft	pid = device.spawn(str(MASHED), cwd=str(MASHED.parent))
+FIXED-guard	re/frida/input_consumer_watch.py	87	soft	dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/input_diag.py	46	soft	dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/input_feed.py	90	soft	dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/input_feed_cooked.py	210	soft	dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/input_feed_wm.py	67	soft	dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/input_recon.py	98	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/input_resolver_drive.py	200	soft	dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/launch_with_crash_catch.py	87	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/launch_with_hooks.py	91	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/logo_overlay_diff.py	96	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/mainbsp_probe.py	49	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/manual_test_config.py	45	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/manual_test_config2.py	42	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/manual_test_config3.py	44	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/manual_test_config4.py	36	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/manual_test_config5.py	40	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/manual_test_config6.py	39	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/manual_test_config7.py	44	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/manual_test_config8.py	38	soft	proc = subprocess.Popen([EXE_PATH], cwd='original', env=env)
+FIXED-guard	re/frida/mass_canonical_observe.py	220	soft	print(f'frida.spawn {MASHED_EXE} (suspended) ...')
+FIXED-guard	re/frida/mass_canonical_observe.py	224	soft	pid = device.spawn(
+FIXED-guard	re/frida/mass_canonical_observe_r2.py	243	soft	print(f'frida.spawn {MASHED_EXE} (suspended) ...')
+FIXED-guard	re/frida/mass_canonical_observe_r2.py	247	soft	pid = device.spawn(
+FIXED-guard	re/frida/mass_canonical_observe_r3.py	242	soft	print(f'frida.spawn {MASHED_EXE} (suspended) ...')
+FIXED-guard	re/frida/mass_canonical_observe_r3.py	246	soft	pid = device.spawn(
+FIXED-guard	re/frida/mass_canonical_observe_wave0.py	224	soft	print(f'frida.spawn {MASHED_EXE} (suspended) ...')
+FIXED-guard	re/frida/mass_canonical_observe_wave0.py	228	soft	pid = device.spawn(
+FIXED-guard	re/frida/mass_canonical_observe_wave2.py	84	soft	pid = device.spawn(str(MASHED_EXE), cwd=str(MASHED_EXE.parent))
+FIXED-guard	re/frida/mass_canonical_observe_wave3.py	46	soft	pid = device.spawn(str(MASHED), cwd=str(MASHED.parent))
+FIXED-guard	re/frida/menu_anim_diff.py	104	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/menu_burst.py	91	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/menu_draw_burst.py	261	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/menu_draw_dump.py	123	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/menu_drawloop_diff.py	123	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/menu_nav_observe.py	80	soft	dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/menu_prompt_diff.py	182	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/nav_champ_probe.py	117	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FIXED-guard	re/frida/nav_reach_probe.py	53	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/nav_to_race.py	35	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FIXED-guard	re/frida/observe_c4_render_math_hooks.py	130	hard	proc = subprocess.Popen(
+FIXED-guard	re/frida/observe_c4_save_hooks.py	426	hard	proc = subprocess.Popen(
+FIXED-guard	re/frida/observe_c4_sweep_20260517.py	239	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/observe_frontend_full_30s.py	210	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/observe_hooks_at_menu.py	207	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/observe_lap_hooks_at_menu.py	137	hard	proc = subprocess.Popen(
+FIXED-guard	re/frida/orig_grid_timeseries.py	108	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FIXED-guard	re/frida/orig_nav_hold.py	167	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/parity_shots.py	142	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/patch_skip_powerups.py	73	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/phys_c4_inrace_probe.py	40	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FIXED-guard	re/frida/pickup_pos_probe2.py	310	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FIXED-guard	re/frida/probe_005ab100.py	33	soft	pid = frida.spawn(EXE)
+FIXED-guard	re/frida/probe_005abf80.py	65	soft	pid = frida.spawn(EXE)
+FIXED-guard	re/frida/probe_action_semantics.py	206	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/probe_badenter.py	41	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/probe_gamemode_state.py	40	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/probe_log_global.py	39	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/probe_phys_state.py	71	soft	pid = dev.spawn([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/probe_player_state.py	53	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/probe_prompt_calls.py	50	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/probe_replay_clock.py	98	soft	proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env)
+FIXED-guard	re/frida/probe_rwsqrt_lut.py	32	soft	pid = dev.spawn([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/race_draw_burst.py	348	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FIXED-guard	re/frida/race_hud_burst.py	608	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/race_refs.py	80	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/raster_create_probe.py	40	soft	pid=frida.spawn([EXE],cwd=os.path.join(ROOT,'original'),env=env)
+FIXED-guard	re/frida/record_attach.py	143	soft	proc = subprocess.Popen([str(exe)], cwd=str(exe.parent), env=env)
+FIXED-guard	re/frida/record_session.py	270	soft	pid = dev.spawn(str(MASHED_EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/record_session.py	393	soft	pid = dev.spawn(str(exe), cwd=str(exe.parent), env=env)
+FIXED-guard	re/frida/replay_session.py	123	soft	pid = dev.spawn(str(exe), cwd=str(exe.parent), env=env)
+FIXED-guard	re/frida/replay_verify.py	284	soft	proc = subprocess.Popen([str(exe)], cwd=str(exe.parent), env=env)
+FIXED-guard	re/frida/run_diff.py	761	soft	proc = subprocess.Popen(
+NOT-A-GAME-LAUNCH	re/frida/run_diff_parallel.py	44	hard	out = subprocess.check_output(['bash', str(POOL_SH), cmd, *map(str, args)],
+FIXED-guard	re/frida/run_diff_scenario.py	227	soft	pid = dev.spawn(str(MASHED_EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/run_diff_warm.py	142	soft	self.proc = subprocess.Popen(
+FIXED-guard	re/frida/run_negctl.py	201	soft	self.spawn()
+FIXED-guard	re/frida/run_negctl.py	205	soft	self.proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env,
+FIXED-guard	re/frida/run_trace_boot_crash.py	50	soft	proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent))
+FIXED-guard	re/frida/scenario_attach_probe.py	90	soft	p = subprocess.Popen(
+FIXED-guard	re/frida/scenario_launch.py	5410	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+FIXED-guard	re/frida/speed_probe.py	124	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/symbolize_ntdll_fault.py	55	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/test_bypass5.py	73	soft	proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env,
+FIXED-guard	re/frida/test_pizwin32_install.py	117	soft	proc = subprocess.Popen(
+FIXED-guard	re/frida/trace_boot_heap.py	72	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/trace_lock_helper.py	49	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/trace_savedata_gate.py	73	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/u9667_menu_table_dump.py	109	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/verify_rebind.py	96	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/verify_rebind.py	148	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/frida/wsb_contact_baseline.py	89	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FIXED-guard	re/parity/sweep.py	297	soft	pid = dev.spawn(str(MASHED_EXE), cwd=str(ORIG_DIR), env=env)
+FIXED-guard	re/tools/ab_report.py	133	soft	proc = subprocess.Popen([str(exe)], cwd=str(REPO), env=env)
+NOT-A-GAME-LAUNCH	re/tools/bind/test_porttop_bind_lib.py	177	soft	r = subprocess.run(['cmd', '/c', bat], capture_output=True)
+NOT-A-GAME-LAUNCH	re/tools/bind/test_porttop_bind_lib.py	182	soft	out = subprocess.run([exe], capture_output=True).stdout.decode().strip()
+NOT-A-GAME-LAUNCH	re/tools/bind/test_porttop_bind_lib.py	226	soft	r = subprocess.run(['cmd', '/c', bat], capture_output=True)
+NOT-A-GAME-LAUNCH	re/tools/bind/test_porttop_bind_lib.py	230	soft	out = subprocess.run([exe], capture_output=True).stdout.decode().strip()
+NOT-A-GAME-LAUNCH	re/tools/ddkobj/mathprobe/ddkcrt_rename.py	43	soft	lst = subprocess.run([str(ddk / "bin" / "lib.exe"), "/nologo", "/LIST", str(libc)], capture_output=True, text=True,
+NOT-A-GAME-LAUNCH	re/tools/ddkobj/mathprobe/ddkcrt_rename.py	52	soft	subprocess.run([str(ddk / "bin" / "lib.exe"), "/nologo", f"/EXTRACT:{full[mem.lower()]}", f"/OUT:{dst}",
+FIXED-guard	re/tools/focus_pause_check.py	57	soft	proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+NOT-A-GAME-LAUNCH	re/tools/gen_portstate_seed.py	49	hard	common = subprocess.run(['git', '-C', REPO, 'rev-parse', '--git-common-dir'], capture_output=True,
+FILED-shell-wrapper	re/tools/pu_replay/sweep.ps1	43	soft	& $Exe "$src.puhook.csv" 0 2>&1 | Set-Content -Encoding utf8 $log
+FIXED-guard	re/tools/sa_boostwatch.py	117	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env,
+FIXED-guard	re/tools/sa_capture.py	100	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env,
+FIXED-guard	re/tools/sa_headwatch.py	100	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env,
+FIXED-guard	re/tools/sa_leaderwatch.py	97	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env,
+NOT-A-GAME-LAUNCH	re/tools/spawner_audit.py	5	hard	A file is a SPAWNER when it contains both a process-spawn token (.spawn(, Popen,
+NOT-A-GAME-LAUNCH	re/tools/spawner_audit.py	6	hard	Start-Process) and a MASHED.exe reference
+NOT-A-GAME-LAUNCH	re/tools/spawner_audit.py	25	soft	SPAWN = re.compile(r'\.spawn\(|\bPopen\b|Start-Process', re.I)
+FIXED-guard	re/tools/statediff/a8_run_port.py	31	soft	head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+FIXED-guard	re/tools/statediff/a8_run_port.py	32	soft	p = subprocess.Popen([str(EXE)], cwd=ROOT, env=env)
+FIXED-guard	re/tools/veccap/capture_vectors.py	139	soft	proc = subprocess.Popen(
+FIXED-guard	re/tools/veccap/live_check_veccap1.py	102	soft	proc = subprocess.Popen(
+FIXED-guard	re/tools/veccap/record_race.py	221	soft	proc = subprocess.Popen([str(EXE)], cwd=str(GAME), env=env, stdin=subprocess.DEVNULL,
+NOT-A-GAME-LAUNCH	re/tools/veccap/replay_offline.py	85	soft	r = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=str(HERE / 'out'))
+NOT-A-GAME-LAUNCH	re/tools/veccap/replay_offline.py	106	soft	r = subprocess.run([str(exe), str(bin_path), mode], capture_output=True, text=True)
+NOT-A-GAME-LAUNCH	re/tools/veccap/veccap_registry.py	185	hard	common = subprocess.run(['git', 'rev-parse', '--git-common-dir'], cwd=str(here),
+NOT-A-GAME-LAUNCH	re/tools/xref.py	151	hard	subprocess.run([_bash(), pool_sh, "release", slot[len("Mashed_pool"):]],
+FILED-shell-wrapper	scripts/b19_navcheck.ps1	23	hard	$p=Start-Process -FilePath (Join-Path $tmp "mashed_re.exe") -WorkingDirectory $root -PassThru
+FIXED-guard	scripts/diag.py	375	soft	p = subprocess.Popen([exe], cwd=cwd, env=env)
+FILED-shell-wrapper	scripts/mashed_shot.ps1	20	soft	$p=Start-Process -FilePath $exe -WorkingDirectory $wd -PassThru
+FILED-shell-wrapper	scripts/observe_runtime.ps1	48	soft	$proc = Start-Process -FilePath $exe -WorkingDirectory $wd -PassThru
+FILED-verify-archive	verify/a4order_20261017/run_arms.py	118	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/a5flip_20261026/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/a5timer_20261026/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/a6flip_20261019/run_arms.py	214	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/aiveh_20261026/run_arms.py	272	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/audiolink_20261023/runtime_table.py	14	hard	p = subprocess.Popen([os.path.join(ORIG, 'MASHED.exe')], cwd=ORIG, env=env, creationflags=0x00000200 | 0x00000008)
+FILED-verify-archive	verify/audiovoltods_20261024/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/bankpath_20261024/navrun.py	14	soft	p = subprocess.Popen([exe], cwd=root, env=e)
+FILED-verify-archive	verify/bankpath_20261024/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/bindbulk_20261121/tools/regen.py	22	soft	r = subprocess.run([sys.executable, os.path.join(T, 'bulk_bind_gen.py'), os.getcwd(), ','.join(roots), '--write'],
+FILED-verify-archive	verify/bindbulk_20261121/tools/regen.py	26	soft	subprocess.run([sys.executable, os.path.join(T, 'refs_gen.py')], check=True)
+FILED-verify-archive	verify/brecipe_20261021/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/c3k44_20261017/run_arms.py	149	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/camribbon_20261016/run_cam.py	42	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/car_bright_20260930/sa_capture_pinned.py	104	soft	proc = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env,
+FILED-verify-archive	verify/car_bright_fix_20260930/a1_dirlog.py	73	soft	proc = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env,
+FILED-verify-archive	verify/car_bright_fix_20260930/run_race.py	73	soft	proc = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env,
+FILED-verify-archive	verify/car_bright_fix_20260930/trackview_dump.py	47	soft	proc = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env,
+FILED-verify-archive	verify/car_gray_fix_20260930/run_race.py	66	soft	proc = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env,
+FILED-verify-archive	verify/carlod2_20261016/run_all.py	46	soft	subprocess.run([PY, str(HERE / "run_gctrl.py"), exe, name], stdout=f, stderr=subprocess.STDOUT)
+FILED-verify-archive	verify/carlod2_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/carlod2_20261016/run_replay3d.py	63	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/carlod_20261016/run_all.py	48	soft	subprocess.run([PY, str(HERE / "run_gctrl.py"), exe, name], stdout=f, stderr=subprocess.STDOUT)
+FILED-verify-archive	verify/carlod_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/carlod_20261016/run_replay3d.py	63	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/ccinv_20261019/run_arms.py	247	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/cev_20261018/run_arms.py	164	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/colllut_20261026/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/cpcflip_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d1r1_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/d1r1_20261016/run_replay3d.py	63	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/d1r2_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/d1r2_20261016/run_replay.py	52	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/d1r3_20261016/run_gctrl.py	102	soft	proc = subprocess.Popen([str(exe)], cwd=str(WT), env=env,
+FILED-verify-archive	verify/d1r3_20261016/run_gctrl_all.py	17	soft	r = subprocess.run([sys.executable, str(HERE / "run_gctrl.py"), exe, name, "0", track,
+FILED-verify-archive	verify/d1r3_20261016/run_gctrl_vs.py	23	soft	r = subprocess.run([sys.executable, str(HERE / "run_gctrl.py"), exe, name, "0", track,
+FILED-verify-archive	verify/d1r3_20261016/run_races.py	61	soft	proc = subprocess.Popen([str(exe)], cwd=str(WT), env=env,
+FILED-verify-archive	verify/d1shadows_20261024/run_replay.py	54	soft	p = subprocess.Popen([a.exe], cwd=str(Path(a.root)), env=env)
+FILED-verify-archive	verify/d2bsp_20261016/run_arms.py	72	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2close_20261016/run_arms.py	67	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2close_20261016/tracks_check.py	32	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/d2engage_20261016/run_arms.py	75	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2lateral_20261016/run_arms.py	78	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2off_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2posmodel_20261016/run_arms.py	82	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2rebase_20261019/run_arms.py	212	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2ref_20261017/run_arms.py	148	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d2settle_20261016/run_arms.py	64	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3_bulk_20261011/tools/peek.py	23	hard	proc = subprocess.Popen([os.path.join(ROOT, "mashedmod", "build", "mashed_re.exe")], cwd=ROOT, env=env)
+FILED-verify-archive-ps1	verify/d3_consumer_20261007/run_e1.ps1	25	soft	& py @args
+FILED-verify-archive-ps1	verify/d3_consumer_20261007/run_e1b.ps1	23	soft	& py @a
+FILED-verify-archive-ps1	verify/d3_consumer_20261007/run_e2.ps1	38	soft	$p = Start-Process -FilePath $exe -WorkingDirectory $root -PassThru
+FILED-verify-archive-ps1	verify/d3_determinism_20261007/run_f2.ps1	47	soft	$p = Start-Process -FilePath $exe -WorkingDirectory $root -PassThru
+FILED-verify-archive	verify/d3_gatefire_20261008/sa_inputs_poll.py	32	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3_gatefire_20261008/sa_substate_poll.py	31	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3_pathprog_a_20261016/run_pathprog_a.py	155	soft	p = subprocess.Popen([str(a.get("exe", NEW))], cwd=str(WT), env=env)
+FILED-verify-archive	verify/d3_u9683_20261016/run_u9683.py	127	soft	p = subprocess.Popen([str(a["exe"])], cwd=str(WT), env=env)
+FILED-verify-archive	verify/d3_u9684_20261013/run_arms.py	45	soft	p = subprocess.Popen([EXE], cwd=W, env=env)
+FILED-verify-archive	verify/d3bB2_20261017/run_arms.py	106	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3b_20261016/run_arms.py	77	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3bc_20261019/run_arms.py	240	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3cfbox_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3cfboxflip_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3close_20261021/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d3close_20261021/run_pu.py	44	soft	rep = subprocess.run([exe, src + '.puhook.csv', '0'], env=env, capture_output=True, text=True).stdout
+FILED-verify-archive	verify/d3close_20261021/run_pu.py	67	soft	rep = subprocess.run([exe, src, '0'], env=env, capture_output=True, text=True).stdout
+FILED-verify-archive-ps1	verify/d3rflame_20261024/run_replay_arms.ps1	27	soft	& $exe $a.in 0 2>&1 | Set-Content -Encoding utf8 $log
+FILED-verify-archive	verify/d3subph3_20261028/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d4dc77b0lap_20261030/run_lap.py	36	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/d4dc77b0laplong_20261030/run_lap.py	36	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/d4dc77b0matchend_20261101/exe_vsprobe.py	104	soft	pid = frida.spawn([a.exe], cwd=a.root, env=env)
+FILED-verify-archive	verify/d4dc77b0matchend_20261101/run_arms.py	275	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d4dc77b0runtime_20261101/exe_vsprobe.py	104	soft	pid = frida.spawn([a.exe], cwd=a.root, env=env)
+FILED-verify-archive	verify/d4dc77b0st3pretick_20261101/exe_vsprobe.py	104	soft	pid = frida.spawn([a.exe], cwd=a.root, env=env)
+FILED-verify-archive	verify/d4dc77b0st3pretick_20261101/run_arms.py	275	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d4dc82a0_20261025/asi_measure_probe.py	70	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env); pid = proc.pid
+FILED-verify-archive-ps1	verify/d4dc82a0_20261025/run_all_asi.ps1	7	soft	& py.exe -3.12 "$V\asi_measure_probe.py" "$V\asi_measure_probe.json" 'D:\MashedWT\D4-DC-82a0_data\after\mashed_re_dev.asi'
+FILED-verify-archive-ps1	verify/d4dc82a0_20261025/run_all_asi.ps1	9	soft	& py.exe -3.12 "$V\run_diff_private.py" menu_menus_ba
+FILED-verify-archive-ps1	verify/d4dc82a0_20261025/run_all_asi.ps1	12	soft	& py.exe -3.12 "$V\run_diff_private.py" menu_menus_ba --self-baseline
+FILED-verify-archive-ps1	verify/d4dc82a0_20261025/run_all_sa.ps1	8	hard	& pwsh -NoProfile -File "$V\run_sa.ps1" -Exe "$D\$k\mashed_re.exe" -Screen $s -Out "$V\sa${s}_$k.json" -Log "$V\sa${s}_$k.log"
+FILED-verify-archive-ps1	verify/d4dc82a0_20261025/run_sa.ps1	23	soft	$p = Start-Process -FilePath $Exe -WorkingDirectory $root -PassThru
+FILED-verify-archive	verify/d4dc_0046d4a0_knob_20261101/run_replay.py	23	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/d4dc_0046d4a0_replayorder_20261102/run_replay.py	35	soft	p = subprocess.Popen([EXE[tag]], cwd=ROOT, env=e)
+FILED-verify-archive	verify/d4flip_matchend_st3pretick_20261102/run_arms.py	275	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/d4wsbsolvkv_20261029/uc_arm.py	278	soft	r = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=str(d))
+FILED-verify-archive	verify/d4wsbsolvkvarmu_20261030/uc_arm.py	302	soft	r = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=str(d))
+FILED-verify-archive	verify/d5flipmusic_20261030/run_port.py	37	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/d5flipsavefirstrun_20261030/run_witness.py	30	soft	p = subprocess.Popen([str(EXE)], cwd=str(scratch), env=env)
+FILED-verify-archive	verify/d5partmorphflip_20261030/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/dcleaf_20261022/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/dcmath4d20_20261025/run_replay.py	53	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/dcmix_20261022/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/dcphys2_20261022/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/dcphys_20261021/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/dcstream_20261022/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/dflip_20261017/run_arms.py	66	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/dualcopy3_20261016/run_arm.py	69	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/dualcopy3_20261016/run_baselines.py	20	soft	p = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ROOT))
+FILED-verify-archive	verify/dualcopy4_20261016/run_arm.py	69	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/dualcopy4_20261016/run_baselines.py	20	soft	p = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ROOT))
+FILED-verify-archive	verify/dualcopy4_20261016/run_m3replay.py	26	soft	p = subprocess.Popen([exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/dualcopy4_20261016/run_nav.py	27	soft	p = subprocess.Popen([str(Path(exe).resolve())], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/dupinstall2_20261016/c4_racediff.py	156	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/dupinstall2_20261016/c4_verify.py	85	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FILED-verify-archive	verify/dupinstall2_20261016/install_observe.py	98	soft	pid = device.spawn(str(EXE), cwd=str(ORIG), env=env)
+FILED-verify-archive	verify/dupinstall2_20261016/nav_probe.py	62	soft	proc = subprocess.Popen([str(RD.MASHED_EXE)], cwd=str(RD.MASHED_EXE.parent), env=env, **kw)
+FILED-verify-archive	verify/dupinstall2_20261016/run_gctrl_private.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/dupinstall_20261016/install_observe.py	95	soft	pid = device.spawn(str(EXE), cwd=str(ORIG), env=env)
+FILED-verify-archive	verify/dupinstall_20261016/run_gctrl_private.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/f5flip_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/faithflip_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/fe_residuals_20261016/run_fx.py	15	soft	p = subprocess.Popen([exe], cwd=gr, env=env)
+FILED-verify-archive	verify/fe_residuals_20261016/u9672/sa_scr_keys.py	10	soft	p = subprocess.Popen([exe], cwd=gr, env=env)
+FILED-verify-archive	verify/fe_residuals_20261016/u9680/rect_probe.py	55	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env); print("spawned PID", pid, flush=True)
+FILED-verify-archive	verify/fe_residuals_20261016/u9680/run_sa_drawstream.py	11	soft	p = subprocess.Popen([exe], cwd=gr, env=env)
+FILED-verify-archive	verify/fflip_20261021/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/freecam_title_20261001/post_freecam_keys.py	57	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/freecam_title_20261001/title_probe.py	56	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/fwd494fd0_20261016/run_gctrl_private.py	56	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/fwdsse_20261019/run_arms.py	201	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/fxgates_20261026/fx_arms.py	37	soft	t0 = time.time(); p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/fxinputs_20261026/run_arms.py	272	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/fxrebase_20261027/run_arms.py	272	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/gridyaw_20261016/run_arms.py	86	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/gridyaw_20261016/run_rb.py	95	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive-ps1	verify/hb_train_20261110/flipcount_HB-TRAIN-FLIP-DECISION.ps1	4	soft	Invoke-Expression $m.Value
+FILED-verify-archive	verify/hbarctic_20261027/run_render.py	56	soft	proc = subprocess.Popen([str(exe)], cwd=str(root), env=env,
+FILED-verify-archive	verify/hbarcticnolight_20261101/run_render.py	41	soft	proc = subprocess.Popen([str(exe)], cwd=str(root), env=env,
+FILED-verify-archive	verify/hbarcticopensea_20261027/run_render.py	46	soft	proc = subprocess.Popen([str(exe)], cwd=str(root), env=env,
+FILED-verify-archive	verify/hbarcticsky_20261027/run_render.py	43	soft	proc = subprocess.Popen([str(exe)], cwd=str(root), env=env,
+FILED-verify-archive	verify/hbarcticskyflip_20261027/run_render.py	42	soft	proc = subprocess.Popen([str(exe)], cwd=str(root), env=env,
+FILED-verify-archive	verify/hbforestwater_20261027/run_render.py	52	soft	proc = subprocess.Popen([str(exe)], cwd=str(root), env=env,
+FILED-verify-archive	verify/hbtexanimrefs_20261027/run_render.py	63	soft	proc = subprocess.Popen([str(exe)], cwd=str(root), env=env,
+FILED-verify-archive	verify/iconcube_20261028/run_arms.py	272	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/iconcube_20261028/run_arms_glow.py	275	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/iconcube_20261028/run_replay3d.py	64	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/intromovies_20261028/run_intro.py	170	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=env)
+FILED-verify-archive	verify/k357_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/kfdot_20261022/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/librwrest_20261016/run_shade.py	35	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/librwrest_checks_20261016/negctl.py	36	soft	subprocess.run(["py", "-3.12", str(HERE / "run_stand.py"), str(EXE), str(HERE / f"stand_{arm}_neg"),
+FILED-verify-archive	verify/librwrest_checks_20261016/run_stand.py	74	soft	p = subprocess.Popen([a.exe], cwd=str(root), env=env)
+FILED-verify-archive	verify/lk21_20261018/run_arms.py	169	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/match_20261113/MATCH-RWT-S1B_probes/gscan.py	15	soft	r = subprocess.run([str(BIN[tc] / "cl.exe"), "/nologo", "/c", "/Gy", *base, *extra, f"/Fa{out}",
+FILED-verify-archive	verify/matchs04_20261031/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs05_20261101/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs06fu_20261102/tools/run_measure.py	23	soft	p = subprocess.Popen([exe], cwd=root, env=env)
+FILED-verify-archive	verify/matchs07_20261101/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs08_20261101/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs09_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs10_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs11_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs12_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs13_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs14_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs15_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs16_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matchs19_20261102/tools/swaps.py	23	soft	blob = subprocess.check_output(["git", "hash-object", src], text=True).strip()
+FILED-verify-archive	verify/matcht13seedwriter_20261102/l_arms.py	29	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/menuanim_20261027/orig_anim_poll.py	11	hard	p = subprocess.Popen([str(ORIG / "MASHED.exe")], cwd=str(ORIG), env=env)
+FILED-verify-archive	verify/menuanim_20261027/orig_anim_timing.py	28	soft	dev=frida.get_local_device(); pid=dev.spawn(str(EXE),cwd=str(ORIG),env=env)
+FILED-verify-archive	verify/padcoop_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/padcoopflip_20261026/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/partmorph_20261028/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/partmorph_20261028/run_arms_s0.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/pickups_fix_20261001/run_race.py	62	soft	proc = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env,
+FILED-verify-archive-ps1	verify/playtest_loading_disc_20261122/run_orig.ps1	6	hard	$p = Start-Process -FilePath "$root\original\MASHED.exe" -WorkingDirectory "$root\original" -PassThru
+FILED-verify-archive-ps1	verify/playtest_loading_disc_20261122/run_re_req.ps1	9	hard	$p = Start-Process -FilePath "$Dir\mashed_re.exe" -WorkingDirectory $Dir -PassThru
+FILED-verify-archive	verify/pontoon_20261016/run_arm.py	69	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/pontoon_20261016/run_arms.py	50	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/pontoon_20261016/run_replay3d.py	63	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/portstate_20261108/fpu_exe_probe.py	60	soft	pid = dev.spawn(str(Path(exe).resolve()), cwd=str(root), env=env)
+FILED-verify-archive	verify/portstate_20261108/fpu_probe.py	149	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FILED-verify-archive	verify/portstate_20261108/run_nav.py	39	soft	p = subprocess.Popen([str(Path(exe).resolve())], cwd=str(root), env=env)
+FILED-verify-archive	verify/portstate_20261108/run_seed.py	39	soft	p = subprocess.Popen([str(Path(exe).resolve())], cwd=str(root), env=env)
+FILED-verify-archive	verify/portstate_20261109/aispline_ddk/x87_live_emu.py	368	soft	pid = dev.spawn(str(exe), cwd=str(exe.parent), env=env)
+FILED-verify-archive	verify/portstate_20261109/x87_live_emu.py	367	soft	pid = dev.spawn(str(exe), cwd=str(exe.parent), env=env)
+FILED-verify-archive	verify/porttop08_20261112/watch_eab0.py	81	soft	proc = subprocess.Popen([EXE], cwd=root, env=env)
+FILED-verify-archive	verify/porttop_20261108/knob_boot.py	35	soft	p = subprocess.Popen([EXE], cwd=root, env=env)
+FILED-verify-archive	verify/porttopland_20261121/tools/define_diff.py	7	soft	files = subprocess.run(['git', 'diff', '--name-only', ref, '--', 'mashedmod/src/mashed_re/Match/'], capture_output=True,
+FILED-verify-archive	verify/pregocubeflip_20261029/run_arms.py	273	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/r7flip_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/r7input_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/r7joypad_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/r7keep_20261022/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/racelua2_20261122/vfs_watch.py	173	hard	pid = frida.spawn([str(exe)], cwd=str(exe.parent), env=env)
+FILED-verify-archive	verify/rbflip_20261021/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/rfx2_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rfx2_20261016/run_nt.py	30	soft	subprocess.run([sys.executable, str(WT / "verify" / "d1r1_20261016" / "run_replay3d.py"), exe, str(out),
+FILED-verify-archive	verify/rfx_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rhooks_20261016/run_gctrl.py	56	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rpct_20261022/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/rprops2_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rprops2_20261016/run_replay3d.py	63	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rprops2_20261016/smoke_tracks.py	32	soft	p = subprocess.Popen([exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rprops_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rprops_20261016/run_replay3d.py	63	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rprops_20261016/smoke_tracks.py	32	soft	p = subprocess.Popen([exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rsky_20261016/binmesh_census.py	31	soft	p = subprocess.Popen([str(exe)], cwd=str(root), env=env)
+FILED-verify-archive	verify/rsky_20261016/run13.py	153	soft	p = subprocess.Popen([str(exe)], cwd=str(root), env=env)
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final.ps1	10	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_base.exe"   --root $Root --out "$Out\base_n"   --tracks 20
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final.ps1	11	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_after4.exe" --root $Root --out "$Out\after4_n" --tracks 20
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final.ps1	12	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_after4.exe" --root $Root --out "$Out\after4"
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final.ps1	13	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_after4.exe" --root $Root --out "$Out\ctl" --tracks 2,5,7,9,10,11,12 `
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final.ps1	15	soft	& $py -3.12 verify\rsky_20261016\run_gctrl_priv.py "$Out\exe_after4.exe" after4 --root $Root --out "$Out\gctrl"
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final2.ps1	9	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_base2.exe"  --root $Root --out "$Out\base2"
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final2.ps1	10	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_base2.exe"  --root $Root --out "$Out\base2_n"  --tracks 20
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final2.ps1	11	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_after5.exe" --root $Root --out "$Out\after5_n" --tracks 20
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final2.ps1	12	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_after5.exe" --root $Root --out "$Out\after5"
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final2.ps1	13	soft	& $py -3.12 verify\rsky_20261016\run13.py run --exe "$Out\exe_after5.exe" --root $Root --out "$Out\ctl2" --tracks 2,5,7,9,10,11,12 `
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final2.ps1	15	soft	& $py -3.12 verify\rsky_20261016\run_gctrl_priv.py "$Out\exe_base2.exe"  base2  --root $Root --out "$Out\gctrl2"
+FILED-verify-archive-ps1	verify/rsky_20261016/run_final2.ps1	16	soft	& $py -3.12 verify\rsky_20261016\run_gctrl_priv.py "$Out\exe_after5.exe" after5 --root $Root --out "$Out\gctrl2"
+FILED-verify-archive	verify/rsky_20261016/run_gctrl_priv.py	52	soft	p = subprocess.Popen([str(exe)], cwd=str(root), env=env)
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify.ps1	8	soft	& $py -3.12 $run run --exe "$Out\exe_verify.exe" --root $Root --out "$Out\verify"
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify.ps1	9	soft	& $py -3.12 $run run --exe "$Out\exe_verify.exe" --root $Root --out "$Out\verify_n" --tracks 20
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify.ps1	10	soft	& $py -3.12 $run run --exe "$Out\exe_pre.exe"    --root $Root --out "$Out\pre"
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify.ps1	11	soft	& $py -3.12 $run run --exe "$Out\exe_pre.exe"    --root $Root --out "$Out\pre_n"    --tracks 20
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify.ps1	12	soft	& $py -3.12 $run run --exe "$Out\exe_verify.exe" --root $Root --out "$Out\ctl" --tracks 2,5,7,9,10,11,12 `
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify.ps1	14	soft	& $py -3.12 verify\rsky_20261016\run_gctrl_priv.py "$Out\exe_verify.exe" verify --root $Root --out "$Out\gctrl"
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify2.ps1	9	soft	& $py -3.12 $run run --exe "$Out\exe_verify2.exe" --root $Root --out "$Out\verify2"
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify2.ps1	10	soft	& $py -3.12 $run run --exe "$Out\exe_verify2.exe" --root $Root --out "$Out\verify2_n" --tracks 20
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify2.ps1	11	soft	& $py -3.12 $run run --exe "$Out\exe_verify2.exe" --root $Root --out "$Out\ctl2" --tracks 2,5,7,9,10,11,12 `
+FILED-verify-archive-ps1	verify/rskyverify_20261016/run_verify2.ps1	13	soft	& $py -3.12 verify\rsky_20261016\run_gctrl_priv.py "$Out\exe_verify2.exe" verify2 --root $Root --out "$Out\gctrl2"
+FILED-verify-archive	verify/rstates_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rstates_20261016/smoke_tracks.py	42	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rtex_20261016/run_gctrl.py	55	soft	p = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rtex_20261016/run_replay3d.py	63	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/rwcbombdestroy_20261116/orig_bomb_destroy.py	49	soft	pid = frida.spawn([EXE], cwd=EXE.rsplit('\\', 1)[0] if '\\' in EXE else None)
+FILED-verify-archive	verify/savelink2_20261023/run_knob_arms.py	59	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/savelink_20261023/run_arms.py	290	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/savelink_20261023/write_leg.py	25	soft	p = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+FILED-verify-archive-ps1	verify/scr19_parity_20261012/after_fix/run_sa.ps1	16	hard	$p = Start-Process -FilePath "$wt\mashedmod\build\mashed_re.exe" -WorkingDirectory $wt -PassThru
+FILED-verify-archive	verify/scr19_parity_20261012/alpha_probe.py	18	soft	pid = dev.spawn(str(M.EXE), cwd=str(M.ORIG), env=env)
+FILED-verify-archive	verify/scr19_parity_20261012/arrow_fix/measure_probe.py	97	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FILED-verify-archive-ps1	verify/scr19_parity_20261012/arrow_fix/run_sa.ps1	16	hard	$p = Start-Process -FilePath "$wt\mashedmod\build\mashed_re.exe" -WorkingDirectory $wt -PassThru
+FILED-verify-archive	verify/scr19_parity_20261012/scr32_fix/measure_probe32.py	112	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FILED-verify-archive-ps1	verify/scr19_parity_20261012/scr32_fix/run_sa.ps1	17	hard	$p = Start-Process -FilePath "$wt\mashedmod\build\mashed_re.exe" -WorkingDirectory $wt -PassThru
+FILED-verify-archive-ps1	verify/scr19_parity_20261012/scr32_texty/run_sa.ps1	19	hard	$p = Start-Process -FilePath "$wt\mashedmod\build\mashed_re.exe" -WorkingDirectory $wt -PassThru
+FILED-verify-archive	verify/scr19_parity_20261012/scr32_texty/text_frame_probe.py	82	soft	pid = dev.spawn(str(EXE), cwd=str(EXE.parent), env=env)
+FILED-verify-archive	verify/scr19_parity_20261012/scr32_texty/text_y_probe.py	97	soft	pid = dev.spawn(str(EXE), cwd=str(EXE.parent), env=env)
+FILED-verify-archive	verify/scr19_parity_20261012/scr32_texty_recheck/recheck_frame_probe.py	103	soft	pid = dev.spawn(str(EXE), cwd=str(EXE.parent), env=env)
+FILED-verify-archive-ps1	verify/scr19_parity_20261012/scr32_texty_recheck/run_sa.ps1	20	soft	$p = Start-Process -FilePath "$wt\mashedmod\build\mashed_re_$Build.exe" -WorkingDirectory $wt -PassThru
+FILED-verify-archive-ps1	verify/scr19_parity_20261012/scr32_texty_sites/run_sa.ps1	20	soft	$p = Start-Process -FilePath "$wt\mashedmod\build\mashed_re_$Build.exe" -WorkingDirectory $wt -PassThru
+FILED-verify-archive	verify/scr19_parity_20261012/text3/probe_devcount.py	41	soft	pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+FILED-verify-archive	verify/scr19_parity_20261012/text4/probe_chalrow.py	43	soft	pid = dev.spawn(str(EXE), cwd=str(EXE.parent), env=env)
+FILED-verify-archive	verify/sea_fix_20260930/run_race.py	59	soft	proc = subprocess.Popen([str(exe)], cwd=str(ROOT), env=env,
+FILED-verify-archive	verify/sea_level_20260929/sa_capture_frozen.py	100	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env,
+FILED-verify-archive	verify/seek414f00_20261016/run_arm.py	69	soft	p = subprocess.Popen([a.exe], cwd=str(ROOT), env=env)
+FILED-verify-archive	verify/seek414f00_20261016/run_exe_arms.py	19	soft	p = subprocess.run([sys.executable, str(ARM), exe, name, *extra, *knobs], capture_output=True, text=True, cwd=str(ROOT))
+FILED-verify-archive	verify/snap_20261027/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/snapflip_20261028/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/soflip_20261021/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/substep_20261021/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/t13seed_20261102/p_arms.py	29	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/trinflip_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive-ps1	verify/txdscope_20261016/run_txdscope.ps1	16	soft	& $py -3.12 $run run --exe "$Out\exe_after.exe" --root $Root --out "$Out\after"
+FILED-verify-archive-ps1	verify/txdscope_20261016/run_txdscope.ps1	18	soft	& $py -3.12 $run run --exe "$Out\exe_after.exe" --root $Root --out "$Out\ctl" --tracks 2,5,10,11,12,13 MASHED_NO_TXDSCOPE=1
+FILED-verify-archive-ps1	verify/txdscope_20261016/run_txdscope.ps1	20	soft	& $py -3.12 verify\rsky_20261016\run_gctrl_priv.py "$Out\exe_base.exe" base --root $Root --out "$Out\gctrl"
+FILED-verify-archive-ps1	verify/txdscope_20261016/run_txdscope.ps1	21	soft	& $py -3.12 verify\rsky_20261016\run_gctrl_priv.py "$Out\exe_after.exe" after --root $Root --out "$Out\gctrl"
+FILED-verify-archive	verify/u9152_20261018/run_arms.py	190	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9747_20261018/run_arms.py	155	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9749_20261017/run_arms.py	138	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9754_20261018/run_arms.py	173	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9755_20261018/run_arms.py	179	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9756_20261018/flip/run_arms.py	184	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9756_20261018/run_arms.py	183	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9758_20261018/run_arms.py	194	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9759_20261018/run_arms.py	199	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9760_20261019/run_arms.py	203	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9760_20261019/split/run_arms.py	205	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9761_20261019/run_arms.py	208	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9762_20261019/run_arms.py	211	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9764_20261019/run_arms.py	215	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9765_20261019/run_arms.py	217	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9766_20261019/run_arms.py	220	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9767_20261019/run_arms.py	221	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9769_20261019/run_arms.py	246	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9770_20261019/run_arms.py	249	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9771_20261019/run_arms.py	264	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9772_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9773_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9774_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9775_20261025/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9776_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9777_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9778_20261021/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9779_20261021/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9779_20261024/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9780_20261024/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/u9782_20261024/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/wcsflip_20261020/run_arms.py	269	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/wsbbroada_20261027/c4_racediff_v10.py	231	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbbroada_20261027/c4_racediff_v8.py	221	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbbroada_20261027/c4_racediff_v9.py	227	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbbroadtail_20261027/c4_racediff_v11.py	239	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbbroadws_20261027/c4_racediff_v10.py	232	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbbvh_20261026/c4_racediff_bvh.py	210	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbbvh_20261026/make_tool.py	76	soft	r = rep(r, "        proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,",
+FILED-verify-archive	verify/wsbbvh_20261026/make_tool.py	78	soft	        proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,)
+FILED-verify-archive	verify/wsbbvh_20261027/c4_racediff_v6.py	214	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbbvhfu_20261027/c4_racediff_v7.py	215	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbc230_20261027/c4_racediff_v10.py	231	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbc230_20261027/c4_racediff_v11.py	234	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbnarrowflip_20261027/run_arms.py	271	soft	p = subprocess.Popen([exe], cwd=ROOT, env=env)
+FILED-verify-archive	verify/wsbsolvws_20261027/c4_racediff_v7.py	215	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsbsolvws_20261027/c4_racediff_v8_raw.py	221	soft	proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
+FILED-verify-archive	verify/wsjmusic_20261026/run_port.py	36	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)
+FILED-verify-archive	verify/wsjref_20261026/run_port.py	34	soft	p = subprocess.Popen([EXE], cwd=ROOT, env=e)

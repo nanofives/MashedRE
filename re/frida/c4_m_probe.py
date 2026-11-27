@@ -8,6 +8,7 @@
 # inputs that decide whether each row's old defect is observable live.
 #
 # Usage: py -3.12 re/frida/c4_m_probe.py [--plan qb|modes] [--out DIR] [--tag NAME]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time
 from pathlib import Path
 import frida

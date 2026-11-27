@@ -2,6 +2,7 @@
 # Installs all save hooks via InjectHooks, then restores a configurable subset
 # to find which save hook(s) cause the t=10s crash.
 # Usage: py -3.12 re/frida/bisect_save_hooks.py --keep-range 0 14
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse, json, os, pefile, subprocess, sys, time
 from pathlib import Path
 import frida, psutil, ctypes

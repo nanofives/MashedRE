@@ -55,6 +55,7 @@
 # Emits log/diff_scenario_<hook_name>.csv (same schema as run_diff.py) and prints
 # GREEN/RED + a degeneracy check (how many DISTINCT original values the vectors
 # produced — 1 distinct == still degenerate; >1 == non-degenerate, the goal).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import csv
 import json
 import os

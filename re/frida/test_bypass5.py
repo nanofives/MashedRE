@@ -2,6 +2,7 @@
 Bypass test: 4 track-node crashers + VfsStreamRead = 5 hooks bypassed.
 All other hooks including 28 save hooks remain installed.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, subprocess, sys, time
 from pathlib import Path
 import frida, psutil, pefile

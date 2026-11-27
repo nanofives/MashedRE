@@ -10,6 +10,7 @@
 # Spawn+attach (NEVER frida.spawn). Kills ONLY the pid it launches.
 # Usage: py -3.12 re/frida/capture_player_dynamics.py [--track 3] [--mode 2] [--hold 16]
 #        --steer 0 (none) | 1 (hold steer ctrl `--steerctrl` after --steer-at s)
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, argparse, subprocess, math
 from pathlib import Path
 import frida

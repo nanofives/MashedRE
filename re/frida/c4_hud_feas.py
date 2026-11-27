@@ -1,6 +1,7 @@
 # Feasibility probe (stock original) for the group-H C4 scenarios. Counts game entries into
 # 0x00403160 / 0x0041db80 / 0x004295a0 / 0x00429e10 / 0x0043df00 and samples the gating globals.
 # Usage: py -3.12 re/frida/c4_hud_feas.py --scen attract|quick [--secs N] [--tag T]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time
 from pathlib import Path
 import frida

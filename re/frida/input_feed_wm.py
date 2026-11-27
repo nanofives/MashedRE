@@ -11,6 +11,7 @@
 # nav handlers fire, the menu consumes WM_KEYDOWN and this path drives navigation.
 #
 # Usage: py -3.12 re/frida/input_feed_wm.py [--settle MS] [--seconds N] [--count 0x..,..]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import ctypes, os, sys, time
 from ctypes import wintypes
 from pathlib import Path

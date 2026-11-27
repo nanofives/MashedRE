@@ -84,6 +84,7 @@
 #   log/race_hud_burst.json  { "<label>_f<i>": [ {"v","r"}, ... ] }   quads
 #   log/race_hud_text.json   { "<label>_f<i>": [ {"str_*","xy_raw",...} ] } text
 #   log/race_hud_attrib.json  retaddr -> count, per channel (who draws what)
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import json
 import os

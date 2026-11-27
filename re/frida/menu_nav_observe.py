@@ -8,6 +8,7 @@
 # mode: 0=push submenu, 1=pop-2-levels, 2=reuse.  See frontend_input_nav_trace/TRACE.md.
 #
 # Usage: py -3.12 re/frida/menu_nav_observe.py [--seconds N]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 from pathlib import Path
 import frida

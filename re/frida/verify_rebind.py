@@ -26,6 +26,7 @@ PID hygiene (CLAUDE.md): spawns its own MASHED, kills ONLY that pid.
 Usage:
   py -3.12 re\frida\verify_rebind.py --cfg <path-to-contcfg0.bin> --key 0x39 --control 0x14
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import os
 import shutil

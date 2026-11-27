@@ -10,6 +10,7 @@
 # so MASHED's per-frame edge detection registers one move per tap.
 #
 # Usage: py -3.12 re/frida/input_feed.py [--seq down,down,up] [--settle MS] [--seconds N]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 from pathlib import Path
 import frida

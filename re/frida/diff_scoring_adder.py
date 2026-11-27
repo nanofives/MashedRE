@@ -21,6 +21,7 @@
 # (verify_scoring_hooks.py) it is the C4 evidence for FUN_0040b290.
 #
 # Usage: py -3.12 re/frida/diff_scoring_adder.py
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time
 from pathlib import Path
 import frida

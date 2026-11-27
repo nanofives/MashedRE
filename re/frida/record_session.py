@@ -22,6 +22,7 @@
 #
 # Stops on: --seconds elapsed, OR the game process exiting (quit/crash). The trace +
 # coverage are flushed to disk every ~1s, so a mid-jump crash still keeps what played.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, json, csv, hashlib, datetime, argparse
 from pathlib import Path
 import frida

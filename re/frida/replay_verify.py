@@ -18,6 +18,7 @@
 #
 # Usage:
 #   py -3.12 re/frida/replay_verify.py --pid <PID> re/scenarios/001-nav-demo
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, json, argparse, subprocess
 from pathlib import Path
 import frida

@@ -7,6 +7,7 @@
 # each state into verify/parity/.
 #
 # Usage: py -3.12 re/frida/parity_shots.py
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import ctypes, os, sys, time
 from ctypes import wintypes
 from pathlib import Path

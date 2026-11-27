@@ -7,6 +7,7 @@ Usage: py -3.12 re/tools/statediff/a8_run_port.py <out_dir> [seconds=45] [EXTRA=
 Recipe (verify/a8_velvec_20260825/PROVENANCE.txt, twenty-third follow-up), plus
 MASHED_MUTE=1 per the project's always-launch-muted rule.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, shutil, subprocess, sys, time
 from pathlib import Path
 

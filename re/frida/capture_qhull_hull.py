@@ -18,6 +18,7 @@
 #
 # Spawn+attach (NEVER frida.spawn). Kills ONLY the pid it launches.
 # Usage: py -3.12 re/frida/capture_qhull_hull.py [--track 0] [--mode 10] [--cars 4] [--hold 20]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, json, base64, argparse, subprocess
 from pathlib import Path
 import frida

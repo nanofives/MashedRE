@@ -5,6 +5,7 @@
 # Usage: py -3.12 re/tools/sa_capture.py out_prefix t1,t2,... [ENV=VAL ...]
 # e.g.:  py -3.12 re/tools/sa_capture.py verify/parity3d/sa_cam 6,12,20 \
 #            MASHED_TRACK_VIEW=Arctic MASHED_CAR=1 MASHED_ROUND=1
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import ctypes, os, subprocess, sys, time
 from ctypes import wintypes
 from pathlib import Path

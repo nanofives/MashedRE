@@ -6,6 +6,7 @@
 # 0x400000), this spawns the standalone (rebased /BASE:0x10000) and classifies
 # stack values against the LIVE module range so the caller chain resolves against
 # mashed_re.map (Rva+Base column).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import json, os, sys, time
 from pathlib import Path
 import frida

@@ -26,6 +26,7 @@ Usage:
 Writes <out_prefix>.leader.json (summary) and <out_prefix>.leader.csv (every sample).
 The process is spawned and killed BY PID; no blanket kill by name.
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import ctypes, json, os, struct, subprocess, sys, time
 from ctypes import wintypes
 from pathlib import Path

@@ -16,6 +16,7 @@
 #   1) launch MASHED yourself (double-click original\MASHED.exe -> main menu)
 #   2) py -3.12 re/frida/record_attach.py --pid <PID> --name ramp-airborne --mode physics --seconds 180
 #      (find PID: the MASHED window title is "MASHED [D3D9] [Release]")
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, json, argparse, datetime, subprocess
 from pathlib import Path
 import frida

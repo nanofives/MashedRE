@@ -17,6 +17,7 @@
 # With --asi the dev .asi loads, so installed-hook self-tests run against the exact
 # replayed scenario — that is the canonical-scenario / installed-hook C4 evidence the
 # C4_REVALIDATION backlog needs (no human in the loop).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, json, argparse
 from pathlib import Path
 import frida

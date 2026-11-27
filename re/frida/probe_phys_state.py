@@ -3,6 +3,7 @@
 # (g_records[0]) grounded count (+0x278 float, +0x9e0 int), velocity (+0x9b0),
 # speed (+0x9e4), drive accum (+0xb14), and Collision::g_worldTriCount /
 # g_terrainEntryCount by resolving symbols from the .map.
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time, bisect
 from pathlib import Path
 import frida

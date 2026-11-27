@@ -7,6 +7,7 @@
 # Ground truth for porting the player rows faithfully into mashed_re.exe.
 #
 # Usage: py -3.12 re/frida/probe_player_state.py [screen]   (default 4)
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os, sys, time
 from pathlib import Path
 import frida

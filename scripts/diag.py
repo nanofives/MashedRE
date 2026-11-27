@@ -24,6 +24,7 @@ Subcommands:
 Usage:  py -3.12 scripts/diag.py doctor
         py -3.12 scripts/diag.py run --tag build -- cmd /c mashedmod\\build.bat
 """
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../re/orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse
 import datetime
 import os

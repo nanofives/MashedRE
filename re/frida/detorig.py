@@ -12,6 +12,7 @@
 #   py -3.12 re/frida/detorig.py --compare DIR_A DIR_B          # checkpoint-by-checkpoint diff
 #
 # MASHED_ROOT selects the game install (<root>/original/MASHED.exe).
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import argparse, ctypes, ctypes.wintypes as wt, hashlib, json, os, subprocess, sys, time
 from pathlib import Path
 

@@ -17,6 +17,7 @@
 # here (the >1000 calls/s rule in CLAUDE.md targets FastSqrt-class leaves).
 #
 # Usage: py -3.12 re/frida/trace_savedata_gate.py [seconds]
+import os as _gos, sys as _gsys; _gsys.path.append(_gos.path.join(_gos.path.dirname(_gos.path.abspath(__file__)), '../orchestrator')); import mashed_launch_guard  # HB-LOCK-BARE-LAUNCH-SURVEY: game launches take MashedLock
 import os
 import pathlib
 import sys
