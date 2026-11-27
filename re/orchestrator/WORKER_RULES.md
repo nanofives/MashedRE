@@ -49,8 +49,12 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   nav-demo runs unless the caller passes it. Harness only, not the deterministic-mode default.
 - Build from your worktree: `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"`.
   Never redeploy `original\mashed_re_dev.asi` (file a decision row if one is needed).
-- Game runs: private root `D:\MashedWT\<step>_root` (robocopy of `original\` with
-  `original\` inside), `MASHED_ROOT` pointing at it, sandbox disabled, and wrap the boot in
+- Game runs: private root `D:\MashedWT\<step>_root` (copy of `original\` with
+  `original\` inside, made with `py -3.12 scripts/mashedwt_cleanup.py prep original <root>`, which is robocopy /E
+  /XF hook_dual_install.log: that 45 MB log is rewritten by every run and 447 copies were 19.6 GB). The row's
+  close (`diag.py wt-remove`, called by the merge train) deletes `<step>_root*\original` (HB-MASHEDWT-ROOT-CLEANUP,
+  2026-11-27, ~0.5 GB per root); it refuses a root that another root junctions into, a fixed tool root, a root written
+  in the last 7 days or one named in a live command line. Keep results outside `original\`. `MASHED_ROOT` pointing at it, sandbox disabled, and wrap the boot in
   the lock: `py -3.12 <orch-wt>\re\orchestrator\mashed_lock.py run --label <step> -- <cmd>`
   (`run --solo` for a wall-clock-bound step such as D2 arms; the window expires after 1 h unless you
   pass `--ttl <s>`, and a new solo open waits while the merge train has a priority claim). Kill only PIDs you spawned.
