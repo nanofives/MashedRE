@@ -3,8 +3,8 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x00404e20	bound	1	36	C4	match	IdxPtr404e20	vehicle	raceload:reuse:IdxPtr404e20		re/match/s01/raw/00404e20.c
 0x004053d0	bound	1	45	C4	match	TrackDataSlotSet	render	raceload:reuse:Orig_004053d0		re/match/s01/004053d0.c
 0x004074a0	bound	1	167	C4	match	FUN_004074a0	gameplay	bulk:bind:match		re/match/s01/004074a0.c
-0x00409300	c4_unbound	31	48	C4	match	FUN_00409300	gameplay			re/match/s01/00409300.c
-0x00409330	c4_unbound	30	120	C4	match	FUN_00409330	gameplay		gates	re/match/s01/00409330.c
+0x00409300	bound	31	48	C4	match	FUN_00409300	gameplay	raceload:bind:match		re/match/s01/00409300.c
+0x00409330	bound	30	120	C4	match	FUN_00409330	gameplay	gates:reuse:PortTop_Bound_00409330;raceload:bind:match		re/match/s01/00409330.c
 0x004095a0	c4_unbound	1	211	C4	match	FUN_004095a0	gameplay		gates	re/match/s01/004095a0.c
 0x00409680	c4_unbound	1	20	C4	match	LedArrayInit	render		raceload	re/match/tlr/00409680.c;re/match/s01/raw/00409680.c
 0x00409710	bound	1	119	C4	match	FUN_00409710	render	gates:bind:match;raceload:reuse:PortTop_Bound_00409710		re/match/tlr/00409710.c;re/match/s01/raw/00409710.c
@@ -44,7 +44,7 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x00425c00	bound	4	156	C4	match	FUN_00425c00	frontend	raceload:bind:match		re/match/s05/00425c00.c
 0x00426060	bound	13	6	C4	match	TrackPhysWorld1Get	render	bulk:reuse:PortTop_Bound_00426060;raceload:bind:match;renderframe:reuse:PortTop_Bound_00426060		re/match/s05/00426060.c
 0x00426070	bound	2	6	C4	match	TrackPhysWorld2Get	render	raceload:reuse:TrackPhysWorld2Get;renderframe:reuse:TrackPhysWorld2Get		re/match/s06/00426070.c
-0x00426090	bound	61	6	C4	match	GlobalDat0066ce58Get	frontend	raceframe:reuse:GlobalDat0066ce58Get		re/match/s06/00426090.c
+0x00426090	bound	61	6	C4	match	GlobalDat0066ce58Get	frontend	raceframe:reuse:GlobalDat0066ce58Get;raceload:reuse:GlobalDat0066ce58Get		re/match/s06/00426090.c
 0x004260a0	bound	4	6	C4	match	GetDat00657438	frontend	bulk:reuse:GetDat00657438;raceframe:reuse:GetDat00657438		re/match/s06/004260a0.c
 0x004260b0	bound	4	6	C4	match	GetDat0065743c	frontend	bulk:reuse:GetDat0065743c;raceframe:reuse:GetDat0065743c		re/match/s06/004260b0.c
 0x004262f0	bound	1	73	C4	match	FUN_004262f0	render	raceload:bind:match		re/match/s06/004262f0.c
@@ -67,13 +67,13 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x00474fb0	bound	10	28	C4	match	FUN_00474fb0	render	raceframe:reuse:PortTop_Bound_00474fb0;raceload:bind:match		re/match/s12/00474fb0.c
 0x00474fd0	bound	10	50	C4	match	FUN_00474fd0	render	raceload:bind:match		re/match/s12/00474fd0.c
 0x00478110	bound	4	156	C4	match	FUN_00478110	render	raceload:bind:match		re/match/s12/00478110.c
-0x004783f0	c4_unbound	1	482	C4	frida-replay	FUN_004783f0	ai		raceload	re/match/s12/004783f0.c
-0x004785e0	c4_unbound	30	121	C4	frida-replay	FUN_004785e0	util		raceload	re/match/s12/004785e0.c
+0x004783f0	bound	1	482	C4	frida-replay	FUN_004783f0	ai	raceload:bind:replay		re/match/s12/004783f0.c
+0x004785e0	bound	30	121	C4	frida-replay	FUN_004785e0	util	raceload:reuse:PortTop_RL_004785e0		re/match/s12/004785e0.c
 0x00478660	bound	1	1606	C4	frida-replay	FUN_00478660	ai	raceload:bind:replay		re/match/s12/00478660.c
 0x00478cb0	bound	1	16	C4	match	FUN_00478cb0	physics	raceload:bind:match		re/match/s12/00478cb0.c
 0x00478cc0	bound	1	16	C4	match	FUN_00478cc0	render	raceload:reuse:RenderWorldStateZeroFill		re/match/s12/00478cc0.c
 0x00479030	bound	42	174	C4	match	FUN_00479030	track	raceload:bind:match		re/match/s12/00479030.c
-0x004790e0	c4_unbound	1	17	C4	match	FUN_004790e0	track		raceload	re/match/s12/004790e0.c
+0x004790e0	bound	1	17	C4	match	FUN_004790e0	track	raceload:reuse:PortTop_RL_004790e0		re/match/s12/004790e0.c
 0x00479330	bound	1	2888	C2		FUN_00479330	track	raceload:bind:provisional		re/match/s12/00479330.c
 0x0047a0f0	bound	1	59	C4	match	FUN_0047a0f0	track	raceload:bind:match		re/match/s12/0047a0f0.c
 0x0047a180	bound	1	38	C4	match	Course_Id	render	raceload:bind:match		re/match/s12/0047a180.c
@@ -125,7 +125,7 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x00489dc0	source_not_c4	1	657	C2		FUN_00489dc0	particle			re/match/s14/00489dc0.c
 0x00491780	bound	1	23	C4	match	FUN_00491780	render	raceload:bind:match		re/match/s15/00491780.c
 0x004924c0	bound	1	30	C4	match	Set6147b4Triple	render	raceload:bind:match		re/match/s15/004924c0.c
-0x004a3384	no_source	30	9	C2		CRT::acos	util		raceframe	
+0x004a3384	bound	30	9	C2		CRT::acos	util	raceframe:reuse:MashedCrt_acos_004a3384;raceload:reuse:MashedCrt_acos_004a3384		
 0x004a3a90	no_source	2	57	C2		FUN_004a3a90	third-party-library[msvc-crt-main]			
 0x004a5aaf	c4_unbound	19	29	C4	libid	FUN_004a5aaf	third-party-library[msvc-crt-main]		bulk	
 0x004a5bee	c4_unbound	11	156	C4	libid	FUN_004a5bee	third-party-library[msvc-crt-main]		bulk	
@@ -144,11 +144,11 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x004b3de0	bound	4	82	C4	match	FUN_004b3de0	render	raceload:bind:match		re/match/s18/004b3de0.c
 0x004b4010	bound	1	55	C4	match	FUN_004b4010	render	raceload:bind:match		re/match/s18/004b4010.c
 0x004b4280	bound	1	60	C4	match	FUN_004b4280	render	raceload:bind:match		re/match/s18/004b4280.c
-0x004b4550	source_not_c4	74	247	C3		Vec3Centroid	util		raceframe;raceload	re/match/s18/004b4550.c
+0x004b4550	bound	74	247	C3		Vec3Centroid	util	raceframe:reuse:PortTop_Bound_004b4550;raceload:bind:provisional		re/match/s18/004b4550.c
 0x004b46b0	bound	240	54	C4	match	FUN_004b46b0	render	raceload:reuse:Vec3Equal		re/match/s18/004b46b0.c
-0x004b4eb0	source_not_c4	30	384	C1		FUN_004b4eb0	render		raceload	re/match/tlr/004b4eb0.c
+0x004b4eb0	bound	30	384	C1		FUN_004b4eb0	render	raceload:bind:provisional		re/match/tlr/004b4eb0.c
 0x004b5030	bound	30	71	C4	match	FUN_004b5030	render	raceload:bind:match		re/match/s18/004b5030.c
-0x004b53b0	c4_unbound	18	431	C4	frida-replay	FUN_004b53b0	render		raceload	re/match/s18/004b53b0.c
+0x004b53b0	bound	18	431	C4	frida-replay	FUN_004b53b0	render	raceload:bind:replay		re/match/s18/004b53b0.c
 0x004b70d0	bound	35	59	C2		FUN_004b70d0	third-party-library[lua-4.0]	raceload:reuse:lua_tostring		
 0x004bb7a0	no_source	35	701	C2		FUN_004bb7a0	third-party-library[lua-4.0]			
 0x004bcfc0	no_source	35	31	C2		FUN_004bcfc0	third-party-library[lua-4.0]			
@@ -156,16 +156,16 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x004bf180	c4_unbound	14	121	C4	libid	lcode_numberK	third-party-library[lua-4.0]		bulk	
 0x004c1210	bound	24	232	C4	match	FUN_004c1210	third-party-library[renderware]	bulk:reuse:RwCore_004c1210		re/match/rwl01/004c1210.c
 0x004c45f0	bound	54	12	C4	match	FUN_004c45f0	render	raceframe:reuse:RwCore_004c45f0;raceload:reuse:RwCore_004c45f0;renderframe:reuse:RwCore_004c45f0		re/match/s19/004c45f0.c
-0x004c4670	bound	13	5	C4	match	thunk_FUN_004c4680	render	bulk:reuse:RwCore_004c4670;renderframe:reuse:RwCore_004c4670		re/match/s19/004c4670.c
+0x004c4670	bound	13	5	C4	match	thunk_FUN_004c4680	render	bulk:reuse:RwCore_004c4670;raceload:reuse:RwCore_004c4670;renderframe:reuse:RwCore_004c4670		re/match/s19/004c4670.c
 0x004c4680	source_not_c4	13	968	C2		FUN_004c4680	render			re/match/s19/004c4680.c
 0x004c59c0	bound	1	64	C4	match	FUN_004c59c0	render	raceload:bind:match		re/match/s19/004c59c0.c
-0x004cf2b0	source_not_c4	28	378	C2		FUN_004cf2b0	third-party-library[renderware]		raceload	re/match/rwl01/004cf2b0.c
+0x004cf2b0	bound	28	378	C2		FUN_004cf2b0	third-party-library[renderware]	raceload:bind:provisional		re/match/rwl01/004cf2b0.c
 0x004e42d0	bound	47	42	C4	match	FUN_004e42d0	third-party-library[renderware]	bulk:reuse:RwCore_004e42d0		re/match/rwl02/004e42d0.c
 0x004e4380	bound	36	38	C4	match	FUN_004e4380	third-party-library[renderware]	raceload:bind:match		re/match/rwl02/004e4380.c
 0x004e4c30	c4_unbound	2	338	C4	match	RpLightStreamRead	third-party-library[renderware]			re/match/rwl02/004e4c30.c
 0x004e51e0	bound	3	156	C2		FUN_004e51e0	third-party-library[renderware]	raceload:bind:provisional		re/match/rwl02/004e51e0.c
 0x004e5280	bound	3	122	C4	match	FUN_004e5280	third-party-library[renderware]	raceload:bind:match		re/match/rwl02/004e5280.c
-0x004e55d0	c4_unbound	77	129	C4	match	FUN_004e55d0	third-party-library[renderware]			re/match/rwl02/004e55d0.c
+0x004e55d0	bound	77	129	C4	match	FUN_004e55d0	third-party-library[renderware]	raceload:reuse:RwCore_004e55d0		re/match/rwl02/004e55d0.c
 0x004e5820	bound	3	21	C4	match	FUN_004e5820	third-party-library[renderware]	raceload:reuse:RwCore_004e5820;renderframe:reuse:RwCore_004e5820		re/match/rwl02/004e5820.c
 0x004e6650	bound	1	43	C4	match	FUN_004e6650	third-party-library[renderware]	raceload:bind:match		re/match/rwl02/004e6650.c
 0x004e6920	bound	260	127	C4	match	FUN_004e6920	third-party-library[renderware]	bulk:reuse:RwCore_004e6920		re/match/rwl02/004e6920.c
@@ -220,9 +220,9 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x00551fd0	bound	2	8	C4	match	FUN_00551fd0	third-party-library[renderware]	bulk:reuse:RwCore_00551fd0;raceload:reuse:RwCore_00551fd0		re/match/rwl04/00551fd0.c
 0x00552020	bound	84	39	C4	match	FUN_00552020	third-party-library[renderware]	raceload:bind:match		re/match/rwl04/00552020.c
 0x00558ca0	bound	2	12	C4	match	FUN_00558ca0	third-party-library[RenderWare-Physics-3.7]	raceload:bind:match		re/match/rwl05/00558ca0.c
-0x00558cb0	c4_unbound	1	114	C4	frida-replay	FUN_00558cb0	third-party-library[RenderWare-Physics-3.7]		raceload	re/match/rwl05/00558cb0.c
-0x00558df0	source_not_c4	1	579	C2		FUN_00558df0	third-party-library[renderware]		raceload	re/match/rwl05/00558df0.c
-0x00559560	c4_unbound	1	107	C4	frida-replay	FUN_00559560	third-party-library[RenderWare-Physics-3.7]		raceload	re/match/rwl05/00559560.c
+0x00558cb0	bound	1	114	C4	frida-replay	FUN_00558cb0	third-party-library[RenderWare-Physics-3.7]	raceload:bind:replay		re/match/rwl05/00558cb0.c
+0x00558df0	bound	1	579	C2		FUN_00558df0	third-party-library[renderware]	raceload:bind:provisional		re/match/rwl05/00558df0.c
+0x00559560	bound	1	107	C4	frida-replay	FUN_00559560	third-party-library[RenderWare-Physics-3.7]	raceload:bind:replay		re/match/rwl05/00559560.c
 0x005595d0	source_not_c4	1	1396	C3		FUN_005595d0	third-party-library[RenderWare-Physics-3.7]		raceload	re/match/rwl05/005595d0.c
 0x00559b50	bound	1	73	C4	match	FUN_00559b50	third-party-library[RenderWare-Physics-3.7]	raceload:bind:match		re/match/rwl05/00559b50.c
 0x00559c40	source_not_c4	36	660	C3		PhysicsSceneBodyRegister	third-party-library[RenderWare-Physics-3.7]		raceframe;raceload	re/match/rwl05/00559c40.c
@@ -261,7 +261,7 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x005625e0	bound	1	30	C4	match	FUN_005625e0	third-party-library[RenderWare-Physics-3.7]	raceload:bind:match		re/match/rwl05/005625e0.c
 0x00562600	bound	1	56	C4	match	FUN_00562600	third-party-library[RenderWare-Physics-3.7]	raceload:bind:match		re/match/rwl05/00562600.c
 0x00562fd0	bound	2	45	C4	match	FUN_00562fd0	third-party-library[RenderWare-Physics-3.7]	raceload:bind:match		re/match/rwl05/00562fd0.c
-0x00563de0	c4_unbound	1	16	C4	match	FUN_00563de0	third-party-library[RenderWare-Physics-3.7]			re/match/rwl05/00563de0.c
+0x00563de0	bound	1	16	C4	match	FUN_00563de0	third-party-library[RenderWare-Physics-3.7]	raceload:bind:match		re/match/rwl05/00563de0.c
 0x00563df0	c4_unbound	1	114	C4	match	FUN_00563df0	third-party-library[RenderWare-Physics-3.7]			re/match/rwl05/00563df0.c
 0x00563e70	c4_unbound	344	239	C4		FUN_00563e70	third-party-library[RenderWare-Physics-3.7]		bulk	
 0x00563f60	c4_unbound	24	221	C4		FUN_00563f60	third-party-library[RenderWare-Physics-3.7]		bulk	
@@ -297,8 +297,8 @@ rva	class	calls_to_anchor	size	confidence	c4_route	name	subsystem	bound_in	stop_
 0x0057c220	bound	60	74	C4	match	RWP37WorldSlotAssign	third-party-library[RenderWare-Physics-3.7]	bulk:reuse:PortTop_Bound_0057c220;raceload:bind:match		re/match/rwl06/0057c220.c
 0x0057c300	bound	60	102	C4	match	RWP37BodyCreate	third-party-library[RenderWare-Physics-3.7]	bulk:reuse:PortTop_Bound_0057c300;raceload:bind:match		re/match/rwl06/0057c300.c
 0x0057c420	bound	60	30	C4	match	FUN_0057c420	third-party-library[RenderWare-Physics-3.7]	raceframe:reuse:PortTop_Bound_0057c420;raceload:bind:match		re/match/rwl06/0057c420.c
-0x0057c4b0	no_source	1	71	C2		FUN_0057c4b0	third-party-library[qhull-2002.1]		raceload	
+0x0057c4b0	bound	1	71	C4	match (pending re/promotions)	FUN_0057c4b0	third-party-library[qhull-2002.1]	raceload:bind:match		re/match/rwl06/0057c4b0.c
 0x0057c500	bound	39	75	C4	match	RWP37WorldCreate	third-party-library[RenderWare-Physics-3.7]	bulk:reuse:PortTop_Bound_0057c500;raceload:bind:match		re/match/rwl06/0057c500.c
 0x0057c550	bound	39	62	C4	match	FUN_0057c550	third-party-library[RenderWare-Physics-3.7]	bulk:reuse:PortTop_Bound_0057c550;raceload:bind:match		re/match/rwl06/0057c550.c
 0x005c229b	c4_unbound	202	34	C4	libid	_rand	third-party-library[msvc-crt-tail]		bulk	
-0x005c4e10	c4_unbound	1	16	C4	match	FUN_005c4e10	boot			re/match/s28/005c4e10.c
+0x005c4e10	bound	1	16	C4	match	FUN_005c4e10	boot	raceload:bind:match		re/match/s28/005c4e10.c
