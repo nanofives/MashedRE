@@ -8,7 +8,7 @@
 #define FUN_00448220 PortTop_Bound_00448220
 #define FUN_00408a50 PerCarRaceProgressGet   // exe body (Match/MatchS01.cpp)
 #define FUN_00408b00 PortTop_GTStop_00408b00   // named stop
-#define FUN_00409330 PortTop_GTStop_00409330   // named stop
+#define FUN_00409330 PortTop_Bound_00409330   // exe body (Match/PortTop_00409330.cpp)
 #define FUN_0040e350 GetRenderSubMode   // exe body (Match/MatchS02_0040e350.cpp)
 #define FUN_0040e370 IsCarSlotActive   // exe body (Match/MatchS02_0040e370.cpp)
 #define FUN_0040e4a0 PortTop_Bound_0040e4a0   // exe body (Match/PortTop_0040e4a0.cpp)

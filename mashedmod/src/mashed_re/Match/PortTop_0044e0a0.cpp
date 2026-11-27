@@ -11,7 +11,7 @@
 #define FUN_00481750 PortTop_Bound_00481750
 #define FUN_0048aa20 PortTop_Bound_0048aa20
 #define FUN_004b4510 PortTop_Bound_004b4510
-#define FUN_004b4550 PortTop_RFStop_004b4550   // named stop
+#define FUN_004b4550 PortTop_Bound_004b4550   // exe body (Match/PortTop_004b4550.cpp)
 extern "C" {
 #include "../../../../re/match/s08/0044e0a0.c"
 }

@@ -30,10 +30,6 @@ unsigned PortTop_GT_StopHits(void) { return g_rlStopHits; }
 int PortTop_GTStop_00408b00(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x00408b00u, "0x00448220", n, _ReturnAddress(), ex);
     if (ex) PortTop_AudioCalleeStop(0x00408b00u, 0u, _ReturnAddress()); return 0; }
-// stop rva 00409330: declared int by 0x00448220; outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s01/00409330.c
-int PortTop_GTStop_00409330(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
-    if (n == 1 || ex) RlStopLog(0x00409330u, "0x00448220", n, _ReturnAddress(), ex);
-    if (ex) PortTop_AudioCalleeStop(0x00409330u, 0u, _ReturnAddress()); return 0; }
 // stop rva 004095a0: declared undefined1 * by 0x00409710; outside the gate roots (RVA ownership, BIND-GATES-ALLKNOBS binds only its roots), source re/match/s01/004095a0.c
 int PortTop_GTStop_004095a0(void) { static unsigned n = 0; ++n; ++g_rlStopHits; const int ex = !RlStopCount();
     if (n == 1 || ex) RlStopLog(0x004095a0u, "0x00409710", n, _ReturnAddress(), ex);

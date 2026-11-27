@@ -17,7 +17,7 @@
 #define FUN_00487280 PortTop_RFStop_00487280   // named stop
 #define FUN_00487d00 PortTop_RFStop_00487d00   // named stop
 #define FUN_00487d60 PortTop_RFStop_00487d60   // named stop
-#define FUN_004a3384 PortTop_RFStop_004a3384   // named stop
+#define FUN_004a3384 MashedCrt_acos_004a3384   // exe body (Match/PortTop_CrtMath.cpp)
 #define FUN_004c0ed0 RwCore_004c0ed0   // exe body (RwCore/RwCore_004c0ed0.cpp)
 #define FUN_004c1b40 PortTop_Bound_004c1b40
 #define FUN_004e6100 RwCore_004e6100   // exe body (RwCore/RwCore_004e6100.cpp)
