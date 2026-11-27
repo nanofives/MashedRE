@@ -9,7 +9,7 @@
 #define FUN_0040cea0 PortTop_Bound_0040cea0   // exe body (Match/PortTop_0040cea0.cpp)
 #define FUN_0041a8d0 PortTop_BulkStop_0041a8d0   // named stop
 #define FUN_00420230 PortTop_Bound_00420230
-#define FUN_00420420 PortTop_BulkStop_00420420   // named stop
+#define FUN_00420420 PortTop_Bound_00420420
 #define FUN_004220d0 PortTop_Bound_004220d0   // exe body (Match/PortTop_00421a90.cpp)
 #define FUN_0042a8d0 PortTop_Bound_0042a8d0   // exe body (Match/PortTop_0042a8d0.cpp)
 #define FUN_0042f6a0 GetRaceSubMode   // exe body (Match/MatchS07_0042f6a0.cpp)

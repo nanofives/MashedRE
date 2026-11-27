@@ -361,3 +361,5 @@
 005b9460
 005c7570
 005c75c0
+# BIND-00420420 (run 56): all-knobs gate rank 1, caller 0x0040d110 (call at 0x0040d1fb); source re/match/s05/00420420.c carries 0x0041fe10
+00420420

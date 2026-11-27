@@ -1,0 +1,8 @@
+0x0041f330 _FUN_0041f330: 100.0% (regs 100.0%, ops 100.0%)  16/16 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 47 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0041f360 _FUN_0041f360: 100.0% (regs 100.0%, ops 100.0%)  13/13 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 97 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0041fe10 _FUN_0041fe10: 100.0% (regs 100.0%, ops 100.0%)  117/117 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 401 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00420420 _FUN_00420420: 100.0% (regs 100.0%, ops 100.0%)  317/317 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 1099 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)

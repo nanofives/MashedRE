@@ -1,0 +1,29 @@
+1c1
+< Counter({'reuse': 204, 'stop': 188, 'bind': 97}) Counter({'match': 96, 'replay': 1})
+---
+> Counter({'reuse': 211, 'stop': 191, 'bind': 97}) Counter({'match': 96, 'replay': 1})
+18c18
+< 0041fe10 bind re/match/s05/0041fe10.c C4 FUN_0041fe10
+---
+> 0041fe10 stop file-local copy of this rva in the source of 0x00420420 (one body per RVA) C4 FUN_0041fe10
+20c20,21
+< 00420420 stop outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s05/00420420.c C4 FUN_00420420
+---
+> 00420290 stop  C2 FUN_00420290
+> 00420420 bind re/match/s05/00420420.c C4 FUN_00420420
+44a46
+> 0042a6b0 reuse PortTop_Bound_0042a6b0 C4 FUN_0042a6b0
+169a172
+> 004b52c0 reuse RwCore_004b52c0 C4 FUN_004b52c0
+225a229
+> 004c15c0 reuse RwCore_004c15c0 C4 FUN_004c15c0
+230a235,236
+> 004c5c00 reuse RwCore_004c5c00 C4 FUN_004c5c00
+> 004c5c80 reuse RwCore_004c5c80 C4 FUN_004c5c80
+423a430
+> 0053fb70 reuse RwCore_0053fb70 C4 FUN_0053fb70
+425a433
+> 0053fd30 reuse RwCore_0053fd30 C4 FUN_0053fd30
+438a447,448
+> 00544a70 stop  C2 FUN_00544a70
+> 00544ad0 stop  C2 FUN_00544ad0
