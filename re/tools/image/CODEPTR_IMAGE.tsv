@@ -1061,8 +1061,8 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x00635204	0x005b8030	undefined *	-	-	yes		cp-slots	ghidra-ref
 0x00635208	0x005aee90	undefined *	-	-	yes		cp-slots	ghidra-ref
 0x00635850	0x005be1b0	undefined *	PTR_FUN_00635850	FUN_005be1b0	no		trap	ghidra-ref
-0x00635854	0x005bf670	undefined *	-	FUN_005bf670	no	PortTop_Bound_005bf670	bound	ghidra-ref
-0x00635858	0x005be160	undefined *	-	FUN_005be160	no	PortTop_Bound_005be160	bound	ghidra-ref
+0x00635854	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
+0x00635858	0x005be160	undefined *	-	FUN_005be160	no		trap	ghidra-ref
 0x0063585c	0x005be1f0	undefined *	-	-	no		trap	ghidra-ref
 0x00635860	0x005be210	undefined *	-	-	no		trap	ghidra-ref
 0x00635864	0x005be230	undefined *	-	-	no		trap	ghidra-ref
@@ -1092,14 +1092,14 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x006358c8	0x005bfd00	undefined *	-	-	no		trap	ghidra-ref
 0x006358cc	0x005bfd00	undefined *	-	-	no		trap	ghidra-ref
 0x006358e0	0x005be940	undefined *	PTR_FUN_006358e0	FUN_005be940	no		trap	ghidra-ref
-0x006358e4	0x005bf670	undefined *	-	FUN_005bf670	no	PortTop_Bound_005bf670	bound	ghidra-ref
+0x006358e4	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
 0x006358e8	0x005be990	undefined *	-	FUN_005be990	no		trap	ghidra-ref
 0x006358ec	0x005be9f0	undefined *	-	FUN_005be9f0	no		trap	ghidra-ref
 0x006358f0	0x005bea60	undefined *	-	-	no		trap	ghidra-ref
 0x006358f4	0x005bea90	undefined *	-	-	no		trap	ghidra-ref
 0x006358f8	0x005beaa0	undefined *	-	FUN_005beaa0	no		trap	ghidra-ref
 0x006358fc	0x005beba0	undefined *	PTR_FUN_006358fc	FUN_005beba0	no		trap	ghidra-ref
-0x00635900	0x005bf670	undefined *	-	FUN_005bf670	no	PortTop_Bound_005bf670	bound	ghidra-ref
+0x00635900	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
 0x00635904	0x005bec10	undefined *	-	FUN_005bec10	no		trap	ghidra-ref
 0x00635908	0x005bec90	undefined *	-	-	no		trap	ghidra-ref
 0x0063590c	0x005becd0	undefined *	-	-	no		trap	ghidra-ref
@@ -1114,7 +1114,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x00635930	0x005bef60	undefined *	-	-	no		trap	ghidra-ref
 0x00635934	0x005bf000	undefined *	-	FUN_005bf000	no		trap	ghidra-ref
 0x00635970	0x005beba0	undefined *	PTR_FUN_00635970	FUN_005beba0	no		trap	ghidra-ref
-0x00635974	0x005bf670	undefined *	-	FUN_005bf670	no	PortTop_Bound_005bf670	bound	ghidra-ref
+0x00635974	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
 0x00635978	0x005bf370	undefined *	-	FUN_005bf370	no		trap	ghidra-ref
 0x0063597c	0x005bec90	undefined *	-	-	no		trap	ghidra-ref
 0x00635980	0x005becd0	undefined *	-	-	no		trap	ghidra-ref
@@ -1238,7 +1238,7 @@ slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evi
 0x00635b7c	0x005bea90	undefined *	-	-	no		trap	ghidra-ref
 0x00635b80	0x005c0dc0	undefined *	-	FUN_005c0dc0	no		trap	ghidra-ref
 0x00635b88	0x005c0e70	undefined *	PTR_FUN_00635b88	FUN_005c0e70	no		trap	ghidra-ref
-0x00635b8c	0x005bf670	undefined *	-	FUN_005bf670	no	PortTop_Bound_005bf670	bound	ghidra-ref
+0x00635b8c	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
 0x00635b90	0x005c0ec0	undefined *	-	FUN_005c0ec0	no		trap	ghidra-ref
 0x00635b94	0x005c0ef0	undefined *	-	FUN_005c0ef0	no		trap	ghidra-ref
 0x00635b98	0x005c0f60	undefined *	-	-	no		trap	ghidra-ref

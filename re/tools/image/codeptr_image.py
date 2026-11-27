@@ -65,6 +65,14 @@ def main():
     for r in csv.DictReader(open(BIND, encoding='utf-8'), delimiter='\t'):
         if r['kind'] in BIND_KINDS and r['exe_symbol'] and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', r['exe_symbol']):
             bind[int(r['rva'], 16)] = r['exe_symbol']
+            # RO-AUDIOINIT-45D460-REACH-6: CP_IMG_EXTERN declares every target `extern "C" void sym(void)` (cdecl name),
+            # so a target whose re/match source defines it __stdcall (decorated sym@N) cannot link: it stays trap.
+            # (0x005be160 / 0x005bf670 gave LNK2019 when bound.)
+            m = re.search(r'(re/match/[^\s;,()]+?\.c)', r['note'])
+            if m and os.path.exists(os.path.join(ROOT, m.group(1))):
+                src = open(os.path.join(ROOT, m.group(1)), encoding='utf-8', errors='replace').read()
+                if re.search(r'__stdcall\s+FUN_%s\s*\(' % r['rva'][2:].lower(), src, re.I):
+                    del bind[int(r['rva'], 16)]
 
     rows, refused = [], []
     for r in raw:
