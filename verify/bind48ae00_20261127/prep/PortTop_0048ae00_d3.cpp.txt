@@ -1,0 +1,27 @@
+// BIND-0048AE00-CALLEES (2026-11-27): exe-only port body of rva 0x0048ae00 = re/match/s14/0048ae00.c
+// (match.py BYTE-IDENTICAL, hooks.csv C4 c4=match). Reached on the exe only under MASHED_ORIG_TOP, from the bound caller named in
+// re/tools/bind/state/b48ae00/profile.json (re/tools/bind/porttop_bind.py --profile b48ae00). Callees bind to exe bodies by
+// name; a callee with no matched or admitted body, or outside the root, is a named stop (Match/PortTop_B48Stops.cpp).
+// RVA-LINT: ORIGTOP-ONLY
+#ifdef MASHED_STANDALONE
+#define MATCH_PORT 1
+#define FUN_0048ae00 PortTop_Bound_0048ae00
+#define FUN_0040bb30 Search40bb30   // exe body (Match/MatchS02_0040bb30.cpp)
+#define FUN_0042a5d0 PortTop_Bound_0042a5d0   // exe body (Match/PortTop_0042a5d0.cpp)
+#define FUN_004770c0 Orig_004770c0   // exe body (Match/PortTop_004770c0.cpp)
+#define FUN_004b3f90 MashedRw_ClumpFirstAtomic_004b3f90   // exe body (LibRw/RwApiBind.cpp)
+#define FUN_004b52f0 MashedRw_AtomicGeometryFlags_004b52f0   // exe body (LibRw/RwApiBind.cpp)
+#define FUN_004b6480 Orig_004b6480   // exe body (Match/PortTop_004b6480.cpp)
+#define FUN_004c0b30 MashedRw_FrameCreate_004c0b30   // exe body (LibRw/RwApiBind.cpp)
+#define FUN_004c1040 MashedRw_FrameAddChild_004c1040   // exe body (LibRw/RwApiBind.cpp)
+#define FUN_004e69a0 MashedRw_AtomicClone_004e69a0   // exe body (LibRw/RwApiBind.cpp)
+#define FUN_004e6e00 MashedRw_ClumpDestroy_004e6e00   // exe body (LibRw/RwApiBind.cpp)
+#define FUN_004e7e30 MashedRw_AtomicSetFrame_004e7e30   // exe body (LibRw/RwApiBind.cpp)
+#define FUN_005449f0 PortTop_B48Stop_005449f0   // named stop
+#define FUN_00544a70 PortTop_B48Stop_00544a70   // named stop
+#define FUN_00544ad0 PortTop_B48Stop_00544ad0   // named stop
+#define FUN_00544bf0 PortTop_B48Stop_00544bf0   // named stop
+extern "C" {
+#include "../../../../re/match/s14/0048ae00.c"
+}
+#endif // MASHED_STANDALONE

@@ -1,0 +1,12 @@
+# Profile `b48ae00` rules (format: state/_shared/rules.tsv header)
+# existing exe bodies other profiles already bind these callees to (same alias line as gates rules.tsv)
+alias	0040bb30	Search40bb30	Match/MatchS02_0040bb30.cpp
+# the RW calls of 0x0048ae00 bind to the existing librw bindings (each calls its RwCore_ body under MASHED_RWC_FRAME), the
+# form of 0x004548e0 (Match/PortTop_004548e0.cpp, ATOMIC-VIEW-2): the clump 0x0042a5d0 returns on the knob path is a librw rw::Clump
+alias	004b3f90	MashedRw_ClumpFirstAtomic_004b3f90	LibRw/RwApiBind.cpp
+alias	004e69a0	MashedRw_AtomicClone_004e69a0	LibRw/RwApiBind.cpp
+alias	004e6e00	MashedRw_ClumpDestroy_004e6e00	LibRw/RwApiBind.cpp
+alias	004e7e30	MashedRw_AtomicSetFrame_004e7e30	LibRw/RwApiBind.cpp
+alias	004c0b30	MashedRw_FrameCreate_004c0b30	LibRw/RwApiBind.cpp
+alias	004c1040	MashedRw_FrameAddChild_004c1040	LibRw/RwApiBind.cpp
+alias	004b52f0	MashedRw_AtomicGeometryFlags_004b52f0	LibRw/RwApiBind.cpp

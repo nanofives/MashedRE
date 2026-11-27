@@ -1,0 +1,2 @@
+# BIND-0048AE00-CALLEES (run 57): root this row owns (caller 0x0040bbb0, boot path from 0x00402750)
+0048ae00
