@@ -131,6 +131,33 @@ def bindings():
 
 
 @case
+def bindings_foreign_stop():
+    """BIND-BINDINGS-BULK-DRIFT: bulk (stop_sym_foreign) keeps a missing row another profile's stop_prefix names, and
+    still relabels a missing row no profile's prefix names."""
+    d = tempfile.mkdtemp(prefix='fstop_')
+    keep_b, keep_sd = pb.BINDINGS, pb.state_dir
+    try:
+        sd = os.path.join(d, 'state'); os.makedirs(sd)
+        json.dump({'00400300': ['stop'], '00400310': ['stop']}, open(os.path.join(sd, 'plan.json'), 'w'))
+        bt = os.path.join(d, 'BINDINGS.tsv')
+        head = 'rva\tname\tkind\tsym\tnote\tlevel\tcaller\n'
+        a_row = '0x00400300\tFUN_00400300\tmissing\tPortTop_AStop_00400300\tAUDIO: named stop\t6\t0x00400000\n'
+        o_row = '0x00400310\tFUN_00400310\tmissing\tPortTop_Missing_00400310\tOLD: named stop\t6\t0x00400000\n'
+        open(bt, 'w', newline='\n').write(head + a_row + o_row)
+        pb.BINDINGS, pb.state_dir = bt, (lambda prof: sd)
+        with contextlib.redirect_stdout(io.StringIO()):
+            pb.cmd_bindings(argparse.Namespace(profile='bulk', step=None, dry=False))
+        rows = {l.split('\t')[0]: l.split('\t') for l in open(bt).read().splitlines()[1:]}
+        return (open(bt).read().splitlines()[1] == a_row.rstrip('\n')
+                and rows['0x00400310'][3] == 'PortTop_BulkStop_00400310'
+                and pb.foreign_stop_owner('bulk', 'PortTop_AStop_00400300') == 'audio'
+                and pb.foreign_stop_owner('bulk', 'PortTop_BulkStop_00400300') is None)
+    finally:
+        pb.BINDINGS, pb.state_dir = keep_b, keep_sd
+        shutil.rmtree(d, ignore_errors=True)
+
+
+@case
 def moved():
     """BIND-MOVED-TSV-AUTO: cmd_moved appends a line with cause + RVA now bound and a totals line, once."""
     d = tempfile.mkdtemp(prefix='moved_')

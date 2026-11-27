@@ -1296,6 +1296,19 @@ def cmd_sync(a):
 # --------------------------------------------------------------------------------------------------------------------
 # bindings: BINDINGS.tsv rows from the profile's plan.json (was bindings_update.py)
 # --------------------------------------------------------------------------------------------------------------------
+def foreign_stop_owner(prof, sym):
+    """The other profile whose stop_prefix names `sym` (a BINDINGS.tsv exe_symbol), else None."""
+    for p, Q in sorted(PROFILES.items()):
+        if p != prof and Q.get('stop_prefix') and sym.startswith(Q['stop_prefix']):
+            return p
+    return None
+
+
+# BIND-BINDINGS-BULK-DRIFT (run 57): profiles whose BINDINGS.tsv output the selftest checks besides the ones that set
+# profile.json selftest_bindings (audio). Kept here, not in state/bulk/profile.json, so the row changes no profile state.
+SELFTEST_BINDINGS_TOOL = ('bulk',)
+
+
 def cmd_bindings(a):
     P = PROFILES[a.profile]
     plan = json.load(open(os.path.join(state_dir(a.profile), 'plan.json')))
@@ -1356,6 +1369,9 @@ def cmd_bindings(a):
             f = lines[idx[key]].split('\t')
             if f[2] == 'missing' and kind == 'missing' and P['bindings_keep_missing']:
                 pass   # PORT-TOP-06: a stop of this closure does not overwrite another closure's missing row
+            elif f[2] == 'missing' and kind == 'missing' and P['stop_sym_foreign'] and foreign_stop_owner(a.profile, f[3]):
+                pass   # BIND-BINDINGS-BULK-DRIFT: a stop_sym_foreign profile (bulk) keeps a named stop another profile
+                #        wrote (its stop_prefix); the profile that wrote the row first owns it
             elif f[2] == 'missing':   # only a missing row is updated; a row another row wrote keeps its text
                 if kind == 'missing':
                     f[3], f[4] = sym, note
@@ -1792,9 +1808,9 @@ def cmd_selftest(a):
         if b.unclean:
             bad += selftest_cemit(b)
     # BINDINGS.tsv: the rows of each profile with profile.json selftest_bindings (audio), rebuilt in memory, must equal
-    # the committed file
+    # the committed file; SELFTEST_BINDINGS_TOOL (bulk) is checked the same way
     for prof in sorted(PROFILES, key=lambda p: (PROFILES[p]['selftest_order'], p)):
-        if not PROFILES[prof]['selftest_bindings']:
+        if not PROFILES[prof]['selftest_bindings'] and prof not in SELFTEST_BINDINGS_TOOL:
             continue
         raw = open(BINDINGS, 'rb').read()
         bak = raw
