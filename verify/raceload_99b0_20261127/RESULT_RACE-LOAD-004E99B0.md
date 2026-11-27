@@ -11,6 +11,8 @@ is empty (RULE 1). G-CTRL / B / 12x4: not run (row kind).
 
 ## 0a. Fix round (run 57, L0 merge-bar finding), on 02cc8ed95, head still d20fd3984
 
+Fix-round checks ran on commit 8cd63d10c (this RESULT is committed on top of it).
+
 Finding: the replay verified 0x004783f0 from re/match/pilot/a4_004783f0.c (verify/provinsitu_ref1_20261121/PROMOTIONS.tsv
 line 41, IDENTICAL-FOR-600, run b1_023950_016_4), but the binder bound re/match/s12/004783f0.c, a different unit (its replay
 rule takes the one `re/match/*/<rva>.c` file, porttop_bind.py:395-398). Fix, data only (RULE 1, `git diff orch/integration
