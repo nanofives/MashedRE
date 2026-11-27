@@ -1,0 +1,23 @@
+diff --git a/mashedmod/exe_sources.rsp b/mashedmod/exe_sources.rsp
+index 654c38021..44e7aa724 100644
+--- a/mashedmod/exe_sources.rsp
++++ b/mashedmod/exe_sources.rsp
+@@ -3045,3 +3045,5 @@
+ "Match\PortTop_004b6f60.cpp"
+ "Match\PortTop_004b6f90.cpp"
+ "Match\PortTop_005507a0.cpp"
++"Match\PortTop_0048ae00.cpp"
++"Match\PortTop_B48Stops.cpp"
+diff --git a/mashedmod/src/mashed_re/Match/PortTop_0040bbb0.cpp b/mashedmod/src/mashed_re/Match/PortTop_0040bbb0.cpp
+index 4148a34ca..6f292130d 100644
+--- a/mashedmod/src/mashed_re/Match/PortTop_0040bbb0.cpp
++++ b/mashedmod/src/mashed_re/Match/PortTop_0040bbb0.cpp
+@@ -120,6 +120,8 @@ int PortTop_StandIn04G_004b3d20(char* p0) {
+ #define FUN_00476390 Orig_00476390                       // matched, Match/PortTop_00476390.cpp, since PORT-OT-RENDER
+ #undef FUN_0048e820
+ #define FUN_0048e820 PortTop_PS3_Call0048e820            // L-118 near-match body, Match/PortTop_0048e820.cpp, since PARTICLE-3-SWAP
++#undef FUN_0048ae00
++#define FUN_0048ae00 PortTop_Bound_0048ae00           // matched, Match/PortTop_0048ae00.cpp, since BIND-0048AE00-CALLEES
+ #undef FUN_00477e40
+ #define FUN_00477e40 Orig_00477e40                       // matched, Match/PortTop_00477e40.cpp, since PORT-OT-RENDER
+ #undef FUN_00489290

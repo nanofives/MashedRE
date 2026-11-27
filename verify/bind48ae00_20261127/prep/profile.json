@@ -1,0 +1,66 @@
+{
+  "_doc": "Profile b48ae00 (BIND-0048AE00-CALLEES, run 57, 2026-11-27): root 0x0048ae00 (c4=match, re/match/s14/0048ae00.c), wired into its one caller 0x0040bbb0 (Match/PortTop_0040bbb0.cpp rebound block). Its callees 0x00544a70 / 0x00544ad0 / 0x00544bf0 bind as L-126 provisional bodies (prov_bind here, PROVISIONAL.tsv). Evidence verify/bind48ae00_20261127/RESULT_BIND-0048AE00-CALLEES.md.",
+  "selftest_order": 6,
+  "own_mark": "// BIND-0048AE00-CALLEES (2026-11-27): exe-only port body",
+  "own_tag": "BIND-0048AE00-CALLEES",
+  "prune_stale": true,
+  "rwcore_fallback": true,
+  "reuse_any": true,
+  "force_old_binds": false,
+  "c_emit": true,
+  "listing": "full",
+  "static_stop": true,
+  "held_external": true,
+  "thunk_names": true,
+  "bindings_keep_missing": true,
+  "roots_only_reason": "outside the root 0x0048ae00 (RVA ownership, BIND-0048AE00-CALLEES binds only its root and its three callees), source %s",
+  "stop_prefix": "PortTop_B48Stop_",
+  "stop_file": "Match/PortTop_B48Stops.cpp",
+  "stops": {
+    "style": "count"
+  },
+  "stops_subst": [
+    [
+      "// PORT-OT-RACE (2026-11-16): named stops of the race-load closure of 0x0040d270 (verify/ro_20261116/rltools/rl_bind_gen.py).",
+      "// BIND-0048AE00-CALLEES (2026-11-27): named stops of root 0x0048ae00 (re/tools/bind/porttop_bind.py --profile b48ae00)."
+    ],
+    [
+      "MASHED_OT_RL_STOPS",
+      "MASHED_OT_B48_STOPS"
+    ],
+    [
+      "PortTop_RL_StopHits",
+      "PortTop_B48_StopHits"
+    ],
+    [
+      "PortTop_RLStop_",
+      "PortTop_B48Stop_"
+    ],
+    [
+      "race-load stop (PORT-OT-RACE)",
+      "root stop (BIND-0048AE00-CALLEES)"
+    ],
+    [
+      "so the load",
+      "so the caller"
+    ]
+  ],
+  "hdr": [
+    "%(mark)s of rva 0x%(rva)s = %(src)s",
+    "// (%(ev)s). Reached on the exe only under MASHED_ORIG_TOP, from the bound caller named in",
+    "// re/tools/bind/state/b48ae00/profile.json (re/tools/bind/porttop_bind.py --profile b48ae00). Callees bind to exe bodies by",
+    "// name; a callee with no matched or admitted body, or outside the root, is a named stop (Match/PortTop_B48Stops.cpp)."
+  ],
+  "local_shared_note": "   // the one exe copy",
+  "local_bound_note": "   // this source carries its only exe copy",
+  "bindings_roots": null,
+  "bindings_root_caller": null,
+  "bindings_tag": "BIND-0048AE00-CALLEES",
+  "allow_text": "%(step)s (L-111 (a), L-126), %(date)s: the matched or provisional body runs only on MASHED_ORIG_TOP (root 0x0048ae00, %(tool)s); deleted at the ORIG_TOP flip. Evidence: %(evidence)s.",
+  "allow_default": {
+    "step": "BIND-0048AE00-CALLEES",
+    "date": "2026-11-27",
+    "evidence": "verify/bind48ae00_20261127/RESULT_BIND-0048AE00-CALLEES.md",
+    "tool": "re/tools/bind/porttop_bind.py --profile b48ae00"
+  }
+}
