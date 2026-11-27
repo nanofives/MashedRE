@@ -26,6 +26,13 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-27  0x004b6ba0  FUN_004b6ba0  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x4c; DAT_008ad860 += 1, __stricmp 0x004b6b10 over the 0x0090dac0 entry table; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6ed0  FUN_004b6ed0  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x38; modes 1 / 2 / 3 on +0x20070, two calls to 0x004b6b00; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6f90  FUN_004b6f90  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x44; DAT_008ad874 += 1, compares +0x20070 with entry +0x78; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6cd0  FUN_004b6cd0  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x30; calls 0x004b6b00 / 0x004b6b20 / 0x004b6b90, window DAT_008ad9c0 / DAT_007d3e64..68; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6f60  FUN_004b6f60  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x2c; DAT_008ad870 += 1, clears +0x20064..+0x20070, tail-jumps 0x004b6b00; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6c00  FUN_004b6c00  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, stored by 0x004b6640 into record slot +0x28; __stricmp 0x004b6b10 over the 0x0090dac0 entry table (DAT_008ad9a8), ring 0x008ab860; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
+2026-11-27  0x004b6630  FUN_004b6630  (none)->C1  added (RACE-PIZ-DEVICE): piz: device method, address stored by 0x004b6640 into its record slot +0x14 (pc_funcs body 16 B); returns &DAT_008cd9c0 + n*0x20078; evidence: verify/racepiz_20261127/RESULT_RACE-PIZ-DEVICE.md
 2026-11-22  U-9804  UNCERTAINTIES  filed  pause menu screen 0 reached in the frontend after Quit Race -> Back: original frontend state after Continue / Restart Race there unobserved; standalone reloads screen 0 (fix/playtest-pause-menu, verify/pause_menu_20261122/RESULT_PLAYTEST-PAUSE-MENU.md)
 2026-11-22  0x005c92c0  FUN_005c92c0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c92c0.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md
 2026-11-22  0x005c92f0  FUN_005c92f0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s28/005c92f0.c; evidence: verify/roaudinit_20261122/RESULT_RO-AUDIOINIT-45D460-REACH-4.md

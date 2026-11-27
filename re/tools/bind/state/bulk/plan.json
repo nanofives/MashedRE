@@ -2408,8 +2408,9 @@
 "stop"
 ],
 "004b67a0": [
-"stop",
-"outside the bulk cp1 list (RVA ownership: bind only the listed rvas), source re/match/s18/004b67a0.c"
+"reuse",
+"PortTop_Bound_004b67a0",
+"Match/PortTop_004b67a0.cpp"
 ],
 "0053fbb0": [
 "reuse",
