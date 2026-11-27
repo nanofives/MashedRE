@@ -90,7 +90,7 @@ PROFILE_DEFAULTS = dict(
     c_emit=True, listing='full', stops={'style': 'count'}, stops_subst=[], hdr=None, header=None, stop_force_note=None,
     refs_file=None, foreign_keep_marks=[], stop_reasons=None, static_stop=False, group_same_source=False,
     held_external=False, thunk_names=False, bindings_keep_missing=False, root_external={},
-    local_shared_note='', local_bound_note='', bindings_roots=None, bindings_root_caller=None,
+    local_shared_note='', local_bound_note='', bindings_roots=None, bindings_root_caller=None, bindings_tag=None,
     selftest_order=99, selftest_roots_only=False, selftest_bindings=False,
     # BIND-BULK-PROFILE (2026-11-21), the keys the RACE-BIND-C4-BULK cp1 generator (bulk_bind_gen.py) needed:
     #   force_roots false        a root that already has an exe body is reused, never bound twice
@@ -1260,7 +1260,7 @@ def cmd_bindings(a):
         called = {c for v in plan.values() if v[0] == 'bind' for c in v[3] + v[4]}
         rc = P['bindings_root_caller']
         lv = int(lines[idx[rc]].split('\t')[5]) + 1 if rc in idx else 1
-        roots = [(r, lv, rc) for r in sorted(plan) if r not in called]
+        roots = [(r, lv, rc or '') for r in sorted(plan) if r not in called]
     level, caller = {}, {}
     q = list(roots)
     while q:   # level / caller by BFS from the roots (default level 3 for the rest, as bindings_update.py did)
@@ -1273,7 +1273,9 @@ def cmd_bindings(a):
                 q.append((cc, lv + 1, '0x' + r))
     ADM = {l.split('\t')[0][2:].lower() for l in open('re/match/ADMITTED.tsv', encoding='utf-8') if l.startswith('0x')}
     skip = {r for r, _, _ in P['bindings_roots']} if P['bindings_roots'] else set()
-    tag = a.step or P['bindings_tag']
+    tag = a.step or P['bindings_tag'] or P['own_tag']
+    if not tag:
+        sys.exit('profile %s: no bindings_tag, own_tag or --step for the BINDINGS.tsv notes' % a.profile)
     upd = add = 0
     for r, pr in sorted(plan.items()):
         if r in skip:
