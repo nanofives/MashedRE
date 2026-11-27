@@ -83,7 +83,10 @@ prov_bind	005b8910
 prov_bind	005b8c40
 prov_bind	005c6f50
 prov_bind	005a65d0
-prov_bind	004ccef0
+# RO-AUDIOINIT-45D460-REACH-6: 0x004ccef0 keeps ONE exe body and ONE PROVISIONAL.tsv row, the RW core hand body
+# RwCoreHand_004ccef0 (RwCore/RwCore_Hand.cpp, PROVISIONAL.tsv line 87) that 0x004cce20 already installs at RwGlobals+0x108;
+# REACH-5's second body (re/match/s20/004ccef0.c, 0.0%, tail jmp) is no longer bound. Both bodies were std::malloc(size).
+alias	004ccef0	RwCoreHand_004ccef0	RwCore/RwCore_Hand.cpp
 # RO-AUDIOINIT-45D460-REACH-5: CRT pow (0x004a2d30, C4 libid) called by 0x005b8c40 at 0x005b91c2: the exe CRT pow body
 alias	004a2d30	RwCoreCrt_pow	RwCore/RwCore_Crt.cpp
 # RO-AUDIOINIT-45D460-REACH-5: bind the replay-verified source re/match/s26/005aeb90.c (c4=frida-replay) for 0x005b8910 / 0x005b8c40
