@@ -28,8 +28,9 @@ Diff head -> with 0x00420420 as a bulk root (plan listing lines):
   caller of 0x0041fe10 in the original is 0x00420763 inside 0x00420420; in re/match/s05/0041fe10.c the call to
   FUN_00420420 is from the stand-in `Caller_0041fe10`. So the bind count stays 97 (one traded for one). This moves a
   cp1-list RVA (0x0041fe10) from bind to stop as a direct effect of this row's bind: its moved.tsv line will carry
-  cause "file-local copy in re/match/s05/00420420.c, now bound as 0x00420420". [Flag for the lead: 0x0041fe10's state
-  line changes as a consequence of the owned bind; no other row owns 0x0041fe10 this run.]
+  cause "BIND-00420420 source carries 0x0041fe10" (RVA now bound: 0x00420420). Lead ruling 2026-11-27: this line counts
+  as the bulk state line for this row (no other run 56 row owns 0x0041fe10); no other RVA's line is touched; the diff
+  is shown in the final RESULT. Trade: one bind for one stop, 97 binds stay 97.
 - New stops (5 next stops of the gate-rank row, three new in the listing): 0x00420290 (C2), 0x00544a70 (C2),
   0x00544ad0 (C2); 0x004222f0 and 0x0053d460 were already stops. 0x00544a70 / 0x00544ad0 are owned by
   BIND-0048AE00-CALLEES: this row lists them as stops only and binds nothing there; if that row binds them first,
