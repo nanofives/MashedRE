@@ -1,4 +1,5 @@
-Binder selftest: NOT MEASURED (not run: L0 DISK HOLD, C: at 14 GB free, under the 25 GB line; baseline log/orch/run56_selftest_head.txt is PASS 0 on every profile). Not met: 2 of 3 commits done, BIND-MGLOBAL-C-FORM not done, stop moved from "none started" to "needs a ddkobj.py decision".
+Binder selftest PASS 0 before and after, every profile (raceload, audio, bulk, raceframe, renderframe, gates: plan IDENTICAL, wrappers+stops IDENTICAL, bulk listing 60 moved all named, BINDINGS.tsv IDENTICAL); output log/orch/run56_selftest_small3.txt equals the head baseline log/orch/run56_selftest_head.txt.
+Scope: commits 1-2 only (BIND-MOVED-TSV-AUTO, BIND-BULK-BINDINGS-TAG). BIND-MGLOBAL-C-FORM is split to DDKOBJ-MGLOBAL-ENUM-FORM (needs ddkobj.py, not this row).
 
 # RESULT BIND-TOOLS-SMALL-3 (run 56)
 
@@ -12,14 +13,14 @@ Branch orch/BIND-TOOLS-SMALL-3, base 1379467a6.
 2. e1c7de25d BIND-BULK-BINDINGS-TAG: `bindings --profile bulk` died with KeyError 'bindings_tag'. Fixes: PROFILE_DEFAULTS
    bindings_tag=None, fallback to own_tag, clear exit when neither exists, and a None caller (bulk has no bindings_root_caller)
    written as an empty field (it crashed `'\t'.join`). Data: state/bulk/profile.json bindings_tag RACE-BIND-C4-BULK.
-3. BIND-MGLOBAL-C-FORM: NOT done, see below.
+3. BIND-MGLOBAL-C-FORM: split out to DDKOBJ-MGLOBAL-ENUM-FORM (lead ruling), not part of this merge.
 
-## Checks run
-- `py -3.12 re/tools/bind/test_porttop_bind_lib.py`: 10/10 PASS (new case `moved` included, link case ran).
-- `porttop_bind.py moved --profile bulk --dry` (and with --rva 00401570): 0 lines, bulk moved.tsv already names every moved line.
+## Checks run (after the disk hold lifted, C: 28 GB free, base orch/integration 1379467a6 unchanged)
+- `py -3.12 re/tools/bind/porttop_bind.py selftest` under test-slot: PASS 0 on every profile (see line 1).
+- `py -3.12 re/tools/bind/test_porttop_bind_lib.py`: 10/10 PASS (new case `moved`, link case ran).
+- `porttop_bind.py moved --profile bulk --dry` (and --rva 00401570): 0 lines, bulk moved.tsv already names every moved line.
 - `porttop_bind.py bindings --profile bulk --dry`: before the fix KeyError, after: "updated 4 added 425 (dry run)". BINDINGS.tsv not written.
-- Binder selftest, VS2022 build, object build, ddkobj check: NOT RUN (disk hold). Neither commit changes plan or wrapper generation
-  (commit 1 adds a command, commit 2 only touches `bindings`), but that is a reading, not a measurement: [UNCERTAIN], test = `py -3.12 re/tools/bind/porttop_bind.py selftest` must end PASS 0 on the merged tree.
+- VS2022 build, object build, ddkobj check: not run (neither commit changes generated output the build consumes: the selftest regenerates every wrapper and stop file IDENTICAL).
 
 ## BIND-MGLOBAL-C-FORM: why not done
 0x0047b860 / 0x0047b8d0 are C units (Match/PortTop_<rva>.c). Their wrapper (state/raceload/rules.tsv extra_pre, lines for 0047b860 and
