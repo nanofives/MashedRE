@@ -1,0 +1,9 @@
+lines: 25, fail lines returned: 0
+case-insensitive-only matches in this output: 7
+[selftest] lib kind: 1 lib roots, 10 profile x rva lib bindings resolve, 0 fail (unit test: re/tools/bind/test_porttop_bind_lib.py)
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit of the 4 held rvas (c_hold.txt, not bound): 4 compile, 0 fail
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)
+[selftest] C emit fixture: as C compiles, as C++ fails (expected)

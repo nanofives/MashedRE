@@ -682,13 +682,14 @@ function Get-DdkobjStep([string]$wt) {
 # are applied (c4_reclass batch --apply --strict) and fails the pass on a NEW failure against the base head's list, so a
 # promotion that changes what is bindable cannot leave the head's plans stale (run 55: drain 1 took the head from FAIL 14
 # to FAIL 35). A failure line is a `[selftest]` line that names FAIL / FAILS / DIFFERENT / COMPILES (unexpected) or has a
-# non-zero "N fail" / "N failures" count; the closing PASS / FAIL N line is not one. The base list is taken from the
+# non-zero "N fail" / "N failures" count; the closing PASS / FAIL N line is not one. The FAIL / DIFFERENT / COMPILES tests are case-sensitive
+# (-cmatch, HB-TRAIN-SELFTEST-FAILMATCH): the passing line '... 3 compile, 0 fail' matched FAILS? under -match. The base list is taken from the
 # head before the batch (a temp worktree at $base), and only when the merged tree has failures at all.
 $script:BinderRunner = $null   # the selftest swaps this for a fake that returns canned output
 function Get-BinderFailLines($out) {
   @(@($out) | ForEach-Object { "$_".Trim() } | Where-Object {
     $_ -match '^\[selftest\]' -and $_ -notmatch '^\[selftest\] (PASS|FAIL \d+)$' -and
-    ($_ -match '\bFAILS?\b' -or $_ -match 'DIFFERENT' -or $_ -match 'COMPILES \(unexpected\)' -or $_ -match '(?<![\d.])[1-9]\d* (fail|failures|wrapper-shape failures)\b')
+    ($_ -cmatch '\bFAILS?\b' -or $_ -cmatch 'DIFFERENT' -or $_ -cmatch 'COMPILES \(unexpected\)' -or $_ -cmatch '(?<![\d.])[1-9]\d* (fail|failures|wrapper-shape failures)\b')
   } | Sort-Object -Unique)
 }
 function Invoke-BinderSelftest([string]$wt) {
@@ -1109,6 +1110,19 @@ if ($SelfTest) {
   $script:fakeBase = @($lA, '[selftest] PASS'); $script:fakeAfter = @($lA)
   $bs4 = Test-BinderStep $wt2 'HEAD'
   Check ((-not $bs4.ok) -and $bs4.why -match 'did not finish') "binder selftest step: a selftest that never prints PASS / FAIL N fails the pass (not a list comparison)"
+  # HB-TRAIN-SELFTEST-FAILMATCH: the passing C-emit line ('3 compile, 0 fail') is not a failure line; '1 fail' and an upper-case FAIL are.
+  $lP = '[selftest] C emit of the 3 held rvas (c_hold.txt, not bound): 3 compile, 0 fail'
+  $lP1 = '[selftest] C emit of the 3 held rvas (c_hold.txt, not bound): 2 compile, 1 fail'
+  $lUp = '[selftest] C emit fixture: as C FAILS, as C++ fails (expected)'
+  $script:fakeBase = @($lA, '[selftest] PASS'); $script:fakeAfter = @($lA, $lP, '[selftest] PASS')
+  $bs5 = Test-BinderStep $wt2 'HEAD'
+  Check ($bs5.ok -and $bs5.new -eq 0 -and @(Get-BinderFailLines @($lA, $lP)).Count -eq 0) "binder selftest step: the passing '3 compile, 0 fail' line present only after the merge is not a NEW failure, the pass stands"
+  $script:fakeBase = @($lA, '[selftest] PASS'); $script:fakeAfter = @($lA, $lP1, '[selftest] FAIL 1')
+  $bs6 = Test-BinderStep $wt2 'HEAD'
+  Check ((-not $bs6.ok) -and $bs6.new -eq 1 -and $bs6.why -match '1 fail') "binder selftest step: a '1 fail' line is a NEW failure ($($bs6.why))"
+  $script:fakeBase = @($lA, '[selftest] PASS'); $script:fakeAfter = @($lA, $lUp, '[selftest] FAIL 1')
+  $bs7 = Test-BinderStep $wt2 'HEAD'
+  Check ((-not $bs7.ok) -and $bs7.new -eq 1 -and $bs7.why -match 'as C FAILS') "binder selftest step: an upper-case FAIL / FAILS line is a failure ($($bs7.why))"
   $script:BinderRunner = $null
   $tsrc = [IO.File]::ReadAllText($PSCommandPath)
   $iTb = $tsrc.IndexOf('function Try-Batch'); $iAp = $tsrc.IndexOf('$pr = Apply-Promotions $wt $it', $iTb); $iBs = $tsrc.IndexOf('Test-BinderStep $wt $base', $iTb); $iAl = $tsrc.IndexOf('archive_lint.py', $iTb)
