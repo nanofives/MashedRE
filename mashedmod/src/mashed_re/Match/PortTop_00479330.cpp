@@ -17,7 +17,7 @@
 #define FUN_00478200 PortTop_Bound_00478200
 #define FUN_00478cc0 RenderWorldStateZeroFill   // exe body (Match/MatchS12_00478cc0.cpp)
 #define FUN_00479030 PortTop_Bound_00479030
-#define FUN_004790e0 PortTop_RLStop_004790e0   // named stop
+#define FUN_004790e0 PortTop_RL_004790e0   // exe body (Match/PortTop_RL_004790e0.cpp)
 #define FUN_004850e0 PortTop_Bound_004850e0
 #define FUN_00485460 PortTop_Bound_00485460
 #define FUN_004987b0 DbgPrintf_004987b0   // exe body (Match/PortTop_004987b0.cpp)

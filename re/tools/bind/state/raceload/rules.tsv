@@ -33,7 +33,9 @@ prov_bind	00479330
 prov_bind	00478660
 prov_bind	00462950
 # PORT-OT-RACE-BIND-PROV4: rvas kept as named stops although a matched source exists, with the reason.
-stop_reason	004790e0	register-arg: world pointer in EAX (re/match/s12/004790e0.c header; caller 0x00479330 loads [ebx+0x105d4] into EAX at 0x00479e2e), declared void(void) by re/match/s12/00479330.c under MATCH_PORT and static in its own source; no exe body takes EAX
+# RACE-LOAD-004E99B0 (run 57): 0x004790e0 binds the stack-argument entry over its C4 source (was a stop_reason: register-arg, world in EAX);
+# 0x00479330 passes the world under MATCH_PORT (re/match/s12/00479330.c)
+alias	004790e0	PortTop_RL_004790e0	Match/PortTop_RL_004790e0.cpp
 # PORT-OT-RACE-BIND-PROV4: a source that defines its function under a name other than FUN_<rva>
 # re/match/rwl02/004e5c30.c line 34
 name_def	004e5c30	RpWorldForAllAtomics
@@ -256,3 +258,5 @@ prov_bind	00558df0
 stop_reason	004785e0	register-arg: p in EAX, out in ECX, norm on the stack (re/match/s12/004785e0.c header); the source defines it static with a stand-in caller, so no exe symbol exists to bind
 # RACE-LOAD-004E99B0: next stop 0x004cf2b0 (caller 0x00478110, after Smoke.mts), source rewritten from the disassembly, NOT-PROVEN, re/match/PROVISIONAL.tsv
 prov_bind	004cf2b0
+# RACE-LOAD-004E99B0: stop 0x004b4550 (after the H_Anim_*.anm loads), C3 hand source, NOT-PROVEN, re/match/PROVISIONAL.tsv
+prov_bind	004b4550

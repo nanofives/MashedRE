@@ -1721,6 +1721,13 @@
 ],
 []
 ],
+"004b4550": [
+"bind",
+"re/match/s18/004b4550.c",
+"provisional",
+[],
+[]
+],
 "004053d0": [
 "reuse",
 "Orig_004053d0",
@@ -2636,9 +2643,6 @@
 "RwCore_004c3b30",
 "RwCore/RwCore_004c3b30.cpp"
 ],
-"004b4550": [
-"stop"
-],
 "00426090": [
 "reuse",
 "GlobalDat0066ce58Get",
@@ -2930,8 +2934,9 @@
 []
 ],
 "004790e0": [
-"stop",
-"register-arg: world pointer in EAX (re/match/s12/004790e0.c header; caller 0x00479330 loads [ebx+0x105d4] into EAX at 0x00479e2e), declared void(void) by re/match/s12/00479330.c under MATCH_PORT and static in its own source; no exe body takes EAX"
+"reuse",
+"PortTop_RL_004790e0",
+"Match/PortTop_RL_004790e0.cpp"
 ],
 "004850e0": [
 "bind",
