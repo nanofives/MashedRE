@@ -1,0 +1,72 @@
+== against mashedmod/build/ddkobj_headctrl
+  identical: base 2455  now 2455
+  functions: base 2562  now 2562
+  different: base 79  now 79
+  not_in_map: base 28  now 28
+  units_linked: base 2437  now 2437
+  units: base 2713  now 2713
+  refusals: base {'fail:externalized-static-register-convention': 13, 'fail:wrapper-redefines-globals': 4}  now {'fail:externalized-static-register-convention': 12, 'fail:static-global-unmapped': 1, 'fail:wrapper-redefines-globals': 4}
+  provisional_units_skipped: base 259  now 259
+  fn_addr_refs_ok: base 66  now 66
+  dual body: base 33 now 33
+  provisional fns in linked units: base ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00'] now ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00']
+  newly DIFFERENT: none   no longer DIFFERENT: none
+  new not-in-map: none
+  per-function result changes: 0
+  unit status changes: 1
+  UNIT re/match/s01/004036a0.c (Match\PortTop_00403910.cpp): fail:externalized-static-register-convention -> fail:static-global-unmapped
+== against D:/MashedWT/DDKOBJ-STATIC-GLOBALS_data/piz_base
+  identical: base 2455  now 2455
+  functions: base 2562  now 2562
+  different: base 79  now 79
+  not_in_map: base 28  now 28
+  units_linked: base 2437  now 2437
+  units: base 2713  now 2713
+  refusals: base {'fail:externalized-static-register-convention': 13, 'fail:wrapper-redefines-globals': 4}  now {'fail:externalized-static-register-convention': 12, 'fail:static-global-unmapped': 1, 'fail:wrapper-redefines-globals': 4}
+  provisional_units_skipped: base 259  now 259
+  fn_addr_refs_ok: base 66  now 66
+  dual body: base 33 now 33
+  provisional fns in linked units: base ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00'] now ['0x0041a400', '0x0043c5b0', '0x0045cd30', '0x004967e0', '0x00498510', '0x004c0c20', '0x004c0f00']
+  newly DIFFERENT: none   no longer DIFFERENT: none
+  new not-in-map: none
+  per-function result changes: 0
+  unit status changes: 1
+  UNIT re/match/s01/004036a0.c (Match\PortTop_00403910.cpp): fail:externalized-static-register-convention -> fail:static-global-unmapped
+== the static-global sources (C view file-static DAT_<addr>)
+re/match/pilot/a7_0041c380.c	DAT_0063cde4	no exe wrapper includes it (not a unit)
+re/match/s01/004034a0.c	DAT_00636b74	no exe wrapper includes it (not a unit)
+re/match/s01/004036a0.c	DAT_00636b74	Match\PortTop_00403910.cpp	fail:static-global-unmapped	DAT_00636b74: file-static in the C view and no MGLOBAL in the source (the port view keeps a private copy as well); no address to bind	-	
+re/match/s04/0041c380.c	DAT_0063cde4	Match\PortTop_0041cb80.cpp	ok		DAT_0063cde4->__ddkabs_0063cde4 refs 3	0x0041c380 IDENTICAL abs 4 (base IDENTICAL abs 2) ; 0x0041cb80 IDENTICAL abs 4 (base IDENTICAL abs 3)
+re/match/s06/00429290.c	DAT_0067d960	Match\MatchS06_00429290.cpp	ok		DAT_0067d960->__ddkabs_0067d960 refs 1	0x00429240 IDENTICAL abs 1 (base IDENTICAL abs 0) ; 0x00429290 IDENTICAL abs 0 (base IDENTICAL abs 0)
+re/match/s06/00429290.c	DAT_0067d960	Match\PortTop_00429290.cpp	ok		DAT_0067d960->__ddkabs_0067d960 refs 1	0x00429240 IDENTICAL abs 1 (base IDENTICAL abs 0) ; 0x00429290 IDENTICAL abs 0 (base IDENTICAL abs 0)
+re/match/s09/004527f0.c	DAT_005f9790,DAT_00684c50,DAT_00684e30	no exe wrapper includes it (not a unit)
+re/match/s09/00459400.c	DAT_0068bb5c	no exe wrapper includes it (not a unit)
+re/match/s10/00461650.c	DAT_0068f4c4	Match\PortTop_00461650.cpp	ok		DAT_0068f4c4->__ddkabs_0068f4c4 refs 5	0x00461650 IDENTICAL abs 88 (base IDENTICAL abs 83)
+re/match/s10/00462950.c	DAT_0068fc80,DAT_0068fc84	Match\PortTop_00462950.cpp	skip:provisional		-	
+re/match/s10/00463590.c	DAT_006904e0	Match\PortTop_00463590.cpp	ok		DAT_006904e0->__ddkabs_006904e0 refs 3	0x00463590 IDENTICAL abs 8 (base IDENTICAL abs 5)
+re/match/s10/004661f0.c	DAT_0069058c	Match\PortTop_004661f0.cpp	ok		DAT_0069058c->__ddkabs_0069058c refs 2	0x004661f0 IDENTICAL abs 62 (base IDENTICAL abs 60)
+re/match/s12/00475a60.c	DAT_0069160c	Match\PortTop_00475a60.cpp	ok		DAT_0069160c->__ddkabs_0069160c refs 2	0x00475a60 IDENTICAL abs 5 (base IDENTICAL abs 3)
+re/match/s12/00475c10.c	DAT_00691614	Match\PortTop_00475c10.cpp	ok		DAT_00691614->__ddkabs_00691614 refs 2	0x00475c10 IDENTICAL abs 8 (base IDENTICAL abs 6)
+re/match/s12/004769a0.c	DAT_00692528,DAT_0069252c,DAT_00692530	Match\MatchS12_004769a0.cpp	ok		DAT_00692530->__ddkabs_00692530 refs 1; DAT_0069252c->__ddkabs_0069252c refs 1; DAT_00692528->__ddkabs_00692528 refs 1	0x004769a0 IDENTICAL abs 4 (base IDENTICAL abs 1)
+re/match/s12/004769d0.c	DAT_006924dc,DAT_006924e0	Match\MatchS12_004769d0.cpp	ok		DAT_006924e0->__ddkabs_006924e0 refs 1; DAT_006924dc->__ddkabs_006924dc refs 1	0x004769d0 IDENTICAL abs 3 (base IDENTICAL abs 1)
+re/match/s12/00476d00.c	DAT_006924dc	Match\MatchS12_00476d00.cpp	ok		DAT_006924dc->__ddkabs_006924dc refs 2	0x00476d00 IDENTICAL abs 13 (base IDENTICAL abs 11)
+re/match/s13/0047ab30.c	DAT_006bf1cc	Match\PortTop_0047ab30.cpp	ok		DAT_006bf1cc->__ddkabs_006bf1cc refs 5	0x0047ab30 IDENTICAL abs 5 (base IDENTICAL abs 0)
+re/match/s13/0047abd0.c	DAT_006bf1cc	Match\PortTop_0047abd0.cpp	ok		DAT_006bf1cc->__ddkabs_006bf1cc refs 6	0x0047abd0 IDENTICAL abs 6 (base IDENTICAL abs 0)
+re/match/s13/0047ac80.c	DAT_006bf1cc	Match\PortTop_0047ac80.cpp	ok		DAT_006bf1cc->__ddkabs_006bf1cc refs 1	0x0047ac80 IDENTICAL abs 1 (base IDENTICAL abs 0)
+re/match/s13/0047ad40.c	DAT_006bf1cc	Match\PortTop_0047ad40.cpp	ok		DAT_006bf1cc->__ddkabs_006bf1cc refs 4	0x0047ad40 IDENTICAL abs 4 (base IDENTICAL abs 0)
+re/match/s13/0047c0f0.c	DAT_006c2fec	Match\PortTop_0047c0f0.cpp	ok		DAT_006c2fec->__ddkabs_006c2fec refs 3	0x0047c0f0 IDENTICAL abs 7 (base IDENTICAL abs 4)
+re/match/s14/00489890.c	DAT_00703110	Match\PortTop_00489890.cpp	ok		DAT_00703110->__ddkabs_00703110 refs 1	0x00489890 IDENTICAL abs 1 (base IDENTICAL abs 0)
+re/match/s15/0048e5f0.c	DAT_007668f4	Match\PortTop_0048e5f0.cpp	ok		DAT_007668f4->__ddkabs_007668f4 refs 2	0x0048e5f0 IDENTICAL abs 13 (base IDENTICAL abs 11)
+re/match/s15/00491c00.c	DAT_00771724,DAT_00771728	no exe wrapper includes it (not a unit)
+re/match/s15/00491f00.c	DAT_00771724	no exe wrapper includes it (not a unit)
+re/match/s16/00498a00.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00498c00.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00498d20.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00498d60.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00498e40.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00498ea0.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00498f60.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00499170.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/004991f0.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+re/match/s16/00499400.c	DAT_007731f8	no exe wrapper includes it (not a unit)
+sources: 35
