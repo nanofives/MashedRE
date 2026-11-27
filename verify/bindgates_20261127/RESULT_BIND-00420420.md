@@ -2,9 +2,9 @@
 
 # RESULT BIND-00420420 (run 56, BIND section)
 
-Base: **orch/integration f10b8e69c** (BIND-TOOLS-SMALL-3 merged at 2ca0564f0). Branch `orch/BIND-00420420`, worktree
+Base: **orch/integration affd19dd4** (rebased from f10b8e69c after drain 1 pass 2; `git diff --name-only f10b8e69c affd19dd4` touches none of re/tools/bind, dual_copy_allowlist.txt, exe_sources.rsp, mashedmod/, re/match/, hooks.csv; BIND-TOOLS-SMALL-3 merged at 2ca0564f0). Branch `orch/BIND-00420420`, worktree
 `.worktrees\BIND-00420420`. The branch was first stacked on orch/BIND-TOOLS-SMALL-3 a20f17480 (prep only, nothing counted
-from it), then rebased onto f10b8e69c; every number below is from f10b8e69c + this row's commits. Row kind: top-down binding
+from it), then rebased onto f10b8e69c; builds, ddkobj, arms and knob boots below ran on f10b8e69c + this row's commits; the binder selftest and the bindings comparison were re-run on affd19dd4 + this row (selftest output byte-identical). Row kind: top-down binding
 row, data only (RULE 1): `git diff orch/integration -- re/tools/bind/porttop_bind.py` is empty. G-CTRL / B / 12x4: not run (row kind).
 
 Decision B: the done-means "body executes on a knob-on arm" is **not met: stop at RwCore_005509b0+0x4 (COURSE.LUA VFS open, owned by
@@ -33,7 +33,12 @@ RACE-VFS-COURSELUA)**. The measured count is 0; it is reported, not hidden. No h
     (ORIGTOP-ONLY needs exactly one marked, ORIGTOP-HELD none unmarked). **Decision L-183, Mariano: option (1)**. Moves the
     **D4 burn-down 4 -> 5**; the old :730 key (two files, ORIGTOP-ONLY) no longer matches a finding and is superseded by this line.
     Follow-up lint tool row LINT-HELDPAIR-HANDCOPY (retags it) is filed separately by the lead.
-- `bindings --profile bulk` **not written**: its dry run (`BIND-00420420_bindings_dry.txt`, "updated 4 added 429") rewrites 4 rows of
+- `bindings --profile bulk` **not written: head drift, not this bind** (L0 ruling). Run (written, diffed, file restored) on
+  head **affd19dd4** without the bind: "updated 4 added 425"; on this branch rebased onto affd19dd4: "updated 4 added 429". The same 4
+  rows change on both, each a named stop another profile owns that the bulk plan also lists as a stop, relabelled to the bulk stop symbol:
+  `0x0057c210` PortTop_AStop_0057c210 (audio, PORT-TOP-AUDIOTICK-STOPS) -> PortTop_BulkStop_0057c210; `0x00401da0`, `0x00535700`,
+  `0x0055dff0` PortTop_RFStop_<rva> (raceframe, PORT-TOP-06) -> PortTop_BulkStop_<rva>. The +4 added rows (429 vs 425) are the bind's
+  new bulk plan entries; BINDINGS.tsv is not regenerated (L0 files a separate row). Earlier note: its dry run (`BIND-00420420_bindings_dry.txt`, "updated 4 added 429") rewrites 4 rows of
   the audio / raceframe profiles as bulk stops and adds the whole bulk plan; the profile's documented order is write -> refs -> sync,
   and BINDINGS.tsv is selftest-checked from the audio plan only. BINDINGS.tsv byte-identical to the base.
 - Tools (evidence only, not wired anywhere): `tools/count_body.py` (Frida entry counter by .map address), `tools/arms.py`,
@@ -142,5 +147,7 @@ Earlier read-only evidence (before the bind, base 1379467a6): `BIND-00420420_pla
 
 ## 9. frida-<hash> folders in %LOCALAPPDATA%\Temp
 
-698 at the start of this row (another session cleaned them since); 6 at the end. 5 of the 6 carry creation times of this row's Frida
-runs (11:18, 11:19, 11:40 x3); left in place (not deleted, in case another session's Frida is using one).
+Before the first Frida run this row recorded only a count (698), not a name list. Six folders are present now. Without a pre-run name
+list none can be attributed to this row by name, and deletion by age is excluded, so **0 deleted**. Present at the end:
+frida-316dbdfaf0005d08d77d0eb3454c4657, frida-32aaf3dc06bf0ce4aefca65061e34380, frida-32c9f35d4c6d37a53c6ce5ad8e93282b,
+frida-59351c55e012ce88ce5d0589b4d72cc0, frida-61c4a9f37a4d464f7d35791d1f29db00, frida-f74065303b60b62cff18cc944f43e640.
