@@ -3,6 +3,7 @@
   "selftest_order": 3,
   "own_mark": "// RACE-BIND-C4-BULK (2026-11-21): exe-only port body",
   "own_tag": "RACE-BIND-C4-BULK",
+  "bindings_tag": "RACE-BIND-C4-BULK",
   "prune_stale": true,
   "rwcore_fallback": true,
   "reuse_any": true,
